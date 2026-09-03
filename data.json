@@ -1,0 +1,31 @@
+{
+  "updated": "2026-09-03 07:00 KST (샘플)",
+  "summary": "여기는 나중에 분석 에이전트가 자동으로 채울 요약 자리입니다. 아래 숫자들은 화면이 제대로 나오는지 확인하려고 넣은 가짜 데이터입니다.",
+  "sections": [
+    {
+      "title": "섹터 ETF 자금 흐름",
+      "note": "최근 5거래일 기준 (샘플)",
+      "items": [
+        { "name": "반도체", "value": "8.2억$", "change": "+2.4%", "comment": "샘플 데이터" },
+        { "name": "AI 인프라", "value": "3.1억$", "change": "+1.1%", "comment": "샘플 데이터" },
+        { "name": "방산", "value": "-0.7억$", "change": "-0.9%", "comment": "샘플 데이터" }
+      ]
+    },
+    {
+      "title": "CFTC COT 포지셔닝",
+      "note": "샘플",
+      "items": [
+        { "name": "금", "value": "순매수 21.4만", "change": "+3.2%", "comment": "샘플 데이터" },
+        { "name": "나스닥100", "value": "순매도 1.8만", "change": "-1.4%", "comment": "샘플 데이터" }
+      ]
+    },
+    {
+      "title": "온체인 · 펀딩비",
+      "note": "샘플",
+      "items": [
+        { "name": "BTC 펀딩비", "value": "0.011%", "change": "+0.3%", "comment": "샘플 데이터" },
+        { "name": "ETH 미결제약정", "value": "94억$", "change": "-1.2%", "comment": "샘플 데이터" }
+      ]
+    }
+  ]
+}
