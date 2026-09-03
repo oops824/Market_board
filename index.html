@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>시장 자금흐름 보드</title>
+<style>
+:root{--bg:#0f1216;--card:#181d24;--line:#262d36;--txt:#e6e9ee;--sub:#8b95a3;--up:#ff5b5b;--dn:#3d8bff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;padding:16px 14px 60px}
+h1{font-size:19px;margin:0 0 4px}
+.meta{color:var(--sub);font-size:13px;margin-bottom:14px}
+select{background:var(--card);color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:14px;margin-bottom:16px;width:100%}
+.summary{background:var(--card);border:1px solid var(--line);border-left:3px solid #6c8cff;border-radius:10px;padding:14px;font-size:14px;line-height:1.65;margin-bottom:18px;white-space:pre-wrap}
+section{margin-bottom:22px}
+h2{font-size:15px;margin:0 0 8px;color:#c9d3e0}
+.note{color:var(--sub);font-size:12.5px;margin:0 0 8px}
+.row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:8px}
+.nm{font-size:14px;font-weight:600}
+.cm{color:var(--sub);font-size:12.5px;margin-top:3px;line-height:1.5}
+.vl{text-align:right;white-space:nowrap}
+.v{font-size:14px}
+.c{font-size:12.5px;margin-top:3px}
+.up{color:var(--up)}.dn{color:var(--dn)}
+.err{color:var(--sub);font-size:14px;line-height:1.6}
+</style>
+</head>
+<body>
+<h1>시장 자금흐름 보드</h1>
+<div class="meta" id="meta">불러오는 중...</div>
+<select id="arc" style="display:none"></select>
+<div id="app"></div>
+<script>
+const $=s=>document.querySelector(s);
+const esc=t=>String(t??'').replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+function render(d){
+  $('#meta').textContent='갱신: '+(d.updated||'-');
+  let h='';
+  if(d.summary)h+='<div class="summary">'+esc(d.summary)+'</div>';
+  (d.sections||[]).forEach(s=>{
+    h+='<section><h2>'+esc(s.title)+'</h2>';
+    if(s.note)h+='<p class="note">'+esc(s.note)+'</p>';
+    (s.items||[]).forEach(i=>{
+      const ch=String(i.change??''),cls=ch.startsWith('-')?'dn':(ch?'up':'');
+      h+='<div class="row"><div><div class="nm">'+esc(i.name)+'</div>'+
+        (i.comment?'<div class="cm">'+esc(i.comment)+'</div>':'')+'</div>'+
+        '<div class="vl"><div class="v">'+esc(i.value)+'</div>'+
+        (ch?'<div class="c '+cls+'">'+esc(ch)+'</div>':'')+'</div></div>';
+    });
+    h+='</section>';
+  });
+  $('#app').innerHTML=h||'<p class="err">표시할 내용이 없습니다.</p>';
+}
+function load(p){
+  fetch(p+'?t='+Date.now()).then(r=>{if(!r.ok)throw 0;return r.json()}).then(render)
+  .catch(()=>{$('#meta').textContent='';
+  $('#app').innerHTML='<p class="err">data.json을 읽지 못했습니다. 파일이 올라갔는지, 1~2분 기다렸는지 확인해 주세요.</p>'});
+}
+fetch('reports/list.json?t='+Date.now()).then(r=>r.ok?r.json():Promise.reject()).then(l=>{
+  if(!l.length)return;
+  const s=$('#arc');s.style.display='block';
+  s.innerHTML='<option value="data.json">최신 리포트</option>'+
+    l.map(f=>'<option value="reports/'+f+'">'+f.replace('.json','')+'</option>').join('');
+  s.onchange=()=>load(s.value);
+}).catch(()=>{});
+load('data.json');
+</script>
+</body>
+</html>
