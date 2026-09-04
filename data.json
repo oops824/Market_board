@@ -1,40 +1,76 @@
 {
-  "updated": "2026-09-04 10:57 KST",
-  "summary": "**매크로·유동성**: 하이일드 스프레드, 10년 실질금리, 장단기 금리차, 달러지수, 연준 순유동성 5개 항목 모두 수집 실패. 이번 업데이트에서는 매크로 레벨의 위험 경계/안주 판단 및 유동성-위험자산 흐름 비교가 불가능한 상태다.\n\n**섹터 자금 흐름**: 5거래일 기준 기술(XLK +0.42%), 소프트웨어(IGV +1.01%)는 강세를 유지한 반면, 방산(ITA -5.50%), 배터리(LIT -2.19%), 우주(ARKX -1.85%), 반도체(SMH -0.95%)는 조정 흐름을 보여 성장주 내에서도 순환매 성격의 차별화가 나타난다.\n\n**COT 포지셔닝**: 나스닥100·S&P500·비트코인은 레버리지펀드·자산운용사 순매수 모두 전주 대비 변화 없음(0)으로 집계되어 뚜렷한 쏠림은 확인되지 않는다. 반면 금은 비상업(투기) 순매수가 21,145계약 늘어난 243,334계약으로, 롱 포지션 과밀도가 높아지는 구간이라 되돌림 시 변동성 확대 취약성에 유의할 필요가 있다(3일 지연 데이터, 방향성 예측 아님).\n\n**COT-실시간 엇갈림**: COT상 비트코인 레버리지펀드 포지션은 변화 없음(0)으로 나타났으나, 하이퍼리퀴드 실시간 펀딩비는 BTC·ETH·SOL·HYPE 전 종목 플러스(롱 우위)를 유지하고 있어 지연 데이터와 실시간 파생시장 심리 사이에 괴리가 존재한다.\n\n**암호화폐**: 하이퍼리퀴드 OI는 BTC 2,914M$, ETH 2,248M$, HYPE 2,083M$, SOL 598M$ 순으로 크며 펀딩비는 전 종목 미세한 양수를 유지해 완만한 롱 우위 심리가 지속되고 있다. 스테이블코인 총발행량 지표는 수집 실패했으나 개별 코인 기준 USDC가 30일간 +3.21% 증가해(가격은 $1 고정) 대기자금이 쌓이는 신호로 해석되며, 반대로 USDT(-0.14%)와 USDS(-3.14%)는 소폭 감소해 일부 자금 이탈 흐름도 동시에 관측된다. 코인베이스 프리미엄은 BTC·ETH 모두 수집 실패로 기관 매수 강도 판단은 불가하다.",
+  "updated": "2026-09-04 15:07 KST",
+  "summary": "10년물, 2년물, DXY, VIX, HYG, TLT, TIP 등 핵심 매크로 지표는 모두 수집 실패이며, 연준 순유동성 데이터도 확인되지 않아 유동성 방향 판단이 불가하다. 장단기 금리차(10y-3m)는 +0.10%p로 1주 전과 변화 없이 낮은 수준을 유지해 베어 플래트닝 경계가 지속된다. 위험선호 지표인 HYG/TLT는 0.965(1년 백분위 94%)로 여전히 위험선호 과열권에 있으나 1개월 기준 -0.10%로 소폭 꺾였고, 동시에 시장폭(RSP/SPY -1.37%)과 반도체 주도력(SMH/SPY -10.13%, 3개월)이 뚜렷이 하락해 지표상 위험선호 신호와 실제 자금 쏠림 완화 흐름이 서로 어긋난다. 섹터 ETF는 반도체(-3.56%), 소프트웨어(-3.05%), 방산(-3.53%), 배터리(-3.46%), 기술(-1.40%), 우주(-1.43%) 등 전 섹터가 최근 5거래일 동반 조정을 보여 성장주 전반의 자금 이탈이 관측된다. COT 포지셔닝에서는 나스닥100·S&P500·비트코인 모두 레버리지펀드 및 자산운용사 순매수 변화가 0으로 사실상 정체되어 있어 과밀도 판단이 어려운 반면, 금은 비상업(투기) 순매수가 전주 대비 +21,145계약 늘어 롱 포지션 쏠림이 심화된 상태로 취약성이 커졌다. 실시간 하이퍼리퀴드 데이터에서는 BTC·ETH·SOL·HYPE 모두 시간당 펀딩비가 동일하게 +0.0013%로 소폭 롱 우세를 보이는데, 이는 COT상 비트코인 레버리지펀드 순매수가 변화 없음(0)으로 나온 것과 엇갈려 3일 지연된 COT 데이터의 한계를 드러낸다. 스테이블코인 총 발행량은 수집 실패했으나 개별 종목에서는 USDT +0.07%(거의 정체), USDC +3.00%(30일), USDS -1.19%로 USDC 쪽으로의 자금 이동이 감지되며, 가격 데이터 부재로 대기자금 축적 여부는 단정할 수 없다. 코인베이스 프리미엄은 BTC·ETH 모두 수집 실패로 방향성 판단이 불가하다. DeFiLlama 프로토콜 수익에서는 Hyperliquid Perps가 24시간 +54.8% 급증해 파생 거래 활발도가 높아졌으며, Tether·Circle USDC 발행 수익은 큰 변동 없이 안정적으로 유지되고 있다.",
   "sections": [
     {
       "title": "매크로 · 유동성",
-      "note": "FRED · 발표 지연 있음",
+      "note": "야후 파이낸스 · 전일 종가 기준",
       "items": [
         {
-          "name": "하이일드 스프레드",
+          "name": "10년 국채금리",
           "value": "수집 실패",
           "change": "",
-          "comment": "csv1:The read operation timed out | csv2:The read operation timed out | txt1:The read oper"
+          "comment": "not enough arguments for format string"
         },
         {
-          "name": "10년 실질금리",
+          "name": "2년 국채금리",
           "value": "수집 실패",
           "change": "",
-          "comment": "csv1:The read operation timed out | csv2:The read operation timed out | txt1:The read oper"
+          "comment": "not enough arguments for format string"
         },
         {
-          "name": "장단기 금리차 10y-2y",
+          "name": "달러지수 DXY",
           "value": "수집 실패",
           "change": "",
-          "comment": "csv1:The read operation timed out | csv2:The read operation timed out | txt1:The read oper"
+          "comment": "not enough arguments for format string"
         },
         {
-          "name": "달러지수 (광의)",
+          "name": "변동성 VIX",
           "value": "수집 실패",
           "change": "",
-          "comment": "csv1:The read operation timed out | csv2:The read operation timed out | txt1:The read oper"
+          "comment": "not enough arguments for format string"
         },
         {
-          "name": "연준 순유동성",
+          "name": "하이일드 HYG",
           "value": "수집 실패",
           "change": "",
-          "comment": "csv1:The read operation timed out | csv2:The read operation timed out | txt1:The read oper"
+          "comment": "not enough arguments for format string"
+        },
+        {
+          "name": "장기채 TLT",
+          "value": "수집 실패",
+          "change": "",
+          "comment": "not enough arguments for format string"
+        },
+        {
+          "name": "물가연동채 TIP",
+          "value": "수집 실패",
+          "change": "",
+          "comment": "not enough arguments for format string"
+        },
+        {
+          "name": "장단기 금리차 (10y-3m)",
+          "value": "+0.10%p",
+          "change": "+0.00%p (1주)",
+          "comment": "2026-09-03 · 축소=베어 플래트닝 경계"
+        },
+        {
+          "name": "위험선호 HYG/TLT",
+          "value": "0.965",
+          "change": "-0.10% (1개월)",
+          "comment": "2026-09-03 · 상승=위험선호 · 1년 백분위 94%"
+        },
+        {
+          "name": "시장 폭 RSP/SPY",
+          "value": "0.2846",
+          "change": "-1.37% (3개월)",
+          "comment": "2026-09-03 · 하락=소수 대형주 쏠림 심화"
+        },
+        {
+          "name": "반도체 주도력 SMH/SPY",
+          "value": "0.7147",
+          "change": "-10.13% (3개월)",
+          "comment": "2026-09-03 · 상승=반도체가 지수 주도"
         }
       ]
     },
@@ -44,38 +80,38 @@
       "items": [
         {
           "name": "반도체 (SMH)",
-          "value": "550.48$",
-          "change": "-0.95%",
+          "value": "552.60$",
+          "change": "-3.56%",
           "comment": "2026-09-03 종가 · 5거래일 변화"
         },
         {
           "name": "기술 (XLK)",
-          "value": "183.60$",
-          "change": "+0.42%",
+          "value": "185.97$",
+          "change": "-1.40%",
           "comment": "2026-09-03 종가 · 5거래일 변화"
         },
         {
           "name": "소프트웨어 (IGV)",
-          "value": "103.42$",
-          "change": "+1.01%",
+          "value": "106.95$",
+          "change": "-3.05%",
           "comment": "2026-09-03 종가 · 5거래일 변화"
         },
         {
           "name": "방산 (ITA)",
-          "value": "223.37$",
-          "change": "-5.50%",
+          "value": "225.98$",
+          "change": "-3.53%",
           "comment": "2026-09-03 종가 · 5거래일 변화"
         },
         {
           "name": "우주 (ARKX)",
-          "value": "31.85$",
-          "change": "-1.85%",
+          "value": "32.35$",
+          "change": "-1.43%",
           "comment": "2026-09-03 종가 · 5거래일 변화"
         },
         {
           "name": "배터리 (LIT)",
-          "value": "74.26$",
-          "change": "-2.19%",
+          "value": "74.46$",
+          "change": "-3.46%",
           "comment": "2026-09-03 종가 · 5거래일 변화"
         }
       ]
@@ -116,27 +152,27 @@
       "items": [
         {
           "name": "BTC",
-          "value": "OI 2,914M$",
-          "change": "+0.0004%",
-          "comment": "마크가격 80,982.00$ · 시간당 펀딩비"
+          "value": "OI 2,896M$",
+          "change": "+0.0013%",
+          "comment": "마크가격 80,930.00$ · 시간당 펀딩비"
         },
         {
           "name": "ETH",
-          "value": "OI 2,248M$",
+          "value": "OI 2,263M$",
           "change": "+0.0013%",
-          "comment": "마크가격 2,507.70$ · 시간당 펀딩비"
+          "comment": "마크가격 2,508.80$ · 시간당 펀딩비"
         },
         {
           "name": "SOL",
           "value": "OI 598M$",
           "change": "+0.0013%",
-          "comment": "마크가격 103.77$ · 시간당 펀딩비"
+          "comment": "마크가격 103.75$ · 시간당 펀딩비"
         },
         {
           "name": "HYPE",
-          "value": "OI 2,083M$",
+          "value": "OI 2,046M$",
           "change": "+0.0013%",
-          "comment": "마크가격 87.44$ · 시간당 펀딩비"
+          "comment": "마크가격 85.92$ · 시간당 펀딩비"
         }
       ]
     },
@@ -152,33 +188,33 @@
         },
         {
           "name": "Circle USDC",
-          "value": "6.56M$",
-          "change": "+0.0%",
+          "value": "6.58M$",
+          "change": "+0.2%",
           "comment": "Stablecoin Issuer · 24시간 프로토콜 수익"
         },
         {
           "name": "Robinhood Chain",
-          "value": "4.01M$",
-          "change": "+0.0%",
-          "comment": "Chain · 24시간 프로토콜 수익"
-        },
-        {
-          "name": "GMGN",
-          "value": "2.46M$",
-          "change": "+0.0%",
-          "comment": "Telegram Bot · 24시간 프로토콜 수익"
-        },
-        {
-          "name": "Canton",
-          "value": "1.69M$",
-          "change": "+0.0%",
+          "value": "4.13M$",
+          "change": "+3.1%",
           "comment": "Chain · 24시간 프로토콜 수익"
         },
         {
           "name": "Hyperliquid Perps",
-          "value": "1.67M$",
-          "change": "+0.0%",
+          "value": "2.58M$",
+          "change": "+54.8%",
           "comment": "Derivatives · 24시간 프로토콜 수익"
+        },
+        {
+          "name": "GMGN",
+          "value": "1.99M$",
+          "change": "-19.1%",
+          "comment": "Telegram Bot · 24시간 프로토콜 수익"
+        },
+        {
+          "name": "Canton",
+          "value": "1.50M$",
+          "change": "-11.3%",
+          "comment": "Chain · 24시간 프로토콜 수익"
         },
         {
           "name": "Pons V2",
@@ -206,20 +242,20 @@
         },
         {
           "name": "USDT",
-          "value": "183.0B$",
-          "change": "-0.14% (30일)",
+          "value": "183.3B$",
+          "change": "+0.07% (30일)",
           "comment": "개별 스테이블코인 발행량"
         },
         {
           "name": "USDC",
-          "value": "74.6B$",
-          "change": "+3.21% (30일)",
+          "value": "74.5B$",
+          "change": "+3.00% (30일)",
           "comment": "개별 스테이블코인 발행량"
         },
         {
           "name": "USDS",
-          "value": "6.4B$",
-          "change": "-3.14% (30일)",
+          "value": "6.6B$",
+          "change": "-1.19% (30일)",
           "comment": "개별 스테이블코인 발행량"
         }
       ]
