@@ -159,20 +159,47 @@ def stables():
 # ---------- 코인베이스 프리미엄 ----------
 def cb_premium():
     out = []
-    pairs = [("BTC", "BTC-USD", "BTCUSDT"), ("ETH", "ETH-USD", "ETHUSDT")]
-    for ko, cb, bn in pairs:
+    # (표시명, 코인베이스, 바이낸스, OKX, 바이빗)
+    pairs = [("BTC", "BTC-USD", "BTCUSDT", "BTC-USDT", "BTCUSDT"),
+             ("ETH", "ETH-USD", "ETHUSDT", "ETH-USDT", "ETHUSDT")]
+
+    def binance(p):
+        j = json.loads(get("https://data-api.binance.vision/api/v3/ticker/price"
+                           "?symbol=%s" % p, 20))
+        return float(j["price"]), "바이낸스"
+
+    def okx(p):
+        j = json.loads(get("https://www.okx.com/api/v5/market/ticker?instId=%s" % p, 20))
+        return float(j["data"][0]["last"]), "OKX"
+
+    def bybit(p):
+        j = json.loads(get("https://api.bybit.com/v5/market/tickers"
+                           "?category=spot&symbol=%s" % p, 20))
+        return float(j["result"]["list"][0]["lastPrice"]), "바이빗"
+
+    for ko, cb, bnp, op, byp in pairs:
         try:
             c = float(json.loads(get(
-                "https://api.exchange.coinbase.com/products/%s/ticker" % cb))["price"])
-            b = float(json.loads(get(
-                "https://api.binance.com/api/v3/ticker/price?symbol=%s" % bn))["price"])
-            gap = (c / b - 1) * 100
-            out.append({"name": "%s 코인베이스 프리미엄" % ko,
-                        "value": "{:+.3f}%".format(gap),
-                        "change": "{:+.0f}bp".format(gap * 100),
-                        "comment": "코인베이스 {:,.2f} vs 바이낸스 {:,.2f} · 양수=미국 매수 우위".format(c, b)})
+                "https://api.exchange.coinbase.com/products/%s/ticker" % cb, 20))["price"])
         except Exception as e:
-            out.append(fail("%s 코인베이스 프리미엄" % ko, e))
+            out.append(fail("%s 코인베이스 프리미엄" % ko, "코인베이스:" + str(e)[:50]))
+            continue
+        ref, src, errs = None, "", []
+        for fn, arg in ((binance, bnp), (okx, op), (bybit, byp)):
+            try:
+                ref, src = fn(arg)
+                break
+            except Exception as e:
+                errs.append("%s:%s" % (fn.__name__, str(e)[:25]))
+        if not ref:
+            out.append(fail("%s 코인베이스 프리미엄" % ko, " | ".join(errs)))
+            continue
+        gap = (c / ref - 1) * 100
+        out.append({"name": "%s 코인베이스 프리미엄" % ko,
+                    "value": "{:+.3f}%".format(gap),
+                    "change": "{:+.0f}bp".format(gap * 100),
+                    "comment": "코인베이스 {:,.2f} vs {} {:,.2f} · 양수=미국 매수 우위".format(
+                        c, src, ref)})
     return out
 
 with open("data.json", encoding="utf-8") as f:
