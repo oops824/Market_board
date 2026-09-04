@@ -23,9 +23,9 @@ def fred(sid, days=400):
     ]
     errs = []
     for kind, u in urls:
-        for attempt in (1, 2, 3):
+        for attempt in (1, 2):
             try:
-                txt = get(u, 120)
+                txt = get(u, 25)
                 if not txt or len(txt) < 50:
                     raise ValueError("빈응답")
                 if kind == "txt":
@@ -53,7 +53,7 @@ def fred(sid, days=400):
                 return out
             except Exception as e:
                 errs.append("%s%d:%s" % (kind, attempt, str(e)[:28]))
-                time.sleep(4)
+                time.sleep(2)
     raise ValueError(" | ".join(errs[-4:]))
 def ago(series, days):
     target = datetime.datetime.strptime(series[-1][0], "%Y-%m-%d") - datetime.timedelta(days=days)
