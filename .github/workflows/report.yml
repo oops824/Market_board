@@ -1,7 +1,7 @@
 name: market-board
 on:
   schedule:
-    - cron: "0 22 * * *"
+    - cron: "0 23 * * *"
   workflow_dispatch:
 permissions:
   contents: write
