@@ -1,6 +1,6 @@
 {
-  "updated": "2026-09-04 10:19 KST",
-  "summary": "매크로·유동성 지표(하이일드 스프레드, 10년 실질금리, 장단기 금리차, 달러지수, 연준 순유동성) 전 항목이 타임아웃으로 수집 실패하여 위험 선호 국면 판단과 유동성-위험자산 흐름 정합성 점검이 불가능한 상태다.\n\n섹터 자금 흐름은 혼조세로, 기술(XLK +0.42%)·소프트웨어(IGV +1.01%)는 소폭 강세인 반면 방산(ITA -5.50%), 배터리(LIT -2.19%), 우주(ARKX -1.85%), 반도체(SMH -0.95%)는 5거래일 기준 조정을 받아 안전자산·성장주 내에서도 순환매가 엇갈리고 있다.\n\nCFTC COT 상 나스닥100·S&P500·비트코인 모두 레버리지펀드·자산운용사 순포지션 변화가 0으로 집계되어 전주 대비 포지션 쏠림도를 판단할 근거가 부족하며, 이는 데이터 갱신 지연 가능성을 시사한다. 반면 금은 비상업(투기) 순매수가 21,145계약 증가(총 243,334계약)해 포지션 밀집도가 높아진 상태로, 되돌림 시 변동성 확대 취약구간에 진입했다고 볼 수 있다.\n\n실시간 하이퍼리퀴드 데이터에서는 BTC·ETH·SOL·HYPE 전 종목 미결제약정이 증가하고 펀딩비도 양(+)의 값을 유지해 롱 쏠림이 커지는 모습인데, 이는 COT 상 BTC 레버리지펀드 순포지션 0(변화 없음)과 명확히 엇갈린다. COT는 3일 지연된 과거 스냅샷이므로 이 괴리는 최근 며칠 사이 레버리지 자금이 빠르게 유입됐을 가능성을 시사하는 취약 신호로만 해석해야 한다.\n\n스테이블코인은 총 발행량 집계가 실패해 전체 대기자금 규모는 확인이 어려우나, 개별로는 USDC가 30일간 +3.21% 증가한 반면 USDT(-0.14%), USDS(-3.14%)는 소폭 감소해 자금이 USDC로 쏠리는 재배분 양상이 관찰된다. 가격 상승 없이 USDC만 늘어난 점은 대기자금 축적 신호로 볼 수 있으나 전체 발행량 데이터 부재로 확정하기는 어렵다.\n\nDeFiLlama 수익 랭킹에서는 Tether·Circle 등 스테이블코인 발행사가 여전히 최상위를 차지해 스테이블코인 발행·상환 사업 자체의 수익성은 견조하게 유지되고 있다.\n\n코인베이스 프리미엄(BTC·ETH)은 HTTP 451 오류로 수집 실패하여 미국 기관 매수 강도 관련 부호·추세 판단이 불가하다.",
+  "updated": "2026-09-04 10:57 KST",
+  "summary": "**매크로·유동성**: 하이일드 스프레드, 10년 실질금리, 장단기 금리차, 달러지수, 연준 순유동성 5개 항목 모두 수집 실패. 이번 업데이트에서는 매크로 레벨의 위험 경계/안주 판단 및 유동성-위험자산 흐름 비교가 불가능한 상태다.\n\n**섹터 자금 흐름**: 5거래일 기준 기술(XLK +0.42%), 소프트웨어(IGV +1.01%)는 강세를 유지한 반면, 방산(ITA -5.50%), 배터리(LIT -2.19%), 우주(ARKX -1.85%), 반도체(SMH -0.95%)는 조정 흐름을 보여 성장주 내에서도 순환매 성격의 차별화가 나타난다.\n\n**COT 포지셔닝**: 나스닥100·S&P500·비트코인은 레버리지펀드·자산운용사 순매수 모두 전주 대비 변화 없음(0)으로 집계되어 뚜렷한 쏠림은 확인되지 않는다. 반면 금은 비상업(투기) 순매수가 21,145계약 늘어난 243,334계약으로, 롱 포지션 과밀도가 높아지는 구간이라 되돌림 시 변동성 확대 취약성에 유의할 필요가 있다(3일 지연 데이터, 방향성 예측 아님).\n\n**COT-실시간 엇갈림**: COT상 비트코인 레버리지펀드 포지션은 변화 없음(0)으로 나타났으나, 하이퍼리퀴드 실시간 펀딩비는 BTC·ETH·SOL·HYPE 전 종목 플러스(롱 우위)를 유지하고 있어 지연 데이터와 실시간 파생시장 심리 사이에 괴리가 존재한다.\n\n**암호화폐**: 하이퍼리퀴드 OI는 BTC 2,914M$, ETH 2,248M$, HYPE 2,083M$, SOL 598M$ 순으로 크며 펀딩비는 전 종목 미세한 양수를 유지해 완만한 롱 우위 심리가 지속되고 있다. 스테이블코인 총발행량 지표는 수집 실패했으나 개별 코인 기준 USDC가 30일간 +3.21% 증가해(가격은 $1 고정) 대기자금이 쌓이는 신호로 해석되며, 반대로 USDT(-0.14%)와 USDS(-3.14%)는 소폭 감소해 일부 자금 이탈 흐름도 동시에 관측된다. 코인베이스 프리미엄은 BTC·ETH 모두 수집 실패로 기관 매수 강도 판단은 불가하다.",
   "sections": [
     {
       "title": "매크로 · 유동성",
@@ -10,31 +10,31 @@
           "name": "하이일드 스프레드",
           "value": "수집 실패",
           "change": "",
-          "comment": "The read operation timed out"
+          "comment": "csv1:The read operation timed out | csv2:The read operation timed out | txt1:The read oper"
         },
         {
           "name": "10년 실질금리",
           "value": "수집 실패",
           "change": "",
-          "comment": "The read operation timed out"
+          "comment": "csv1:The read operation timed out | csv2:The read operation timed out | txt1:The read oper"
         },
         {
           "name": "장단기 금리차 10y-2y",
           "value": "수집 실패",
           "change": "",
-          "comment": "The read operation timed out"
+          "comment": "csv1:The read operation timed out | csv2:The read operation timed out | txt1:The read oper"
         },
         {
           "name": "달러지수 (광의)",
           "value": "수집 실패",
           "change": "",
-          "comment": "The read operation timed out"
+          "comment": "csv1:The read operation timed out | csv2:The read operation timed out | txt1:The read oper"
         },
         {
           "name": "연준 순유동성",
           "value": "수집 실패",
           "change": "",
-          "comment": "The read operation timed out"
+          "comment": "csv1:The read operation timed out | csv2:The read operation timed out | txt1:The read oper"
         }
       ]
     },
@@ -116,27 +116,27 @@
       "items": [
         {
           "name": "BTC",
-          "value": "OI 2,916M$",
-          "change": "+0.0005%",
-          "comment": "마크가격 80,883.00$ · 시간당 펀딩비"
+          "value": "OI 2,914M$",
+          "change": "+0.0004%",
+          "comment": "마크가격 80,982.00$ · 시간당 펀딩비"
         },
         {
           "name": "ETH",
-          "value": "OI 2,250M$",
+          "value": "OI 2,248M$",
           "change": "+0.0013%",
-          "comment": "마크가격 2,506.50$ · 시간당 펀딩비"
+          "comment": "마크가격 2,507.70$ · 시간당 펀딩비"
         },
         {
           "name": "SOL",
           "value": "OI 598M$",
           "change": "+0.0013%",
-          "comment": "마크가격 103.62$ · 시간당 펀딩비"
+          "comment": "마크가격 103.77$ · 시간당 펀딩비"
         },
         {
           "name": "HYPE",
-          "value": "OI 2,069M$",
+          "value": "OI 2,083M$",
           "change": "+0.0013%",
-          "comment": "마크가격 86.95$ · 시간당 펀딩비"
+          "comment": "마크가격 87.44$ · 시간당 펀딩비"
         }
       ]
     },
