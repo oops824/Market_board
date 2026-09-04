@@ -61,8 +61,8 @@ def macro_items():
             if p is not None:
                 cm += " · 1년 백분위 %.0f%%" % p
             out.append({"name": ko,
-                        "value": ("{:,.%df}%s" % dec).format(v, unit),
-                        "change": ("{:+.%df}%s (1주)" % dec).format(w, unit),
+                        "value": ("{:,.%df}" % dec).format(v) + unit,
+                        "change": ("{:+.%df}" % dec).format(w) + unit + " (1주)",
                         "comment": cm})
         except Exception as e:
             out.append(fail(ko, e))
