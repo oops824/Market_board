@@ -1,4 +1,4 @@
-import json, os, urllib.request, datetime
+import json, os, urllib.request, urllib.error, datetime
 
 key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 with open("data.json", encoding="utf-8") as f:
@@ -20,19 +20,42 @@ prompt = (
     + json.dumps(payload, ensure_ascii=False)[:60000]
 )
 
-body = json.dumps({"model": "claude-sonnet-5", "max_tokens": 1200,
-                   "messages": [{"role": "user", "content": prompt}]}).encode()
-req = urllib.request.Request("https://api.anthropic.com/v1/messages", data=body,
-                             headers={"content-type": "application/json",
-                                      "x-api-key": key,
-                                      "anthropic-version": "2023-06-01"})
-try:
-    with urllib.request.urlopen(req, timeout=180) as r:
-        res = json.loads(r.read().decode())
-    txt = "".join(b.get("text", "") for b in res.get("content", []) if b.get("type") == "text")
-    payload["summary"] = txt.strip() or "분석 결과가 비어 있습니다."
-except Exception as e:
-    payload["summary"] = "분석 실패: %s" % str(e)[:200]
+def call(model):
+    body = json.dumps({"model": model, "max_tokens": 2000,
+                       "messages": [{"role": "user", "content": prompt}]}).encode()
+    req = urllib.request.Request("https://api.anthropic.com/v1/messages", data=body,
+                                 headers={"content-type": "application/json",
+                                          "x-api-key": key,
+                                          "anthropic-version": "2023-06-01"})
+    try:
+        with urllib.request.urlopen(req, timeout=300) as r:
+            return json.loads(r.read().decode())
+    except urllib.error.HTTPError as e:
+        return {"_http": e.code, "_body": e.read().decode("utf-8", "replace")[:600]}
+    except Exception as e:
+        return {"_err": str(e)[:300]}
+
+summary = ""
+for model in ("claude-sonnet-5", "claude-haiku-4-5-20251001"):
+    res = call(model)
+    print("=== %s ===" % model)
+    print(json.dumps(res, ensure_ascii=False)[:2500])
+    if "_http" in res:
+        summary = "분석 실패 (HTTP %s): %s" % (res["_http"], res["_body"])
+        continue
+    if "_err" in res:
+        summary = "분석 실패: " + res["_err"]
+        continue
+    txt = "\n".join(b["text"] for b in res.get("content", [])
+                    if isinstance(b, dict) and b.get("text"))
+    if txt.strip():
+        summary = txt.strip()
+        break
+    summary = "응답이 비었음. 모델=%s / stop=%s / 블록타입=%s" % (
+        res.get("model"), res.get("stop_reason"),
+        [b.get("type") for b in res.get("content", []) if isinstance(b, dict)])
+
+payload["summary"] = summary or "분석 결과 없음"
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
 day = datetime.datetime.now(KST).strftime("%Y-%m-%d")
