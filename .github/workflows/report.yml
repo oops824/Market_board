@@ -15,6 +15,7 @@ jobs:
           python-version: "3.11"
       - run: python scripts/collect.py
       - run: python scripts/cot.py
+      - run: python scripts/macro.py
       - run: python scripts/analyze.py
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
