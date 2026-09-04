@@ -38,25 +38,25 @@ def pctile(series, v, days=365):
     return sum(1 for x in vals if x <= v) / len(vals) * 100
 
 # (표시명, 야후 티커, 단위, 소수점, 설명)
+# (표시명, 야후 티커, 단위, 소수점, 배율, 설명)
 YH_ITEMS = [
-    ("10년 국채금리", "^TNX", "%", 2, "성장주 밸류에이션 할인율"),
-    ("2년 국채금리", "^IRX", "%", 2, "연준 정책 기대 반영"),
-    ("달러지수 DXY", "DX-Y.NYB", "", 2, "강세=위험자산·원자재 역풍"),
-    ("변동성 VIX", "^VIX", "", 2, "단기 스트레스"),
-    ("하이일드 HYG", "HYG", "$", 2, "신용 위험선호. 하락=경계"),
-    ("장기채 TLT", "TLT", "$", 2, "금리 방향 대리지표"),
-    ("물가연동채 TIP", "TIP", "$", 2, "실질금리 대리지표. 하락=실질금리 상승"),
+    ("10년 국채금리", "^TNX", "%", 2, 0.1, "성장주 밸류에이션 할인율"),
+    ("3개월 국채금리", "^IRX", "%", 2, 0.1, "연준 정책 기대 반영"),
+    ("달러지수 DXY", "DX-Y.NYB", "", 2, 1, "강세=위험자산·원자재 역풍"),
+    ("변동성 VIX", "^VIX", "", 2, 1, "단기 스트레스"),
+    ("하이일드 HYG", "HYG", "$", 2, 1, "신용 위험선호. 하락=경계"),
+    ("장기채 TLT", "TLT", "$", 2, 1, "금리 방향 대리지표"),
+    ("물가연동채 TIP", "TIP", "$", 2, 1, "실질금리 대리지표. 하락=실질금리 상승"),
 ]
-
 def macro_items():
     out, cache = [], {}
-    for ko, sym, unit, dec, note in YH_ITEMS:
+    for ko, sym, unit, dec, mul, note in YH_ITEMS:
         try:
             s = yh(sym)
             cache[sym] = s
-            d, v = s[-1]
-            w = v - ago(s, 7)
-            p = pctile(s, v)
+            p = pctile(s, s[-1][1])
+            d, v = s[-1][0], s[-1][1] * mul
+            w = v - ago(s, 7) * mul
             cm = "%s · %s" % (d, note)
             if p is not None:
                 cm += " · 1년 백분위 %.0f%%" % p
@@ -70,8 +70,8 @@ def macro_items():
     # 장단기 금리차 (^TNX, ^IRX 는 실제값의 10배로 제공됨)
     try:
         t, i = cache["^TNX"], cache["^IRX"]
-        cur = (t[-1][1] - i[-1][1]) / 10
-        prev = (ago(t, 7) - ago(i, 7)) / 10
+        cur = (t[-1][1] - i[-1][1]) * 0.1
+        prev = (ago(t, 7) - ago(i, 7)) * 0.1
         out.append({"name": "장단기 금리차 (10y-3m)",
                     "value": "{:+.2f}%p".format(cur),
                     "change": "{:+.2f}%p (1주)".format(cur - prev),
