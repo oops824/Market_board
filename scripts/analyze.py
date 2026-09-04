@@ -21,7 +21,7 @@ prompt = (
 )
 
 def call(model):
-    body = json.dumps({"model": model, "max_tokens": 2000,
+    body = json.dumps({"model": model, "max_tokens": 4000,
                        "messages": [{"role": "user", "content": prompt}]}).encode()
     req = urllib.request.Request("https://api.anthropic.com/v1/messages", data=body,
                                  headers={"content-type": "application/json",
@@ -50,6 +50,8 @@ for model in ("claude-sonnet-5", "claude-haiku-4-5-20251001"):
                     if isinstance(b, dict) and b.get("text"))
     if txt.strip():
         summary = txt.strip()
+        if res.get("stop_reason") == "max_tokens":
+            summary += "\n\n(글자 수 한도로 잘렸습니다)"
         break
     summary = "응답이 비었음. 모델=%s / stop=%s / 블록타입=%s" % (
         res.get("model"), res.get("stop_reason"),
