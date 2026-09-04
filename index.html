@@ -36,7 +36,12 @@ const esc=t=>String(t??'').replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp
 function render(d){
   $('#meta').textContent='갱신: '+(d.updated||'-');
   let h='';
-  if(d.summary)h+='<div class="summary">'+esc(d.summary)+'</div>';
+  if(d.summary){
+    const b=esc(d.summary)
+      .replace(/^\[(.+?)\]\s*$/gm,'<b class="sh">$1</b>')
+      .replace(/^- (.+)$/gm,'&nbsp;• $1');
+    h+='<div class="summary">'+b+'</div>';
+  }
   (d.sections||[]).forEach(s=>{
     h+='<section><h2>'+esc(s.title)+'</h2>';
     if(s.note)h+='<p class="note">'+esc(s.note)+'</p>';
