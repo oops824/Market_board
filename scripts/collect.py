@@ -3,49 +3,76 @@ import json, urllib.request, datetime, os, csv, io
 KST = datetime.timezone(datetime.timedelta(hours=9))
 now = datetime.datetime.now(KST)
 
-def get(url, data=None):
-    h = {"User-Agent": "Mozilla/5.0 (market-board)"}
-    body = None
-    if data is not None:
-        body = json.dumps(data).encode()
-        h["Content-Type"] = "application/json"
-    req = urllib.request.Request(url, data=body, headers=h)
+def get(url):
+    req = urllib.request.Request(url, headers={
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                      "(KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+        "Accept": "*/*"})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return r.read().decode("utf-8", "replace")
+
+def post(url, data):
+    req = urllib.request.Request(url, data=json.dumps(data).encode(),
+                                 headers={"Content-Type": "application/json",
+                                          "User-Agent": "market-board"})
     with urllib.request.urlopen(req, timeout=30) as r:
         return r.read().decode("utf-8", "replace")
 
 def fail(name, e):
     return {"name": name, "value": "수집 실패", "change": "", "comment": str(e)[:90]}
 
-ETFS = [("SMH","반도체"),("XLK","기술"),("IGV","소프트웨어"),
-        ("ITA","방산"),("ARKX","우주"),("LIT","배터리")]
+ETFS = [("SMH", "반도체"), ("XLK", "기술"), ("IGV", "소프트웨어"),
+        ("ITA", "방산"), ("ARKX", "우주"), ("LIT", "배터리")]
+
+def yahoo(sym):
+    j = json.loads(get("https://query1.finance.yahoo.com/v8/finance/chart/"
+                       "%s?range=1mo&interval=1d" % sym))
+    r = j["chart"]["result"][0]
+    cl = [c for c in r["indicators"]["quote"][0]["close"] if c is not None]
+    d = datetime.datetime.utcfromtimestamp(r["timestamp"][-1]).strftime("%Y-%m-%d")
+    if len(cl) < 6:
+        raise ValueError("데이터 부족")
+    return cl[-6:], d
+
+def stooq(sym):
+    txt = get("https://stooq.com/q/d/l/?s=%s.us&i=d" % sym.lower())
+    rows = [r for r in csv.DictReader(io.StringIO(txt))
+            if r.get("Close") not in (None, "", "N/D")][-6:]
+    if len(rows) < 6:
+        raise ValueError("Stooq 응답 이상")
+    return [float(r["Close"]) for r in rows], rows[-1]["Date"]
 
 def etf():
     out = []
     for sym, ko in ETFS:
-        try:
-            txt = get("https://stooq.com/q/d/l/?s=%s.us&i=d" % sym.lower())
-            rows = [r for r in csv.DictReader(io.StringIO(txt))
-                    if r.get("Close") not in (None, "", "N/D")][-6:]
-            last, prev = float(rows[-1]["Close"]), float(rows[0]["Close"])
-            out.append({"name": "%s (%s)" % (ko, sym),
-                        "value": "%,.2f$".replace("%,", "{:,").format(last) if False else "{:,.2f}$".format(last),
-                        "change": "{:+.2f}%".format((last/prev-1)*100),
-                        "comment": "%s 종가 · 5거래일 변화" % rows[-1]["Date"]})
-        except Exception as e:
-            out.append(fail("%s (%s)" % (ko, sym), e))
+        cl = d = None
+        errs = []
+        for fn in (yahoo, stooq):
+            try:
+                cl, d = fn(sym)
+                break
+            except Exception as e:
+                errs.append("%s:%s" % (fn.__name__, str(e)[:40]))
+        if cl is None:
+            out.append(fail("%s (%s)" % (ko, sym), " / ".join(errs)))
+            continue
+        out.append({"name": "%s (%s)" % (ko, sym),
+                    "value": "{:,.2f}$".format(cl[-1]),
+                    "change": "{:+.2f}%".format((cl[-1] / cl[0] - 1) * 100),
+                    "comment": "%s 종가 · 5거래일 변화" % d})
     return out
 
 def hyperliquid():
     try:
-        raw = json.loads(get("https://api.hyperliquid.xyz/info", {"type": "metaAndAssetCtxs"}))
-        meta, ctxs, want, out = raw[0]["universe"], raw[1], ["BTC","ETH","SOL","HYPE"], []
+        raw = json.loads(post("https://api.hyperliquid.xyz/info", {"type": "metaAndAssetCtxs"}))
+        meta, ctxs, want, out = raw[0]["universe"], raw[1], ["BTC", "ETH", "SOL", "HYPE"], []
         for m, c in zip(meta, ctxs):
             if m["name"] in want:
                 px = float(c.get("markPx") or 0)
                 oi = float(c.get("openInterest") or 0) * px
                 out.append({"name": m["name"],
-                            "value": "OI {:,.0f}M$".format(oi/1e6),
-                            "change": "{:+.4f}%".format(float(c.get("funding") or 0)*100),
+                            "value": "OI {:,.0f}M$".format(oi / 1e6),
+                            "change": "{:+.4f}%".format(float(c.get("funding") or 0) * 100),
                             "comment": "마크가격 {:,.2f}$ · 시간당 펀딩비".format(px)})
         return out or [fail("하이퍼리퀴드", "대상 코인 없음")]
     except Exception as e:
@@ -58,7 +85,7 @@ def llama():
         ps = sorted(raw.get("protocols", []),
                     key=lambda p: p.get("total24h") or 0, reverse=True)[:8]
         return [{"name": p.get("name", "?"),
-                 "value": "{:,.2f}M$".format((p.get("total24h") or 0)/1e6),
+                 "value": "{:,.2f}M$".format((p.get("total24h") or 0) / 1e6),
                  "change": "{:+.1f}%".format(p.get("change_1d") or 0),
                  "comment": "%s · 24시간 프로토콜 수익" % (p.get("category") or "")}
                 for p in ps] or [fail("DeFiLlama", "데이터 없음")]
@@ -67,9 +94,9 @@ def llama():
 
 payload = {
     "updated": now.strftime("%Y-%m-%d %H:%M KST"),
-    "summary": "자동 수집 완료. 해석 코멘트는 4단계에서 분석 에이전트를 붙이면 이 자리에 들어갑니다.",
+    "summary": "자동 수집 완료.",
     "sections": [
-        {"title": "섹터 ETF 가격", "note": "최근 5거래일 변화 (Stooq)", "items": etf()},
+        {"title": "섹터 ETF 가격", "note": "최근 5거래일 변화", "items": etf()},
         {"title": "하이퍼리퀴드 펀딩비 · 미결제약정", "note": "실시간", "items": hyperliquid()},
         {"title": "DeFiLlama 프로토콜 수익 랭킹", "note": "24시간 기준 상위 8", "items": llama()},
     ],
@@ -80,8 +107,4 @@ day = now.strftime("%Y-%m-%d")
 for path in ("data.json", "reports/%s.json" % day):
     with open(path, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
-files = sorted([f for f in os.listdir("reports")
-                if f.endswith(".json") and f != "list.json"], reverse=True)
-with open("reports/list.json", "w", encoding="utf-8") as f:
-    json.dump(files, f)
-print("done:", day)
+print("collect done")
