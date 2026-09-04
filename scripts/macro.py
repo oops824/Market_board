@@ -15,22 +15,46 @@ def fail(name, e):
 
 # ---------- FRED ----------
 def fred(sid, days=400):
+    import time
     st = (now - datetime.timedelta(days=days)).strftime("%Y-%m-%d")
-    txt = get("https://fred.stlouisfed.org/graph/fredgraph.csv"
-              "?id=%s&cosd=%s" % (sid, st))
-    rows = list(csv.reader(io.StringIO(txt)))
-    out = []
-    for r in rows[1:]:
-        if len(r) < 2:
-            continue
-        v = r[1].strip()
-        if v in ("", "."):
-            continue
-        out.append((r[0].strip(), float(v)))
-    if not out:
-        raise ValueError("빈 응답")
-    return out
-
+    urls = [
+        ("csv", "https://fred.stlouisfed.org/graph/fredgraph.csv?id=%s&cosd=%s" % (sid, st)),
+        ("txt", "https://fred.stlouisfed.org/data/%s.txt" % sid),
+    ]
+    errs = []
+    for kind, u in urls:
+        for attempt in (1, 2, 3):
+            try:
+                txt = get(u, 120)
+                if not txt or len(txt) < 50:
+                    raise ValueError("빈응답")
+                if kind == "txt":
+                    out = []
+                    for line in txt.splitlines():
+                        p = line.split()
+                        if len(p) == 2 and p[0][:4].isdigit() and p[1] != ".":
+                            try:
+                                out.append((p[0], float(p[1])))
+                            except ValueError:
+                                pass
+                    if not out:
+                        raise ValueError("txt 파싱 실패")
+                    return out[-500:]
+                out = []
+                for r in list(csv.reader(io.StringIO(txt)))[1:]:
+                    if len(r) < 2:
+                        continue
+                    v = r[1].strip()
+                    if v in ("", "."):
+                        continue
+                    out.append((r[0].strip(), float(v)))
+                if not out:
+                    raise ValueError("csv 비어있음")
+                return out
+            except Exception as e:
+                errs.append("%s%d:%s" % (kind, attempt, str(e)[:28]))
+                time.sleep(4)
+    raise ValueError(" | ".join(errs[-4:]))
 def ago(series, days):
     target = datetime.datetime.strptime(series[-1][0], "%Y-%m-%d") - datetime.timedelta(days=days)
     prev = [p for p in series if datetime.datetime.strptime(p[0], "%Y-%m-%d") <= target]
