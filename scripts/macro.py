@@ -14,47 +14,17 @@ def fail(name, e):
     return {"name": name, "value": "수집 실패", "change": "", "comment": str(e)[:90]}
 
 # ---------- FRED ----------
-def fred(sid, days=400):
-    import time
-    st = (now - datetime.timedelta(days=days)).strftime("%Y-%m-%d")
-    urls = [
-        ("csv", "https://fred.stlouisfed.org/graph/fredgraph.csv?id=%s&cosd=%s" % (sid, st)),
-        ("txt", "https://fred.stlouisfed.org/data/%s.txt" % sid),
-    ]
-    errs = []
-    for kind, u in urls:
-        for attempt in (1, 2):
-            try:
-                txt = get(u, 25)
-                if not txt or len(txt) < 50:
-                    raise ValueError("빈응답")
-                if kind == "txt":
-                    out = []
-                    for line in txt.splitlines():
-                        p = line.split()
-                        if len(p) == 2 and p[0][:4].isdigit() and p[1] != ".":
-                            try:
-                                out.append((p[0], float(p[1])))
-                            except ValueError:
-                                pass
-                    if not out:
-                        raise ValueError("txt 파싱 실패")
-                    return out[-500:]
-                out = []
-                for r in list(csv.reader(io.StringIO(txt)))[1:]:
-                    if len(r) < 2:
-                        continue
-                    v = r[1].strip()
-                    if v in ("", "."):
-                        continue
-                    out.append((r[0].strip(), float(v)))
-                if not out:
-                    raise ValueError("csv 비어있음")
-                return out
-            except Exception as e:
-                errs.append("%s%d:%s" % (kind, attempt, str(e)[:28]))
-                time.sleep(2)
-    raise ValueError(" | ".join(errs[-4:]))
+def yh(sym, rng="1y"):
+    j = json.loads(get("https://query1.finance.yahoo.com/v8/finance/chart/"
+                       "%s?range=%s&interval=1d" % (urllib.parse.quote(sym), rng), 30))
+    r = j["chart"]["result"][0]
+    ts, cl = r["timestamp"], r["indicators"]["quote"][0]["close"]
+    out = [(datetime.datetime.utcfromtimestamp(t).strftime("%Y-%m-%d"), float(c))
+           for t, c in zip(ts, cl) if c is not None]
+    if not out:
+        raise ValueError("빈 응답")
+    return out
+
 def ago(series, days):
     target = datetime.datetime.strptime(series[-1][0], "%Y-%m-%d") - datetime.timedelta(days=days)
     prev = [p for p in series if datetime.datetime.strptime(p[0], "%Y-%m-%d") <= target]
@@ -67,22 +37,23 @@ def pctile(series, v, days=365):
         return None
     return sum(1 for x in vals if x <= v) / len(vals) * 100
 
-FRED_ITEMS = [
-    ("하이일드 스프레드", "BAMLH0A0HYM2", "%", 2,
-     "위험자산 조기경보. 확대=신용 경계"),
-    ("10년 실질금리", "DFII10", "%", 2,
-     "금·성장주 밸류에이션 핵심 변수"),
-    ("장단기 금리차 10y-2y", "T10Y2Y", "%p", 2,
-     "베어 플래트닝/스티프닝 확인"),
-    ("달러지수 (광의)", "DTWEXBGS", "", 2,
-     "강세=위험자산·원자재 역풍"),
+# (표시명, 야후 티커, 단위, 소수점, 설명)
+YH_ITEMS = [
+    ("10년 국채금리", "^TNX", "%", 2, "성장주 밸류에이션 할인율"),
+    ("2년 국채금리", "^IRX", "%", 2, "연준 정책 기대 반영"),
+    ("달러지수 DXY", "DX-Y.NYB", "", 2, "강세=위험자산·원자재 역풍"),
+    ("변동성 VIX", "^VIX", "", 2, "단기 스트레스"),
+    ("하이일드 HYG", "HYG", "$", 2, "신용 위험선호. 하락=경계"),
+    ("장기채 TLT", "TLT", "$", 2, "금리 방향 대리지표"),
+    ("물가연동채 TIP", "TIP", "$", 2, "실질금리 대리지표. 하락=실질금리 상승"),
 ]
 
 def macro_items():
-    out = []
-    for ko, sid, unit, dec, note in FRED_ITEMS:
+    out, cache = [], {}
+    for ko, sym, unit, dec, note in YH_ITEMS:
         try:
-            s = fred(sid)
+            s = yh(sym)
+            cache[sym] = s
             d, v = s[-1]
             w = v - ago(s, 7)
             p = pctile(s, v)
@@ -95,24 +66,60 @@ def macro_items():
                         "comment": cm})
         except Exception as e:
             out.append(fail(ko, e))
-    # 순유동성 = 연준 자산 - 역레포 - 재무부계정
-    try:
-        wal, rrp, tga = fred("WALCL", 500), fred("RRPONTSYD", 500), fred("WTREGEN", 500)
-        def bn(s, scale):
-            return s[-1][1] * scale, ago(s, 28) * scale
-        w0, w1 = bn(wal, 0.001)      # 백만$ -> 십억$
-        r0, r1 = bn(rrp, 1.0)        # 십억$
-        t0, t1 = bn(tga, 1.0)        # 십억$
-        cur, prev = w0 - r0 - t0, w1 - r1 - t1
-        out.append({"name": "연준 순유동성",
-                    "value": "{:,.0f}B$".format(cur),
-                    "change": "{:+,.0f}B$ (4주)".format(cur - prev),
-                    "comment": "%s · 연준자산-역레포-TGA · 증가=위험자산 우호" % wal[-1][0]})
-    except Exception as e:
-        out.append(fail("연준 순유동성", e))
-    return out
 
-# ---------- 스테이블코인 ----------
+    # 장단기 금리차 (^TNX, ^IRX 는 실제값의 10배로 제공됨)
+    try:
+        t, i = cache["^TNX"], cache["^IRX"]
+        cur = (t[-1][1] - i[-1][1]) / 10
+        prev = (ago(t, 7) - ago(i, 7)) / 10
+        out.append({"name": "장단기 금리차 (10y-3m)",
+                    "value": "{:+.2f}%p".format(cur),
+                    "change": "{:+.2f}%p (1주)".format(cur - prev),
+                    "comment": "%s · 축소=베어 플래트닝 경계" % t[-1][0]})
+    except Exception as e:
+        out.append(fail("장단기 금리차", e))
+
+    # 신용 스프레드 대용: HYG / TLT 비율
+    try:
+        h, l = cache["HYG"], cache["TLT"]
+        cur = h[-1][1] / l[-1][1]
+        prev = ago(h, 21) / ago(l, 21)
+        hist = [(d, hv / lv) for (d, hv), (_, lv) in zip(h, l)]
+        p = pctile(hist, cur)
+        out.append({"name": "위험선호 HYG/TLT",
+                    "value": "{:.3f}".format(cur),
+                    "change": "{:+.2f}% (1개월)".format((cur / prev - 1) * 100),
+                    "comment": "%s · 상승=위험선호 · 1년 백분위 %s" % (
+                        h[-1][0], "%.0f%%" % p if p is not None else "-")})
+    except Exception as e:
+        out.append(fail("위험선호 HYG/TLT", e))
+
+    # 시장 폭: RSP(동일가중) / SPY(시총가중)
+    try:
+        r, s = yh("RSP"), yh("SPY")
+        cur = r[-1][1] / s[-1][1]
+        prev = ago(r, 63) / ago(s, 63)
+        out.append({"name": "시장 폭 RSP/SPY",
+                    "value": "{:.4f}".format(cur),
+                    "change": "{:+.2f}% (3개월)".format((cur / prev - 1) * 100),
+                    "comment": "%s · 하락=소수 대형주 쏠림 심화" % r[-1][0]})
+    except Exception as e:
+        out.append(fail("시장 폭 RSP/SPY", e))
+
+    # 반도체 주도력: SMH / SPY
+    try:
+        m, s = yh("SMH"), yh("SPY")
+        cur = m[-1][1] / s[-1][1]
+        prev = ago(m, 63) / ago(s, 63)
+        out.append({"name": "반도체 주도력 SMH/SPY",
+                    "value": "{:.4f}".format(cur),
+                    "change": "{:+.2f}% (3개월)".format((cur / prev - 1) * 100),
+                    "comment": "%s · 상승=반도체가 지수 주도" % m[-1][0]})
+    except Exception as e:
+        out.append(fail("반도체 주도력", e))
+
+    return out
+  # ---------- 스테이블코인 ----------
 def stables():
     out = []
     try:
