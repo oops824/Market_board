@@ -1,4 +1,4 @@
-import json, urllib.request, csv, io, datetime
+import json, urllib.request, urllib.parse, csv, io, datetime
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
 now = datetime.datetime.now(KST)
@@ -179,7 +179,7 @@ with open("data.json", encoding="utf-8") as f:
     payload = json.load(f)
 
 payload["sections"].insert(0, {"title": "매크로 · 유동성",
-                               "note": "FRED · 발표 지연 있음", "items": macro_items()})
+                               "note": "야후 파이낸스 · 전일 종가 기준", "items": macro_items()})
 payload["sections"].append({"title": "스테이블코인 발행량",
                             "note": "암호화폐 대기자금", "items": stables()})
 payload["sections"].append({"title": "코인베이스 프리미엄",
