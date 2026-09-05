@@ -21,30 +21,21 @@ def post(url, data):
 def fail(name, e):
     return {"name": name, "value": "수집 실패", "change": "", "comment": str(e)[:90]}
 
-ETFS = [("SMH", "반도체"), ("XLK", "기술"), ("IGV", "소프트웨어"),
-        ("ITA", "방산"), ("ARKX", "우주"), ("LIT", "배터리")]
-
-def yahoo(sym):
-    j = json.loads(get("https://query1.finance.yahoo.com/v8/finance/chart/"
-                       "%s?range=1mo&interval=1d" % sym))
-    r = j["chart"]["result"][0]
-    cl = [c for c in r["indicators"]["quote"][0]["close"] if c is not None]
-    d = datetime.datetime.utcfromtimestamp(r["timestamp"][-1]).strftime("%Y-%m-%d")
-    if len(cl) < 6:
-        raise ValueError("데이터 부족")
-    return cl[-6:], d
-
-def stooq(sym):
-    txt = get("https://stooq.com/q/d/l/?s=%s.us&i=d" % sym.lower())
-    rows = [r for r in csv.DictReader(io.StringIO(txt))
-            if r.get("Close") not in (None, "", "N/D")][-6:]
-    if len(rows) < 6:
-        raise ValueError("Stooq 응답 이상")
-    return [float(r["Close"]) for r in rows], rows[-1]["Date"]
+# (티커, 한글명, [대장주 2종목])
+ETFS = [
+    ("SMH", "반도체", ["NVDA", "TSM"]),
+    ("XLK", "기술", ["AAPL", "MSFT"]),
+    ("IGV", "소프트웨어", ["MSFT", "ORCL"]),
+    ("ITA", "방산", ["GE", "RTX"]),
+    ("ARKX", "우주", ["RKLB", "LHX"]),
+    ("LIT", "배터리", ["TSLA", "ALB"]),
+    ("GRID", "AI인프라·전력망", ["ETN", "PWR"]),
+    ("XLU", "유틸리티(전력)", ["NEE", "CEG"]),
+]
 
 def etf():
     out = []
-    for sym, ko in ETFS:
+    for sym, ko, leaders in ETFS:
         cl = d = None
         errs = []
         for fn in (yahoo, stooq):
@@ -55,13 +46,23 @@ def etf():
                 errs.append("%s:%s" % (fn.__name__, str(e)[:40]))
         if cl is None:
             out.append(fail("%s (%s)" % (ko, sym), " / ".join(errs)))
-            continue
-        out.append({"name": "%s (%s)" % (ko, sym),
-                    "value": "{:,.2f}$".format(cl[-1]),
-                    "change": "{:+.2f}%".format((cl[-1] / cl[0] - 1) * 100),
-                    "comment": "%s 종가 · 5거래일 변화" % d})
+        else:
+            out.append({"name": "%s (%s)" % (ko, sym),
+                        "value": "{:,.2f}$".format(cl[-1]),
+                        "change": "{:+.2f}%".format((cl[-1] / cl[0] - 1) * 100),
+                        "comment": "%s 종가 · 5거래일 변화" % d})
+        for lsym in leaders:
+            try:
+                lcl, ld = yahoo(lsym)
+                out.append({"name": "  └ %s" % lsym,
+                            "value": "{:,.2f}$".format(lcl[-1]),
+                            "change": "{:+.2f}%".format((lcl[-1] / lcl[0] - 1) * 100),
+                            "comment": "%s 대장주 · 5거래일 변화" % ko})
+            except Exception as e:
+                out.append({"name": "  └ %s" % lsym, "value": "수집 실패",
+                            "change": "", "comment": str(e)[:60]})
     return out
-
+    
 def hyperliquid():
     try:
         raw = json.loads(post("https://api.hyperliquid.xyz/info", {"type": "metaAndAssetCtxs"}))
