@@ -21,16 +21,16 @@ def post(url, data):
 def fail(name, e):
     return {"name": name, "value": "수집 실패", "change": "", "comment": str(e)[:90]}
 
-# (티커, 한글명, [대장주 2종목])
+# (티커, 한글명, [대장주 3종목])
 ETFS = [
-    ("SMH", "반도체", ["NVDA", "TSM"]),
-    ("XLK", "기술", ["AAPL", "MSFT"]),
-    ("IGV", "소프트웨어", ["MSFT", "ORCL"]),
-    ("ITA", "방산", ["GE", "RTX"]),
-    ("ARKX", "우주", ["RKLB", "LHX"]),
-    ("LIT", "배터리", ["TSLA", "ALB"]),
-    ("GRID", "AI인프라·전력망", ["ETN", "PWR"]),
-    ("XLU", "유틸리티(전력)", ["NEE", "CEG"]),
+    ("SMH", "반도체", ["NVDA", "TSM", "AVGO"]),
+    ("XLK", "기술", ["AAPL", "MSFT", "AVGO"]),
+    ("IGV", "소프트웨어", ["MSFT", "ORCL", "CRM"]),
+    ("ITA", "방산", ["GE", "RTX", "LMT"]),
+    ("ARKX", "우주", ["RKLB", "LHX", "IRDM"]),
+    ("LIT", "배터리", ["TSLA", "ALB", "PANW"]),
+    ("GRID", "AI인프라·전력망", ["ETN", "PWR", "VRT"]),
+    ("XLU", "유틸리티(전력)", ["NEE", "CEG", "VST"]),
 ]
 
 def etf():
