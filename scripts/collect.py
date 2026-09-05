@@ -28,7 +28,7 @@ ETFS = [
     ("IGV", "소프트웨어", ["MSFT", "ORCL", "CRM"]),
     ("ITA", "방산", ["GE", "RTX", "LMT"]),
     ("ARKX", "우주", ["RKLB", "LHX", "IRDM"]),
-    ("LIT", "배터리", ["TSLA", "ALB", "PANW"]),
+    ("LIT", "배터리", ["TSLA", "ALB", "SQM"]),
     ("GRID", "AI인프라·전력망", ["ETN", "PWR", "VRT"]),
     ("XLU", "유틸리티(전력)", ["NEE", "CEG", "VST"]),
 ]
