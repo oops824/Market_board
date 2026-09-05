@@ -5,116 +5,123 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>시장 자금흐름 보드</title>
 <style>
-:root{--bg:#0f1216;--card:#181d24;--line:#262d36;--txt:#e6e9ee;--sub:#8b95a3;--up:#ff5b5b;--dn:#3d8bff}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;padding:16px 14px 60px}
-h1{font-size:19px;margin:0 0 4px}
-.meta{color:var(--sub);font-size:13px;margin-bottom:14px}
-select{background:var(--card);color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:14px;margin-bottom:16px;width:100%}
-.summary{background:var(--card);border:1px solid var(--line);border-left:3px solid #6c8cff;border-radius:10px;padding:14px;font-size:14px;line-height:1.65;margin-bottom:18px;white-space:pre-wrap}
-section{margin-bottom:22px}
-.sh{display:block;color:#8fb0ff;font-size:13px;letter-spacing:.4px;margin:14px 0 4px}  
-h2{font-size:15px;margin:0 0 8px;color:#c9d3e0}
-.note{color:var(--sub);font-size:12.5px;margin:0 0 8px}
-.row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:8px}
-.nm{font-size:14px;font-weight:600}
-.cm{color:var(--sub);font-size:12.5px;margin-top:3px;line-height:1.5}
-.vl{text-align:right;white-space:nowrap}
-.v{font-size:14px}
-.c{font-size:12.5px;margin-top:3px}
-.up{color:var(--up)}.dn{color:var(--dn)}
-.err{color:var(--sub);font-size:14px;line-height:1.6}
+:root{--bg:#0b0e13;--card:#151a22;--card2:#1b212b;--line:#252c37;--txt:#e8ecf2;
+--sub:#8993a4;--dim:#5d6675;--up:#ff5f6d;--dn:#4d94ff;--acc:#7c9cff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--txt);
+font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+padding:14px 12px 70px;font-size:14px}
+header{margin-bottom:14px}
+h1{font-size:18px;margin:0 0 3px;letter-spacing:-.3px}
+.meta{color:var(--dim);font-size:12px}
+.tabs{display:flex;gap:6px;margin:12px 0 14px}
+.tab{flex:1;text-align:center;padding:8px 0;background:var(--card);border:1px solid var(--line);
+border-radius:9px;font-size:13px;color:var(--sub)}
+.tab.on{background:var(--acc);border-color:var(--acc);color:#0b0e13;font-weight:600}
+.kpi{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.kpi div{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:11px 12px}
+.kpi .k{color:var(--dim);font-size:11px;margin-bottom:4px}
+.kpi .v{font-size:17px;font-weight:600;letter-spacing:-.4px}
+.kpi .c{font-size:11.5px;margin-top:2px}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;
+margin-bottom:9px;overflow:hidden}
+summary{padding:12px 14px;font-size:14px;font-weight:600;cursor:pointer;list-style:none;
+display:flex;justify-content:space-between;align-items:center}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'▾';color:var(--dim);font-size:12px;transition:.2s}
+details[open] summary::after{transform:rotate(180deg)}
+.body{padding:0 14px 12px}
+.note{color:var(--dim);font-size:11.5px;margin:0 0 10px}
+table{width:100%;border-collapse:collapse}
+td{padding:9px 0;border-top:1px solid var(--line);vertical-align:top}
+tr:first-child td{border-top:none}
+td.n{font-size:13.5px}
+td.v{text-align:right;white-space:nowrap;font-size:13.5px;font-variant-numeric:tabular-nums}
+.sub{color:var(--dim);font-size:11px;margin-top:3px;line-height:1.45}
+.lead td.n{padding-left:12px;color:var(--sub);font-size:12.5px}
+.lead{background:rgba(255,255,255,.015)}
+.badge{display:inline-block;padding:2px 6px;border-radius:5px;font-size:11.5px;margin-top:3px}
+.up{background:rgba(255,95,109,.13);color:var(--up)}
+.dn{background:rgba(77,148,255,.13);color:var(--dn)}
+.na{background:rgba(255,255,255,.05);color:var(--dim)}
+.sum{background:var(--card);border:1px solid var(--line);border-radius:12px;
+padding:13px 14px;font-size:13.5px;line-height:1.72;white-space:pre-wrap;margin-bottom:9px}
+.sum b{display:block;color:var(--acc);font-size:12px;letter-spacing:.5px;
+margin:0 0 6px;font-weight:600}
+select{background:var(--card);color:var(--txt);border:1px solid var(--line);
+border-radius:9px;padding:8px 10px;font-size:13px;width:100%;margin-bottom:12px}
+.err{color:var(--sub);line-height:1.7;padding:20px 4px}
+.chart{background:var(--card);border:1px solid var(--line);border-radius:12px;
+padding:13px 12px 8px;margin-bottom:9px}
+.chart .t{font-size:13px;font-weight:600;margin-bottom:2px}
+.chart .s{color:var(--dim);font-size:11px;margin-bottom:8px}
+.hide{display:none}
 </style>
 </head>
 <body>
-<h1>시장 자금흐름 보드</h1>
-<div class="meta" id="meta">불러오는 중...</div>
-<select id="arc" style="display:none"></select>
-<div id="app"></div>
-<div id="trend"></div>
+<header>
+  <h1>시장 자금흐름 보드</h1>
+  <div class="meta" id="meta">불러오는 중...</div>
+</header>
+<div class="tabs">
+  <div class="tab on" id="t1">지표</div>
+  <div class="tab" id="t2">추이</div>
+</div>
+<div id="p1">
+  <select id="arc" class="hide"></select>
+  <div class="kpi" id="kpi"></div>
+  <div id="sum"></div>
+  <div id="app"></div>
+</div>
+<div id="p2" class="hide"></div>
 <script>
-const $=s=>document.querySelector(s);
-const esc=t=>String(t??'').replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
-function render(d){
-  $('#meta').textContent='갱신: '+(d.updated||'-');
-  let h='';
-  if(d.summary){
-    const b=esc(d.summary)
-      .replace(/^\[(.+?)\]\s*$/gm,'<b class="sh">$1</b>')
-      .replace(/^- (.+)$/gm,'&nbsp;• $1');
-    h+='<div class="summary">'+b+'</div>';
-  }
-  (d.sections||[]).forEach(s=>{
-    h+='<section><h2>'+esc(s.title)+'</h2>';
-    if(s.note)h+='<p class="note">'+esc(s.note)+'</p>';
-    (s.items||[]).forEach(i=>{
-      const ch=String(i.change??''),cls=ch.startsWith('-')?'dn':(ch?'up':'');
-      h+='<div class="row"><div><div class="nm">'+esc(i.name)+'</div>'+
-        (i.comment?'<div class="cm">'+esc(i.comment)+'</div>':'')+'</div>'+
-        '<div class="vl"><div class="v">'+esc(i.value)+'</div>'+
-        (ch?'<div class="c '+cls+'">'+esc(ch)+'</div>':'')+'</div></div>';
-    });
-    h+='</section>';
-  });
-  $('#app').innerHTML=h||'<p class="err">표시할 내용이 없습니다.</p>';
-}
-function load(p){
-  fetch(p+'?t='+Date.now()).then(r=>{if(!r.ok)throw 0;return r.json()}).then(render)
-  .catch(()=>{$('#meta').textContent='';
-  $('#app').innerHTML='<p class="err">data.json을 읽지 못했습니다. 파일이 올라갔는지, 1~2분 기다렸는지 확인해 주세요.</p>'});
-}
-fetch('reports/list.json?t='+Date.now()).then(r=>r.ok?r.json():Promise.reject()).then(l=>{
-  if(!l.length)return;
-  const s=$('#arc');s.style.display='block';
-  s.innerHTML='<option value="data.json">최신 리포트</option>'+
-    l.map(f=>'<option value="reports/'+f+'">'+f.replace('.json','')+'</option>').join('');
-  s.onchange=()=>load(s.value);
-}).catch(()=>{});
-function spark(pts,color,unit){
-  if(pts.length<2)return '<div class="cm">데이터 적립 중 ('+pts.length+'일)</div>';
-  const W=320,H=90,vs=pts.map(p=>p.v);
-  let mn=Math.min(...vs),mx=Math.max(...vs);
-  if(mx===mn){mx+=1;mn-=1}
-  const pad=(mx-mn)*0.15;mn-=pad;mx+=pad;
-  const X=i=>i*(W-40)/(pts.length-1)+35, Y=v=>H-12-(v-mn)/(mx-mn)*(H-28);
-  const d=pts.map((p,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(p.v).toFixed(1)).join(' ');
-  const zero=(mn<0&&mx>0)?'<line x1="35" y1="'+Y(0).toFixed(1)+'" x2="'+(W-5)+
-    '" y2="'+Y(0).toFixed(1)+'" stroke="#3a4350" stroke-dasharray="3 3"/>':'';
-  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto">'+zero+
-    '<path d="'+d+'" fill="none" stroke="'+color+'" stroke-width="2"/>'+
-    '<circle cx="'+X(pts.length-1).toFixed(1)+'" cy="'+Y(vs[vs.length-1]).toFixed(1)+
-    '" r="3" fill="'+color+'"/>'+
-    '<text x="2" y="12" fill="#8b95a3" font-size="9">'+mx.toFixed(2)+unit+'</text>'+
-    '<text x="2" y="'+(H-3)+'" fill="#8b95a3" font-size="9">'+mn.toFixed(2)+unit+'</text>'+
-    '<text x="35" y="'+(H-1)+'" fill="#8b95a3" font-size="9">'+pts[0].d.slice(5)+'</text>'+
-    '<text x="'+(W-45)+'" y="'+(H-1)+'" fill="#8b95a3" font-size="9">'+
-    pts[pts.length-1].d.slice(5)+'</text></svg>';
-}
-function trends(){
-  fetch('history/trend.json?t='+Date.now()).then(r=>r.ok?r.json():Promise.reject())
-  .then(h=>{
-    if(!h.length)return;
-    let x='<section><h2>추이</h2>';
-    [['btc_prem','BTC 코인베이스 프리미엄','#f7931a','%'],
-     ['eth_prem','ETH 코인베이스 프리미엄','#6c8cff','%']].forEach(([k,t,c,u])=>{
-      const p=h.filter(r=>typeof r[k]==='number').map(r=>({d:r.date,v:r[k]}));
-      x+='<div class="row" style="display:block"><div class="nm">'+t+'</div>'+
-         spark(p,c,u)+'</div>';
-    });
-    const names={};
-    h.forEach(r=>Object.keys(r.defi||{}).forEach(n=>names[n]=(names[n]||0)+1));
-    const top=Object.keys(names).sort((a,b)=>names[b]-names[a]).slice(0,3);
-    top.forEach((n,i)=>{
-      const p=h.filter(r=>r.defi&&typeof r.defi[n]==='number')
-               .map(r=>({d:r.date,v:r.defi[n]}));
-      x+='<div class="row" style="display:block"><div class="nm">'+n+
-         ' 일일 수익</div>'+spark(p,['#4ade80','#38bdf8','#f472b6'][i],'M$')+'</div>';
-    });
-    document.getElementById('trend').innerHTML=x+'</section>';
-  }).catch(()=>{});
-}
-load('data.json');
-trends();
-</script>
-</body>
-</html>
+var $=function(s){return document.querySelector(s)};
+function esc(t){return String(t==null?'':t).replace(/[<>&]/g,function(c){
+  return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c]})}
+function cls(c){if(!c)return 'na';return String(c).trim().charAt(0)==='-'?'dn':'up'}
+function num(t){if(!t)return null;
+  var m=String(t).replace(/,/g,'').match(/-?\d+(\.\d+)?/);return m?parseFloat(m[0]):null}
+
+function findItem(title,kw){
+  for(var i=0;i<CUR.sections.length;i++){var s=CUR.sections[i];
+    if(s.title.indexOf(title)<0)continue;
+    for(var j=0;j<s.items.length;j++){
+      if(s.items[j].name.indexOf(kw)>=0)return s.items[j]}}
+  return null}
+
+function kpi(){
+  var picks=[['매크로','변동성 VIX','VIX'],['매크로','달러지수','달러'],
+             ['매크로','HYG/TLT','위험선호'],['프리미엄','BTC','BTC 프리미엄']];
+  var h='';
+  for(var i=0;i<picks.length;i++){
+    var it=findItem(picks[i][0],picks[i][1]);
+    if(!it)continue;
+    h+='<div><div class="k">'+picks[i][2]+'</div><div class="v">'+
+       esc(it.value)+'</div><div class="c '+
+       (cls(it.change)==='up'?'':'')+'"><span class="badge '+cls(it.change)+'">'+
+       (esc(it.change)||'-')+'</span></div></div>'}
+  $('#kpi').innerHTML=h}
+
+function summary(){
+  if(!CUR.summary){$('#sum').innerHTML='';return}
+  var parts=CUR.summary.split(/\n(?=\[)/),h='';
+  for(var i=0;i<parts.length;i++){
+    var m=parts[i].match(/^\[(.+?)\]\s*([\s\S]*)$/);
+    if(m){h+='<div class="sum"><b>'+esc(m[1])+'</b>'+
+      esc(m[2].trim()).replace(/^- /gm,'· ')+'</div>'}
+    else if(parts[i].trim()){h+='<div class="sum">'+esc(parts[i].trim())+'</div>'}}
+  $('#sum').innerHTML=h}
+
+function tables(){
+  var h='';
+  for(var i=0;i<CUR.sections.length;i++){
+    var s=CUR.sections[i],rows='';
+    for(var j=0;j<s.items.length;j++){
+      var it=s.items[j],lead=it.name.indexOf('└')>=0;
+      rows+='<tr class="'+(lead?'lead':'')+'"><td class="n">'+
+        esc(it.name.replace('└','↳'))+
+        (it.comment?'<div class="sub">'+esc(it.comment)+'</div>':'')+
+        '</td><td class="v">'+esc(it.value)+
+        (it.change?'<br><span class="badge '+cls(it.change)+'">'+esc(it.change)+'</span>':'')+
+        '</td></tr>'}
+    h+='<details'+(i<2?' open':'')+'><summary>'+esc(s.title)+'</
