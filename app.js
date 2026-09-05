@@ -64,3 +64,19 @@ function load(p){
     $('#meta').textContent='';
     $('#app').innerHTML='<p class="err">data.json을 읽지 못했습니다.<br>'+
       '실행이 끝났는지, 1~2분 기다렸는지 확인해 주세요.</p>'})}
+$('#t1').onclick=function(){$('#t1').className='tab on';$('#t2').className='tab';
+  $('#p1').className='';$('#p2').className='hide'};
+$('#t2').onclick=function(){$('#t2').className='tab on';$('#t1').className='tab';
+  $('#p2').className='';$('#p1').className='hide'};
+
+fetch('reports/list.json?t='+Date.now())
+.then(function(r){return r.ok?r.json():Promise.reject()}).then(function(l){
+  if(!l.length)return;
+  var s=$('#arc');s.className='';
+  var o='<option value="data.json">최신 리포트</option>';
+  for(var i=0;i<l.length;i++){o+='<option value="reports/'+l[i]+'">'+
+    l[i].replace('.json','')+'</option>'}
+  s.innerHTML=o;
+  s.onchange=function(){load(s.value)}}).catch(function(){});
+
+load('data.json');
