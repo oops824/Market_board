@@ -216,4 +216,46 @@ day = now.strftime("%Y-%m-%d")
 for p in ("data.json", "reports/%s.json" % day):
     with open(p, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
+# ---------- 히스토리 적립 ----------
+import os
+os.makedirs("history", exist_ok=True)
+hpath = "history/trend.json"
+try:
+    with open(hpath, encoding="utf-8") as f:
+        hist = json.load(f)
+except Exception:
+    hist = []
+
+def find(title, name):
+    for s in payload["sections"]:
+        if s["title"] == title:
+            for i in s["items"]:
+                if i["name"] == name:
+                    return i
+    return None
+
+def num(txt):
+    if not txt:
+        return None
+    t = "".join(ch for ch in str(txt) if ch.isdigit() or ch in "+-.")
+    try:
+        return float(t)
+    except ValueError:
+        return None
+
+rec = {"date": now.strftime("%Y-%m-%d")}
+for ko, key in (("BTC", "btc_prem"), ("ETH", "eth_prem")):
+    it = find("코인베이스 프리미엄", "%s 코인베이스 프리미엄" % ko)
+    if it and it["value"] != "수집 실패":
+        rec[key] = num(it["value"])
+for s in payload["sections"]:
+    if s["title"] == "DeFiLlama 프로토콜 수익 랭킹":
+        rec["defi"] = {i["name"]: num(i["value"]) for i in s["items"]
+                       if i["value"] != "수집 실패"}
+
+hist = [h for h in hist if h.get("date") != rec["date"]]
+hist.append(rec)
+hist = sorted(hist, key=lambda h: h["date"])[-120:]
+with open(hpath, "w", encoding="utf-8") as f:
+    json.dump(hist, f, ensure_ascii=False)
 print("macro done")
