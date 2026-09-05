@@ -14,13 +14,13 @@ prompt = (
     "[종합]\n"
     "3~4줄. 오늘 시장의 큰 그림과 가장 눈에 띄는 신호 하나.\n\n"
     "[매크로·유동성]\n"
-    "2~3줄. 금리, 달러, VIX, 위험선호(HYG/TLT), 시장 폭 중심.\n\n"
+    "2줄. 금리, 달러, VIX, 위험선호(HYG/TLT), 시장 폭 중심.\n\n"
     "[섹터]\n"
-    "2~3줄. 섹터 ETF 등락과 반도체 주도력(SMH/SPY) 중심.\n\n"
+    "2줄. 섹터 ETF 등락과 반도체 주도력(SMH/SPY) 중심.\n\n"
     "[COT 포지셔닝]\n"
-    "2~3줄. 방향 예측이 아니라 포지션 과밀도와 취약성 관점으로만.\n\n"
+    "2줄. 방향 예측이 아니라 포지션 과밀도와 취약성 관점으로만.\n\n"
     "[암호화폐]\n"
-    "2~3줄. 펀딩비·미결제약정, 스테이블코인 발행량, 코인베이스 프리미엄 중심.\n\n"
+    "2줄. 펀딩비·미결제약정, 스테이블코인 발행량, 코인베이스 프리미엄 중심.\n\n"
     "[체크포인트]\n"
     "다음 며칠 확인할 것 2~3개를 '- '로 시작하는 줄로.\n\n"
     "규칙:\n"
@@ -38,7 +38,7 @@ prompt = (
 )
 
 def call(model):
-    body = json.dumps({"model": model, "max_tokens": 4000,
+    body = json.dumps({"model": model, "max_tokens": 8000,
                        "messages": [{"role": "user", "content": prompt}]}).encode()
     req = urllib.request.Request("https://api.anthropic.com/v1/messages", data=body,
                                  headers={"content-type": "application/json",
