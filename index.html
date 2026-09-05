@@ -31,6 +31,7 @@ h2{font-size:15px;margin:0 0 8px;color:#c9d3e0}
 <div class="meta" id="meta">불러오는 중...</div>
 <select id="arc" style="display:none"></select>
 <div id="app"></div>
+<div id="trend"></div>
 <script>
 const $=s=>document.querySelector(s);
 const esc=t=>String(t??'').replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
@@ -69,7 +70,51 @@ fetch('reports/list.json?t='+Date.now()).then(r=>r.ok?r.json():Promise.reject())
     l.map(f=>'<option value="reports/'+f+'">'+f.replace('.json','')+'</option>').join('');
   s.onchange=()=>load(s.value);
 }).catch(()=>{});
+function spark(pts,color,unit){
+  if(pts.length<2)return '<div class="cm">데이터 적립 중 ('+pts.length+'일)</div>';
+  const W=320,H=90,vs=pts.map(p=>p.v);
+  let mn=Math.min(...vs),mx=Math.max(...vs);
+  if(mx===mn){mx+=1;mn-=1}
+  const pad=(mx-mn)*0.15;mn-=pad;mx+=pad;
+  const X=i=>i*(W-40)/(pts.length-1)+35, Y=v=>H-12-(v-mn)/(mx-mn)*(H-28);
+  const d=pts.map((p,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(p.v).toFixed(1)).join(' ');
+  const zero=(mn<0&&mx>0)?'<line x1="35" y1="'+Y(0).toFixed(1)+'" x2="'+(W-5)+
+    '" y2="'+Y(0).toFixed(1)+'" stroke="#3a4350" stroke-dasharray="3 3"/>':'';
+  return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto">'+zero+
+    '<path d="'+d+'" fill="none" stroke="'+color+'" stroke-width="2"/>'+
+    '<circle cx="'+X(pts.length-1).toFixed(1)+'" cy="'+Y(vs[vs.length-1]).toFixed(1)+
+    '" r="3" fill="'+color+'"/>'+
+    '<text x="2" y="12" fill="#8b95a3" font-size="9">'+mx.toFixed(2)+unit+'</text>'+
+    '<text x="2" y="'+(H-3)+'" fill="#8b95a3" font-size="9">'+mn.toFixed(2)+unit+'</text>'+
+    '<text x="35" y="'+(H-1)+'" fill="#8b95a3" font-size="9">'+pts[0].d.slice(5)+'</text>'+
+    '<text x="'+(W-45)+'" y="'+(H-1)+'" fill="#8b95a3" font-size="9">'+
+    pts[pts.length-1].d.slice(5)+'</text></svg>';
+}
+function trends(){
+  fetch('history/trend.json?t='+Date.now()).then(r=>r.ok?r.json():Promise.reject())
+  .then(h=>{
+    if(!h.length)return;
+    let x='<section><h2>추이</h2>';
+    [['btc_prem','BTC 코인베이스 프리미엄','#f7931a','%'],
+     ['eth_prem','ETH 코인베이스 프리미엄','#6c8cff','%']].forEach(([k,t,c,u])=>{
+      const p=h.filter(r=>typeof r[k]==='number').map(r=>({d:r.date,v:r[k]}));
+      x+='<div class="row" style="display:block"><div class="nm">'+t+'</div>'+
+         spark(p,c,u)+'</div>';
+    });
+    const names={};
+    h.forEach(r=>Object.keys(r.defi||{}).forEach(n=>names[n]=(names[n]||0)+1));
+    const top=Object.keys(names).sort((a,b)=>names[b]-names[a]).slice(0,3);
+    top.forEach((n,i)=>{
+      const p=h.filter(r=>r.defi&&typeof r.defi[n]==='number')
+               .map(r=>({d:r.date,v:r.defi[n]}));
+      x+='<div class="row" style="display:block"><div class="nm">'+n+
+         ' 일일 수익</div>'+spark(p,['#4ade80','#38bdf8','#f472b6'][i],'M$')+'</div>';
+    });
+    document.getElementById('trend').innerHTML=x+'</section>';
+  }).catch(()=>{});
+}
 load('data.json');
+trends();
 </script>
 </body>
 </html>
