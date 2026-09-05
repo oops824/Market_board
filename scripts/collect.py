@@ -21,6 +21,24 @@ def post(url, data):
 def fail(name, e):
     return {"name": name, "value": "수집 실패", "change": "", "comment": str(e)[:90]}
 
+def yahoo(sym):
+    j = json.loads(get("https://query1.finance.yahoo.com/v8/finance/chart/"
+                       "%s?range=1mo&interval=1d" % sym))
+    r = j["chart"]["result"][0]
+    cl = [c for c in r["indicators"]["quote"][0]["close"] if c is not None]
+    d = datetime.datetime.utcfromtimestamp(r["timestamp"][-1]).strftime("%Y-%m-%d")
+    if len(cl) < 6:
+        raise ValueError("데이터 부족")
+    return cl[-6:], d
+
+def stooq(sym):
+    txt = get("https://stooq.com/q/d/l/?s=%s.us&i=d" % sym.lower())
+    rows = [r for r in csv.DictReader(io.StringIO(txt))
+            if r.get("Close") not in (None, "", "N/D")][-6:]
+    if len(rows) < 6:
+        raise ValueError("Stooq 응답 이상")
+    return [float(r["Close"]) for r in rows], rows[-1]["Date"]
+    
 # (티커, 한글명, [대장주 3종목])
 ETFS = [
     ("SMH", "반도체", ["NVDA", "TSM", "AVGO"]),
