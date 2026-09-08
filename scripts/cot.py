@@ -14,7 +14,12 @@ def fetch(ds, kw):
     with urllib.request.urlopen(req, timeout=90) as r:
         return json.loads(r.read().decode())
 
-def latest_two(rows):
+def latest_two(rows, L, S):
+    rows = [r for r in rows
+            if "CONSOLIDATED" not in (r.get("market_and_exchange_names") or "").upper()
+            and (float(r.get(L) or 0) + float(r.get(S) or 0)) > 0]
+    if not rows:
+        raise ValueError("유효 포지션 행 없음")
     dates = sorted({r["report_date_as_yyyy_mm_dd"] for r in rows}, reverse=True)[:2]
     out = []
     for d in dates:
@@ -35,17 +40,19 @@ for ko, kw, kind in TARGETS:
         rows = fetch(TFF if kind == "tff" else LEG, kw)
         if not rows:
             raise ValueError("계약명 매칭 실패")
-        p = latest_two(rows)
         if kind == "tff":
-            L, S, label = "lev_money_positions_long_all", "lev_money_positions_short_all", "레버리지펀드"
+            L, S = "lev_money_positions_long_all", "lev_money_positions_short_all"
+            label = "레버리지펀드"
         else:
-            L, S, label = "noncomm_positions_long_all", "noncomm_positions_short_all", "비상업(투기)"
-        cur = net(p[0][1], L, S)
+            L, S = "noncomm_positions_long_all", "noncomm_positions_short_all"
+            label = "비상업(투기)"
+        p = latest_two(rows, L, S)
         if len(p) < 2:
             raise ValueError("전주 데이터 없음")
+        cur = net(p[0][1], L, S)
         prev = net(p[1][1], L, S)
-        cm = "%s · 전주(%s) 대비 · %s" % (p[0][0], p[1][0],
-                                        (p[0][1].get("market_and_exchange_names") or "")[:40])
+        cm = "%s · 전주(%s) 대비 · %s" % (
+            p[0][0], p[1][0], (p[0][1].get("market_and_exchange_names") or "")[:40])
         if kind == "tff":
             am = net(p[0][1], "asset_mgr_positions_long_all", "asset_mgr_positions_short_all")
             cm += " · 자산운용사 순{} {:,.0f}".format("매수" if am >= 0 else "매도", abs(am))
