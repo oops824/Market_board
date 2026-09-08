@@ -122,33 +122,62 @@ def macro_items():
   # ---------- 스테이블코인 ----------
 def stables():
     out = []
+    urls = [
+        "https://stablecoins.llama.fi/stablecoincharts/all",
+        "https://stablecoins.llama.fi/charts/all",
+        "https://api.llama.fi/stablecoincharts/all",
+        "https://api.llama.fi/charts/stablecoins",
+    ]
+    errs = []
+    for u in urls:
+        try:
+            raw = get(u, 60)
+            if raw.lstrip()[:1] not in ("[", "{"):
+                raise ValueError("JSON아님:" + raw.lstrip()[:25])
+            j = json.loads(raw)
+            if not isinstance(j, list) or not j:
+                raise ValueError("형식 이상")
+
+            def tot(row):
+                c = row.get("totalCirculatingUSD")
+                if isinstance(c, dict):
+                    return sum(float(v or 0) for v in c.values())
+                return float(c or 0)
+
+            pts = [(int(r["date"]), tot(r)) for r in j if tot(r) > 0][-400:]
+            if len(pts) < 40:
+                raise ValueError("데이터부족%d" % len(pts))
+            cur = pts[-1][1]
+
+            def back(n):
+                return pts[max(0, len(pts) - 1 - n)][1]
+
+            d = datetime.datetime.utcfromtimestamp(pts[-1][0]).strftime("%Y-%m-%d")
+            out.append({"name": "스테이블코인 총 발행량",
+                        "value": "{:,.1f}B$".format(cur / 1e9),
+                        "change": "{:+.2f}% (30일)".format((cur / back(30) - 1) * 100),
+                        "comment": "%s · 7일 %+.2f%% · 증가=대기자금 유입" % (
+                            d, (cur / back(7) - 1) * 100)})
+            break
+        except Exception as e:
+            errs.append("%s:%s" % (u.split("/")[-1], str(e)[:30]))
+    else:
+        out.append(fail("스테이블코인 총 발행량", " | ".join(errs)))
+
     try:
-        j = json.loads(get("https://stablecoins.llama.fi/stablecoincharts/all"
-                           "?stablecoin=undefined", 60))
-        def tot(row):
-            c = row.get("totalCirculatingUSD") or {}
-            return sum(float(v or 0) for v in c.values())
-        pts = [(int(r["date"]), tot(r)) for r in j if tot(r) > 0][-120:]
-        cur = pts[-1][1]
-        def back(n):
-            return pts[max(0, len(pts) - 1 - n)][1]
-        d = datetime.datetime.utcfromtimestamp(pts[-1][0]).strftime("%Y-%m-%d")
-        out.append({"name": "스테이블코인 총 발행량",
-                    "value": "{:,.1f}B$".format(cur / 1e9),
-                    "change": "{:+.2f}% (30일)".format((cur / back(30) - 1) * 100),
-                    "comment": "%s · 7일 %+.2f%% · 증가=대기자금 유입" % (
-                        d, (cur / back(7) - 1) * 100)})
-    except Exception as e:
-        out.append(fail("스테이블코인 총 발행량", e))
-    try:
-        j = json.loads(get("https://stablecoins.llama.fi/stablecoins?includePrices=true", 60))
+        raw = get("https://stablecoins.llama.fi/stablecoins?includePrices=true", 60)
+        if raw.lstrip()[:1] not in ("[", "{"):
+            raise ValueError("JSON아님:" + raw.lstrip()[:25])
+        j = json.loads(raw)
         ps = sorted(j.get("peggedAssets", []),
                     key=lambda p: float((p.get("circulating") or {}).get("peggedUSD") or 0),
                     reverse=True)[:3]
+        if not ps:
+            raise ValueError("목록 비어있음")
         for p in ps:
             c = float((p.get("circulating") or {}).get("peggedUSD") or 0)
             pm = float((p.get("circulatingPrevMonth") or {}).get("peggedUSD") or 0)
-            out.append({"name": p.get("symbol") or p.get("name"),
+            out.append({"name": p.get("symbol") or p.get("name") or "?",
                         "value": "{:,.1f}B$".format(c / 1e9),
                         "change": "{:+.2f}% (30일)".format((c / pm - 1) * 100) if pm else "",
                         "comment": "개별 스테이블코인 발행량"})
