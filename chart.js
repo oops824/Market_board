@@ -1,44 +1,46 @@
 function spark(pts,color,unit){
   if(!pts||pts.length<2)return '<div class="s">데이터 적립 중 ('+
     (pts?pts.length:0)+'일)</div>';
-  var W=320,H=95,i,vs=[];
+  var W=320,H=105,i,vs=[];
   for(i=0;i<pts.length;i++){vs.push(pts[i].v)}
   var lo=Math.min.apply(null,vs),hi=Math.max.apply(null,vs);
   var last=vs[vs.length-1],li=vs.indexOf(lo),hidx=vs.indexOf(hi);
   var mn=lo,mx=hi;
   if(mx===mn){mx=mx+Math.abs(mx||1)*0.1;mn=mn-Math.abs(mn||1)*0.1}
-  var pad=(mx-mn)*0.22;mn=mn-pad;mx=mx+pad;
+  var pad=(mx-mn)*0.25;mn=mn-pad;mx=mx+pad;
   var span=(mx-mn)||1;
-  function X(k){return 34+k*(W-42)/(pts.length-1)}
-  function Y(v){return H-14-(v-mn)/span*(H-30)}
   function fm(v){var a=Math.abs(v);
-    return a>=1000?v.toFixed(0):a>=10?v.toFixed(2):v.toFixed(3)}
-  var d='';
-  for(i=0;i<pts.length;i++){d+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(pts[i].v).toFixed(1)+' '}
+    return a>=1000?v.toFixed(0):(a>=10?v.toFixed(2):v.toFixed(3))}
+  function X(k){return 40+k*(W-48)/(pts.length-1)}
+  function Y(v){return H-16-(v-mn)/span*(H-32)}
   var z='';
   for(i=0;i<=4;i++){
     var gv=mn+span*i/4,gy=Y(gv);
-    z+='<line x1="34" y1="'+gy.toFixed(1)+'" x2="'+(W-6)+'" y2="'+gy.toFixed(1)+
-       '" stroke="#232a35" stroke-width="1"/>'+
-       '<text x="2" y="'+(gy+3).toFixed(1)+'" fill="#4a5361" font-size="8">'+
+    z+='<line x1="40" y1="'+gy.toFixed(1)+'" x2="'+(W-6)+'" y2="'+gy.toFixed(1)+
+       '" stroke="#242b36" stroke-width="1"/>'+
+       '<text x="2" y="'+(gy+3).toFixed(1)+'" fill="#4e5766" font-size="8">'+
        fm(gv)+'</text>'}
-  if(mn<0&&mx>0){z+='<line x1="34" y1="'+Y(0).toFixed(1)+'" x2="'+(W-6)+
-    '" y2="'+Y(0).toFixed(1)+'" stroke="#5a6577" stroke-dasharray="3 3"/>'}
+  if(mn<0&&mx>0){z+='<line x1="40" y1="'+Y(0).toFixed(1)+'" x2="'+(W-6)+
+    '" y2="'+Y(0).toFixed(1)+'" stroke="#68738a" stroke-dasharray="3 3"/>'}
+  var d='';
+  for(i=0;i<pts.length;i++){d+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(pts[i].v).toFixed(1)+' '}
   function mark(idx,val,col,dy){
-    var x=X(idx),tx=x<60?x:(x>W-60?x-52:x-24);
+    var x=X(idx),tx=x-22;
+    if(tx<42)tx=42;
+    if(tx>W-46)tx=W-46;
     return '<circle cx="'+x.toFixed(1)+'" cy="'+Y(val).toFixed(1)+'" r="2.6" fill="'+col+
-      '" opacity=".85"/><text x="'+tx.toFixed(1)+'" y="'+(Y(val)+dy).toFixed(1)+
-      '" fill="'+col+'" font-size="9.5">'+fm(val)+unit+'</text>'}
+      '"/><text x="'+tx.toFixed(1)+'" y="'+(Y(val)+dy).toFixed(1)+'" fill="'+col+
+      '" font-size="9.5" font-weight="600">'+fm(val)+unit+'</text>'}
   return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto">'+z+
     '<path d="'+d+'" fill="none" stroke="'+color+'" stroke-width="2"/>'+
-    mark(hidx,hi,'#ff8080',-6)+mark(li,lo,'#6aa8ff',13)+
+    mark(hidx,hi,'#ff8080',-7)+mark(li,lo,'#6aa8ff',14)+
     '<circle cx="'+X(pts.length-1).toFixed(1)+'" cy="'+Y(last).toFixed(1)+
     '" r="3.4" fill="'+color+'"/>'+
-    '<text x="34" y="'+(H-2)+'" fill="#5d6675" font-size="9">'+
+    '<text x="40" y="'+(H-3)+'" fill="#5d6675" font-size="9">'+
     String(pts[0].d).slice(5)+'</text>'+
-    '<text x="'+(W-46)+'" y="'+(H-2)+'" fill="#5d6675" font-size="9">'+
+    '<text x="'+(W-48)+'" y="'+(H-3)+'" fill="#5d6675" font-size="9">'+
     String(pts[pts.length-1].d).slice(5)+'</text>'+
-    '<text x="2" y="11" fill="'+color+'" font-size="11" font-weight="600">'+
+    '<text x="2" y="10" fill="'+color+'" font-size="11" font-weight="600">'+
     fm(last)+unit+'</text></svg>'}
 function drawTrends(h){
   if(!h||!h.length)return '<p class="err">기록이 아직 없습니다.</p>';
