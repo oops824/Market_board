@@ -27,14 +27,22 @@ function spark(pts,color,unit){
 function drawTrends(h){
   if(!h||!h.length)return '<p class="err">기록이 아직 없습니다.</p>';
   var x='',i,j,n;
-  var defs=[['btc_prem','BTC 코인베이스 프리미엄','#f7931a','%'],
+  var defs=[['tnx','10년 국채금리','#ff9f43','%'],
+            ['irx','3개월 국채금리','#feca57','%'],
+            ['dxy','달러지수 DXY','#48dbfb',''],
+            ['vix','변동성 VIX','#ff6b6b',''],
+            ['risk','위험선호 HYG/TLT','#1dd1a1',''],
+            ['breadth','시장 폭 RSP/SPY','#a29bfe',''],
+            ['smh','반도체 주도력 SMH/SPY','#00d2d3',''],
+            ['btc_prem','BTC 코인베이스 프리미엄','#f7931a','%'],
             ['eth_prem','ETH 코인베이스 프리미엄','#7c9cff','%']];
   for(i=0;i<defs.length;i++){
     var k=defs[i][0],p=[];
     for(j=0;j<h.length;j++){
       if(typeof h[j][k]==='number')p.push({d:h[j].date,v:h[j][k]})}
     x+='<div class="chart"><div class="t">'+defs[i][1]+
-       '</div><div class="s">양수=미국 매수 우위</div>'+
+       '</div><div class="s">'+(defs[i][0].indexOf('prem')>=0?
+       '양수=미국 매수 우위':'일별 추이')+'</div>'+
        spark(p,defs[i][2],defs[i][3])+'</div>'}
   var cnt={};
   for(j=0;j<h.length;j++){var o=h[j].defi||{};
