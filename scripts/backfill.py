@@ -70,3 +70,66 @@ os.makedirs("history", exist_ok=True)
 with open("history/trend.json", "w", encoding="utf-8") as f:
     json.dump(out, f, ensure_ascii=False)
 print("총 %d일치 저장" % len(out))
+# ---------- 매크로 지표 과거 채우기 ----------
+def yh_hist(sym, rng="1y"):
+    url = ("https://query1.finance.yahoo.com/v8/finance/chart/%s?range=%s&interval=1d"
+           % (urllib.parse.quote(sym), rng))
+    req = urllib.request.Request(url, headers={
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                      "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        j = json.loads(r.read().decode())
+    res = j["chart"]["result"][0]
+    q = res["indicators"]["quote"][0]
+    out = {}
+    for t, c in zip(res["timestamp"], q["close"]):
+        if c is None:
+            continue
+        d = datetime.datetime.utcfromtimestamp(t).strftime("%Y-%m-%d")
+        out[d] = float(c)
+    return out
+
+SIMPLE = [("^TNX", "tnx"), ("^IRX", "irx"), ("DX-Y.NYB", "dxy"), ("^VIX", "vix")]
+RATIOS = [("HYG", "TLT", "risk"), ("RSP", "SPY", "breadth"), ("SMH", "SPY", "smh")]
+
+series = {}
+for sym, key in SIMPLE:
+    try:
+        series[key] = yh_hist(sym)
+        print("완료:", sym, len(series[key]), "일")
+    except Exception as e:
+        print("실패:", sym, str(e)[:60])
+
+cache = {}
+for a, b, key in RATIOS:
+    try:
+        for s in (a, b):
+            if s not in cache:
+                cache[s] = yh_hist(s)
+        ha, hb = cache[a], cache[b]
+        series[key] = {d: ha[d] / hb[d] for d in ha if d in hb and hb[d]}
+        print("완료:", key, len(series[key]), "일")
+    except Exception as e:
+        print("실패:", key, str(e)[:60])
+
+# 기존 기록에 병합 (기존 값 우선)
+try:
+    with open("history/trend.json", encoding="utf-8") as f:
+        cur = json.load(f)
+except Exception:
+    cur = []
+by_date = {h["date"]: h for h in cur}
+
+for key, vals in series.items():
+    for d, v in vals.items():
+        if d < START:
+            continue
+        rec = by_date.get(d) or {"date": d}
+        if key not in rec:
+            rec[key] = round(v, 4)
+        by_date[d] = rec
+
+final = sorted(by_date.values(), key=lambda h: h["date"])[-400:]
+with open("history/trend.json", "w", encoding="utf-8") as f:
+    json.dump(final, f, ensure_ascii=False)
+print("매크로 병합 후 총 %d일" % len(final))
