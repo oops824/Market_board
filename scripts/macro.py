@@ -39,9 +39,10 @@ def pctile(series, v, days=365):
 
 # (표시명, 야후 티커, 단위, 소수점, 설명)
 # (표시명, 야후 티커, 단위, 소수점, 배율, 설명)
+# (표시명, 야후 티커, 단위, 소수점, 배율, 설명)
 YH_ITEMS = [
-    ("10년 국채금리", "^TNX", "%", 2, 0.1, "성장주 밸류에이션 할인율"),
-    ("3개월 국채금리", "^IRX", "%", 2, 0.1, "연준 정책 기대 반영"),
+    ("10년 국채금리", "^TNX", "%", 2, 1, "성장주 밸류에이션 할인율"),
+    ("3개월 국채금리", "^IRX", "%", 2, 1, "연준 정책 기대 반영"),
     ("달러지수 DXY", "DX-Y.NYB", "", 2, 1, "강세=위험자산·원자재 역풍"),
     ("변동성 VIX", "^VIX", "", 2, 1, "단기 스트레스"),
     ("하이일드 HYG", "HYG", "$", 2, 1, "신용 위험선호. 하락=경계"),
@@ -70,8 +71,8 @@ def macro_items():
     # 장단기 금리차 (^TNX, ^IRX 는 실제값의 10배로 제공됨)
     try:
         t, i = cache["^TNX"], cache["^IRX"]
-        cur = (t[-1][1] - i[-1][1]) * 0.1
-        prev = (ago(t, 7) - ago(i, 7)) * 0.1
+        cur = t[-1][1] - i[-1][1]
+        prev = ago(t, 7) - ago(i, 7)
         out.append({"name": "장단기 금리차 (10y-3m)",
                     "value": "{:+.2f}%p".format(cur),
                     "change": "{:+.2f}%p (1주)".format(cur - prev),
@@ -273,6 +274,15 @@ def num(txt):
         return None
 
 rec = {"date": now.strftime("%Y-%m-%d")}
+for nm, key in (("10년 국채금리", "tnx"), ("3개월 국채금리", "irx"),
+                ("달러지수 DXY", "dxy"), ("변동성 VIX", "vix"),
+                ("위험선호 HYG/TLT", "risk"), ("시장 폭 RSP/SPY", "breadth"),
+                ("반도체 주도력 SMH/SPY", "smh")):
+    it = find("매크로", nm)
+    if it and it["value"] != "수집 실패":
+        v = num(it["value"])
+        if v is not None:
+            rec[key] = v
 for ko, key in (("BTC", "btc_prem"), ("ETH", "eth_prem")):
     it = find("코인베이스 프리미엄", "%s 코인베이스 프리미엄" % ko)
     if it and it["value"] != "수집 실패":
