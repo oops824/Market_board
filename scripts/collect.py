@@ -69,12 +69,15 @@ def chg(cl, n):
 
 def row(label, cl, d, note):
     c5, c20 = chg(cl, 5), chg(cl, 20)
-    ch = "5일 {:+.2f}%".format(c5) if c5 is not None else ""
+    parts = []
+    if c5 is not None:
+        parts.append({"t": "5일 {:+.2f}%".format(c5), "c": "up" if c5 >= 0 else "dn"})
     if c20 is not None:
-        ch += " / 20일 {:+.2f}%".format(c20)
+        parts.append({"t": "20일 {:+.2f}%".format(c20), "c": "up" if c20 >= 0 else "dn"})
     return {"name": label,
             "value": "{:,.2f}$".format(cl[-1]),
-            "change": ch,
+            "change": "",
+            "badges": parts,
             "comment": "%s 종가 · %s" % (d, note)}
 
 def etf():
