@@ -33,7 +33,15 @@ function summary(){
       esc(m[2].trim()).replace(/^- /gm,'· ')+'</div>'}
     else if(parts[i].trim()){h+='<div class="sum">'+esc(parts[i].trim())+'</div>'}}
   $('#sum').innerHTML=h}
-
+function badges(it){
+  if(it.badges&&it.badges.length){
+    var s='';
+    for(var i=0;i<it.badges.length;i++){
+      s+='<br><span class="badge '+(it.badges[i].c||'na')+'">'+
+         esc(it.badges[i].t)+'</span>'}
+    return s}
+  return it.change?'<br><span class="badge '+cls(it.change)+'">'+
+         esc(it.change)+'</span>':''}
 function tables(){
   var h='';
   for(var i=0;i<CUR.sections.length;i++){
@@ -44,7 +52,7 @@ function tables(){
         esc(it.name.replace('└','↳'))+
         (it.comment?'<div class="sub">'+esc(it.comment)+'</div>':'')+
         '</td><td class="v">'+esc(it.value)+
-        (it.change?'<br><span class="badge '+cls(it.change)+'">'+esc(it.change)+'</span>':'')+
+        badges(it)+
         '</td></tr>'}
     h+='<details'+(i<2?' open':'')+'><summary>'+esc(s.title)+'</summary><div class="body">'+
        (s.note?'<p class="note">'+esc(s.note)+'</p>':'')+
