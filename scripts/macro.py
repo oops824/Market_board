@@ -258,10 +258,13 @@ except Exception:
 
 def find(title, name):
     for s in payload["sections"]:
-        if s["title"] == title:
-            for i in s["items"]:
-                if i["name"] == name:
-                    return i
+        for i in s["items"]:
+            if i["name"] == name:
+                return i
+    for s in payload["sections"]:
+        for i in s["items"]:
+            if name in i["name"]:
+                return i
     return None
 
 def num(txt):
