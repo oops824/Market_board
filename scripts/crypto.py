@@ -339,7 +339,12 @@ def coin_pats(sym):
     return pats
 
 
+JUNK = re.compile(r"^\s*convert\s+[\d.,]+\s|\bto\s+[A-Z]{3}\s*$|price (?:today|chart|index)|환율 계산", re.I)
+
+
 def relevant(sym, n):
+    if JUNK.search(n["title"]):  # 환전 계산기·시세 페이지 등 기사가 아닌 결과
+        return False
     return any(p.search(n["title"]) for p in coin_pats(sym))
 
 
