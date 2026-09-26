@@ -1,5 +1,5 @@
-/* 보유 코인 종합 대시보드 (탭3) */
-var CR=null,HOLD_KEY='mb_holdings_v1';
+/* 관심 코인 종합 대시보드 (탭3) */
+var CR=null;
 var FNG_KO={'Extreme Fear':'극단적 공포','Fear':'공포','Neutral':'중립','Greed':'탐욕',
   'Extreme Greed':'극단적 탐욕'};
 function escA(t){return String(t==null?'':t).replace(/[<>&"']/g,function(c){
@@ -16,8 +16,6 @@ function fpc(v,d){return nz(v)?(v>=0?'+':'')+v.toFixed(d==null?2:d)+'%':'-'}
 function bd(v,txt){return '<span class="badge '+(nz(v)?(v>=0?'up':'dn'):'na')+'">'+
   (txt||fpc(v))+'</span>'}
 
-function loadHold(){try{return JSON.parse(localStorage.getItem(HOLD_KEY))||{}}catch(e){return {}}}
-function saveHold(h){try{localStorage.setItem(HOLD_KEY,JSON.stringify(h))}catch(e){}}
 
 /* 펀딩비 해석: 8시간 환산 % 기준 */
 function fundTag(p8){
@@ -40,10 +38,45 @@ function sparkline(arr,up){
 function kv(k,v,s){return '<div class="kv"><div class="k">'+k+'</div><div class="v">'+v+
   '</div>'+(s?'<div class="s">'+s+'</div>':'')+'</div>'}
 
-function coinCard(c,h,total){
+function newsList(arr){
+  var x='<ul class="news">';
+  for(var j=0;j<arr.length;j++){var n=arr[j];
+    if(!/^https?:\/\//.test(n.url))continue;
+    x+='<li><a href="'+escA(n.url)+'" target="_blank" rel="noopener noreferrer"'+
+      (n.orig?' title="'+escA(n.orig)+'"':'')+'>'+escA(n.title)+'</a><div class="s">'+
+      escA(n.src)+(n.ts?' · '+escA(n.ts):'')+(n.lang==='en'?(n.orig?' · 영문 번역':' · EN'):'')+
+      '</div></li>'}
+  return x+'</ul>'}
+
+function pickCard(p,past){
+  if(!p)return '';
+  var ch=nz(p.now)&&nz(p.price)?(p.now/p.price-1)*100:null,x='';
+  x+='<div class="pk-h"><div><span class="pk-tag">오늘의 주목 코인 · '+escA(p.date.slice(5))+
+    '</span><div class="pk-n"><b>'+escA(p.sym)+'</b> '+escA(p.name)+
+    ' <span class="cn">#'+escA(p.rank)+'</span></div>'+
+    (p.headline?'<div class="pk-hl">'+escA(p.headline)+'</div>':'')+'</div>'+
+    '<div class="cp">'+fp(nz(p.now)?p.now:p.price)+(nz(p.ch24)?' '+bd(p.ch24):'')+'</div></div>';
+  x+='<div class="grid">'+kv('7일 (소개 시점)',bd(p.ch7))+kv('30일 (소개 시점)',bd(p.ch30))+
+    kv('시가총액',fbig(p.mcap))+kv('소개 이후',nz(ch)?bd(ch):'-',fp(p.price)+' → '+fp(p.now))+'</div>';
+  if(p.cats&&p.cats.length)x+='<div class="cats">'+p.cats.map(function(c){
+    return '<span>'+escA(c)+'</span>'}).join('')+'</div>';
+  if(p.intro)x+='<div class="sec">어떤 코인인가</div><div class="brief">'+escA(p.intro)+'</div>';
+  if(p.institutions)x+='<div class="sec">월가·기관 관심 근거</div><div class="brief">'+
+    escA(p.institutions)+'</div>';
+  if(p.evidence&&p.evidence.length)x+='<div class="sec">근거 기사</div>'+newsList(p.evidence);
+  if(p.risks)x+='<div class="sec">유의할 점</div><div class="brief">'+escA(p.risks)+'</div>';
+  if(past&&past.length){
+    var t='<table class="mini"><tr><td>소개일</td><td>코인</td><td>소개 이후</td></tr>';
+    for(var i=0;i<past.length&&i<10;i++){var q=past[i];
+      t+='<tr><td>'+escA(q.date.slice(5))+'</td><td>'+escA(q.sym)+'</td><td>'+
+        (nz(q.since)?bd(q.since):'-')+'</td></tr>'}
+    x+='<div class="sec">지난 소개</div>'+t+'</table>'}
+  x+='<p class="note">시총 상위 250위 중 모멘텀 상위 후보에서, 최근 30일 기사로 ETF·자산운용사·은행 등 '+
+    '기관 관여가 확인된 코인을 매일 1개 선정합니다. 투자 권유가 아닙니다.</p>';
+  return '<div class="pick">'+x+'</div>'}
+
+function coinCard(c){
   var m=c.market||{},hl=c.hl||{},ok=c.okx||{},op=c.options,px=m.price,x='';
-  var q=h&&nz(h.q)?h.q:0,val=q*(px||0),cost=h&&nz(h.avg)?h.avg*q:null;
-  var pnl=cost?val-cost:null,pnlP=cost?(val/cost-1)*100:null;
   // 헤더
   var sum='<summary><div class="ch"><b>'+escA(c.sym)+'</b> <span class="cn">'+
     escA(c.name)+(m.rank?' · #'+m.rank:'')+'</span></div><div class="cp">'+fp(px)+
@@ -53,14 +86,6 @@ function coinCard(c,h,total){
   x+='<div class="grid">'+kv('7일',bd(m.ch7))+kv('30일',bd(m.ch30))+
     kv('원화',fkrw(m.krw))+kv('시가총액',fbig(m.mcap))+kv('24h 거래량',fbig(m.vol))+
     kv('ATH 대비',fpc(m.athPct,1),fp(m.ath))+'</div>';
-  // 보유
-  if(q>0){
-    x+='<div class="sec">내 보유</div><div class="grid">'+
-      kv('수량',q.toLocaleString('en-US',{maximumFractionDigits:6}))+
-      kv('평가액',fbig(val),total?(val/total*100).toFixed(1)+'% 비중':'')+
-      kv('손익',pnl==null?'<span class="dim">평단 미입력</span>':bd(pnl,
-        (pnl>=0?'+':'-')+fbig(Math.abs(pnl))),pnl==null?'':fpc(pnlP))+
-      '</div>'}
   // 선물
   var hl8=nz(hl.funding)?hl.funding*800:null,ok8=nz(ok.funding)?ok.funding*100:null;
   x+='<div class="sec">선물 · 파생</div><div class="grid">'+
@@ -96,80 +121,33 @@ function coinCard(c,h,total){
   // AI 브리핑
   if(c.brief)x+='<div class="sec">AI 브리핑</div><div class="brief">'+escA(c.brief)+'</div>';
   // 뉴스
-  x+='<div class="sec">최신 뉴스</div>';
-  if(c.news&&c.news.length){
-    x+='<ul class="news">';
-    for(var j=0;j<c.news.length;j++){var n=c.news[j];
-      if(!/^https?:\/\//.test(n.url))continue;
-      x+='<li><a href="'+escA(n.url)+'" target="_blank" rel="noopener noreferrer">'+
-        escA(n.title)+'</a><div class="s">'+escA(n.src)+' · '+escA(n.ts)+
-        (n.lang==='en'?' · EN':'')+'</div></li>'}
-    x+='</ul>'}
-  else x+='<p class="note">최근 3일 뉴스 없음</p>';
+  x+='<div class="sec">최신 뉴스</div>'+
+    (c.news&&c.news.length?newsList(c.news):'<p class="note">최근 3일 뉴스 없음</p>');
   return '<details class="coin">'+sum+'<div class="body">'+x+'</div></details>'}
 
-function holdEditor(h){
-  var r='';
-  for(var i=0;i<CR.coins.length;i++){var c=CR.coins[i],v=h[c.sym]||{};
-    r+='<tr><td class="n">'+escA(c.sym)+'</td><td><input inputmode="decimal" data-s="'+
-      escA(c.sym)+'" data-k="q" value="'+(nz(v.q)?v.q:'')+'" placeholder="수량"></td>'+
-      '<td><input inputmode="decimal" data-s="'+escA(c.sym)+'" data-k="avg" value="'+
-      (nz(v.avg)?v.avg:'')+'" placeholder="평단 $"></td></tr>'}
-  return '<details id="hed"><summary>보유 수량 · 평단 입력</summary><div class="body">'+
-    '<p class="note">이 기기 브라우저에만 저장됩니다 (서버·깃허브로 전송되지 않음)</p>'+
-    '<table class="hold">'+r+'</table></div></details>'}
-
 function renderCrypto(){
-  var h=loadHold(),total=0,cost=0,chg=0,i;
-  for(i=0;i<CR.coins.length;i++){var c=CR.coins[i],m=c.market||{},v=h[c.sym];
-    if(!v||!nz(v.q)||!nz(m.price))continue;
-    var val=v.q*m.price;total+=val;
-    if(nz(v.avg))cost+=v.q*v.avg;
-    if(nz(m.ch24))chg+=val-val/(1+m.ch24/100)}
-  var krwRate=null,b=CR.coins[0]&&CR.coins[0].market;
-  if(b&&nz(b.krw)&&nz(b.price))krwRate=b.krw/b.price;
+  var i,up=0,dn=0,sum=0,n=0,fs=0,fn=0;
+  for(i=0;i<CR.coins.length;i++){var m=CR.coins[i].market||{},hl=CR.coins[i].hl||{};
+    if(nz(m.ch24)){sum+=m.ch24;n++;if(m.ch24>=0)up++;else dn++}
+    if(nz(hl.fundingApr)){fs+=hl.fundingApr;fn++}}
   var top='<div class="kpi ckpi">'+
-    '<div><div class="k">내 평가액</div><div class="v">'+(total?fbig(total):'-')+
-    '</div><div class="c">'+(krwRate&&total?fkrw(total*krwRate):'수량을 입력하세요')+'</div></div>'+
-    '<div><div class="k">24시간 손익</div><div class="v">'+(total?(chg>=0?'+':'-')+
-      fbig(Math.abs(chg)):'-')+'</div><div class="c">'+(total?bd(chg/(total-chg)*100):'')+
-    '</div></div>'+
-    '<div><div class="k">누적 손익</div><div class="v">'+(cost?(total>=cost?'+':'-')+
-      fbig(Math.abs(total-cost)):'-')+'</div><div class="c">'+(cost?bd((total/cost-1)*100):
-      '<span class="dim">평단 미입력</span>')+'</div></div>'+
     '<div><div class="k">공포·탐욕 지수</div><div class="v">'+(CR.fng?CR.fng.value:'-')+
     '</div><div class="c">'+(CR.fng?escA(FNG_KO[CR.fng.label]||CR.fng.label)+(nz(CR.fng.week)?' · 1주전 '+
-      CR.fng.week:''):'')+'</div></div></div>';
-  var alloc='';
-  if(total){alloc='<div class="alloc">';
-    var cols=['#f7931a','#7c9cff','#14f195','#50d2c1','#2a5ada','#b8a1ff','#4da2ff','#ff6fb5'];
-    for(i=0;i<CR.coins.length;i++){var cc=CR.coins[i],hv=h[cc.sym],mm=cc.market||{};
-      if(!hv||!nz(hv.q)||!nz(mm.price))continue;
-      var w=hv.q*mm.price/total*100;
-      alloc+='<span style="width:'+w.toFixed(2)+'%;background:'+cols[i%cols.length]+
-        '" title="'+escA(cc.sym)+' '+w.toFixed(1)+'%"></span>'}
-    alloc+='</div><div class="leg">';
-    for(i=0;i<CR.coins.length;i++){var c2=CR.coins[i],h2=h[c2.sym],m2=c2.market||{};
-      if(!h2||!nz(h2.q)||!nz(m2.price))continue;
-      alloc+='<span><i style="background:'+cols[i%cols.length]+'"></i>'+escA(c2.sym)+' '+
-        (h2.q*m2.price/total*100).toFixed(1)+'%</span>'}
-    alloc+='</div>'}
-  var ov=CR.overall?'<div class="sum"><b>보유 코인 종합</b>'+escA(CR.overall)+'</div>':'';
+      CR.fng.week:''):'')+'</div></div>'+
+    '<div><div class="k">8종 평균 24시간</div><div class="v">'+(n?fpc(sum/n):'-')+
+    '</div><div class="c">상승 '+up+' · 하락 '+dn+'</div></div>'+
+    '<div><div class="k">평균 펀딩비 (연환산)</div><div class="v">'+(fn?fpc(fs/fn,1):'-')+
+    '</div><div class="c">하이퍼리퀴드 기준</div></div>'+
+    '<div><div class="k">비트코인</div><div class="v">'+fp((CR.coins[0].market||{}).price)+
+    '</div><div class="c">'+bd((CR.coins[0].market||{}).ch24)+'</div></div></div>';
+  var ov=CR.overall?'<div class="sum"><b>관심 코인 종합</b>'+escA(CR.overall)+'</div>':'';
   var cards='';
-  for(i=0;i<CR.coins.length;i++)cards+=coinCard(CR.coins[i],h[CR.coins[i].sym],total);
+  for(i=0;i<CR.coins.length;i++)cards+=coinCard(CR.coins[i]);
   var err=CR.errors&&CR.errors.length?'<p class="note">일부 수집 실패 '+CR.errors.length+
     '건: '+escA(CR.errors.slice(0,4).join(' / '))+'</p>':'';
   $('#p3').innerHTML='<div class="cbar"><span id="cupd">'+escA(CR.updated||'')+
     (CR.live?' · 시세 '+CR.live+' 갱신':'')+'</span><button id="clive">시세 새로고침</button></div>'+
-    top+alloc+ov+holdEditor(h)+cards+err;
-  var ins=document.querySelectorAll('#hed input');
-  for(i=0;i<ins.length;i++)ins[i].onchange=function(){
-    var hh=loadHold(),s=this.getAttribute('data-s'),k=this.getAttribute('data-k'),
-      v=parseFloat(String(this.value).replace(/,/g,''));
-    hh[s]=hh[s]||{};
-    if(isFinite(v))hh[s][k]=v;else delete hh[s][k];
-    saveHold(hh);renderCrypto();
-    var d=document.getElementById('hed');if(d)d.open=true};
+    top+pickCard(CR.pick,CR.pastPicks)+ov+cards+err;
   $('#clive').onclick=liveRefresh}
 
 /* 브라우저에서 바로 가격·펀딩비만 갱신 (뉴스·맥스페인은 정기 수집값 유지) */
