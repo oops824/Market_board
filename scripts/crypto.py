@@ -254,10 +254,9 @@ KW = {
     "SOL": (["solana", "솔라나"], ["SOL"]),
     "HYPE": (["hyperliquid", "하이퍼리퀴드"], ["HYPE"]),
     "LINK": (["chainlink", "체인링크"], ["LINK"]),
-    "ONDO": (["ondo finance", "온도파이낸스", "온도 파이낸스"], ["ONDO"]),
-    "SUI": (["sui network", "sui blockchain", "수이 네트워크"], ["SUI"]),
-    "VIRTUAL": (["virtuals protocol", "virtual protocol", "버추얼 프로토콜", "버추얼프로토콜"],
-                ["VIRTUAL"]),
+    "ONDO": (["ondo finance", "온도파이낸스", "온도 파이낸스"], ["ONDO", "Ondo"]),
+    "SUI": (["sui network", "sui blockchain", "sui price", "수이"], ["SUI", "Sui"]),
+    "VIRTUAL": (["virtuals", "virtual protocol", "버추얼"], ["VIRTUAL"]),
 }
 FEEDS = [
     ("https://www.coindesk.com/arc/outboundfeeds/rss/", "CoinDesk", "en"),
@@ -327,20 +326,34 @@ def feed_pool():
     return _FEED_CACHE
 
 
-def feed_match(sym):
+def coin_pats(sym):
     names, tickers = KW.get(sym, ([], []))
-    pat = [re.compile(r"(?<![A-Za-z])%s(?![A-Za-z])" % re.escape(n), re.I) for n in names] + \
-          [re.compile(r"(?<![A-Za-z$])\$?%s(?![A-Za-z])" % re.escape(t)) for t in tickers]
-    return [n for n in feed_pool() if any(p.search(n["title"]) for p in pat)]
+    pats = []
+    for n in names:
+        if re.search(r"[가-힣]", n):  # 한글: 앞뒤가 다른 한글 단어에 붙어 있으면 제외(조사는 허용)
+            pats.append(re.compile(r"(?<![가-힣])%s(?![가-힣]|$)|(?<![가-힣])%s(?=[은는이가을를의와과도로에]|$)"
+                                   % (re.escape(n), re.escape(n))))
+        else:
+            pats.append(re.compile(r"(?<![A-Za-z])%s(?![A-Za-z])" % re.escape(n), re.I))
+    pats += [re.compile(r"(?<![A-Za-z$])\$?%s(?![A-Za-z])" % re.escape(t)) for t in tickers]
+    return pats
+
+
+def relevant(sym, n):
+    return any(p.search(n["title"]) for p in coin_pats(sym))
+
+
+def feed_match(sym):
+    return [n for n in feed_pool() if relevant(sym, n)]
 
 
 NEWS_FAIL = {}
 
 
-def fetch_lang(q, lang):
+def fetch_lang(sym, q, lang):
     for label, fn in (("Google", gnews), ("Bing", bing)):
         try:
-            items = fn(q, lang)
+            items = [n for n in fn(q, lang) if relevant(sym, n)]
             if items:
                 return items[:4]
         except Exception as e:
@@ -349,7 +362,7 @@ def fetch_lang(q, lang):
 
 
 def news(sym, ko_q, en_q):
-    items = fetch_lang(ko_q, "ko") + fetch_lang(en_q, "en")
+    items = fetch_lang(sym, ko_q, "ko") + fetch_lang(sym, en_q, "en")
     if len(items) < 6:
         items += feed_match(sym)
     seen, out = set(), []
