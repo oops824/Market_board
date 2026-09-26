@@ -68,10 +68,23 @@ def safe(label, fn, default):
 
 
 # ---------- CoinGecko ----------
+def cg_get(path):
+    """무료 API 분당 호출 제한 대응: 호출 간격 + 429면 한 번 쉬고 재시도"""
+    import time
+    for i in range(2):
+        time.sleep(4)
+        try:
+            return json.loads(get("https://api.coingecko.com/api/v3/" + path))
+        except urllib.error.HTTPError as e:
+            if e.code != 429 or i:
+                raise
+            time.sleep(65)
+
+
 def coingecko():
     ids = ",".join(c[2] for c in COINS)
-    rows = json.loads(get("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd"
-                          "&ids=%s&sparkline=true&price_change_percentage=24h,7d,30d" % ids))
+    rows = cg_get("coins/markets?vs_currency=usd"
+                  "&ids=%s&sparkline=true&price_change_percentage=24h,7d,30d" % ids)
     out = {}
     for r in rows:
         spark = (r.get("sparkline_in_7d") or {}).get("price") or []
@@ -95,8 +108,7 @@ def coingecko():
 
 def coingecko_krw():
     ids = ",".join(c[2] for c in COINS)
-    j = json.loads(get("https://api.coingecko.com/api/v3/simple/price?ids=%s"
-                       "&vs_currencies=krw" % ids))
+    j = cg_get("simple/price?ids=%s&vs_currencies=krw" % ids)
     return {k: num(v.get("krw")) for k, v in j.items()}
 
 
@@ -268,7 +280,7 @@ FEEDS = [
 ]
 
 
-def rss_items(xml, lang, default_src=""):
+def rss_items(xml, lang, default_src="", cut=NEWS_CUT):
     root = ET.fromstring(xml)
     out = []
     for it in root.iter("item"):
@@ -291,7 +303,7 @@ def rss_items(xml, lang, default_src=""):
             dt = parsedate_to_datetime(it.findtext("pubDate")).astimezone(KST)
         except Exception:
             dt = None
-        if dt and now - dt > NEWS_CUT:
+        if dt and now - dt > cut:
             continue
         out.append({"title": title, "src": src, "url": link,
                     "ts": dt.strftime("%Y-%m-%d %H:%M") if dt else "", "lang": lang})
@@ -305,10 +317,10 @@ def gnews(q, lang):
         urllib.parse.quote(q + " when:3d"), loc), 20), lang)
 
 
-def bing(q, lang):
+def bing(q, lang, cut=NEWS_CUT):
     mkt = "ko-KR" if lang == "ko" else "en-US"
     return rss_items(get("https://www.bing.com/news/search?q=%s&format=rss&mkt=%s" % (
-        urllib.parse.quote(q), mkt), 20), lang)
+        urllib.parse.quote(q), mkt), 20), lang, cut=cut)
 
 
 _FEED_CACHE = None
@@ -390,9 +402,6 @@ def fear_greed():
 
 # ---------- AI 브리핑 ----------
 def ai_brief(coins):
-    key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
-    if not key:
-        return None
     slim = []
     for c in coins:
         slim.append({k: c.get(k) for k in ("sym", "name", "market", "hl", "okx", "options")} |
@@ -407,14 +416,22 @@ def ai_brief(coins):
         "가격·선물(펀딩비, 미결제약정, 롱숏비율)·옵션(맥스페인, 풋콜비율)·뉴스 제목이다.\n"
         "코인마다 한국어 2문장으로 요약하라: 1문장은 뉴스의 핵심 이슈, "
         "1문장은 선물·옵션 포지셔닝이 말하는 것(과열/중립/위축, 맥스페인과 현재가 거리).\n"
-        "그리고 전체 포트폴리오 관점 요약 2~3문장을 overall로 작성하라.\n"
+        "그리고 8개 코인 전체를 아우르는 요약 2~3문장을 overall로 작성하라.\n"
         "규칙: 매수/매도 추천 금지, 관찰된 사실과 함의만. 데이터가 없으면 없다고만. "
         "hl.funding은 시간당, okx.funding은 8시간 기준 소수값이다.\n"
         "출력은 다른 말 없이 JSON 한 개만: "
         "{\"overall\": \"...\", \"coins\": {\"BTC\": \"...\", ...}}\n\n"
         + json.dumps(slim, ensure_ascii=False)[:50000])
-    for model in ("claude-sonnet-5", "claude-haiku-4-5-20251001"):
-        body = json.dumps({"model": model, "max_tokens": 4000,
+    return claude_json(prompt, 4000)
+
+
+def claude_json(prompt, max_tokens, models=("claude-sonnet-5", "claude-haiku-4-5-20251001")):
+    """프롬프트를 보내고 응답 속 JSON(객체/배열) 하나를 파싱해 반환. 키가 없으면 None"""
+    key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+    if not key:
+        return None
+    for model in models:
+        body = json.dumps({"model": model, "max_tokens": max_tokens,
                            "messages": [{"role": "user", "content": prompt}]}).encode()
         req = urllib.request.Request("https://api.anthropic.com/v1/messages", data=body,
                                      headers={"content-type": "application/json",
@@ -425,12 +442,189 @@ def ai_brief(coins):
                 res = json.loads(r.read().decode())
             txt = "".join(b.get("text", "") for b in res.get("content", [])
                           if isinstance(b, dict))
-            m = re.search(r"\{[\s\S]*\}", txt)
+            m = re.search(r"[\[{][\s\S]*[\]}]", txt)
             if m:
                 return json.loads(m.group(0))
         except Exception as e:
             ERRORS.append("AI(%s): %s" % (model, str(e)[:120]))
     return None
+
+
+# ---------- 영어 뉴스 제목 한글 번역 ----------
+def translate_titles(items):
+    """lang == 'en' 인 뉴스의 title을 한국어로 바꾸고 원문은 orig에 보관"""
+    en = [n for n in items if n.get("lang") == "en" and not n.get("orig")]
+    uniq = list(dict.fromkeys(n["title"] for n in en))
+    if not uniq:
+        return
+    prompt = (
+        "다음 가상자산 뉴스 제목들을 자연스러운 한국어 기사 제목으로 번역하라. "
+        "코인 이름은 한국에서 통용되는 한글 표기(예: 비트코인, 이더리움, 솔라나, 체인링크, "
+        "하이퍼리퀴드, 온도파이낸스, 수이, 버추얼프로토콜)를 쓰고, 티커·기관명·숫자는 유지하라.\n"
+        "입력과 같은 순서·같은 개수의 JSON 문자열 배열 하나만 출력하라.\n\n"
+        + json.dumps(uniq, ensure_ascii=False))
+    out = claude_json(prompt, 6000, models=("claude-haiku-4-5-20251001", "claude-sonnet-5"))
+    if not isinstance(out, list) or len(out) != len(uniq):
+        if os.environ.get("ANTHROPIC_API_KEY"):
+            ERRORS.append("뉴스 번역 실패 (영문 그대로 표시)")
+        return
+    ko = {e: str(k).strip() for e, k in zip(uniq, out) if str(k).strip()}
+    for n in en:
+        if n["title"] in ko:
+            n["orig"], n["title"] = n["title"], ko[n["title"]]
+
+
+# ---------- 오늘의 주목 코인 (하루 1개) ----------
+PICK_PATH = "history/picks.json"
+# 기관·월가 관여를 보여주는 표현 (헤드라인 매칭용)
+INST = re.compile(
+    r"\bETFs?\b|ETP|BlackRock|Fidelity|Grayscale|Franklin Templeton|VanEck|Bitwise|21Shares|"
+    r"Invesco|WisdomTree|Canary|CoinShares|ARK Invest|Nasdaq|NYSE|\bCME\b|JPMorgan|J\.P\. Morgan|"
+    r"Goldman|Morgan Stanley|Citi(group)?\b|BNY|State Street|Apollo|KKR|Hamilton Lane|"
+    r"Securitize|Deutsche Bank|Standard Chartered|Visa|Mastercard|Stripe|PayPal|"
+    r"institution(al|s)?|Wall Street|asset manager|S-1|19b-4|SEC (approv|fil)|"
+    r"treasury (company|firm|strategy)|a16z|Andreessen|Paradigm|Pantera|Polychain|"
+    r"블랙록|피델리티|그레이스케일|반에크|기관|월가|현물 ETF|자산운용|나스닥|골드만|JP모건",
+    re.I)
+EXCL_CATS = ("stablecoins", "wrapped-tokens", "liquid-staking-tokens", "bridged-tokens",
+             "tokenized-gold", "exchange-based-tokens")
+EXCL_NAME = re.compile(r"\busd|wrapped|staked|bridged|restak|\bgold\b|tokenized", re.I)
+
+
+def load_picks():
+    try:
+        with open(PICK_PATH, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return []
+
+
+def pick_candidates(skip_ids):
+    rows = cg_get("coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1"
+                  "&price_change_percentage=7d,30d")
+    excl = set()
+    for cat in EXCL_CATS:
+        excl |= {r["id"] for r in safe("CG 카테고리 " + cat, lambda c=cat: cg_get(
+            "coins/markets?vs_currency=usd&category=%s&per_page=250" % c), [])}
+    trend = {c["item"]["id"] for c in (safe("CG 트렌딩", lambda: cg_get("search/trending"),
+                                            {}) or {}).get("coins", [])}
+    out = []
+    for r in rows:
+        rank, mcap, vol = r.get("market_cap_rank"), num(r.get("market_cap")), num(r.get("total_volume"))
+        if not rank or rank <= 10 or not mcap or r["id"] in excl or r["id"] in skip_ids:
+            continue
+        if EXCL_NAME.search(r.get("name", "")) or EXCL_NAME.search(r.get("symbol", "")):
+            continue
+        ch7 = num(r.get("price_change_percentage_7d_in_currency")) or 0
+        ch30 = num(r.get("price_change_percentage_30d_in_currency")) or 0
+        turn = min((vol or 0) / mcap, 1.0)
+        score = max(-1, min(ch30, 150)) / 50 + max(-1, min(ch7, 60)) / 20 + turn * 3 + \
+            (2 if r["id"] in trend else 0)
+        out.append({"id": r["id"], "sym": r["symbol"].upper(), "name": r["name"], "rank": rank,
+                    "price": num(r.get("current_price")), "mcap": mcap, "vol": vol,
+                    "ch7": ch7, "ch30": ch30, "trending": r["id"] in trend,
+                    "score": round(score, 3)})
+    out.sort(key=lambda x: x["score"], reverse=True)
+    return out[:12]
+
+
+def inst_evidence(c):
+    q = '"%s" (ETF OR BlackRock OR Grayscale OR Fidelity OR institutional OR "Wall Street")' % c["name"]
+    items = safe("근거뉴스 " + c["sym"], lambda: bing(q, "en", datetime.timedelta(days=30)), [])
+    items += safe("근거뉴스(ko) " + c["sym"],
+                  lambda: bing("%s 기관 ETF" % c["name"], "ko", datetime.timedelta(days=30)), [])
+    name_pat = re.compile(r"(?<![A-Za-z])(%s|%s)(?![A-Za-z])" % (
+        re.escape(c["name"]), re.escape(c["sym"])), re.I if len(c["sym"]) > 3 else 0)
+    name_ci = re.compile(r"(?<![A-Za-z])%s(?![A-Za-z])" % re.escape(c["name"]), re.I)
+    seen, ev = set(), []
+    for n in items:
+        t = n["title"]
+        if not (name_ci.search(t) or name_pat.search(t)) or not INST.search(t) or JUNK.search(t):
+            continue
+        k = re.sub(r"\W+", "", t.lower())[:40]
+        if k not in seen:
+            seen.add(k)
+            ev.append(n)
+    return ev[:6]
+
+
+def daily_pick(held_ids):
+    picks = load_picks()
+    today = now.strftime("%Y-%m-%d")
+    if picks and picks[-1].get("date") == today:
+        return picks  # 오늘은 이미 소개함
+    cutoff = (now - datetime.timedelta(days=90)).strftime("%Y-%m-%d")
+    recent = {p["id"] for p in picks if p.get("date", "") >= cutoff}
+    cands = pick_candidates(set(held_ids) | recent)
+    for c in cands:
+        c["evidence"] = inst_evidence(c)
+    strong = [c for c in cands if len(c["evidence"]) >= 2] or \
+        [c for c in cands if c["evidence"]]
+    if not strong:
+        ERRORS.append("오늘의 코인: 기관 관심 근거가 확인된 후보 없음 (다음 실행에서 재시도)")
+        return picks
+    strong = strong[:5]
+    for c in strong:
+        d = safe("CG 상세 " + c["id"], lambda i=c["id"]: cg_get(
+            "coins/%s?localization=false&tickers=false&market_data=false"
+            "&community_data=false&developer_data=false" % i), {}) or {}
+        c["desc"] = re.sub(r"<[^>]+>", "", (d.get("description") or {}).get("en") or "")[:700]
+        c["cats"] = [x for x in (d.get("categories") or []) if x][:5]
+    slim = [{k: c.get(k) for k in ("id", "sym", "name", "rank", "mcap", "ch7", "ch30",
+                                    "trending", "desc", "cats")} |
+            {"evidence": ["[%d] %s (%s, %s)" % (i, n["title"], n["src"], n["ts"][:10])
+                          for i, n in enumerate(c["evidence"])]} for c in strong]
+    prompt = (
+        "너는 가상자산 리서치 담당이다. 아래 후보는 시총 상위 250위 안에서 최근 모멘텀이 강하고, "
+        "최근 30일 뉴스 헤드라인에서 월가·기관(ETF, 자산운용사, 은행, 거래소, 벤처캐피털 등)의 "
+        "관여가 확인된 코인들이다.\n"
+        "이 중 '기관의 관심·투자가 가장 구체적이고 확실하게 드러난' 코인 하나를 골라 한국어로 소개하라. "
+        "단순 가격 상승이나 막연한 기대보다 ETF 신청/승인, 기관 상품 출시, 기관 투자·파트너십처럼 "
+        "헤드라인으로 확인되는 사실을 우선하라.\n"
+        "규칙: evidence 헤드라인과 desc에 있는 사실만 쓸 것. 없는 기관명·금액을 만들지 말 것. "
+        "매수/매도 추천 금지.\n"
+        "출력은 다른 말 없이 JSON 하나만: {\"id\": \"후보 id\", "
+        "\"headline\": \"한 줄 소개(25자 내외)\", "
+        "\"intro\": \"무슨 프로젝트이고 왜 지금 떠오르는지 3문장\", "
+        "\"institutions\": \"기관·월가 관심의 구체적 근거 2~3문장\", "
+        "\"risks\": \"유의할 점 1~2문장\", \"evidence\": [근거로 쓴 헤드라인 번호]}\n\n"
+        + json.dumps(slim, ensure_ascii=False))
+    ai = claude_json(prompt, 3000) or {}
+    chosen = next((c for c in strong if c["id"] == ai.get("id")), None)
+    if chosen is None:  # AI 없음/실패 -> 근거 수, 점수 순
+        chosen = max(strong, key=lambda c: (len(c["evidence"]), c["score"]))
+        ai = {}
+    idx = [i for i in ai.get("evidence", []) if isinstance(i, int) and 0 <= i < len(chosen["evidence"])]
+    ev = [chosen["evidence"][i] for i in idx] or chosen["evidence"]
+    picks.append({"date": today, "id": chosen["id"], "sym": chosen["sym"], "name": chosen["name"],
+                  "rank": chosen["rank"], "price": chosen["price"], "mcap": chosen["mcap"],
+                  "ch7": chosen["ch7"], "ch30": chosen["ch30"], "cats": chosen.get("cats", []),
+                  "headline": ai.get("headline", ""), "intro": ai.get("intro", ""),
+                  "institutions": ai.get("institutions", ""), "risks": ai.get("risks", ""),
+                  "evidence": ev[:5]})
+    return picks[-120:]
+
+
+def pick_view(picks):
+    """오늘 소개 + 지난 소개(소개 당시 대비 현재 수익률)"""
+    if not picks:
+        return None, []
+    ids = ",".join(dict.fromkeys(p["id"] for p in picks[-15:]))
+    cur = safe("CG 소개코인 시세", lambda: cg_get(
+        "simple/price?ids=%s&vs_currencies=usd&include_24hr_change=true" % ids), {}) or {}
+    past = []
+    for p in reversed(picks[-15:]):
+        q = cur.get(p["id"]) or {}
+        px = num(q.get("usd"))
+        past.append({"date": p["date"], "sym": p["sym"], "name": p["name"],
+                     "headline": p.get("headline", ""), "pickPrice": p.get("price"),
+                     "price": px, "since": (px / p["price"] - 1) * 100
+                     if px and p.get("price") else None})
+    today = dict(picks[-1])
+    q = cur.get(today["id"]) or {}
+    today["now"] = num(q.get("usd"))
+    today["ch24"] = num(q.get("usd_24h_change"))
+    return today, past[1:]
 
 
 # ---------- 조립 ----------
@@ -454,14 +648,19 @@ def build():
         })
     if not any(c["news"] for c in coins) and NEWS_FAIL:
         ERRORS.append("뉴스 수집 실패: " + " / ".join("%s %s" % kv for kv in NEWS_FAIL.items()))
+    picks = safe("오늘의 코인", lambda: daily_pick([c[2] for c in COINS]), load_picks())
+    pick, past = pick_view(picks)
+    all_news = [n for c in coins for n in c["news"]] + ((pick or {}).get("evidence") or [])
+    safe("뉴스 번역", lambda: translate_titles(all_news), None)
     brief = safe("AI 브리핑", lambda: ai_brief(coins), None) or {}
     for c in coins:
         c["brief"] = (brief.get("coins") or {}).get(c["sym"], "")
     return {"updated": now.strftime("%Y-%m-%d %H:%M KST"),
             "fng": safe("공포탐욕", fear_greed, None),
             "overall": brief.get("overall", ""),
+            "pick": pick, "pastPicks": past,
             "coins": coins,
-            "errors": ERRORS}
+            "errors": ERRORS}, picks
 
 
 def save_history(payload):
@@ -495,8 +694,12 @@ def save_history(payload):
 
 
 if __name__ == "__main__":
-    payload = build()
+    payload, picks = build()
     with open("crypto.json", "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=1)
+    if picks:
+        os.makedirs("history", exist_ok=True)
+        with open(PICK_PATH, "w", encoding="utf-8") as f:
+            json.dump(picks, f, ensure_ascii=False, indent=1)
     save_history(payload)
     print("crypto done · 오류 %d건" % len(ERRORS))
