@@ -72,13 +72,13 @@ def cg_get(path):
     """무료 API 분당 호출 제한 대응: 호출 간격 + 429면 한 번 쉬고 재시도"""
     import time
     for i in range(2):
-        time.sleep(2)
+        time.sleep(4)
         try:
             return json.loads(get("https://api.coingecko.com/api/v3/" + path))
         except urllib.error.HTTPError as e:
             if e.code != 429 or i:
                 raise
-            time.sleep(40)
+            time.sleep(65)
 
 
 def coingecko():
