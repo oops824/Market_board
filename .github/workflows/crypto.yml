@@ -1,7 +1,7 @@
-name: market-board
+name: crypto-board
 on:
   schedule:
-    - cron: "30 21 * * *"
+    - cron: "10 */4 * * *"
   workflow_dispatch:
 permissions:
   contents: write
@@ -11,24 +11,20 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: python scripts/collect.py
-      - run: python scripts/cot.py
-      - run: python scripts/macro.py
-      - run: python scripts/econ.py
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-      - run: python scripts/analyze.py
+      - run: python scripts/crypto.py
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       - run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add -A
-          git diff --staged --quiet || git commit -m "update"
-          git push
+          git add crypto.json history/crypto.json
+          git diff --staged --quiet && exit 0
+          git commit -m "crypto update"
+          for i in 1 2 3; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push && exit 0; sleep 5; done
+          exit 1

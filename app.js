@@ -72,10 +72,11 @@ function load(p){
     $('#meta').textContent='';
     $('#app').innerHTML='<p class="err">data.json을 읽지 못했습니다.<br>'+
       '실행이 끝났는지, 1~2분 기다렸는지 확인해 주세요.</p>'})}
-$('#t1').onclick=function(){$('#t1').className='tab on';$('#t2').className='tab';
-  $('#p1').className='';$('#p2').className='hide'};
-$('#t2').onclick=function(){$('#t2').className='tab on';$('#t1').className='tab';
-  $('#p2').className='';$('#p1').className='hide'};
+function tab(n){for(var i=1;i<=3;i++){$('#t'+i).className='tab'+(i===n?' on':'');
+  $('#p'+i).className=i===n?'':'hide'}}
+$('#t1').onclick=function(){tab(1)};
+$('#t2').onclick=function(){tab(2)};
+$('#t3').onclick=function(){tab(3)};
 
 fetch('reports/list.json?t='+Date.now())
 .then(function(r){return r.ok?r.json():Promise.reject()}).then(function(l){
