@@ -244,41 +244,122 @@ def deribit():
 
 
 # ---------- 뉴스 ----------
-def gnews(q, hl, gl, ceid, limit):
-    url = "https://news.google.com/rss/search?q=%s&hl=%s&gl=%s&ceid=%s" % (
-        urllib.parse.quote(q + " when:3d"), hl, gl, ceid)
-    root = ET.fromstring(get(url, 20))
+# Google News는 GitHub Actions IP를 자주 막으므로(503) Bing 뉴스 RSS, 코인 매체 RSS 순으로 보완
+NEWS_CUT = datetime.timedelta(days=3)
+
+# 매체 RSS 제목 매칭용: (대소문자 무시 이름, 대소문자 구분 티커)
+KW = {
+    "BTC": (["bitcoin", "비트코인"], ["BTC"]),
+    "ETH": (["ethereum", "ether", "이더리움"], ["ETH"]),
+    "SOL": (["solana", "솔라나"], ["SOL"]),
+    "HYPE": (["hyperliquid", "하이퍼리퀴드"], ["HYPE"]),
+    "LINK": (["chainlink", "체인링크"], ["LINK"]),
+    "ONDO": (["ondo finance", "온도파이낸스", "온도 파이낸스"], ["ONDO"]),
+    "SUI": (["sui network", "sui blockchain", "수이 네트워크"], ["SUI"]),
+    "VIRTUAL": (["virtuals protocol", "virtual protocol", "버추얼 프로토콜", "버추얼프로토콜"],
+                ["VIRTUAL"]),
+}
+FEEDS = [
+    ("https://www.coindesk.com/arc/outboundfeeds/rss/", "CoinDesk", "en"),
+    ("https://cointelegraph.com/rss", "Cointelegraph", "en"),
+    ("https://decrypt.co/feed", "Decrypt", "en"),
+    ("https://www.theblock.co/rss.xml", "The Block", "en"),
+    ("https://www.blockmedia.co.kr/feed", "블록미디어", "ko"),
+    ("https://www.tokenpost.kr/rss", "토큰포스트", "ko"),
+]
+
+
+def rss_items(xml, lang, default_src=""):
+    root = ET.fromstring(xml)
     out = []
     for it in root.iter("item"):
-        title = (it.findtext("title") or "").strip()
-        src = (it.findtext("source") or "").strip()
+        title = re.sub(r"\s+", " ", it.findtext("title") or "").strip()
+        src = ""
+        for ch in it:  # <source>, <News:Source> 등
+            if ch.tag.split("}")[-1].lower() == "source" and (ch.text or "").strip():
+                src = ch.text.strip()
+        src = src or default_src
         if src and title.endswith(" - " + src):
             title = title[: -len(src) - 3].strip()
         link = (it.findtext("link") or "").strip()
+        if "bing.com/news/apiclick" in link:  # Bing 리다이렉트 -> 원문 주소
+            real = urllib.parse.parse_qs(urllib.parse.urlparse(link).query).get("url")
+            if real:
+                link = real[0]
         if not title or not link.startswith("http"):
             continue
         try:
-            ts = parsedate_to_datetime(it.findtext("pubDate")).astimezone(KST)
+            dt = parsedate_to_datetime(it.findtext("pubDate")).astimezone(KST)
         except Exception:
-            ts = None
+            dt = None
+        if dt and now - dt > NEWS_CUT:
+            continue
         out.append({"title": title, "src": src, "url": link,
-                    "ts": ts.strftime("%Y-%m-%d %H:%M") if ts else "",
-                    "lang": "ko" if hl.startswith("ko") else "en"})
+                    "ts": dt.strftime("%Y-%m-%d %H:%M") if dt else "", "lang": lang})
     out.sort(key=lambda x: x["ts"], reverse=True)
-    return out[:limit]
+    return out
 
 
-def news(ko_q, en_q):
-    ko = safe("뉴스(ko) " + ko_q, lambda: gnews(ko_q, "ko", "KR", "KR:ko", 4), [])
-    en = safe("뉴스(en) " + en_q, lambda: gnews(en_q, "en-US", "US", "US:en", 4), [])
+def gnews(q, lang):
+    loc = "hl=ko&gl=KR&ceid=KR:ko" if lang == "ko" else "hl=en-US&gl=US&ceid=US:en"
+    return rss_items(get("https://news.google.com/rss/search?q=%s&%s" % (
+        urllib.parse.quote(q + " when:3d"), loc), 20), lang)
+
+
+def bing(q, lang):
+    mkt = "ko-KR" if lang == "ko" else "en-US"
+    return rss_items(get("https://www.bing.com/news/search?q=%s&format=rss&mkt=%s" % (
+        urllib.parse.quote(q), mkt), 20), lang)
+
+
+_FEED_CACHE = None
+
+
+def feed_pool():
+    global _FEED_CACHE
+    if _FEED_CACHE is None:
+        _FEED_CACHE = []
+        for url, name, lang in FEEDS:
+            try:
+                _FEED_CACHE += rss_items(get(url, 20), lang, name)
+            except Exception as e:
+                print("[피드 실패]", name, e)
+    return _FEED_CACHE
+
+
+def feed_match(sym):
+    names, tickers = KW.get(sym, ([], []))
+    pat = [re.compile(r"(?<![A-Za-z])%s(?![A-Za-z])" % re.escape(n), re.I) for n in names] + \
+          [re.compile(r"(?<![A-Za-z$])\$?%s(?![A-Za-z])" % re.escape(t)) for t in tickers]
+    return [n for n in feed_pool() if any(p.search(n["title"]) for p in pat)]
+
+
+NEWS_FAIL = {}
+
+
+def fetch_lang(q, lang):
+    for label, fn in (("Google", gnews), ("Bing", bing)):
+        try:
+            items = fn(q, lang)
+            if items:
+                return items[:4]
+        except Exception as e:
+            NEWS_FAIL[label] = str(e)[:60]
+    return []
+
+
+def news(sym, ko_q, en_q):
+    items = fetch_lang(ko_q, "ko") + fetch_lang(en_q, "en")
+    if len(items) < 6:
+        items += feed_match(sym)
     seen, out = set(), []
-    for n in ko + en:
+    for n in items:
         key = re.sub(r"\W+", "", n["title"].lower())[:40]
         if key in seen:
             continue
         seen.add(key)
         out.append(n)
-    return out
+    return out[:8]
 
 
 # ---------- 공포·탐욕 ----------
@@ -351,8 +432,10 @@ def build():
             "hl": hl.get(hl_name),
             "okx": safe("OKX " + okx_ccy, lambda c=okx_ccy: okx_coin(c), None),
             "options": opts.get(sym),
-            "news": news(ko_q, en_q),
+            "news": news(sym, ko_q, en_q),
         })
+    if not any(c["news"] for c in coins) and NEWS_FAIL:
+        ERRORS.append("뉴스 수집 실패: " + " / ".join("%s %s" % kv for kv in NEWS_FAIL.items()))
     brief = safe("AI 브리핑", lambda: ai_brief(coins), None) or {}
     for c in coins:
         c["brief"] = (brief.get("coins") or {}).get(c["sym"], "")
