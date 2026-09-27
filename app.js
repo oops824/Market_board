@@ -6,6 +6,15 @@ function esc(t){return String(t==null?'':t).replace(/[<>&]/g,function(c){
 var COIN_SECS=['DeFiLlama','스테이블코인','코인베이스 프리미엄'],DROP_SECS=['하이퍼리퀴드'];
 function hiddenSec(t){var l=COIN_SECS.concat(DROP_SECS);
   for(var i=0;i<l.length;i++)if(String(t).indexOf(l[i])>=0)return true;return false}
+function tagsHtml(tags,n){
+  if(!tags||!tags.length)return '';
+  var h='';
+  for(var i=0;i<tags.length&&i<(n||9);i++){var t=tags[i];
+    h+='<span class="tag '+({up:'up',dn:'dn',warn:'warn'}[t.c]||'na')+'">'+esc(t.t)+'</span>'}
+  return '<div class="tags">'+h+'</div>'}
+var LEGEND='<div class="legend"><span><i style="background:var(--up)"></i>상승 신호</span>'+
+  '<span><i style="background:var(--dn)"></i>하락 신호</span>'+
+  '<span><i style="background:var(--warn)"></i>과열·주의</span></div>';
 function cls(c){if(!c)return 'na';return String(c).trim().charAt(0)==='-'?'dn':'up'}
 
 function findItem(title,kw){
@@ -55,13 +64,14 @@ function secTables(secs,nOpen){
     for(var j=0;j<s.items.length;j++){
       var it=s.items[j],lead=it.name.indexOf('└')>=0;
       rows+='<tr class="'+(lead?'lead':'')+'"><td class="n">'+
-        esc(it.name.replace('└','↳'))+
+        esc(it.name.replace('└','↳'))+tagsHtml(it.tags,3)+
         (it.comment?'<div class="sub">'+esc(it.comment)+'</div>':'')+
         '</td><td class="v">'+esc(it.value)+
         badges(it)+
         '</td></tr>'}
     h+='<details'+(i<nOpen?' open':'')+'><summary>'+esc(s.title)+'</summary><div class="body">'+
        (s.note?'<p class="note">'+esc(s.note)+'</p>':'')+
+       (s.items.some(function(x){return x.tags&&x.tags.length})?LEGEND:'')+
        '<table>'+rows+'</table></div></details>'}
   return h}
 

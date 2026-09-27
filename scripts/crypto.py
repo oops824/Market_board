@@ -12,6 +12,7 @@
 import json, os, re, datetime, urllib.request, urllib.parse, urllib.error
 import xml.etree.ElementTree as ET
 from email.utils import parsedate_to_datetime
+import signals
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
 now = datetime.datetime.now(KST)
@@ -56,6 +57,14 @@ def num(x):
 
 
 ERRORS = []
+
+
+def quiet(fn):
+    try:
+        return fn()
+    except Exception as e:
+        print("[없음]", e)
+        return None
 
 
 def safe(label, fn, default):
@@ -157,8 +166,86 @@ def okx_coin(ccy):
             out["lsRatio"] = num(ls["data"][0][1])
     except Exception:
         pass
+    try:  # 미결제약정 24시간 변화 (1시간 간격, 최신이 앞)
+        oh = json.loads(get("%s/rubik/stat/contracts/open-interest-volume"
+                            "?ccy=%s&period=1H" % (OKX, ccy))).get("data") or []
+        if len(oh) > 24 and num(oh[24][1]):
+            out["oiChg24"] = (num(oh[0][1]) / num(oh[24][1]) - 1) * 100
+    except Exception:
+        pass
     if not out:
         raise ValueError("OKX 응답 없음")
+    return out
+
+
+def okx_daily(ccy):
+    """무기한 선물 일봉 120개 -> (종가, 고가, 저가, 거래대금). 과거->최신"""
+    rows = json.loads(get("%s/market/candles?instId=%s-USDT-SWAP&bar=1D&limit=120"
+                          % (OKX, ccy))).get("data") or []
+    rows = rows[::-1]
+    done = [r for r in rows if str(r[8]) == "1"]  # 마감된 봉
+    cur = [r for r in rows if str(r[8]) != "1"]
+    closes = [float(r[4]) for r in done + cur]
+    highs = [float(r[2]) for r in done + cur]
+    lows = [float(r[3]) for r in done + cur]
+    vols = [float(r[7]) for r in done]  # 거래량은 마감된 봉만 비교
+    return closes, highs, lows, vols
+
+
+_USDT_USD = None
+
+
+def cb_premium(ccy):
+    """코인베이스(USD) 가격 / OKX 현물(USDT, 달러 환산) - 1, %"""
+    global _USDT_USD
+    if _USDT_USD is None:
+        _USDT_USD = num(json.loads(get("https://api.exchange.coinbase.com/products/"
+                                       "USDT-USD/ticker")).get("price")) or 1.0
+    cb = num(json.loads(get("https://api.exchange.coinbase.com/products/%s-USD/ticker"
+                            % ccy)).get("price"))
+    ok = num((json.loads(get("%s/market/ticker?instId=%s-USDT" % (OKX, ccy)))
+              .get("data") or [{}])[0].get("last"))
+    if not cb or not ok:
+        raise ValueError("시세 없음")
+    return (cb / (ok * _USDT_USD) - 1) * 100
+
+
+def deriv_signals(c):
+    """펀딩비·미결제약정·롱숏비율·코인베이스 프리미엄·맥스페인 -> 신호"""
+    T = signals.tag
+    m, hl, ok, op = c.get("market") or {}, c.get("hl") or {}, c.get("okx") or {}, c.get("options")
+    out = []
+    f8 = [x for x in ((hl.get("funding") or 0) * 800 if hl.get("funding") is not None else None,
+                      (ok.get("funding") or 0) * 100 if ok.get("funding") is not None else None)
+          if x is not None]
+    f8 = sum(f8) / len(f8) if f8 else None
+    ch24 = m.get("ch24")
+    if f8 is not None:
+        if f8 >= 0.03:
+            out.append(T("펀딩 과열", "warn", 6))
+        elif f8 < 0 and (ch24 or 0) > 0:
+            out.append(T("숏 스퀴즈 주의", "warn", 8))
+        elif f8 < 0:
+            out.append(T("숏 우세 펀딩", "dn", 4))
+    oc = ok.get("oiChg24")
+    if oc is not None and ch24 is not None:
+        if oc >= 8:
+            out.append(T("신규 롱 유입", "up", 6) if ch24 >= 0 else T("신규 숏 유입", "dn", 6))
+        elif oc <= -8:
+            out.append(T("숏 커버링", "up", 5) if ch24 >= 0 else T("롱 청산", "dn", 5))
+    ls = ok.get("lsRatio")
+    if ls is not None:
+        if ls >= 2:
+            out.append(T("롱 쏠림 %.1f" % ls, "warn", 4))
+        elif ls <= 0.8:
+            out.append(T("숏 쏠림 %.1f" % ls, "warn", 4))
+    pr = c.get("cbPrem")
+    if pr is not None and abs(pr) >= 0.05:
+        out.append(T("미국 매수 우위", "up", 6) if pr > 0 else T("미국 매도 우위", "dn", 6))
+    if op and m.get("price"):
+        d = (op["major"]["maxPain"] / m["price"] - 1) * 100
+        if abs(d) >= 8:
+            out.append(T("맥스페인 괴리 %+.0f%%" % d, "na", 3))
     return out
 
 
@@ -405,7 +492,8 @@ def ai_brief(coins):
     slim = []
     for c in coins:
         slim.append({k: c.get(k) for k in ("sym", "name", "market", "hl", "okx", "options")} |
-                    {"news": [n["title"] for n in c.get("news", [])][:6]})
+                    {"news": [n["title"] for n in c.get("news", [])][:6],
+                     "signals": [t["t"] for t in c.get("tags", [])]})
     for s in slim:
         if s.get("market"):
             s["market"] = {k: v for k, v in s["market"].items() if k != "spark"}
@@ -646,7 +734,12 @@ def build():
             "okx": safe("OKX " + okx_ccy, lambda c=okx_ccy: okx_coin(c), None),
             "options": opts.get(sym),
             "news": news(sym, ko_q, en_q),
+            "cbPrem": quiet(lambda c=okx_ccy: cb_premium(c)),  # 코인베이스 미상장이면 None
         })
+        cc = coins[-1]
+        daily = safe("OKX 일봉 " + okx_ccy, lambda c=okx_ccy: okx_daily(c), None)
+        tags = (signals.price_signals(*daily) if daily else []) + deriv_signals(cc)
+        cc["tags"] = sorted(tags, key=lambda x: -x["p"])
     if not any(c["news"] for c in coins) and NEWS_FAIL:
         ERRORS.append("뉴스 수집 실패: " + " / ".join("%s %s" % kv for kv in NEWS_FAIL.items()))
     picks = safe("오늘의 코인", lambda: daily_pick([c[2] for c in COINS]), load_picks())

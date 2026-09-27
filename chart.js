@@ -17,11 +17,11 @@ function spark(pts,color,unit){
   for(i=0;i<=4;i++){
     var gv=mn+span*i/4,gy=Y(gv);
     z+='<line x1="40" y1="'+gy.toFixed(1)+'" x2="'+(W-6)+'" y2="'+gy.toFixed(1)+
-       '" stroke="#242b36" stroke-width="1"/>'+
-       '<text x="2" y="'+(gy+3).toFixed(1)+'" fill="#4e5766" font-size="8">'+
+       '" stroke="#252b35" stroke-width="1"/>'+
+       '<text x="2" y="'+(gy+3).toFixed(1)+'" fill="#7f8898" font-size="8.5">'+
        fm(gv)+'</text>'}
   if(mn<0&&mx>0){z+='<line x1="40" y1="'+Y(0).toFixed(1)+'" x2="'+(W-6)+
-    '" y2="'+Y(0).toFixed(1)+'" stroke="#68738a" stroke-dasharray="3 3"/>'}
+    '" y2="'+Y(0).toFixed(1)+'" stroke="#7f8898" stroke-dasharray="3 3"/>'}
   var d='';
   for(i=0;i<pts.length;i++){d+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(pts[i].v).toFixed(1)+' '}
   function mark(idx,val,col,dy){
@@ -33,12 +33,12 @@ function spark(pts,color,unit){
       '" font-size="9.5" font-weight="600">'+fm(val)+unit+'</text>'}
   return '<svg viewBox="0 0 '+W+' '+H+'" style="width:100%;height:auto">'+z+
     '<path d="'+d+'" fill="none" stroke="'+color+'" stroke-width="2"/>'+
-    mark(hidx,hi,'#ff8080',-7)+mark(li,lo,'#6aa8ff',14)+
+    mark(hidx,hi,'#ff5c6c',-7)+mark(li,lo,'#4d9dff',14)+
     '<circle cx="'+X(pts.length-1).toFixed(1)+'" cy="'+Y(last).toFixed(1)+
     '" r="3.4" fill="'+color+'"/>'+
-    '<text x="40" y="'+(H-3)+'" fill="#5d6675" font-size="9">'+
+    '<text x="40" y="'+(H-3)+'" fill="#7f8898" font-size="9.5">'+
     String(pts[0].d).slice(5)+'</text>'+
-    '<text x="'+(W-48)+'" y="'+(H-3)+'" fill="#5d6675" font-size="9">'+
+    '<text x="'+(W-48)+'" y="'+(H-3)+'" fill="#7f8898" font-size="9.5">'+
     String(pts[pts.length-1].d).slice(5)+'</text>'+
     '<text x="2" y="10" fill="'+color+'" font-size="11" font-weight="600">'+
     fm(last)+unit+'</text></svg>'}

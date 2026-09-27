@@ -1,4 +1,5 @@
 import json, urllib.request, datetime, os, csv, io
+import signals
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
 now = datetime.datetime.now(KST)
@@ -52,22 +53,26 @@ ETFS = [
 ]
 
 def yahoo3(sym):
-    """종가 리스트와 마지막 날짜 반환 (약 3개월치)"""
+    """일봉 약 6개월치 -> (종가, 마지막 날짜, 고가, 저가, 거래량). 신호 계산용"""
     j = json.loads(get("https://query1.finance.yahoo.com/v8/finance/chart/"
-                       "%s?range=3mo&interval=1d" % sym))
+                       "%s?range=6mo&interval=1d" % sym))
     r = j["chart"]["result"][0]
-    cl = [c for c in r["indicators"]["quote"][0]["close"] if c is not None]
+    q = r["indicators"]["quote"][0]
+    rows = [(c, h, l, v) for c, h, l, v in zip(q["close"], q["high"], q["low"], q["volume"])
+            if c is not None]
     d = datetime.datetime.utcfromtimestamp(r["timestamp"][-1]).strftime("%Y-%m-%d")
-    if len(cl) < 6:
+    if len(rows) < 6:
         raise ValueError("데이터 부족")
-    return cl, d
+    cl, hi, lo, vo = (list(x) for x in zip(*rows))
+    return cl, d, hi, lo, vo
+
 
 def chg(cl, n):
     if len(cl) <= n:
         return None
     return (cl[-1] / cl[-1 - n] - 1) * 100
 
-def row(label, cl, d, note):
+def row(label, cl, d, note, hi=None, lo=None, vo=None):
     c5, c20 = chg(cl, 5), chg(cl, 20)
     parts = []
     if c5 is not None:
@@ -78,20 +83,22 @@ def row(label, cl, d, note):
             "value": "{:,.2f}$".format(cl[-1]),
             "change": "",
             "badges": parts,
+            "tags": signals.top(signals.price_signals(cl, hi, lo, vo), 3),
             "comment": "%s 종가 · %s" % (d, note)}
 
 def etf():
     out = []
     for sym, ko, leaders in ETFS:
         try:
-            cl, d = yahoo3(sym)
-            out.append(row("%s (%s)" % (ko, sym), cl, d, "섹터 ETF"))
+            cl, d, hi, lo, vo = yahoo3(sym)
+            out.append(row("%s (%s)" % (ko, sym), cl, d, "섹터 ETF", hi, lo, vo))
         except Exception as e:
             out.append(fail("%s (%s)" % (ko, sym), e))
         for lsym, lko in leaders:
             try:
-                lcl, ld = yahoo3(lsym)
-                out.append(row("  └ %s (%s)" % (lko, lsym), lcl, ld, "%s 대장주" % ko))
+                lcl, ld, lhi, llo, lvo = yahoo3(lsym)
+                out.append(row("  └ %s (%s)" % (lko, lsym), lcl, ld, "%s 대장주" % ko,
+                               lhi, llo, lvo))
             except Exception as e:
                 out.append({"name": "  └ %s (%s)" % (lko, lsym), "value": "수집 실패",
                             "change": "", "comment": str(e)[:60]})
