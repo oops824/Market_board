@@ -97,22 +97,6 @@ def etf():
                             "change": "", "comment": str(e)[:60]})
     return out
     
-def hyperliquid():
-    try:
-        raw = json.loads(post("https://api.hyperliquid.xyz/info", {"type": "metaAndAssetCtxs"}))
-        meta, ctxs, want, out = raw[0]["universe"], raw[1], ["BTC", "ETH", "SOL", "HYPE"], []
-        for m, c in zip(meta, ctxs):
-            if m["name"] in want:
-                px = float(c.get("markPx") or 0)
-                oi = float(c.get("openInterest") or 0) * px
-                out.append({"name": m["name"],
-                            "value": "OI {:,.0f}M$".format(oi / 1e6),
-                            "change": "{:+.4f}%".format(float(c.get("funding") or 0) * 100),
-                            "comment": "마크가격 {:,.2f}$ · 시간당 펀딩비".format(px)})
-        return out or [fail("하이퍼리퀴드", "대상 코인 없음")]
-    except Exception as e:
-        return [fail("하이퍼리퀴드", e)]
-
 def llama():
     try:
         raw = json.loads(get("https://api.llama.fi/overview/fees?excludeTotalDataChart=true"
@@ -132,7 +116,6 @@ payload = {
     "summary": "자동 수집 완료.",
     "sections": [
         {"title": "섹터 ETF 가격", "note": "최근 5거래일 변화", "items": etf()},
-        {"title": "하이퍼리퀴드 펀딩비 · 미결제약정", "note": "실시간", "items": hyperliquid()},
         {"title": "DeFiLlama 프로토콜 수익 랭킹", "note": "24시간 기준 상위 8", "items": llama()},
     ],
 }

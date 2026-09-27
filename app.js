@@ -2,6 +2,10 @@ var $=function(s){return document.querySelector(s)};
 var CUR=null;
 function esc(t){return String(t==null?'':t).replace(/[<>&]/g,function(c){
   return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c]})}
+// 코인 탭으로 옮긴 섹션(COIN_SECS)과 삭제한 섹션: 지표 탭에서는 표시하지 않음
+var COIN_SECS=['DeFiLlama','스테이블코인','코인베이스 프리미엄'],DROP_SECS=['하이퍼리퀴드'];
+function hiddenSec(t){var l=COIN_SECS.concat(DROP_SECS);
+  for(var i=0;i<l.length;i++)if(String(t).indexOf(l[i])>=0)return true;return false}
 function cls(c){if(!c)return 'na';return String(c).trim().charAt(0)==='-'?'dn':'up'}
 
 function findItem(title,kw){
@@ -14,7 +18,7 @@ function findItem(title,kw){
 
 function kpi(){
   var picks=[['매크로','변동성 VIX','VIX'],['매크로','달러지수','달러'],
-             ['매크로','HYG/TLT','위험선호'],['프리미엄','BTC','BTC 프리미엄']];
+             ['매크로','HYG/TLT','위험선호'],['매크로','10년 국채금리','10년 금리']];
   var h='';
   for(var i=0;i<picks.length;i++){
     var it=findItem(picks[i][0],picks[i][1]);
@@ -43,9 +47,11 @@ function badges(it){
   return it.change?'<br><span class="badge '+cls(it.change)+'">'+
          esc(it.change)+'</span>':''}
 function tables(){
+  $('#app').innerHTML=secTables(CUR.sections.filter(function(s){return !hiddenSec(s.title)}),2)}
+function secTables(secs,nOpen){
   var h='';
-  for(var i=0;i<CUR.sections.length;i++){
-    var s=CUR.sections[i],rows='';
+  for(var i=0;i<secs.length;i++){
+    var s=secs[i],rows='';
     for(var j=0;j<s.items.length;j++){
       var it=s.items[j],lead=it.name.indexOf('└')>=0;
       rows+='<tr class="'+(lead?'lead':'')+'"><td class="n">'+
@@ -54,10 +60,10 @@ function tables(){
         '</td><td class="v">'+esc(it.value)+
         badges(it)+
         '</td></tr>'}
-    h+='<details'+(i<2?' open':'')+'><summary>'+esc(s.title)+'</summary><div class="body">'+
+    h+='<details'+(i<nOpen?' open':'')+'><summary>'+esc(s.title)+'</summary><div class="body">'+
        (s.note?'<p class="note">'+esc(s.note)+'</p>':'')+
        '<table>'+rows+'</table></div></details>'}
-  $('#app').innerHTML=h}
+  return h}
 
 function render(d){
   CUR=d;

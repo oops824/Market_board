@@ -1,5 +1,5 @@
 /* 관심 코인 종합 대시보드 (탭3) */
-var CR=null;
+var CR=null,MKT=null;  // MKT: data.json 중 코인 탭으로 옮긴 섹션(일 1회 갱신)
 var FNG_KO={'Extreme Fear':'극단적 공포','Fear':'공포','Neutral':'중립','Greed':'탐욕',
   'Extreme Greed':'극단적 탐욕'};
 function escA(t){return String(t==null?'':t).replace(/[<>&"']/g,function(c){
@@ -71,8 +71,8 @@ function pickCard(p,past){
       t+='<tr><td>'+escA(q.date.slice(5))+'</td><td>'+escA(q.sym)+'</td><td>'+
         (nz(q.since)?bd(q.since):'-')+'</td></tr>'}
     x+='<div class="sec">지난 소개</div>'+t+'</table>'}
-  x+='<p class="note">시총 상위 250위 중 모멘텀 상위 후보에서, 최근 30일 기사로 ETF·자산운용사·은행 등 '+
-    '기관 관여가 확인된 코인을 매일 1개 선정합니다. 투자 권유가 아닙니다.</p>';
+  x+='<p class="note">시총 상위 250위 중 모멘텀 상위 후보에서, 최근 30일 기사 2건 이상으로 ETF·자산운용사·은행 등 '+
+    '기관 관여가 확인된 코인을 매일 1개 선정합니다(해당 코인이 없는 날은 건너뜀). 투자 권유가 아닙니다.</p>';
   return '<div class="pick">'+x+'</div>'}
 
 function coinCard(c){
@@ -145,9 +145,12 @@ function renderCrypto(){
   for(i=0;i<CR.coins.length;i++)cards+=coinCard(CR.coins[i]);
   var err=CR.errors&&CR.errors.length?'<p class="note">일부 수집 실패 '+CR.errors.length+
     '건: '+escA(CR.errors.slice(0,4).join(' / '))+'</p>':'';
+  var mk='';
+  if(MKT&&MKT.secs.length)mk='<div class="sec mk">크립토 시장 지표 · '+escA(MKT.updated)+'</div>'+
+    secTables(MKT.secs,1);
   $('#p3').innerHTML='<div class="cbar"><span id="cupd">'+escA(CR.updated||'')+
     (CR.live?' · 시세 '+CR.live+' 갱신':'')+'</span><button id="clive">시세 새로고침</button></div>'+
-    top+pickCard(CR.pick,CR.pastPicks)+ov+cards+err;
+    top+pickCard(CR.pick,CR.pastPicks)+ov+mk+'<div class="sec mk">관심 코인 8종</div>'+cards+err;
   $('#clive').onclick=liveRefresh}
 
 /* 브라우저에서 바로 가격·펀딩비만 갱신 (뉴스·맥스페인은 정기 수집값 유지) */
@@ -184,4 +187,12 @@ function loadCrypto(){
     try{renderCrypto()}catch(e){$('#p3').innerHTML='<p class="err">표시 오류: '+escA(e.message)+'</p>'}})
   .catch(function(){$('#p3').innerHTML='<p class="err">crypto.json이 아직 없습니다.<br>'+
     'Actions에서 crypto-board 워크플로를 한 번 실행해 주세요.</p>'})}
-loadCrypto();
+function loadMarket(){
+  fetch('data.json?t='+Date.now()).then(function(r){if(!r.ok)throw 0;return r.json()})
+  .then(function(d){
+    var order=['코인베이스 프리미엄','스테이블코인','DeFiLlama'],secs=[];
+    order.forEach(function(k){(d.sections||[]).forEach(function(s){
+      if(s.title.indexOf(k)>=0)secs.push(s)})});
+    MKT={updated:d.updated||'',secs:secs};
+    if(CR)try{renderCrypto()}catch(e){}}).catch(function(){})}
+loadCrypto();loadMarket();
