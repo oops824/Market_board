@@ -77,10 +77,16 @@ function pickCard(p,past){
 
 function coinCard(c){
   var m=c.market||{},hl=c.hl||{},ok=c.okx||{},op=c.options,px=m.price,x='';
-  // 헤더
-  var sum='<summary><div class="ch"><b>'+escA(c.sym)+'</b> <span class="cn">'+
-    escA(c.name)+(m.rank?' · #'+m.rank:'')+'</span></div><div class="cp">'+fp(px)+
-    ' '+bd(m.ch24)+'</div></summary>';
+  // 헤더: 이름·가격 / 핵심 신호·등락 / AI 한 줄
+  var line=((c.brief||'').match(/^[\s\S]*?[.다요](?=\s|$)/)||[c.brief||''])[0];
+  var sum='<summary><div class="cr1"><div class="ch"><b>'+escA(c.sym)+'</b><span class="cn">'+
+    escA(c.name)+(m.rank?' · #'+m.rank:'')+'</span></div><div class="cp">'+fp(px)+'</div></div>'+
+    '<div class="cr2">'+(tagsHtml(c.tags,3)||'<div></div>')+'<div class="chg '+
+    (nz(m.ch24)?(m.ch24>=0?'tu':'td'):'')+'">'+fpc(m.ch24)+'</div></div>'+
+    '<div class="cr3">'+(line?'<b class="ai">✦</b><span>'+escA(line)+'</span>':
+      '<span>자세히 보기</span>')+'</div></summary>';
+  if(c.tags&&c.tags.length)x+='<div class="sec" style="margin-top:0">핵심 신호</div>'+
+    tagsHtml(c.tags)+'<div style="height:12px"></div>';
   // 가격
   x+=sparkline(m.spark,(m.ch7||0)>=0);
   x+='<div class="grid">'+kv('7일',bd(m.ch7))+kv('30일',bd(m.ch30))+
@@ -146,11 +152,11 @@ function renderCrypto(){
   var err=CR.errors&&CR.errors.length?'<p class="note">일부 수집 실패 '+CR.errors.length+
     '건: '+escA(CR.errors.slice(0,4).join(' / '))+'</p>':'';
   var mk='';
-  if(MKT&&MKT.secs.length)mk='<div class="sec mk">크립토 시장 지표 · '+escA(MKT.updated)+'</div>'+
+  if(MKT&&MKT.secs.length)mk='<div class="hd">크립토 시장 지표<small>'+escA(MKT.updated)+'</small></div>'+
     secTables(MKT.secs,1);
   $('#p3').innerHTML='<div class="cbar"><span id="cupd">'+escA(CR.updated||'')+
     (CR.live?' · 시세 '+CR.live+' 갱신':'')+'</span><button id="clive">시세 새로고침</button></div>'+
-    top+pickCard(CR.pick,CR.pastPicks)+ov+mk+'<div class="sec mk">관심 코인 8종</div>'+cards+err;
+    top+pickCard(CR.pick,CR.pastPicks)+ov+mk+'<div class="hd">관심 코인 8종<small>4시간마다 갱신</small></div>'+LEGEND+cards+err;
   $('#clive').onclick=liveRefresh}
 
 /* 브라우저에서 바로 가격·펀딩비만 갱신 (뉴스·맥스페인은 정기 수집값 유지) */
