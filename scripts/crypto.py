@@ -525,7 +525,7 @@ def pick_candidates(skip_ids):
                     "ch7": ch7, "ch30": ch30, "trending": r["id"] in trend,
                     "score": round(score, 3)})
     out.sort(key=lambda x: x["score"], reverse=True)
-    return out[:12]
+    return out[:20]
 
 
 def inst_evidence(c):
@@ -558,10 +558,11 @@ def daily_pick(held_ids):
     cands = pick_candidates(set(held_ids) | recent)
     for c in cands:
         c["evidence"] = inst_evidence(c)
-    strong = [c for c in cands if len(c["evidence"]) >= 2] or \
-        [c for c in cands if c["evidence"]]
+    # 기관 관여 기사가 2건 이상인 후보만. 없으면 억지로 고르지 않고 다음 실행에서 재시도
+    strong = sorted([c for c in cands if len(c["evidence"]) >= 2],
+                    key=lambda c: (len(c["evidence"]), c["score"]), reverse=True)
     if not strong:
-        ERRORS.append("오늘의 코인: 기관 관심 근거가 확인된 후보 없음 (다음 실행에서 재시도)")
+        ERRORS.append("오늘의 코인: 기관 관여 기사 2건 이상인 후보 없음 (다음 실행에서 재시도)")
         return picks
     strong = strong[:5]
     for c in strong:
