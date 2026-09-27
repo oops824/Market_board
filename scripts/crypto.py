@@ -13,6 +13,7 @@ import json, os, re, datetime, urllib.request, urllib.parse, urllib.error
 import xml.etree.ElementTree as ET
 from email.utils import parsedate_to_datetime
 import signals
+import calendar_ctx
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
 now = datetime.datetime.now(KST)
@@ -97,7 +98,7 @@ def coingecko():
     out = {}
     for r in rows:
         spark = (r.get("sparkline_in_7d") or {}).get("price") or []
-        step = max(1, len(spark) // 56)  # 168개(1시간봉) -> 약 56개로 축소
+        step = 2  # 168개(1시간봉) -> 84개(2시간 간격)로 축소
         out[r["id"]] = {
             "price": num(r.get("current_price")),
             "mcap": num(r.get("market_cap")),
@@ -110,7 +111,9 @@ def coingecko():
             "ch30": num(r.get("price_change_percentage_30d_in_currency")),
             "ath": num(r.get("ath")),
             "athPct": num(r.get("ath_change_percentage")),
-            "spark": [round(p, 6) for p in spark[::step] if p is not None],
+            # 7일 차트: 마지막 점이 수집 시각, 점 간격 step시간
+            "spark": [round(p, 6) for p in spark[::-1][::step][::-1] if p is not None],
+            "sparkEnd": int(now.timestamp() * 1000), "sparkStepH": step,
         }
     return out
 
@@ -179,7 +182,7 @@ def okx_coin(ccy):
 
 
 def okx_daily(ccy):
-    """무기한 선물 일봉 120개 -> (종가, 고가, 저가, 거래대금). 과거->최신"""
+    """무기한 선물 일봉 120개 -> (종가, 고가, 저가, 거래대금, 시각). 과거->최신"""
     rows = json.loads(get("%s/market/candles?instId=%s-USDT-SWAP&bar=1D&limit=120"
                           % (OKX, ccy))).get("data") or []
     rows = rows[::-1]
@@ -189,7 +192,8 @@ def okx_daily(ccy):
     highs = [float(r[2]) for r in done + cur]
     lows = [float(r[3]) for r in done + cur]
     vols = [float(r[7]) for r in done]  # 거래량은 마감된 봉만 비교
-    return closes, highs, lows, vols
+    ts = [int(r[0]) for r in done + cur]  # 봉 시작 시각(ms)
+    return closes, highs, lows, vols, ts
 
 
 _USDT_USD = None
@@ -500,13 +504,15 @@ def ai_brief(coins):
         if s.get("options"):
             s["options"] = {k: v for k, v in s["options"].items() if k != "expiries"}
     prompt = (
-        "너는 가상자산 데이터 정리 담당이다. 아래 JSON은 보유 코인별로 방금 수집한 "
+        "너는 가상자산 데이터 정리 담당이다. 아래 JSON은 관심 코인별로 방금 수집한 "
         "가격·선물(펀딩비, 미결제약정, 롱숏비율)·옵션(맥스페인, 풋콜비율)·뉴스 제목이다.\n"
         "코인마다 한국어 2문장으로 요약하라: 1문장은 뉴스의 핵심 이슈, "
         "1문장은 선물·옵션 포지셔닝이 말하는 것(과열/중립/위축, 맥스페인과 현재가 거리).\n"
         "그리고 8개 코인 전체를 아우르는 요약 2~3문장을 overall로 작성하라.\n"
+        + calendar_ctx.macro_context(now.date()) + "\n"
         "규칙: 매수/매도 추천 금지, 관찰된 사실과 함의만. 데이터가 없으면 없다고만. "
         "hl.funding은 시간당, okx.funding은 8시간 기준 소수값이다.\n"
+        + calendar_ctx.RULE +
         "출력은 다른 말 없이 JSON 한 개만: "
         "{\"overall\": \"...\", \"coins\": {\"BTC\": \"...\", ...}}\n\n"
         + json.dumps(slim, ensure_ascii=False)[:50000])
@@ -738,7 +744,9 @@ def build():
         })
         cc = coins[-1]
         daily = safe("OKX 일봉 " + okx_ccy, lambda c=okx_ccy: okx_daily(c), None)
-        tags = (signals.price_signals(*daily) if daily else []) + deriv_signals(cc)
+        tags = (signals.price_signals(*daily[:4]) if daily else []) + deriv_signals(cc)
+        if daily and daily[4]:  # 30·90일 차트용 일봉 종가
+            cc["daily"] = {"t": daily[4][-90:], "c": [round(x, 6) for x in daily[0][-90:]]}
         cc["tags"] = sorted(tags, key=lambda x: -x["p"])
     if not any(c["news"] for c in coins) and NEWS_FAIL:
         ERRORS.append("뉴스 수집 실패: " + " / ".join("%s %s" % kv for kv in NEWS_FAIL.items()))

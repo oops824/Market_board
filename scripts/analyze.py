@@ -1,4 +1,5 @@
 import json, os, urllib.request, urllib.error, datetime
+import calendar_ctx
 
 key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 with open("data.json", encoding="utf-8") as f:
@@ -10,6 +11,8 @@ if not key:
 
 prompt = (
     "너는 시장 데이터 정리 담당이다. 아래 JSON은 오늘 자동 수집된 원자료다.\n"
+    + calendar_ctx.macro_context(datetime.datetime.now(
+        datetime.timezone(datetime.timedelta(hours=9))).date()) + "\n"
     "아래 형식을 정확히 지켜 한국어로 작성하라. 각 항목 사이에 빈 줄을 반드시 넣어라.\n\n"
     "경제지표 섹션이 있으면 그 발표 결과가 금리·달러·위험자산 움직임과 "
     "어떻게 연결되는지 [매크로·유동성] 항목에서 반드시 언급하라.\n\n"
@@ -31,6 +34,7 @@ prompt = (
     "- 지표끼리 신호가 엇갈리면 반드시 그 지점을 지적할 것\n"
     "- 하이일드 HYG/TLT는 1년 백분위 80% 이상이면 위험선호 과열, 20% 이하면 경계로 표현\n"
     "- 스테이블코인 발행량이 느는데 가격이 안 오르면 대기자금 축적, 줄면 이탈로 해석\n"
+    + calendar_ctx.RULE +
     "- 코인베이스 프리미엄은 절대값이 작으므로 부호와 추세만 언급, 과대해석 금지\n"
     "- 티커를 쓸 때는 반드시 한글 설명을 괄호로 병기할 것. 예: HYG(하이일드 회사채), "
     "TLT(장기 국채), TIP(물가연동채), RSP(S&P500 동일가중), SPY(S&P500 시총가중), "
