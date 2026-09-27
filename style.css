@@ -148,3 +148,23 @@ border-radius:6px;padding:3px 7px;margin-bottom:7px}
 .pick .cp{font-size:16px}
 .cats{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}
 .cats span{font-size:11.5px;color:var(--sub);border:1px solid var(--line2);border-radius:6px;padding:3px 7px}
+
+/* 가격 차트 */
+.pcw{margin:0 0 12px}
+.phd{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+.phd>span{color:var(--sub);font-size:12px}
+.pbar{display:flex;gap:4px;flex:none}
+.pb{background:var(--card2);color:var(--sub);border:1px solid var(--line);border-radius:7px;
+padding:4px 9px;font-size:12px;font-weight:600}
+.pb.on{background:var(--txt);color:var(--bg);border-color:var(--txt)}
+.pb:disabled{opacity:.35}
+svg.pc{width:100%;height:auto;display:block;touch-action:pan-y;user-select:none;-webkit-user-select:none}
+svg.pc .pl{font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums}
+svg.pc .pa{font-size:10.5px;fill:var(--dim)}
+svg.pc .xt{font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.pst{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px}
+.pst>div{background:var(--card2);border-radius:9px;padding:7px 8px;min-width:0}
+.pst span{display:block;color:var(--dim);font-size:11px}
+.pst b{display:block;font-size:13.5px;font-variant-numeric:tabular-nums;margin:2px 0 1px}
+.pst i{display:block;font-style:normal;color:var(--dim);font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+svg.pc.hov .pl,svg.pc.hov .mk{opacity:.2}

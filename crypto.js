@@ -26,14 +26,85 @@ function fundTag(p8){
   if(p8<0)return '<span class="badge dn">숏 우위</span>';
   return '<span class="badge na">중립</span>'}
 
-function sparkline(arr,up){
-  if(!arr||arr.length<2)return '';
-  var W=300,H=46,lo=Math.min.apply(null,arr),hi=Math.max.apply(null,arr),sp=(hi-lo)||1,d='';
-  for(var i=0;i<arr.length;i++){
-    d+=(i?'L':'M')+(i*W/(arr.length-1)).toFixed(1)+' '+(H-3-(arr[i]-lo)/sp*(H-6)).toFixed(1)}
-  return '<svg class="spk" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'+
-    '<path d="'+d+'" fill="none" stroke="'+(up?'var(--up)':'var(--dn)')+
-    '" stroke-width="1.6" vector-effect="non-scaling-stroke"/></svg>'}
+/* ---------- 가격 차트: 기간 선택, 최고·최저 표시, 터치 시 가격 ---------- */
+var CH_P={},CH_D={};
+function chSeries(c,p){
+  var m=c.market||{};
+  if(p==='7'){
+    if(!m.spark||m.spark.length<2)return null;
+    var end=m.sparkEnd||Date.now(),st=(m.sparkStepH||2)*3600e3,n=m.spark.length;
+    return {ts:m.spark.map(function(_,i){return end-(n-1-i)*st}),v:m.spark.slice(),h:true,
+      label:'최근 7일 · '+(m.sparkStepH||2)+'시간 간격'}}
+  var d=c.daily;if(!d||!d.c||d.c.length<2)return null;
+  var k=Math.min(+p,d.c.length);
+  return {ts:d.t.slice(-k),v:d.c.slice(-k),h:false,
+    label:'최근 '+k+'일 · 일 단위'}}
+function fdt(t,h){var d=new Date(t),s=(d.getMonth()+1)+'/'+d.getDate();
+  return h?s+' '+('0'+d.getHours()).slice(-2)+'시':s}
+function priceChart(c){
+  var p=CH_P[c.sym]||'7',s=chSeries(c,p),id='pc-'+c.sym,i;
+  var btn='<div class="pbar">';
+  ['7','30','90'].forEach(function(q){var ok=!!chSeries(c,q);
+    btn+='<button class="pb'+(q===p?' on':'')+'" data-sym="'+escA(c.sym)+'" data-p="'+q+'"'+
+      (ok?'':' disabled')+'>'+q+'일</button>'});
+  btn+='</div>';
+  if(!s)return '<div class="pcw" id="w'+id+'">'+btn+'<p class="note">차트 데이터 없음</p></div>';
+  var v=s.v,n=v.length,lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),
+    li=v.indexOf(lo),hx=v.indexOf(hi),W=340,H=184,T=26,B=40,L=6,R=6,
+    pad=(hi-lo)*0.06||hi*0.01,mn=lo-pad,mx=hi+pad;
+  function X(k){return L+k*(W-L-R)/(n-1)}
+  function Y(y){return T+(mx-y)/(mx-mn)*(H-T-B)}
+  var up=v[n-1]>=v[0],col=up?'var(--up)':'var(--dn)',d='';
+  for(i=0;i<n;i++)d+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(v[i]).toFixed(1);
+  var area=d+'L'+X(n-1).toFixed(1)+' '+(H-B)+'L'+X(0).toFixed(1)+' '+(H-B)+'Z';
+  function lab(k,val,txt,above,cl){
+    var x=X(k),anc=x<70?'start':x>W-70?'end':'middle',y=above?Y(val)-9:Y(val)+17;
+    return '<circle class="mk" cx="'+x.toFixed(1)+'" cy="'+Y(val).toFixed(1)+'" r="4" fill="'+cl+
+      '" stroke="var(--card)" stroke-width="2"/><text x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+
+      '" text-anchor="'+anc+'" class="pl" fill="'+cl+'">'+txt+'</text>'}
+  CH_D[id]={ts:s.ts,v:v,h:s.h,X:X,Y:Y,W:W,H:H,T:T,B:B};
+  var svg='<svg class="pc" id="'+id+'" viewBox="0 0 '+W+' '+H+'">'+
+    '<defs><linearGradient id="g'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+col+
+    '" stop-opacity=".22"/><stop offset="1" stop-color="'+col+'" stop-opacity="0"/></linearGradient></defs>'+
+    '<line x1="'+L+'" x2="'+(W-R)+'" y1="'+(H-20)+'" y2="'+(H-20)+'" stroke="var(--line)"/>'+
+    '<path d="'+area+'" fill="url(#g'+id+')"/>'+
+    '<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="2" stroke-linejoin="round"/>'+
+    lab(hx,hi,'최고 '+fp(hi),true,'var(--up)')+lab(li,lo,'최저 '+fp(lo),false,'var(--dn)')+
+    '<text x="'+L+'" y="'+(H-5)+'" class="pa">'+fdt(s.ts[0],s.h)+'</text>'+
+    '<text x="'+(W/2)+'" y="'+(H-5)+'" class="pa" text-anchor="middle">'+fdt(s.ts[Math.floor((n-1)/2)],s.h)+'</text>'+
+    '<text x="'+(W-R)+'" y="'+(H-5)+'" class="pa" text-anchor="end">'+fdt(s.ts[n-1],s.h)+'</text>'+
+    '<g class="xh" style="display:none"><line y1="'+T+'" y2="'+(H-B)+'" stroke="var(--sub)" stroke-dasharray="3 3"/>'+
+    '<circle r="4.5" fill="'+col+'" stroke="var(--txt)" stroke-width="1.5"/>'+
+    '<rect rx="6" height="22" fill="var(--card2)" stroke="var(--line2)"/><text class="xt" fill="var(--txt)"></text></g>'+
+    '<rect class="hit" x="0" y="0" width="'+W+'" height="'+H+'" fill="transparent"/></svg>';
+  var ch=(v[n-1]/v[0]-1)*100;
+  return '<div class="pcw" id="w'+id+'"><div class="phd"><span>'+escA(s.label)+'</span>'+btn+'</div>'+svg+
+    '<div class="pst"><div><span>최고</span><b class="tu">'+fp(hi)+'</b><i>'+fdt(s.ts[hx],s.h)+'</i></div>'+
+    '<div><span>최저</span><b class="td">'+fp(lo)+'</b><i>'+fdt(s.ts[li],s.h)+'</i></div>'+
+    '<div><span>기간 등락</span><b class="'+(ch>=0?'tu':'td')+'">'+fpc(ch)+'</b><i>시작 '+fp(v[0])+'</i></div></div></div>'}
+function chMove(e){
+  var svg=e.target.closest&&e.target.closest('svg.pc');if(!svg)return;
+  var o=CH_D[svg.id];if(!o)return;
+  var r=svg.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*o.W,n=o.v.length;
+  var k=Math.max(0,Math.min(n-1,Math.round((x-o.X(0))/(o.X(n-1)-o.X(0))*(n-1))));
+  var g=svg.querySelector('.xh'),px=o.X(k),py=o.Y(o.v[k]);g.style.display='';svg.classList.add('hov');
+  var ln=g.querySelector('line');ln.setAttribute('x1',px);ln.setAttribute('x2',px);
+  var cc=g.querySelector('circle');cc.setAttribute('cx',px);cc.setAttribute('cy',py);
+  var t=g.querySelector('text'),rc=g.querySelector('rect');
+  t.textContent=fdt(o.ts[k],o.h)+'  '+fp(o.v[k]);
+  var tw=t.textContent.length*6.4+14,tx=Math.max(2,Math.min(o.W-tw-2,px-tw/2));
+  rc.setAttribute('x',tx);rc.setAttribute('y',2);rc.setAttribute('width',tw);
+  t.setAttribute('x',tx+7);t.setAttribute('y',17)}
+document.addEventListener('pointermove',chMove);
+document.addEventListener('pointerdown',chMove);
+document.addEventListener('pointerout',function(e){
+  var svg=e.target.closest&&e.target.closest('svg.pc');
+  if(svg&&e.pointerType==='mouse'){var g=svg.querySelector('.xh');if(g)g.style.display='none';svg.classList.remove('hov')}});
+document.addEventListener('click',function(e){
+  var b=e.target.closest&&e.target.closest('button.pb');if(!b||!CR)return;
+  e.preventDefault();CH_P[b.getAttribute('data-sym')]=b.getAttribute('data-p');
+  var c=CR.coins.filter(function(x){return x.sym===b.getAttribute('data-sym')})[0];
+  var w=document.getElementById('wpc-'+c.sym);if(c&&w)w.outerHTML=priceChart(c)});
 
 function kv(k,v,s){return '<div class="kv"><div class="k">'+k+'</div><div class="v">'+v+
   '</div>'+(s?'<div class="s">'+s+'</div>':'')+'</div>'}
@@ -88,7 +159,7 @@ function coinCard(c){
   if(c.tags&&c.tags.length)x+='<div class="sec" style="margin-top:0">핵심 신호</div>'+
     tagsHtml(c.tags)+'<div style="height:12px"></div>';
   // 가격
-  x+=sparkline(m.spark,(m.ch7||0)>=0);
+  x+=priceChart(c);
   x+='<div class="grid">'+kv('7일',bd(m.ch7))+kv('30일',bd(m.ch30))+
     kv('원화',fkrw(m.krw))+kv('시가총액',fbig(m.mcap))+kv('24h 거래량',fbig(m.vol))+
     kv('ATH 대비',fpc(m.athPct,1),fp(m.ath))+'</div>';
