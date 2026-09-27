@@ -562,7 +562,7 @@ def daily_pick(held_ids):
     strong = sorted([c for c in cands if len(c["evidence"]) >= 2],
                     key=lambda c: (len(c["evidence"]), c["score"]), reverse=True)
     if not strong:
-        ERRORS.append("오늘의 코인: 기관 관여 기사 2건 이상인 후보 없음 (다음 실행에서 재시도)")
+        print("오늘의 코인: 기관 관여 기사 2건 이상인 후보 없음 (다음 실행에서 재시도)")
         return picks
     strong = strong[:5]
     for c in strong:
