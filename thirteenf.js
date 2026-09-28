@@ -141,7 +141,7 @@ function renderTF(){
   var bar='<div class="cbar"><span>'+escT(tq(TF.latest_period))+' 공시 기준</span>'+
     '<span>뉴스 '+escT(tdate(TF.news_updated_at)||'-')+'</span></div>';
 
-  $('#p4').innerHTML=bar+tfBar()+
+  $('#p4').innerHTML=bar+tfBar()+(typeof LEGEND==='string'?LEGEND:'')+
     (TF_CAT==='all'?tfConsensus():'')+
     (cards?'<div class="hd">운용사별 포트폴리오</div>'+cards:'')+
     tfNews()+
