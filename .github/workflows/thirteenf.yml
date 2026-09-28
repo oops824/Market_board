@@ -14,7 +14,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
+      # 트리거 시점이 아닌 '실행 시점'의 최신 브랜치를 받는다.
+      # 두 작업이 같은 thirteenf.json 을 고치므로, 앞 작업 결과 위에서 시작해야 충돌이 없다
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"

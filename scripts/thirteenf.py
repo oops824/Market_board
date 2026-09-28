@@ -34,6 +34,7 @@ OUT_PATH = "thirteenf.json"
 SEC_SLEEP = 0.15          # SEC 권고 10 req/s 이내
 TOP_N = 15                # 카테고리별 상위 보유 종목 표시 수
 CONSENSUS_MIN = 2         # 몇 명 이상 겹치면 '공통 매매'로 볼지
+CONSENSUS_MAX_POS = 1500  # 보유 종목이 이보다 많으면 공통 매매 집계에서 제외
 STALE_DAYS = 200          # 최신 공시가 이보다 오래되면 제출중단으로 표시
 
 # CIK 는 2026-09-28 기준 SEC EDGAR / 13f.info 에서 등록명을 대조해 검증 완료.
@@ -294,23 +295,38 @@ def diff_quarters(cur, prev):
     }
 
 
+ETF_TRUST = re.compile(r"^(ISHARES|SPDR|SELECT SECTOR|STATE STR|VANGUARD|INVESCO|PROSHARES|"
+                       r"DIREXION|SCHWAB STRATEGIC|WISDOMTREE|VANECK|GLOBAL X|J P MORGAN EXCHANGE)", re.I)
+
+
+def norm_name(n):
+    n = re.sub(r"\b(CL(ASS)? ?[A-C]|CAP STK CL [A-C]|COM|INC|CORP(ORATION)?|CO|LTD|PLC|N ?V|HLDGS?)\b\.?", "", n.upper())
+    return re.sub(r"[^A-Z0-9]", "", n)
+
+
 def build_consensus(managers):
     """여러 운용사가 같은 분기에 동시에 사고/판 종목."""
     bought, sold = defaultdict(list), defaultdict(list)
     for m in managers:
         if m.get("error") or m.get("stale") or m.get("category") in ("korea", "multi"):
             continue
+        if (m.get("position_count") or 0) > CONSENSUS_MAX_POS:   # 지수형·퀀트 성격의 광범위한 장부
+            continue
+        # 같은 회사의 다른 주식 종류(예: 알파벳 A/C)는 이름으로 합친다.
+        # ETF 신탁명(ISHARES TR 등)은 서로 다른 ETF를 구분하지 못하므로 제외
         for r in m["new_buys"] + m["added"]:
-            bought[(r["cusip"], r["name"])].append(m["name"])
+            if not ETF_TRUST.search(r["name"]):
+                bought[norm_name(r["name"])].append((m["name"], r["cusip"], r["name"]))
         for r in m["sold_out"] + m["trimmed"]:
-            sold[(r["cusip"], r["name"])].append(m["name"])
+            if not ETF_TRUST.search(r["name"]):
+                sold[norm_name(r["name"])].append((m["name"], r["cusip"], r["name"]))
 
     def pack(d):
         out = []
-        for (cusip, name), who in d.items():
-            who = sorted(set(who))
+        for _, rows in d.items():
+            who = sorted({w for w, _c, _n in rows})
             if len(who) >= CONSENSUS_MIN:
-                out.append({"cusip": cusip, "name": name,
+                out.append({"cusip": rows[0][1], "name": rows[0][2],
                             "count": len(who), "managers": who})
         return sorted(out, key=lambda r: -r["count"])[:15]
 
