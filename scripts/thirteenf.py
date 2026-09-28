@@ -407,6 +407,200 @@ def summarize_views(news):
     return out if isinstance(out, dict) else {}
 
 
+# ---------------------------------------------------------------- 가격·신호
+
+FIGI_CACHE = "history/cusip_ticker.json"
+YH_UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                       "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
+SHOW_N = {"top": TOP_N, "new_buys": 8, "sold_out": 8, "added": 8, "trimmed": 8}
+PRICE_MAX_AGE = 400       # 기준일이 이보다 오래된 공시(제출 중단)는 비교하지 않음
+
+
+def _figi(jobs, us_only=False):
+    """OpenFIGI 매핑 요청 1회 (최대 10건). 실패 시 None.
+    us_only: 미국 거래소(US 통합 또는 U로 시작하는 거래소 코드) 상장분만 인정"""
+    for _ in range(3):
+        try:
+            r = requests.post("https://api.openfigi.com/v3/mapping", json=jobs, timeout=30)
+            if r.status_code == 429:
+                time.sleep(30)
+                continue
+            r.raise_for_status()
+            time.sleep(2.6)                    # 키 없이 분당 25회 제한
+            out = []
+            for res in r.json():
+                data = res.get("data") or []
+                eq = [x for x in data if x.get("marketSector") == "Equity"] or data
+                if us_only:
+                    eq = sorted((x for x in eq if str(x.get("exchCode", "")).startswith("U")),
+                                key=lambda x: x.get("exchCode") != "US")
+                out.append((eq[0].get("ticker") or "") if eq else "")
+            return out
+        except Exception as e:
+            print(f"  ! OpenFIGI 실패: {e}")
+            time.sleep(5)
+    return None
+
+
+def figi_tickers(cusips):
+    """CUSIP -> 미국 티커 (OpenFIGI, 키 없이 분당 25회·요청당 10건). 결과는 캐시.
+    1차: CUSIP + 미국 거래소. 실패분 2차: 해외 법인(첫 글자가 영문인 CINS)은 ID_CINS,
+    나머지는 거래소 조건 없이. 2차도 실패하면 '-' 로 저장해 다시 묻지 않는다."""
+    try:
+        with open(FIGI_CACHE, encoding="utf-8") as f:
+            cache = json.load(f)
+    except (OSError, ValueError):
+        cache = {}
+    todo = sorted(c for c in cusips if cache.get(c, "") == "")
+    print(f"[티커] 캐시 {len(cache)} · 조회 {len(todo)}")
+    for i in range(0, len(todo), 10):
+        part = todo[i:i + 10]
+        res = _figi([{"idType": "ID_CUSIP", "idValue": c, "exchCode": "US"} for c in part])
+        if res is None:
+            continue
+        miss = []
+        for c, t in zip(part, res):
+            if t:
+                cache[c] = t
+            else:
+                miss.append(c)
+        if miss:
+            res2 = _figi([{"idType": "ID_CINS" if c[:1].isalpha() else "ID_CUSIP",
+                           "idValue": c} for c in miss], us_only=True)
+            for c, t in zip(miss, res2 or [""] * len(miss)):
+                cache[c] = t or ("-" if res2 is not None else "")
+    os.makedirs(os.path.dirname(FIGI_CACHE), exist_ok=True)
+    with open(FIGI_CACHE, "w", encoding="utf-8") as f:
+        json.dump(cache, f, ensure_ascii=False, indent=0)
+    return {c: t for c, t in cache.items() if t and t != "-"}
+
+
+def yahoo_daily(ticker):
+    """1년 일봉 -> (날짜, 종가, 고가, 저가, 거래량, 현재가)"""
+    sym = ticker.replace("/", "-").replace(" ", "-")
+    for host in ("query1", "query2"):
+        try:
+            r = requests.get(f"https://{host}.finance.yahoo.com/v8/finance/chart/"
+                             f"{urllib.parse.quote(sym)}?range=1y&interval=1d",
+                             headers=YH_UA, timeout=20)
+            if r.status_code == 429:
+                time.sleep(3)
+                continue
+            r.raise_for_status()
+            res = r.json()["chart"]["result"][0]
+            q = res["indicators"]["quote"][0]
+            rows = [(datetime.fromtimestamp(t, timezone.utc).strftime("%Y-%m-%d"), c, h, l, v)
+                    for t, c, h, l, v in zip(res["timestamp"], q["close"], q["high"],
+                                             q["low"], q["volume"]) if c is not None]
+            if len(rows) < 5:
+                return None
+            d, c, h, l, v = (list(x) for x in zip(*rows))
+            now_px = res.get("meta", {}).get("regularMarketPrice") or c[-1]
+            return d, c, h, l, v, float(now_px)
+        except Exception:
+            continue
+    return None
+
+
+def enrich_prices(payload):
+    """표시되는 보유 종목마다 티커·기준일 대비 현재 등락·기술적 신호를 붙인다"""
+    import signals
+    from concurrent.futures import ThreadPoolExecutor
+    managers = payload.get("managers") or []
+    cons = payload.get("consensus") or {}
+    rows = []                                   # (row dict, 기준일)
+    for m in managers:
+        if m.get("error") or not m.get("period"):
+            continue
+        for k, n in SHOW_N.items():
+            for r in (m.get(k) or [])[:n]:
+                rows.append((r, m["period"]))
+    latest = payload.get("latest_period")
+    for k in ("bought", "sold"):
+        for r in (cons.get(k) or [])[:8]:
+            rows.append((r, latest))
+
+    tick = figi_tickers({r["cusip"] for r, _ in rows if r.get("cusip")})
+    uniq = sorted({tick.get(r["cusip"]) for r, _ in rows if tick.get(r.get("cusip"))})
+    print(f"[가격] 티커 {len(uniq)}개 조회")
+    with ThreadPoolExecutor(max_workers=4) as ex:
+        series = dict(zip(uniq, ex.map(yahoo_daily, uniq)))
+    ok = sum(1 for v in series.values() if v)
+    print(f"  -> 가격 {ok}/{len(uniq)}")
+
+    today = datetime.now(timezone.utc).date()
+
+    def base_close(t, period):
+        s_ = series.get(t) if t else None
+        if not s_ or not period or s_[0][0] > period:
+            return None
+        b = [x for x, dd in zip(s_[1], s_[0]) if dd <= period]
+        return b[-1] if b else None
+
+    # 금액 단위 보정: 일부 운용사는 13F 평가액을 '천 달러'로 제출한다.
+    # (평가액 ÷ 주식수) ÷ 기준일 종가의 중앙값이 약 1/1000 이면 그 운용사 금액을 ×1000
+    import statistics
+    for m in managers:
+        if m.get("error") or not m.get("period"):
+            continue
+        ratios = []
+        for k in ("top", "new_buys", "added", "trimmed"):
+            for r in m.get(k) or []:
+                b = base_close(tick.get(r.get("cusip") or ""), m["period"])
+                if b and r.get("value") and r.get("shares") and not r.get("putcall"):
+                    ratios.append(r["value"] / r["shares"] / b)
+        if len(ratios) >= 5 and 0.0003 < statistics.median(ratios) < 0.003:
+            print(f"  -> {m['name']}: 평가액이 천 달러 단위 → ×1000 보정")
+            m["total_value"] = round((m.get("total_value") or 0) * 1000)
+            for k in ("top", "new_buys", "added", "trimmed", "sold_out"):
+                for r in m.get(k) or []:
+                    for f in ("value", "value_prev"):
+                        if r.get(f):
+                            r[f] = round(r[f] * 1000)
+            m["value_unit_fixed"] = True
+
+    # 티커 검증: 13F 평가액 ÷ 주식수 = 기준일 주가. 야후 기준일 종가와 25% 넘게 다르면
+    # 다른 종목(잘못된 티커)이거나 채권·액면분할 등이므로 그 티커는 표시하지 않는다
+    bad = set()
+    for r, period in rows:
+        t = tick.get(r.get("cusip") or "")
+        b = base_close(t, period)
+        if not b or not r.get("value") or not r.get("shares") or r.get("putcall"):
+            continue
+        if abs(r["value"] / r["shares"] / b - 1) > 0.25:
+            bad.add(t)
+    if bad:
+        print(f"  -> 가격 불일치로 제외한 티커 {len(bad)}개: {sorted(bad)[:15]}")
+    tick = {k: v for k, v in tick.items() if v not in bad}
+    tag_cache = {}
+    for r, period in rows:
+        t = tick.get(r.get("cusip") or "")
+        for f in ("ticker", "chg_since", "px_now", "px_period", "tags"):
+            r.pop(f, None)
+        if not t:
+            continue
+        r["ticker"] = t
+        s = series.get(t)
+        if not s:
+            continue
+        d, c, h, l, v, now_px = s
+        r["px_now"] = round(now_px, 4)
+        try:
+            pdate = datetime.strptime(period, "%Y-%m-%d").date()
+        except (TypeError, ValueError):
+            pdate = None
+        if pdate and (today - pdate).days <= PRICE_MAX_AGE:
+            base = [x for x, dd in zip(c, d) if dd <= period]
+            if base and d[0] <= period:
+                r["px_period"] = round(base[-1], 4)
+                r["chg_since"] = round((now_px / base[-1] - 1) * 100, 1)
+        if t not in tag_cache:
+            tag_cache[t] = signals.top(signals.price_signals(c, h, l, v), 3)
+        r["tags"] = tag_cache[t]
+    payload["prices_updated_at"] = datetime.now(timezone.utc).isoformat()
+    return payload
+
+
 # ---------------------------------------------------------------- 메인
 
 def verify_ciks():
@@ -520,6 +714,8 @@ def main(mode):
         payload.update(collect_13f())
     if mode in ("all", "news"):
         payload.update(collect_news())
+    if mode in ("all", "13f", "prices"):
+        enrich_prices(payload)
 
     payload["categories"] = CATEGORIES
     payload["generated_at"] = datetime.now(timezone.utc).isoformat()
@@ -539,7 +735,7 @@ def main(mode):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--verify-cik", action="store_true")
-    ap.add_argument("--mode", choices=["all", "13f", "news"], default="all",
-                    help="13f=보유내역만, news=뉴스만, all=둘 다 (기본)")
+    ap.add_argument("--mode", choices=["all", "13f", "news", "prices"], default="all",
+                    help="13f=보유내역(+가격), news=뉴스만, prices=가격·신호만, all=전부 (기본)")
     args = ap.parse_args()
     verify_ciks() if args.verify_cik else main(args.mode)

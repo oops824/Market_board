@@ -28,6 +28,7 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add thirteenf.json
+          git add history/cusip_ticker.json 2>/dev/null || true
           git diff --staged --quiet && exit 0
           git commit -m "13F holdings update"
           for i in 1 2 3; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push && exit 0; sleep 5; done

@@ -26,11 +26,14 @@ jobs:
       - run: python scripts/thirteenf.py --mode news
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      # 보유 종목 현재가·기준일 대비 등락·신호 (매일)
+      - run: python scripts/thirteenf.py --mode prices
       - run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add thirteenf.json
           git add history/article_ko_13f.json 2>/dev/null || true
+          git add history/cusip_ticker.json 2>/dev/null || true
           git diff --staged --quiet && exit 0
           git commit -m "13F news update"
           for i in 1 2 3; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push && exit 0; sleep 5; done

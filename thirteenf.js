@@ -7,6 +7,14 @@ function tbig(v){if(!tnum(v))return '-';var a=Math.abs(v);
   return a>=1e12?'$'+(v/1e12).toFixed(2)+'T':a>=1e9?'$'+(v/1e9).toFixed(1)+'B':
     a>=1e6?'$'+(v/1e6).toFixed(0)+'M':'$'+v.toLocaleString('en-US',{maximumFractionDigits:0})}
 function tpc(v){return tnum(v)?(v>=0?'+':'')+v.toFixed(0)+'%':'-'}
+function tpc1(v){return tnum(v)?(v>=0?'+':'')+v.toFixed(1)+'%':'-'}
+function tmd(p){var m=String(p||'').match(/^\d{4}-(\d{2})-(\d{2})/);return m?(+m[1])+'/'+(+m[2]):''}
+/* 종목 이름 옆 티커·신호 칩, 값 옆 기준일 대비 현재 등락 */
+function tfName(r){return escT(r.name)+(r.ticker?' <span class="tk">'+escT(r.ticker)+'</span>':'')}
+function tfSince(r,period){
+  if(!tnum(r.chg_since))return '';
+  return '<br><span class="badge '+(r.chg_since>=0?'up':'dn')+'" title="'+escT(tmd(period))+' 종가 '+
+    escT(r.px_period)+' → 현재 '+escT(r.px_now)+'">'+escT(tmd(period))+' 이후 '+tpc1(r.chg_since)+'</span>'}
 function tq(p){if(!p)return '-';var m=String(p).match(/^(\d{4})-(\d{2})/);
   if(!m)return p;return m[1]+' Q'+Math.ceil(+m[2]/3)}
 function tdate(s){if(!s)return '';var d=new Date(s);
@@ -45,9 +53,10 @@ function tfConsensus(){
     if(!l.length)return '<p class="note">해당 없음</p>';
     var h='';
     for(var i=0;i<l.length&&i<8;i++){var r=l[i];
-      h+='<tr><td class="n">'+escT(r.name)+
+      h+='<tr><td class="n">'+tfName(r)+tagsHtml(r.tags,3)+
          '<div class="sub">'+escT(r.managers.join(' · '))+'</div></td>'+
-         '<td class="v"><span class="badge '+cl+'">'+r.count+'곳</span></td></tr>'}
+         '<td class="v"><span class="badge '+cl+'">'+r.count+'곳</span>'+
+         tfSince(r,TF.latest_period)+'</td></tr>'}
     return '<table>'+h+'</table>'}
   return '<details open><summary>공통 매매 종목</summary><div class="body">'+
     '<p class="note">두 곳 이상이 같은 분기에 함께 움직인 종목입니다. '+
@@ -57,7 +66,7 @@ function tfConsensus(){
     '</div></details>'}
 
 /* 운용사 카드 */
-function tfRows(list,kind){
+function tfRows(list,kind,period){
   if(!list||!list.length)return '<p class="note">해당 없음</p>';
   var h='';
   for(var i=0;i<list.length&&i<8;i++){
@@ -67,9 +76,9 @@ function tfRows(list,kind){
     else{
       right=tbig(r.value);
       if(tnum(r.weight))sub.push('비중 '+r.weight.toFixed(1)+'%')}
-    h+='<tr><td class="n">'+escT(r.name)+
+    h+='<tr><td class="n">'+tfName(r)+tagsHtml(r.tags,3)+
        (sub.length?'<div class="sub">'+escT(sub.join(' · '))+'</div>':'')+
-       '</td><td class="v">'+right+
+       '</td><td class="v">'+right+tfSince(r,period)+
        (tnum(r.shares_chg_pct)&&(kind==='add'||kind==='trim')
          ? '<br><span class="badge '+(r.shares_chg_pct>=0?'up':'dn')+'">'+
            tpc(r.shares_chg_pct)+'</span>' : '')+
@@ -95,14 +104,15 @@ function tfManager(m){
     ((TF.views||{})[m.name]?'<div class="tfv"><b class="ai">✦</b><span>'+
       escT(TF.views[m.name])+'</span></div>':'');
   var body='<div class="sec" style="margin-top:0">최근 발언·인터뷰</div>'+tfPerson(m.name)+
-    '<div class="sec">상위 보유</div>'+tfRows(m.top,'top')+
-    '<div class="sec">신규 편입</div>'+tfRows(m.new_buys,'new')+
-    '<div class="sec">전량 청산</div>'+tfRows(m.sold_out,'sold')+
+    '<div class="sec">상위 보유</div>'+tfRows(m.top,'top',m.period)+
+    '<div class="sec">신규 편입</div>'+tfRows(m.new_buys,'new',m.period)+
+    '<div class="sec">전량 청산</div>'+tfRows(m.sold_out,'sold',m.period)+
     '<div class="sec">비중 확대 <span class="dim">주식수 +10% 이상</span></div>'+
-      tfRows(m.added,'add')+
+      tfRows(m.added,'add',m.period)+
     '<div class="sec">비중 축소 <span class="dim">주식수 -10% 이상</span></div>'+
-      tfRows(m.trimmed,'trim')+
-    '<p class="note">직전 분기('+escT(tq(m.period_prev))+') 대비. '+
+      tfRows(m.trimmed,'trim',m.period)+
+    '<p class="note">'+(m.stale?'공시가 오래되어 현재가 비교를 생략했습니다. ':
+      '「'+escT(tmd(m.period))+' 이후」는 공시 기준일 종가 대비 현재가 등락입니다. ')+'신규·청산·확대·축소는 직전 분기('+escT(tq(m.period_prev))+') 대비. '+
     'SEC 공시일 '+escT(m.filed||'-')+'.</p>';
   return '<details class="coin"><summary>'+head+'</summary>'+
     '<div class="body">'+body+'</div></details>'}
@@ -131,7 +141,7 @@ function renderTF(){
   var bar='<div class="cbar"><span>'+escT(tq(TF.latest_period))+' 공시 기준</span>'+
     '<span>뉴스 '+escT(tdate(TF.news_updated_at)||'-')+'</span></div>';
 
-  $('#p4').innerHTML=bar+tfBar()+
+  $('#p4').innerHTML=bar+tfBar()+(typeof LEGEND==='string'?LEGEND:'')+
     (TF_CAT==='all'?tfConsensus():'')+
     (cards?'<div class="hd">운용사별 포트폴리오</div>'+cards:'')+
     tfNews()+
