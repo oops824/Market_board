@@ -177,3 +177,8 @@ svg.pc.hov .pl,svg.pc.hov .mk{opacity:.2}
 #p4 .coin>summary .cr2{align-items:center}
 #p4 summary .dim{margin-left:7px;font-weight:500}
 
+/* 기관 탭: 인물 발언 요지 */
+.tfv{display:flex;align-items:center;gap:6px;margin-top:8px;color:var(--sub);font-size:13px;font-weight:500}
+.tfv span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tfv .ai,.tfview .ai{color:var(--acc)}
+.tfview{margin-bottom:8px}

@@ -39,58 +39,85 @@ STALE_DAYS = 200          # 최신 공시가 이보다 오래되면 제출중단
 # CIK 는 2026-09-28 기준 SEC EDGAR / 13f.info 에서 등록명을 대조해 검증 완료.
 # 운용사를 추가할 때는 반드시 --verify-cik 로 등록명을 먼저 확인할 것.
 MANAGERS = [
-    # (표시명, CIK, 카테고리)
-    ("버크셔 해서웨이 (버핏)",      "0001067983", "value"),
-    ("아이칸 (칼 아이칸)",          "0000921669", "value"),
-    ("퍼싱스퀘어 (애크먼)",         "0001336528", "value"),
+    # (표시명, CIK, 카테고리, 등록명 확인 키워드)
+    # 키워드가 SEC 등록명에 없으면 CIK 오류로 보고 수집하지 않는다
+    ("버크셔 해서웨이 (버핏)",      "0001067983", "value", "BERKSHIRE"),
+    ("아이칸 (칼 아이칸)",          "0000921669", "value", "ICAHN"),
+    ("퍼싱스퀘어 (애크먼)",         "0001336528", "value", "PERSHING"),
+    ("바우포스트 (클라만)",         "0001061768", "value", "BAUPOST"),
+    ("그린라이트 (아인혼)",         "0001079114", "value", "GREENLIGHT"),
 
-    ("브리지워터 (달리오)",         "0001350694", "macro"),
-    ("듀케인 (드러켄밀러)",         "0001536411", "macro"),
-    ("소로스 펀드 매니지먼트",      "0001029160", "macro"),
-    ("아팔루사 (테퍼)",             "0001656456", "macro"),
+    ("브리지워터 (달리오)",         "0001350694", "macro", "BRIDGEWATER"),
+    ("듀케인 (드러켄밀러)",         "0001536411", "macro", "DUQUESNE"),
+    ("소로스 펀드 매니지먼트",      "0001029160", "macro", "SOROS"),
+    ("아팔루사 (테퍼)",             "0001656456", "macro", "APPALOOSA"),
+    ("튜더 (폴 튜더 존스)",         "0000923093", "macro", "TUDOR"),
 
-    ("틸 매크로 (피터 틸)",         "0001562087", "paypal"),
-    ("알티미터 (거스트너)",         "0001541617", "paypal"),
-    ("코투 매니지먼트",             "0001135730", "paypal"),
+    ("시타델 (켄 그리핀)",          "0001423053", "multi", "CITADEL"),
+    ("밀레니엄 (잉글랜더)",         "0001273087", "multi", "MILLENNIUM"),
+    ("포인트72 (스티브 코헨)",      "0001603466", "multi", "POINT72"),
+    ("르네상스 테크놀로지",         "0001037389", "multi", "RENAISSANCE"),
+    ("엘리엇 (폴 싱어)",            "0001791786", "hedge", "ELLIOTT"),
+    ("서드포인트 (댄 로브)",        "0001040273", "hedge", "THIRD POINT"),
+    ("타이거 글로벌 (체이스 콜먼)", "0001167483", "hedge", "TIGER GLOBAL"),
 
-    ("국민연금공단",                "0001608046", "korea"),
+    ("틸 매크로 (피터 틸)",         "0001562087", "paypal", "THIEL"),
+    ("알티미터 (거스트너)",         "0001541617", "paypal", "ALTIMETER"),
+    ("코투 매니지먼트",             "0001135730", "paypal", "COATUE"),
+
+    ("국민연금공단",                "0001608046", "korea", "PENSION"),
 ]
 
 CATEGORIES = {
     "value":  "가치·행동주의",
-    "macro":  "매크로·헤지펀드",
+    "macro":  "매크로",
+    "hedge":  "대형 헤지펀드",
+    "multi":  "멀티전략·퀀트",     # 보유 종목 수천 개·회전율 높음 → 공통매매 집계 제외
     "paypal": "페이팔 마피아·테크",
     "policy": "정책·연준 출신",     # 13F 미제출 — 뉴스 전용
     "korea":  "국내 (국민연금)",
 }
 
 # 뉴스 전용 인물 — 13F 제출 의무가 없거나 제출을 중단한 인물
+# (표시명, 카테고리, 검색어, 제목에 반드시 있어야 하는 단어)
 NEWS_ONLY = [
-    ("재닛 옐런", "policy", "Janet Yellen"),
-    ("제롬 파월", "policy", "Jerome Powell"),
-    ("래리 서머스", "policy", "Larry Summers"),
-    ("케빈 워시", "policy", "Kevin Warsh"),
+    ("재닛 옐런", "policy", "Janet Yellen", "Yellen"),
+    ("제롬 파월", "policy", "Jerome Powell", "Powell"),
+    ("래리 서머스", "policy", "Larry Summers", "Summers"),
+    ("케빈 워시", "policy", "Kevin Warsh", "Warsh"),
     # 버리는 2025-11 사이언 에셋 등록말소로 13F 제출 중단 → 발언만 추적
-    ("마이클 버리", "macro", "Michael Burry"),
+    ("마이클 버리", "macro", "Michael Burry", "Burry"),
 ]
 
-# 13F 제출자 중 뉴스도 같이 볼 인물 (표시명: 영문 검색어)
+# 13F 제출자 중 뉴스도 같이 볼 인물 (표시명: (검색어, 제목 필수 단어))
 NEWS_FOR_MANAGERS = {
-    "버크셔 해서웨이 (버핏)": "Warren Buffett",
-    "아이칸 (칼 아이칸)": "Carl Icahn",
-    "퍼싱스퀘어 (애크먼)": "Bill Ackman",
-    "브리지워터 (달리오)": "Ray Dalio",
-    "듀케인 (드러켄밀러)": "Stanley Druckenmiller",
-    "소로스 펀드 매니지먼트": "George Soros fund",
-    "아팔루사 (테퍼)": "David Tepper",
-    "틸 매크로 (피터 틸)": "Peter Thiel",
-    "알티미터 (거스트너)": "Brad Gerstner",
-    "코투 매니지먼트": "Coatue Philippe Laffont",
-    "국민연금공단": "국민연금 해외투자",
+    "버크셔 해서웨이 (버핏)": ("Warren Buffett", "Buffett|Berkshire"),
+    "아이칸 (칼 아이칸)": ("Carl Icahn", "Icahn"),
+    "퍼싱스퀘어 (애크먼)": ("Bill Ackman", "Ackman"),
+    "바우포스트 (클라만)": ("Seth Klarman", "Klarman|Baupost"),
+    "그린라이트 (아인혼)": ("David Einhorn", "Einhorn|Greenlight"),
+    "브리지워터 (달리오)": ("Ray Dalio", "Dalio|Bridgewater"),
+    "듀케인 (드러켄밀러)": ("Stanley Druckenmiller", "Druckenmiller"),
+    "소로스 펀드 매니지먼트": ("Soros Fund Management", "Soros"),
+    "아팔루사 (테퍼)": ("David Tepper", "Tepper|Appaloosa"),
+    "튜더 (폴 튜더 존스)": ("Paul Tudor Jones", "Tudor Jones"),
+    "시타델 (켄 그리핀)": ("Ken Griffin", "Griffin|Citadel"),
+    "밀레니엄 (잉글랜더)": ("Millennium Management", "Millennium|Englander"),
+    "포인트72 (스티브 코헨)": ("Steve Cohen Point72", "Cohen|Point72"),
+    "르네상스 테크놀로지": ("Renaissance Technologies", "Renaissance"),
+    "엘리엇 (폴 싱어)": ("Elliott Management", "Elliott|Singer"),
+    "서드포인트 (댄 로브)": ("Dan Loeb", "Loeb|Third Point"),
+    "타이거 글로벌 (체이스 콜먼)": ("Tiger Global", "Tiger Global|Chase Coleman"),
+    "틸 매크로 (피터 틸)": ("Peter Thiel", "Thiel"),
+    "알티미터 (거스트너)": ("Brad Gerstner", "Gerstner|Altimeter"),
+    "코투 매니지먼트": ("Coatue Philippe Laffont", "Coatue|Laffont"),
+    "국민연금공단": ("국민연금 해외투자", "국민연금"),
 }
 
-NEWS_KEYWORDS = "macro OR economy OR markets OR Fed OR inflation"
-NEWS_PER_PERSON = 3
+# 인터뷰·발언 위주로 검색
+NEWS_KEYWORDS = ("interview OR says OR said OR warns OR sees OR expects OR bets OR "
+                 "CNBC OR Bloomberg OR podcast OR letter OR stake")
+NEWS_PER_PERSON = 4
 
 session = requests.Session()
 session.headers.update({"User-Agent": UA, "Accept-Encoding": "gzip, deflate"})
@@ -271,7 +298,7 @@ def build_consensus(managers):
     """여러 운용사가 같은 분기에 동시에 사고/판 종목."""
     bought, sold = defaultdict(list), defaultdict(list)
     for m in managers:
-        if m.get("error") or m.get("stale") or m.get("category") == "korea":
+        if m.get("error") or m.get("stale") or m.get("category") in ("korea", "multi"):
             continue
         for r in m["new_buys"] + m["added"]:
             bought[(r["cusip"], r["name"])].append(m["name"])
@@ -292,41 +319,88 @@ def build_consensus(managers):
 
 # ---------------------------------------------------------------- 뉴스
 
-def fetch_news(person_en, limit=NEWS_PER_PERSON):
-    q = urllib.parse.quote(f'"{person_en}" ({NEWS_KEYWORDS})')
-    url = f"https://news.google.com/rss/search?q={q}+when:30d&hl=en-US&gl=US&ceid=US:en"
+NEWS_WINDOW_DAYS = 30
+
+
+def _rss(q, lang):
+    """구글 뉴스 → 실패·빈 결과면 Bing 뉴스. crypto.py 의 RSS 파서 재사용"""
+    import crypto as C
+    cut = __import__("datetime").timedelta(days=NEWS_WINDOW_DAYS)
+    loc = "hl=ko&gl=KR&ceid=KR:ko" if lang == "ko" else "hl=en-US&gl=US&ceid=US:en"
     try:
-        r = session.get(url, timeout=20)
+        r = session.get("https://news.google.com/rss/search?q=%s&%s" % (
+            urllib.parse.quote(q + " when:%dd" % NEWS_WINDOW_DAYS), loc), timeout=20)
         r.raise_for_status()
-        root = ET.fromstring(r.content)
+        items = C.rss_items(r.text, lang, cut=cut)
+        if items:
+            return items
     except Exception as e:
-        print(f"  ! 뉴스 실패 {person_en}: {e}")
+        print(f"  ! 구글 뉴스 실패 → Bing: {e}")
+    try:
+        return C.bing(q, lang, cut)
+    except Exception as e:
+        print(f"  ! Bing 뉴스 실패: {e}")
         return []
-    items = []
-    for it in root.iter("item"):
-        title = (it.findtext("title") or "").strip()
-        link = (it.findtext("link") or "").strip()
-        pub = (it.findtext("pubDate") or "").strip()
-        src_el = it.find("source")
-        source = src_el.text.strip() if src_el is not None and src_el.text else ""
-        if not title:
+
+
+def fetch_news(query, must, limit=NEWS_PER_PERSON):
+    """인물 발언·인터뷰 기사. 제목에 must(정규식) 가 있는 기사만"""
+    lang = "ko" if re.search(r"[가-힣]", query) else "en"
+    q = query if lang == "ko" else f'"{query}" ({NEWS_KEYWORDS})'
+    pat = re.compile(must, re.I)
+    out, seen = [], set()
+    for n in _rss(q, lang):
+        if not pat.search(n["title"]):
             continue
-        title = re.sub(r"\s+-\s+[^-]+$", "", title)   # 꼬리 매체명 제거
-        items.append({"title": title, "url": link, "source": source, "published": pub})
-        if len(items) >= limit:
+        key = re.sub(r"\W+", "", n["title"].lower())[:40]
+        if key in seen:
+            continue
+        seen.add(key)
+        pub = ""
+        if n.get("ts"):
+            pub = n["ts"].replace(" ", "T") + ":00+09:00"
+        out.append({"title": n["title"], "url": n["url"], "source": n.get("src", ""),
+                    "published": pub, "lang": lang})
+        if len(out) >= limit:
             break
-    return items
+    return out
+
+
+def summarize_views(news):
+    """인물별 최근 헤드라인 → 발언·견해 요지 (한국어 1~2문장). 헤드라인에 있는 사실만"""
+    import crypto as C
+    import calendar_ctx
+    by = defaultdict(list)
+    for a in news:
+        by[a["person"]].append("%s (%s)" % (a["title"], (a.get("published") or "")[:10]))
+    if not by:
+        return {}
+    kst_today = datetime.now(timezone.utc).astimezone(
+        __import__("datetime").timezone(__import__("datetime").timedelta(hours=9))).date()
+    prompt = (
+        "아래는 유명 투자자·헤지펀드 매니저·정책 인사별 최근 30일 뉴스 헤드라인이다.\n"
+        + calendar_ctx.macro_context(kst_today) + "\n"
+        "인물마다 그 사람이 시장·경제·투자에 대해 한 발언이나 견해, 또는 최근 투자 행보의 요지를 "
+        "한국어 1~2문장으로 정리하라. 인터뷰·발언이 헤드라인에 없으면 "
+        "'직접 발언 보도 없음'으로 시작하고 관련 이슈만 한 줄로 적어라.\n"
+        "규칙:\n- 헤드라인에 있는 내용만 쓸 것. 수치·종목·시점을 지어내지 말 것\n"
+        "- 매수/매도 추천 금지\n" + calendar_ctx.RULE +
+        "출력은 다른 말 없이 JSON 하나: {\"인물 표시명\": \"요지\", ...}\n\n"
+        + json.dumps(by, ensure_ascii=False)[:40000])
+    out = C.claude_json(prompt, 4000)
+    return out if isinstance(out, dict) else {}
 
 
 # ---------------------------------------------------------------- 메인
 
 def verify_ciks():
     print("CIK 검증 — 등록명이 의도한 운용사와 맞는지 확인하세요.\n")
-    for name, cik, _ in MANAGERS:
+    for name, cik, _, kw in MANAGERS:
         try:
             registered, filings = latest_13f_filings(cik, 1)
+            ok = "OK" if kw.upper() in registered.upper() else "!! 키워드 불일치"
             period = filings[0]["period"] if filings else "13F 없음"
-            print(f"  {name:28s} {cik}  ->  {registered}  (최근 {period})")
+            print(f"  {name:28s} {cik}  ->  {registered}  (최근 {period})  {ok}")
         except Exception as e:
             print(f"  {name:28s} {cik}  ->  조회 실패: {e}")
 
@@ -342,13 +416,16 @@ def load_existing():
 def collect_13f():
     results, periods = [], []
 
-    for name, cik, category in MANAGERS:
+    for name, cik, category, kw in MANAGERS:
         print(f"[13F] {name}")
         entry = {"name": name, "cik": cik,
                  "category": category, "category_label": CATEGORIES[category]}
         try:
             registered, filings = latest_13f_filings(cik, 2)
             entry["registered_name"] = registered
+            print(f"  등록명: {registered}")
+            if kw.upper() not in registered.upper():
+                raise RuntimeError(f"CIK 등록명 불일치 ({registered})")
             if len(filings) < 2:
                 raise RuntimeError("13F 공시가 2건 미만")
 
@@ -393,21 +470,24 @@ def collect_13f():
 
 
 def collect_news():
+    import crypto as C
     print("[뉴스]")
     news = []
-    for disp, en in NEWS_FOR_MANAGERS.items():
-        cat = next((c for n, _, c in MANAGERS if n == disp), "value")
-        for a in fetch_news(en):
+    people = [(disp, next((c for n, _, c, _k in MANAGERS if n == disp), "value"), q, must)
+              for disp, (q, must) in NEWS_FOR_MANAGERS.items()]
+    people += [(disp, cat, q, must) for disp, cat, q, must in NEWS_ONLY]
+    for disp, cat, q, must in people:
+        got = fetch_news(q, must)
+        print(f"  {disp}: {len(got)}건")
+        for a in got:
             a.update({"person": disp, "category": cat,
                       "category_label": CATEGORIES[cat]})
             news.append(a)
-    for disp, cat, en in NEWS_ONLY:
-        for a in fetch_news(en):
-            a.update({"person": disp, "category": cat,
-                      "category_label": CATEGORIES[cat]})
-            news.append(a)
-    print(f"  -> 뉴스 {len(news)}건")
-    return {"news": news, "news_updated_at": datetime.now(timezone.utc).isoformat()}
+    C.translate_titles(news)          # 영문 제목 → 한국어 (원문은 orig)
+    views = summarize_views(news)
+    print(f"  -> 뉴스 {len(news)}건, 발언 요지 {len(views)}명")
+    return {"news": news, "views": views,
+            "news_updated_at": datetime.now(timezone.utc).isoformat()}
 
 
 def main(mode):

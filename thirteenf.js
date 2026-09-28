@@ -12,6 +12,22 @@ function tq(p){if(!p)return '-';var m=String(p).match(/^(\d{4})-(\d{2})/);
 function tdate(s){if(!s)return '';var d=new Date(s);
   return isNaN(d)?'':(d.getMonth()+1)+'/'+d.getDate()}
 
+/* 인물 발언: AI 요지 + 기사 목록 (영문은 번역 제목, 원문은 툴팁) */
+function tfNewsList(arr){
+  if(!arr||!arr.length)return '<p class="note">최근 30일 관련 기사 없음</p>';
+  var h='';
+  for(var k=0;k<arr.length;k++){var a=arr[k];
+    if(!/^https?:\/\//.test(a.url||''))continue;
+    h+='<li><a href="'+escT(a.url)+'" target="_blank" rel="noopener noreferrer"'+
+      (a.orig?' title="'+escT(a.orig)+'"':'')+'>'+escT(a.title)+'</a><div class="s">'+
+      escT(a.source||'')+(tdate(a.published)?' · '+tdate(a.published):'')+
+      (a.lang==='en'?(a.orig?' · 영문 번역':' · EN'):'')+'</div></li>'}
+  return '<ul class="news">'+h+'</ul>'}
+function tfPerson(name){
+  var v=(TF.views||{})[name]||'',arr=(TF.news||[]).filter(function(a){return a.person===name});
+  return (v?'<div class="brief tfview"><b class="ai">✦</b> '+escT(v)+'</div>':'')+tfNewsList(arr)}
+function tfFirst(t){return ((t||'').match(/^[\s\S]*?[.다요](?=\s|$)/)||[t||''])[0]}
+
 /* 카테고리 필터 — 운용사 카드와 하단 뉴스에 함께 적용 */
 function tfBar(){
   var cats=TF.categories||{},ks=['all'],h='';
@@ -36,7 +52,7 @@ function tfConsensus(){
     return '<table>'+h+'</table>'}
   return '<details open><summary>공통 매매 종목</summary><div class="body">'+
     '<p class="note">두 곳 이상이 같은 분기에 함께 움직인 종목입니다. '+
-    '국민연금은 성격이 달라 집계에서 제외했습니다.</p>'+
+    '국민연금과 멀티전략·퀀트 펀드(보유 종목 수천 개)는 성격이 달라 집계에서 제외했습니다.</p>'+
     '<div class="sec">함께 사들인 종목</div>'+rows(b,'up')+
     '<div class="sec">함께 정리한 종목</div>'+rows(s,'dn')+
     '</div></details>'}
@@ -76,8 +92,11 @@ function tfManager(m){
     '<div class="cr3"><span>신규 '+(m.new_buys||[]).length+
     ' · 청산 '+(m.sold_out||[]).length+
     ' · 확대 '+(m.added||[]).length+
-    ' · 축소 '+(m.trimmed||[]).length+'</span></div>';
-  var body='<div class="sec">상위 보유</div>'+tfRows(m.top,'top')+
+    ' · 축소 '+(m.trimmed||[]).length+'</span></div>'+
+    ((TF.views||{})[m.name]?'<div class="tfv"><b class="ai">✦</b><span>'+
+      escT(tfFirst(TF.views[m.name]))+'</span></div>':'');
+  var body='<div class="sec" style="margin-top:0">최근 발언·인터뷰</div>'+tfPerson(m.name)+
+    '<div class="sec">상위 보유</div>'+tfRows(m.top,'top')+
     '<div class="sec">신규 편입</div>'+tfRows(m.new_buys,'new')+
     '<div class="sec">전량 청산</div>'+tfRows(m.sold_out,'sold')+
     '<div class="sec">비중 확대 <span class="dim">주식수 +10% 이상</span></div>'+
@@ -89,24 +108,19 @@ function tfManager(m){
   return '<details class="coin"><summary>'+head+'</summary>'+
     '<div class="body">'+body+'</div></details>'}
 
-/* 하단: 인물 발언·인터뷰 */
+/* 하단: 13F 카드가 없는 인물(정책 인사, 제출 중단자)의 발언·인터뷰 */
 function tfNews(){
-  var l=(TF.news||[]).filter(function(a){return tfPass(a.category)});
-  if(!l.length)return '<div class="hd">발언·인터뷰</div><p class="note">표시할 기사가 없습니다.</p>';
-  var by={},order=[];
-  for(var i=0;i<l.length;i++){var p=l[i].person;
-    if(!by[p]){by[p]=[];order.push(p)}
-    by[p].push(l[i])}
-  var h='<div class="hd">발언·인터뷰<small>최근 30일</small></div>';
-  for(var j=0;j<order.length;j++){
-    var p=order[j],arr=by[p],items='';
-    for(var k=0;k<arr.length;k++){var a=arr[k];
-      items+='<li><a href="'+escT(a.url)+'" target="_blank" rel="noopener">'+
-        escT(a.title)+'</a><div class="s">'+escT(a.source||'')+
-        (tdate(a.published)?' · '+tdate(a.published):'')+'</div></li>'}
-    h+='<details><summary>'+escT(p)+
-       '<span class="dim">'+escT(arr[0].category_label||'')+'</span></summary>'+
-       '<div class="body"><ul class="news">'+items+'</ul></div></details>'}
+  var mg={};(TF.managers||[]).forEach(function(m){mg[m.name]=1});
+  var l=(TF.news||[]).filter(function(a){return !mg[a.person]&&tfPass(a.category)});
+  var order=[],seen={};
+  l.forEach(function(a){if(!seen[a.person]){seen[a.person]=1;order.push(a)}});
+  if(!order.length)return '';
+  var h='<div class="hd">기타 인물 발언·인터뷰<small>최근 30일</small></div>';
+  for(var j=0;j<order.length;j++){var p=order[j].person;
+    h+='<details class="coin"><summary><div class="cr1"><div class="ch"><b>'+escT(p)+
+       '</b><span class="cn">'+escT(order[j].category_label||'')+'</span></div></div>'+
+       ((TF.views||{})[p]?'<div class="tfv"><b class="ai">✦</b><span>'+escT(tfFirst(TF.views[p]))+
+       '</span></div>':'')+'</summary><div class="body">'+tfPerson(p)+'</div></details>'}
   return h}
 
 function renderTF(){
