@@ -8914,10 +8914,25 @@
   "consensus": {
     "bought": [
       {
+        "cusip": "02079K305",
+        "name": "ALPHABET INC",
+        "count": 7,
+        "managers": [
+          "듀케인 (드러켄밀러)",
+          "바우포스트 (클라만)",
+          "버크셔 해서웨이 (버핏)",
+          "서드포인트 (댄 로브)",
+          "소로스 펀드 매니지먼트",
+          "알티미터 (거스트너)",
+          "코투 매니지먼트"
+        ]
+      },
+      {
         "cusip": "023135106",
         "name": "AMAZON COM INC",
-        "count": 6,
+        "count": 7,
         "managers": [
+          "듀케인 (드러켄밀러)",
           "바우포스트 (클라만)",
           "아팔루사 (테퍼)",
           "알티미터 (거스트너)",
@@ -8939,22 +8954,50 @@
         ]
       },
       {
-        "cusip": "02079K305",
-        "name": "ALPHABET INC",
-        "count": 4,
+        "cusip": "007903107",
+        "name": "Advanced Micro Devices Inc",
+        "count": 3,
         "managers": [
-          "버크셔 해서웨이 (버핏)",
-          "서드포인트 (댄 로브)",
-          "알티미터 (거스트너)",
-          "코투 매니지먼트"
+          "듀케인 (드러켄밀러)",
+          "코투 매니지먼트",
+          "타이거 글로벌 (체이스 콜먼)"
         ]
       },
       {
-        "cusip": "02079K107",
-        "name": "ALPHABET INC",
+        "cusip": "874039100",
+        "name": "Taiwan Semiconductor Manufac",
+        "count": 3,
+        "managers": [
+          "듀케인 (드러켄밀러)",
+          "서드포인트 (댄 로브)",
+          "아팔루사 (테퍼)"
+        ]
+      },
+      {
+        "cusip": "15675D103",
+        "name": "CEREBRAS SYSTEMS INC",
+        "count": 3,
+        "managers": [
+          "알티미터 (거스트너)",
+          "코투 매니지먼트",
+          "타이거 글로벌 (체이스 콜먼)"
+        ]
+      },
+      {
+        "cusip": "23331A109",
+        "name": "D R HORTON INC",
         "count": 2,
         "managers": [
-          "바우포스트 (클라만)",
+          "듀케인 (드러켄밀러)",
+          "버크셔 해서웨이 (버핏)"
+        ]
+      },
+      {
+        "cusip": "247361702",
+        "name": "DELTA AIR LINES INC",
+        "count": 2,
+        "managers": [
+          "듀케인 (드러켄밀러)",
           "버크셔 해서웨이 (버핏)"
         ]
       },
@@ -8986,6 +9029,24 @@
         ]
       },
       {
+        "cusip": "G7997R103",
+        "name": "Seagate Technology Hldngs Pl",
+        "count": 2,
+        "managers": [
+          "듀케인 (드러켄밀러)",
+          "타이거 글로벌 (체이스 콜먼)"
+        ]
+      },
+      {
+        "cusip": "G25508105",
+        "name": "Crh Plc",
+        "count": 2,
+        "managers": [
+          "듀케인 (드러켄밀러)",
+          "서드포인트 (댄 로브)"
+        ]
+      },
+      {
         "cusip": "025537101",
         "name": "AMERICAN ELEC PWR CO INC",
         "count": 2,
@@ -9002,68 +9063,15 @@
           "아팔루사 (테퍼)",
           "알티미터 (거스트너)"
         ]
-      },
-      {
-        "cusip": "874039100",
-        "name": "TAIWAN SEMICONDUCTOR MANUFAC",
-        "count": 2,
-        "managers": [
-          "서드포인트 (댄 로브)",
-          "아팔루사 (테퍼)"
-        ]
-      },
-      {
-        "cusip": "871607107",
-        "name": "SYNOPSYS INC",
-        "count": 2,
-        "managers": [
-          "알티미터 (거스트너)",
-          "엘리엇 (폴 싱어)"
-        ]
-      },
-      {
-        "cusip": "852234103",
-        "name": "BLOCK INC",
-        "count": 2,
-        "managers": [
-          "서드포인트 (댄 로브)",
-          "타이거 글로벌 (체이스 콜먼)"
-        ]
-      },
-      {
-        "cusip": "44812J104",
-        "name": "HUT 8 CORP",
-        "count": 2,
-        "managers": [
-          "서드포인트 (댄 로브)",
-          "코투 매니지먼트"
-        ]
-      },
-      {
-        "cusip": "15675D103",
-        "name": "CEREBRAS SYSTEMS INC",
-        "count": 2,
-        "managers": [
-          "코투 매니지먼트",
-          "타이거 글로벌 (체이스 콜먼)"
-        ]
-      },
-      {
-        "cusip": "007903107",
-        "name": "ADVANCED MICRO DEVICES INC",
-        "count": 2,
-        "managers": [
-          "코투 매니지먼트",
-          "타이거 글로벌 (체이스 콜먼)"
-        ]
       }
     ],
     "sold": [
       {
         "cusip": "11135F101",
         "name": "BROADCOM INC",
-        "count": 4,
+        "count": 5,
         "managers": [
+          "듀케인 (드러켄밀러)",
           "브리지워터 (달리오)",
           "서드포인트 (댄 로브)",
           "알티미터 (거스트너)",
@@ -9071,11 +9079,12 @@
         ]
       },
       {
-        "cusip": "02079K305",
+        "cusip": "02079K107",
         "name": "ALPHABET INC",
-        "count": 3,
+        "count": 4,
         "managers": [
           "브리지워터 (달리오)",
+          "코투 매니지먼트",
           "타이거 글로벌 (체이스 콜먼)",
           "퍼싱스퀘어 (애크먼)"
         ]
@@ -9111,12 +9120,12 @@
         ]
       },
       {
-        "cusip": "02079K107",
-        "name": "ALPHABET INC",
+        "cusip": "76131D103",
+        "name": "RESTAURANT BRANDS INTL INC",
         "count": 2,
         "managers": [
-          "코투 매니지먼트",
-          "퍼싱스퀘어 (애크먼)"
+          "듀케인 (드러켄밀러)",
+          "바우포스트 (클라만)"
         ]
       },
       {
@@ -9165,6 +9174,24 @@
         ]
       },
       {
+        "cusip": "55024UAF6",
+        "name": "LUMENTUM HLDGS INC",
+        "count": 2,
+        "managers": [
+          "소로스 펀드 매니지먼트",
+          "타이거 글로벌 (체이스 콜먼)"
+        ]
+      },
+      {
+        "cusip": "47215PAJ5",
+        "name": "JD.COM INC",
+        "count": 2,
+        "managers": [
+          "소로스 펀드 매니지먼트",
+          "아팔루사 (테퍼)"
+        ]
+      },
+      {
         "cusip": "874039100",
         "name": "TAIWAN SEMICONDUCTOR MANUFAC",
         "count": 2,
@@ -9184,7 +9211,7 @@
       }
     ]
   },
-  "holdings_updated_at": "2026-09-28T13:49:53.263975+00:00",
+  "holdings_updated_at": "2026-09-28T14:01:32.056218+00:00",
   "categories": {
     "value": "가치·행동주의",
     "macro": "매크로",
@@ -9194,7 +9221,7 @@
     "policy": "정책·연준 출신",
     "korea": "국내 (국민연금)"
   },
-  "generated_at": "2026-09-28T13:49:53.264180+00:00",
+  "generated_at": "2026-09-28T14:01:32.056581+00:00",
   "note": "13F 는 분기말 후 45일 이내 공시되므로 최대 45일 시차가 있습니다. 파생·공매도·해외주식은 13F 에 포함되지 않습니다.",
   "news_updated_at": "2026-09-28T10:25:38.815536+00:00"
 }
