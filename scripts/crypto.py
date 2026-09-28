@@ -754,6 +754,8 @@ def build():
     pick, past = pick_view(picks)
     all_news = [n for c in coins for n in c["news"]] + ((pick or {}).get("evidence") or [])
     safe("뉴스 번역", lambda: translate_titles(all_news), None)
+    import articles  # 영문 기사 본문 → 한국어 번역 요약
+    safe("기사 번역", lambda: articles.enrich(all_news, "history/article_ko_crypto.json"), 0)
     brief = safe("AI 브리핑", lambda: ai_brief(coins), None) or {}
     for c in coins:
         c["brief"] = (brief.get("coins") or {}).get(c["sym"], "")

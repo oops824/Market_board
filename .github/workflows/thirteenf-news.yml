@@ -12,7 +12,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       # 트리거 시점이 아닌 '실행 시점'의 최신 브랜치를 받는다.
       # 두 작업이 같은 thirteenf.json 을 고치므로, 앞 작업 결과 위에서 시작해야 충돌이 없다
@@ -22,7 +22,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install requests
+      - run: pip install requests trafilatura
       - run: python scripts/thirteenf.py --mode news
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -30,6 +30,7 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add thirteenf.json
+          git add history/article_ko_13f.json 2>/dev/null || true
           git diff --staged --quiet && exit 0
           git commit -m "13F news update"
           for i in 1 2 3; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push && exit 0; sleep 5; done
