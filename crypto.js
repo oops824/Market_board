@@ -101,10 +101,11 @@ document.addEventListener('pointerout',function(e){
   var svg=e.target.closest&&e.target.closest('svg.pc');
   if(svg&&e.pointerType==='mouse'){var g=svg.querySelector('.xh');if(g)g.style.display='none';svg.classList.remove('hov')}});
 document.addEventListener('click',function(e){
-  var b=e.target.closest&&e.target.closest('button.pb');if(!b||!CR)return;
-  e.preventDefault();CH_P[b.getAttribute('data-sym')]=b.getAttribute('data-p');
-  var c=CR.coins.filter(function(x){return x.sym===b.getAttribute('data-sym')})[0];
-  var w=document.getElementById('wpc-'+c.sym);if(c&&w)w.outerHTML=priceChart(c)});
+  // 코인 차트 기간 버튼만 (다른 탭의 .pb 버튼은 무시)
+  var b=e.target.closest&&e.target.closest('button.pb[data-p][data-sym]');if(!b||!CR)return;
+  var c=CR.coins.filter(function(x){return x.sym===b.getAttribute('data-sym')})[0];if(!c)return;
+  e.preventDefault();CH_P[c.sym]=b.getAttribute('data-p');
+  var w=document.getElementById('wpc-'+c.sym);if(w)w.outerHTML=priceChart(c)});
 
 function kv(k,v,s){return '<div class="kv"><div class="k">'+k+'</div><div class="v">'+v+
   '</div>'+(s?'<div class="s">'+s+'</div>':'')+'</div>'}
