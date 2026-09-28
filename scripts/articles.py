@@ -17,6 +17,7 @@ RETRY_FAIL_H = 24       # 실패한 기사는 이 시간 뒤에 다시 시도
 MIN_BODY = 600          # 이보다 짧으면 본문 추출 실패(유료벽 등)로 본다
 BATCH = 5               # AI 한 번에 보낼 기사 수
 MAX_NEW = 60            # 한 번 실행에서 새로 처리할 최대 기사 수
+VERSION = 2             # 번역 규칙을 바꾸면 올린다 → 이전 번역은 다시 처리
 
 
 def _session():
@@ -91,7 +92,12 @@ def translate_batch(batch):
         "(누가, 무엇을, 왜, 수치 포함)\n"
         "- quotes: 기사 속 인물의 직접 인용이 있으면 가장 중요한 1~2개를 한국어로 번역 "
         "(\"발언\" — 발언자 형식). 없으면 빈 배열\n"
-        "규칙: 본문에 없는 내용·해석을 더하지 말 것. 인명·기관명·티커는 원문 표기 유지 가능.\n"
+        "규칙:\n"
+        "- 본문에 없는 내용·해석을 더하지 말 것\n"
+        "- 금액·수치는 원문 표기 그대로 쓸 것 (예: $2.4B, $87,300, 12%). "
+        "억·조 같은 한국식 단위로 환산하지 말 것\n"
+        "- quotes 는 반드시 한국어로 번역할 것. 영어 원문을 그대로 두지 말 것\n"
+        "- 인명·기관명·티커는 원문 표기 유지 가능\n"
         "출력은 다른 말 없이 JSON 하나: {\"기사id\": {\"sum\": \"...\", \"quotes\": [\"...\"]}, ...}\n\n"
         + json.dumps(arts, ensure_ascii=False))
     out = C.claude_json(prompt, 6000)
@@ -125,10 +131,13 @@ def enrich(items, cache_path):
             continue
         seen.add(n["url"])
         c = cache.get(n["url"])
-        if c and (c.get("status") == "ok" or
-                  now - datetime.datetime.fromisoformat(c["t"]) <
-                  datetime.timedelta(hours=RETRY_FAIL_H)):
-            continue
+        if c:
+            if c.get("status") == "ok":
+                if c.get("v") == VERSION:
+                    continue                  # 현재 규칙으로 번역 완료
+            elif now - datetime.datetime.fromisoformat(c["t"]) < \
+                    datetime.timedelta(hours=RETRY_FAIL_H):
+                continue                      # 최근 실패 — 나중에 재시도
         todo.append(n)
     todo = todo[:MAX_NEW]
     print("[기사 번역] 새 기사 %d건 처리" % len(todo))
@@ -159,9 +168,11 @@ def enrich(items, cache_path):
         for aid, key in ids.items():
             r = res.get(aid) or {}
             if r.get("sum"):
-                cache[key].update({"status": "ok", "sum": str(r["sum"]).strip(),
-                                   "quotes": [str(q).strip() for q in (r.get("quotes") or [])
-                                              if str(q).strip()][:2]})
+                # 번역되지 않은(한글 없는) 인용은 버린다
+                qs = [str(q).strip() for q in (r.get("quotes") or [])
+                      if re.search(r"[가-힣]", str(q))][:2]
+                cache[key].update({"status": "ok", "v": VERSION,
+                                   "sum": str(r["sum"]).strip(), "quotes": qs})
             else:
                 cache[key]["status"] = "fail"
 
