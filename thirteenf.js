@@ -1,0 +1,139 @@
+/* 기관 포트폴리오 13F 대시보드 (탭4) */
+var TF=null,TF_CAT='all';
+function escT(t){return String(t==null?'':t).replace(/[<>&"']/g,function(c){
+  return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]})}
+function tnum(v){return typeof v==='number'&&isFinite(v)}
+function tbig(v){if(!tnum(v))return '-';var a=Math.abs(v);
+  return a>=1e12?'$'+(v/1e12).toFixed(2)+'T':a>=1e9?'$'+(v/1e9).toFixed(1)+'B':
+    a>=1e6?'$'+(v/1e6).toFixed(0)+'M':'$'+v.toLocaleString('en-US',{maximumFractionDigits:0})}
+function tpc(v){return tnum(v)?(v>=0?'+':'')+v.toFixed(0)+'%':'-'}
+function tq(p){if(!p)return '-';var m=String(p).match(/^(\d{4})-(\d{2})/);
+  if(!m)return p;return m[1]+' Q'+Math.ceil(+m[2]/3)}
+function tdate(s){if(!s)return '';var d=new Date(s);
+  return isNaN(d)?'':(d.getMonth()+1)+'/'+d.getDate()}
+
+/* 카테고리 필터 — 운용사 카드와 하단 뉴스에 함께 적용 */
+function tfBar(){
+  var cats=TF.categories||{},ks=['all'],h='';
+  for(var k in cats)if(cats.hasOwnProperty(k))ks.push(k);
+  for(var i=0;i<ks.length;i++){var k=ks[i];
+    h+='<button class="pb'+(k===TF_CAT?' on':'')+'" data-tcat="'+escT(k)+'">'+
+       escT(k==='all'?'전체':cats[k])+'</button>'}
+  return '<div class="pbar tfbar">'+h+'</div>'}
+function tfPass(c){return TF_CAT==='all'||c===TF_CAT}
+
+/* 공통 매매: 2인 이상이 같은 분기에 함께 사고 판 종목 */
+function tfConsensus(){
+  var c=TF.consensus||{},b=c.bought||[],s=c.sold||[];
+  if(!b.length&&!s.length)return '';
+  function rows(l,cl){
+    if(!l.length)return '<p class="note">해당 없음</p>';
+    var h='';
+    for(var i=0;i<l.length&&i<8;i++){var r=l[i];
+      h+='<tr><td class="n">'+escT(r.name)+
+         '<div class="sub">'+escT(r.managers.join(' · '))+'</div></td>'+
+         '<td class="v"><span class="badge '+cl+'">'+r.count+'곳</span></td></tr>'}
+    return '<table>'+h+'</table>'}
+  return '<details open><summary>공통 매매 종목</summary><div class="body">'+
+    '<p class="note">두 곳 이상이 같은 분기에 함께 움직인 종목입니다. '+
+    '국민연금은 성격이 달라 집계에서 제외했습니다.</p>'+
+    '<div class="sec">함께 사들인 종목</div>'+rows(b,'up')+
+    '<div class="sec">함께 정리한 종목</div>'+rows(s,'dn')+
+    '</div></details>'}
+
+/* 운용사 카드 */
+function tfRows(list,kind){
+  if(!list||!list.length)return '<p class="note">해당 없음</p>';
+  var h='';
+  for(var i=0;i<list.length&&i<8;i++){
+    var r=list[i],right,sub=[];
+    if(r.putcall)sub.push(r.putcall==='Put'?'풋옵션':'콜옵션');
+    if(kind==='sold'){right=tbig(r.value_prev)}
+    else{
+      right=tbig(r.value);
+      if(tnum(r.weight))sub.push('비중 '+r.weight.toFixed(1)+'%')}
+    h+='<tr><td class="n">'+escT(r.name)+
+       (sub.length?'<div class="sub">'+escT(sub.join(' · '))+'</div>':'')+
+       '</td><td class="v">'+right+
+       (tnum(r.shares_chg_pct)&&(kind==='add'||kind==='trim')
+         ? '<br><span class="badge '+(r.shares_chg_pct>=0?'up':'dn')+'">'+
+           tpc(r.shares_chg_pct)+'</span>' : '')+
+       '</td></tr>'}
+  return '<table>'+h+'</table>'}
+
+function tfManager(m){
+  if(m.error){
+    return '<details class="coin"><summary><div class="cr1"><div class="ch">'+
+      '<b>'+escT(m.name)+'</b></div></div>'+
+      '<div class="cr3"><span>수집 실패 · '+escT(m.error)+'</span></div>'+
+      '</summary></details>'}
+  var stale=m.stale?'<span class="badge warn">공시 중단</span>':'';
+  var head='<div class="cr1"><div class="ch"><b>'+escT(m.name)+'</b></div>'+
+    '<div class="cp">'+tbig(m.total_value)+'</div></div>'+
+    '<div class="cr2"><div class="cn">'+escT(tq(m.period))+' 기준 · '+
+    (m.position_count||0)+'종목'+'</div>'+
+    (stale?'<div>'+stale+'</div>':'')+'</div>'+
+    '<div class="cr3"><span>신규 '+(m.new_buys||[]).length+
+    ' · 청산 '+(m.sold_out||[]).length+
+    ' · 확대 '+(m.added||[]).length+
+    ' · 축소 '+(m.trimmed||[]).length+'</span></div>';
+  var body='<div class="sec">상위 보유</div>'+tfRows(m.top,'top')+
+    '<div class="sec">신규 편입</div>'+tfRows(m.new_buys,'new')+
+    '<div class="sec">전량 청산</div>'+tfRows(m.sold_out,'sold')+
+    '<div class="sec">비중 확대 <span class="dim">주식수 +10% 이상</span></div>'+
+      tfRows(m.added,'add')+
+    '<div class="sec">비중 축소 <span class="dim">주식수 -10% 이상</span></div>'+
+      tfRows(m.trimmed,'trim')+
+    '<p class="note">직전 분기('+escT(tq(m.period_prev))+') 대비. '+
+    'SEC 공시일 '+escT(m.filed||'-')+'.</p>';
+  return '<details class="coin"><summary>'+head+'</summary>'+
+    '<div class="body">'+body+'</div></details>'}
+
+/* 하단: 인물 발언·인터뷰 */
+function tfNews(){
+  var l=(TF.news||[]).filter(function(a){return tfPass(a.category)});
+  if(!l.length)return '<div class="hd">발언·인터뷰</div><p class="note">표시할 기사가 없습니다.</p>';
+  var by={},order=[];
+  for(var i=0;i<l.length;i++){var p=l[i].person;
+    if(!by[p]){by[p]=[];order.push(p)}
+    by[p].push(l[i])}
+  var h='<div class="hd">발언·인터뷰<small>최근 30일</small></div>';
+  for(var j=0;j<order.length;j++){
+    var p=order[j],arr=by[p],items='';
+    for(var k=0;k<arr.length;k++){var a=arr[k];
+      items+='<li><a href="'+escT(a.url)+'" target="_blank" rel="noopener">'+
+        escT(a.title)+'</a><div class="s">'+escT(a.source||'')+
+        (tdate(a.published)?' · '+tdate(a.published):'')+'</div></li>'}
+    h+='<details><summary>'+escT(p)+
+       '<span class="dim">'+escT(arr[0].category_label||'')+'</span></summary>'+
+       '<div class="body"><ul class="news">'+items+'</ul></div></details>'}
+  return h}
+
+function renderTF(){
+  var ms=(TF.managers||[]).filter(function(m){return tfPass(m.category)});
+  var cards='';
+  for(var i=0;i<ms.length;i++)cards+=tfManager(ms[i]);
+  if(!cards)cards='<p class="note">해당 분류의 운용사가 없습니다.</p>';
+
+  var bar='<div class="cbar"><span>'+escT(tq(TF.latest_period))+' 공시 기준</span>'+
+    '<span>뉴스 '+escT(tdate(TF.news_updated_at)||'-')+'</span></div>';
+
+  $('#p4').innerHTML=bar+tfBar()+
+    (TF_CAT==='all'?tfConsensus():'')+
+    '<div class="hd">운용사별 포트폴리오</div>'+cards+
+    tfNews()+
+    '<p class="note">'+escT(TF.note||'')+'</p>';
+
+  var bs=document.querySelectorAll('#p4 .tfbar .pb');
+  for(var j=0;j<bs.length;j++){
+    bs[j].onclick=function(){TF_CAT=this.getAttribute('data-tcat');renderTF()}}}
+
+function loadTF(){
+  fetch('thirteenf.json?t='+Date.now())
+  .then(function(r){if(!r.ok)throw 0;return r.json()})
+  .then(function(d){TF=d;
+    try{renderTF()}
+    catch(e){$('#p4').innerHTML='<p class="err">표시 오류: '+escT(e.message)+'</p>'}})
+  .catch(function(){$('#p4').innerHTML='<p class="err">thirteenf.json이 아직 없습니다.<br>'+
+    'Actions에서 thirteenf 워크플로를 한 번 실행해 주세요.</p>'})}
+loadTF();

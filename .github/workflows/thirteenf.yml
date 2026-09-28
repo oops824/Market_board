@@ -1,0 +1,30 @@
+name: thirteenf
+on:
+  schedule:
+    # 매주 토요일 06:20 KST (금 21:20 UTC) — 13F는 분기 1회 공시라 주 1회로 충분
+    - cron: "20 21 * * 5"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: market-board-push
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install requests
+      - run: python scripts/thirteenf.py --mode 13f
+      - run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add thirteenf.json
+          git diff --staged --quiet && exit 0
+          git commit -m "13F holdings update"
+          for i in 1 2 3; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push && exit 0; sleep 5; done
+          exit 1
