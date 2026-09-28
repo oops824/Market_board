@@ -416,38 +416,59 @@ SHOW_N = {"top": TOP_N, "new_buys": 8, "sold_out": 8, "added": 8, "trimmed": 8}
 PRICE_MAX_AGE = 400       # 기준일이 이보다 오래된 공시(제출 중단)는 비교하지 않음
 
 
+def _figi(jobs):
+    """OpenFIGI 매핑 요청 1회 (최대 10건). 실패 시 None"""
+    for _ in range(3):
+        try:
+            r = requests.post("https://api.openfigi.com/v3/mapping", json=jobs, timeout=30)
+            if r.status_code == 429:
+                time.sleep(30)
+                continue
+            r.raise_for_status()
+            time.sleep(2.6)                    # 키 없이 분당 25회 제한
+            out = []
+            for res in r.json():
+                data = res.get("data") or []
+                eq = [x for x in data if x.get("marketSector") == "Equity"] or data
+                out.append((eq[0].get("ticker") or "") if eq else "")
+            return out
+        except Exception as e:
+            print(f"  ! OpenFIGI 실패: {e}")
+            time.sleep(5)
+    return None
+
+
 def figi_tickers(cusips):
-    """CUSIP -> 미국 티커 (OpenFIGI, 키 없이 분당 25회·요청당 10건). 결과는 캐시"""
+    """CUSIP -> 미국 티커 (OpenFIGI, 키 없이 분당 25회·요청당 10건). 결과는 캐시.
+    1차: CUSIP + 미국 거래소. 실패분 2차: 해외 법인(첫 글자가 영문인 CINS)은 ID_CINS,
+    나머지는 거래소 조건 없이. 2차도 실패하면 '-' 로 저장해 다시 묻지 않는다."""
     try:
         with open(FIGI_CACHE, encoding="utf-8") as f:
             cache = json.load(f)
     except (OSError, ValueError):
         cache = {}
-    todo = sorted(c for c in cusips if c not in cache)
-    print(f"[티커] 캐시 {len(cache)} · 새 CUSIP {len(todo)}")
+    todo = sorted(c for c in cusips if cache.get(c, "") == "")
+    print(f"[티커] 캐시 {len(cache)} · 조회 {len(todo)}")
     for i in range(0, len(todo), 10):
         part = todo[i:i + 10]
-        jobs = [{"idType": "ID_CUSIP", "idValue": c, "exchCode": "US"} for c in part]
-        for attempt in range(3):
-            try:
-                r = requests.post("https://api.openfigi.com/v3/mapping", json=jobs, timeout=30)
-                if r.status_code == 429:
-                    time.sleep(30)
-                    continue
-                r.raise_for_status()
-                for c, res in zip(part, r.json()):
-                    data = res.get("data") or []
-                    eq = [x for x in data if x.get("marketSector") == "Equity"] or data
-                    cache[c] = (eq[0].get("ticker") or "") if eq else ""
-                break
-            except Exception as e:
-                print(f"  ! OpenFIGI 실패: {e}")
-                time.sleep(5)
-        time.sleep(2.6)
+        res = _figi([{"idType": "ID_CUSIP", "idValue": c, "exchCode": "US"} for c in part])
+        if res is None:
+            continue
+        miss = []
+        for c, t in zip(part, res):
+            if t:
+                cache[c] = t
+            else:
+                miss.append(c)
+        if miss:
+            res2 = _figi([{"idType": "ID_CINS" if c[:1].isalpha() else "ID_CUSIP",
+                           "idValue": c} for c in miss])
+            for c, t in zip(miss, res2 or [""] * len(miss)):
+                cache[c] = t or ("-" if res2 is not None else "")
     os.makedirs(os.path.dirname(FIGI_CACHE), exist_ok=True)
     with open(FIGI_CACHE, "w", encoding="utf-8") as f:
         json.dump(cache, f, ensure_ascii=False, indent=0)
-    return cache
+    return {c: t for c, t in cache.items() if t and t != "-"}
 
 
 def yahoo_daily(ticker):
