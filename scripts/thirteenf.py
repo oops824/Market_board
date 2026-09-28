@@ -500,6 +500,11 @@ def collect_news():
                       "category_label": CATEGORIES[cat]})
             news.append(a)
     C.translate_titles(news)          # 영문 제목 → 한국어 (원문은 orig)
+    import articles                   # 영문 기사 본문 → 한국어 번역 요약
+    try:
+        articles.enrich(news, "history/article_ko_13f.json")
+    except Exception as e:
+        print("  ! 기사 번역 실패:", e)
     views = summarize_views(news)
     print(f"  -> 뉴스 {len(news)}건, 발언 요지 {len(views)}명")
     return {"news": news, "views": views,

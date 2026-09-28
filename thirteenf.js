@@ -18,10 +18,10 @@ function tfNewsList(arr){
   var h='';
   for(var k=0;k<arr.length;k++){var a=arr[k];
     if(!/^https?:\/\//.test(a.url||''))continue;
-    h+='<li><a href="'+escT(a.url)+'" target="_blank" rel="noopener noreferrer"'+
+    h+='<li><a href="'+escT(newsHref(a))+'" target="_blank" rel="noopener noreferrer"'+
       (a.orig?' title="'+escT(a.orig)+'"':'')+'>'+escT(a.title)+'</a><div class="s">'+
       escT(a.source||'')+(tdate(a.published)?' · '+tdate(a.published):'')+
-      (a.lang==='en'?(a.orig?' · 영문 번역':' · EN'):'')+'</div></li>'}
+      (a.lang==='en'?(a.orig?' · 영문 번역':' · EN'):'')+'</div>'+koBlock(a)+'</li>'}
   return '<ul class="news">'+h+'</ul>'}
 function tfPerson(name){
   var v=(TF.views||{})[name]||'',arr=(TF.news||[]).filter(function(a){return a.person===name});

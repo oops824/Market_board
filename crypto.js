@@ -110,14 +110,28 @@ document.addEventListener('click',function(e){
 function kv(k,v,s){return '<div class="kv"><div class="k">'+k+'</div><div class="v">'+v+
   '</div>'+(s?'<div class="s">'+s+'</div>':'')+'</div>'}
 
+/* 영문 기사: 한글 번역 요약(펼치기) + 구글 번역 전문 링크. 기관 탭에서도 사용 */
+function koLink(n){
+  return n.real&&/^https?:\/\//.test(n.real)?'<a class="kotr" href="https://translate.google.com/translate?sl=auto&tl=ko&hl=ko&u='+
+    encodeURIComponent(n.real)+'" target="_blank" rel="noopener noreferrer">전문 번역 ↗</a>':''}
+function koBlock(n){
+  if(n.lang!=='en')return '';
+  var tr=koLink(n);
+  if(n.ko&&n.ko.sum){
+    var q=(n.ko.quotes||[]).map(function(x){return '<blockquote>'+escA(x)+'</blockquote>'}).join('');
+    return '<details class="ko"><summary>한글로 읽기</summary><div class="kob">'+escA(n.ko.sum)+q+
+      (tr?'<div class="kol">'+tr+'</div>':'')+'</div></details>'}
+  return tr?'<div class="kol">'+tr+'</div>':''}
+function newsHref(n){return /^https?:\/\//.test(n.real||'')?n.real:n.url}
+
 function newsList(arr){
   var x='<ul class="news">';
   for(var j=0;j<arr.length;j++){var n=arr[j];
     if(!/^https?:\/\//.test(n.url))continue;
-    x+='<li><a href="'+escA(n.url)+'" target="_blank" rel="noopener noreferrer"'+
+    x+='<li><a href="'+escA(newsHref(n))+'" target="_blank" rel="noopener noreferrer"'+
       (n.orig?' title="'+escA(n.orig)+'"':'')+'>'+escA(n.title)+'</a><div class="s">'+
       escA(n.src)+(n.ts?' · '+escA(n.ts):'')+(n.lang==='en'?(n.orig?' · 영문 번역':' · EN'):'')+
-      '</div></li>'}
+      '</div>'+koBlock(n)+'</li>'}
   return x+'</ul>'}
 
 function pickCard(p,past){

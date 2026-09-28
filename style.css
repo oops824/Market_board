@@ -182,3 +182,14 @@ svg.pc.hov .pl,svg.pc.hov .mk{opacity:.2}
 .tfv span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tfv .ai,.tfview .ai{color:var(--acc)}
 .tfview{margin-bottom:8px}
+/* 영문 기사 한글 번역 요약 */
+details.ko{background:none;border:0;border-radius:0;margin:7px 0 0;overflow:visible}
+details.ko>summary{display:inline-flex;padding:4px 9px;font-size:12.5px;font-weight:600;color:var(--acc);
+background:var(--acc-bg);border:1px solid rgba(47,208,189,.35);border-radius:7px}
+details.ko>summary::after{width:5px;height:5px;margin:-3px 0 0 7px;border-color:var(--acc)}
+details.ko[open]>summary::after{margin-top:3px}
+.kob{margin-top:8px;background:var(--card2);border-radius:10px;padding:11px 12px;
+font-size:13.5px;line-height:1.72;color:var(--txt)}
+.kob blockquote{margin:9px 0 0;padding:1px 0 1px 10px;border-left:3px solid var(--acc);color:var(--sub);font-size:13px}
+.kol{margin-top:7px}
+.kotr{font-size:12px;font-weight:600;color:var(--sub);text-decoration:none;border-bottom:1px dotted var(--dim)}
