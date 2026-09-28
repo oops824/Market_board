@@ -407,6 +407,132 @@ def summarize_views(news):
     return out if isinstance(out, dict) else {}
 
 
+# ---------------------------------------------------------------- 가격·신호
+
+FIGI_CACHE = "history/cusip_ticker.json"
+YH_UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                       "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
+SHOW_N = {"top": TOP_N, "new_buys": 8, "sold_out": 8, "added": 8, "trimmed": 8}
+PRICE_MAX_AGE = 400       # 기준일이 이보다 오래된 공시(제출 중단)는 비교하지 않음
+
+
+def figi_tickers(cusips):
+    """CUSIP -> 미국 티커 (OpenFIGI, 키 없이 분당 25회·요청당 10건). 결과는 캐시"""
+    try:
+        with open(FIGI_CACHE, encoding="utf-8") as f:
+            cache = json.load(f)
+    except (OSError, ValueError):
+        cache = {}
+    todo = sorted(c for c in cusips if c not in cache)
+    print(f"[티커] 캐시 {len(cache)} · 새 CUSIP {len(todo)}")
+    for i in range(0, len(todo), 10):
+        part = todo[i:i + 10]
+        jobs = [{"idType": "ID_CUSIP", "idValue": c, "exchCode": "US"} for c in part]
+        for attempt in range(3):
+            try:
+                r = requests.post("https://api.openfigi.com/v3/mapping", json=jobs, timeout=30)
+                if r.status_code == 429:
+                    time.sleep(30)
+                    continue
+                r.raise_for_status()
+                for c, res in zip(part, r.json()):
+                    data = res.get("data") or []
+                    eq = [x for x in data if x.get("marketSector") == "Equity"] or data
+                    cache[c] = (eq[0].get("ticker") or "") if eq else ""
+                break
+            except Exception as e:
+                print(f"  ! OpenFIGI 실패: {e}")
+                time.sleep(5)
+        time.sleep(2.6)
+    os.makedirs(os.path.dirname(FIGI_CACHE), exist_ok=True)
+    with open(FIGI_CACHE, "w", encoding="utf-8") as f:
+        json.dump(cache, f, ensure_ascii=False, indent=0)
+    return cache
+
+
+def yahoo_daily(ticker):
+    """1년 일봉 -> (날짜, 종가, 고가, 저가, 거래량, 현재가)"""
+    sym = ticker.replace("/", "-").replace(" ", "-")
+    for host in ("query1", "query2"):
+        try:
+            r = requests.get(f"https://{host}.finance.yahoo.com/v8/finance/chart/"
+                             f"{urllib.parse.quote(sym)}?range=1y&interval=1d",
+                             headers=YH_UA, timeout=20)
+            if r.status_code == 429:
+                time.sleep(3)
+                continue
+            r.raise_for_status()
+            res = r.json()["chart"]["result"][0]
+            q = res["indicators"]["quote"][0]
+            rows = [(datetime.fromtimestamp(t, timezone.utc).strftime("%Y-%m-%d"), c, h, l, v)
+                    for t, c, h, l, v in zip(res["timestamp"], q["close"], q["high"],
+                                             q["low"], q["volume"]) if c is not None]
+            if len(rows) < 5:
+                return None
+            d, c, h, l, v = (list(x) for x in zip(*rows))
+            now_px = res.get("meta", {}).get("regularMarketPrice") or c[-1]
+            return d, c, h, l, v, float(now_px)
+        except Exception:
+            continue
+    return None
+
+
+def enrich_prices(payload):
+    """표시되는 보유 종목마다 티커·기준일 대비 현재 등락·기술적 신호를 붙인다"""
+    import signals
+    from concurrent.futures import ThreadPoolExecutor
+    managers = payload.get("managers") or []
+    cons = payload.get("consensus") or {}
+    rows = []                                   # (row dict, 기준일)
+    for m in managers:
+        if m.get("error") or not m.get("period"):
+            continue
+        for k, n in SHOW_N.items():
+            for r in (m.get(k) or [])[:n]:
+                rows.append((r, m["period"]))
+    latest = payload.get("latest_period")
+    for k in ("bought", "sold"):
+        for r in (cons.get(k) or [])[:8]:
+            rows.append((r, latest))
+
+    tick = figi_tickers({r["cusip"] for r, _ in rows if r.get("cusip")})
+    uniq = sorted({tick.get(r["cusip"]) for r, _ in rows if tick.get(r.get("cusip"))})
+    print(f"[가격] 티커 {len(uniq)}개 조회")
+    with ThreadPoolExecutor(max_workers=4) as ex:
+        series = dict(zip(uniq, ex.map(yahoo_daily, uniq)))
+    ok = sum(1 for v in series.values() if v)
+    print(f"  -> 가격 {ok}/{len(uniq)}")
+
+    today = datetime.now(timezone.utc).date()
+    tag_cache = {}
+    for r, period in rows:
+        t = tick.get(r.get("cusip") or "")
+        for f in ("ticker", "chg_since", "px_now", "px_period", "tags"):
+            r.pop(f, None)
+        if not t:
+            continue
+        r["ticker"] = t
+        s = series.get(t)
+        if not s:
+            continue
+        d, c, h, l, v, now_px = s
+        r["px_now"] = round(now_px, 4)
+        try:
+            pdate = datetime.strptime(period, "%Y-%m-%d").date()
+        except (TypeError, ValueError):
+            pdate = None
+        if pdate and (today - pdate).days <= PRICE_MAX_AGE:
+            base = [x for x, dd in zip(c, d) if dd <= period]
+            if base and d[0] <= period:
+                r["px_period"] = round(base[-1], 4)
+                r["chg_since"] = round((now_px / base[-1] - 1) * 100, 1)
+        if t not in tag_cache:
+            tag_cache[t] = signals.top(signals.price_signals(c, h, l, v), 3)
+        r["tags"] = tag_cache[t]
+    payload["prices_updated_at"] = datetime.now(timezone.utc).isoformat()
+    return payload
+
+
 # ---------------------------------------------------------------- 메인
 
 def verify_ciks():
@@ -520,6 +646,8 @@ def main(mode):
         payload.update(collect_13f())
     if mode in ("all", "news"):
         payload.update(collect_news())
+    if mode in ("all", "13f", "prices"):
+        enrich_prices(payload)
 
     payload["categories"] = CATEGORIES
     payload["generated_at"] = datetime.now(timezone.utc).isoformat()
@@ -539,7 +667,7 @@ def main(mode):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--verify-cik", action="store_true")
-    ap.add_argument("--mode", choices=["all", "13f", "news"], default="all",
-                    help="13f=보유내역만, news=뉴스만, all=둘 다 (기본)")
+    ap.add_argument("--mode", choices=["all", "13f", "news", "prices"], default="all",
+                    help="13f=보유내역(+가격), news=뉴스만, prices=가격·신호만, all=전부 (기본)")
     args = ap.parse_args()
     verify_ciks() if args.verify_cik else main(args.mode)
