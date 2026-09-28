@@ -1,0 +1,30 @@
+name: thirteenf-news
+on:
+  schedule:
+    # 매일 06:20 KST (전날 21:20 UTC) — 대시보드 갱신 직전에 채워둔다
+    - cron: "20 21 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: market-board-push
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install requests
+      - run: python scripts/thirteenf.py --mode news
+      - run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add thirteenf.json
+          git diff --staged --quiet && exit 0
+          git commit -m "13F news update"
+          for i in 1 2 3; do git pull --rebase origin "${GITHUB_REF_NAME}" && git push && exit 0; sleep 5; done
+          exit 1

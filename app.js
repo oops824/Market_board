@@ -88,11 +88,12 @@ function load(p){
     $('#meta').textContent='';
     $('#app').innerHTML='<p class="err">data.json을 읽지 못했습니다.<br>'+
       '실행이 끝났는지, 1~2분 기다렸는지 확인해 주세요.</p>'})}
-function tab(n){for(var i=1;i<=3;i++){$('#t'+i).className='tab'+(i===n?' on':'');
+function tab(n){for(var i=1;i<=4;i++){$('#t'+i).className='tab'+(i===n?' on':'');
   $('#p'+i).className=i===n?'':'hide'}}
 $('#t1').onclick=function(){tab(1)};
 $('#t2').onclick=function(){tab(2)};
 $('#t3').onclick=function(){tab(3)};
+$('#t4').onclick=function(){tab(4)};
 
 fetch('reports/list.json?t='+Date.now())
 .then(function(r){return r.ok?r.json():Promise.reject()}).then(function(l){
