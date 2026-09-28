@@ -416,8 +416,9 @@ SHOW_N = {"top": TOP_N, "new_buys": 8, "sold_out": 8, "added": 8, "trimmed": 8}
 PRICE_MAX_AGE = 400       # 기준일이 이보다 오래된 공시(제출 중단)는 비교하지 않음
 
 
-def _figi(jobs):
-    """OpenFIGI 매핑 요청 1회 (최대 10건). 실패 시 None"""
+def _figi(jobs, us_only=False):
+    """OpenFIGI 매핑 요청 1회 (최대 10건). 실패 시 None.
+    us_only: 미국 거래소(US 통합 또는 U로 시작하는 거래소 코드) 상장분만 인정"""
     for _ in range(3):
         try:
             r = requests.post("https://api.openfigi.com/v3/mapping", json=jobs, timeout=30)
@@ -430,6 +431,9 @@ def _figi(jobs):
             for res in r.json():
                 data = res.get("data") or []
                 eq = [x for x in data if x.get("marketSector") == "Equity"] or data
+                if us_only:
+                    eq = sorted((x for x in eq if str(x.get("exchCode", "")).startswith("U")),
+                                key=lambda x: x.get("exchCode") != "US")
                 out.append((eq[0].get("ticker") or "") if eq else "")
             return out
         except Exception as e:
@@ -462,7 +466,7 @@ def figi_tickers(cusips):
                 miss.append(c)
         if miss:
             res2 = _figi([{"idType": "ID_CINS" if c[:1].isalpha() else "ID_CUSIP",
-                           "idValue": c} for c in miss])
+                           "idValue": c} for c in miss], us_only=True)
             for c, t in zip(miss, res2 or [""] * len(miss)):
                 cache[c] = t or ("-" if res2 is not None else "")
     os.makedirs(os.path.dirname(FIGI_CACHE), exist_ok=True)
@@ -525,6 +529,49 @@ def enrich_prices(payload):
     print(f"  -> 가격 {ok}/{len(uniq)}")
 
     today = datetime.now(timezone.utc).date()
+
+    def base_close(t, period):
+        s_ = series.get(t) if t else None
+        if not s_ or not period or s_[0][0] > period:
+            return None
+        b = [x for x, dd in zip(s_[1], s_[0]) if dd <= period]
+        return b[-1] if b else None
+
+    # 금액 단위 보정: 일부 운용사는 13F 평가액을 '천 달러'로 제출한다.
+    # (평가액 ÷ 주식수) ÷ 기준일 종가의 중앙값이 약 1/1000 이면 그 운용사 금액을 ×1000
+    import statistics
+    for m in managers:
+        if m.get("error") or not m.get("period"):
+            continue
+        ratios = []
+        for k in ("top", "new_buys", "added", "trimmed"):
+            for r in m.get(k) or []:
+                b = base_close(tick.get(r.get("cusip") or ""), m["period"])
+                if b and r.get("value") and r.get("shares") and not r.get("putcall"):
+                    ratios.append(r["value"] / r["shares"] / b)
+        if len(ratios) >= 5 and 0.0003 < statistics.median(ratios) < 0.003:
+            print(f"  -> {m['name']}: 평가액이 천 달러 단위 → ×1000 보정")
+            m["total_value"] = round((m.get("total_value") or 0) * 1000)
+            for k in ("top", "new_buys", "added", "trimmed", "sold_out"):
+                for r in m.get(k) or []:
+                    for f in ("value", "value_prev"):
+                        if r.get(f):
+                            r[f] = round(r[f] * 1000)
+            m["value_unit_fixed"] = True
+
+    # 티커 검증: 13F 평가액 ÷ 주식수 = 기준일 주가. 야후 기준일 종가와 25% 넘게 다르면
+    # 다른 종목(잘못된 티커)이거나 채권·액면분할 등이므로 그 티커는 표시하지 않는다
+    bad = set()
+    for r, period in rows:
+        t = tick.get(r.get("cusip") or "")
+        b = base_close(t, period)
+        if not b or not r.get("value") or not r.get("shares") or r.get("putcall"):
+            continue
+        if abs(r["value"] / r["shares"] / b - 1) > 0.25:
+            bad.add(t)
+    if bad:
+        print(f"  -> 가격 불일치로 제외한 티커 {len(bad)}개: {sorted(bad)[:15]}")
+    tick = {k: v for k, v in tick.items() if v not in bad}
     tag_cache = {}
     for r, period in rows:
         t = tick.get(r.get("cusip") or "")
