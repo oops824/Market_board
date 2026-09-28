@@ -26,7 +26,6 @@ function tfNewsList(arr){
 function tfPerson(name){
   var v=(TF.views||{})[name]||'',arr=(TF.news||[]).filter(function(a){return a.person===name});
   return (v?'<div class="brief tfview"><b class="ai">✦</b> '+escT(v)+'</div>':'')+tfNewsList(arr)}
-function tfFirst(t){return ((t||'').match(/^[\s\S]*?[.다요](?=\s|$)/)||[t||''])[0]}
 
 /* 카테고리 필터 — 운용사 카드와 하단 뉴스에 함께 적용 */
 function tfBar(){
@@ -94,7 +93,7 @@ function tfManager(m){
     ' · 확대 '+(m.added||[]).length+
     ' · 축소 '+(m.trimmed||[]).length+'</span></div>'+
     ((TF.views||{})[m.name]?'<div class="tfv"><b class="ai">✦</b><span>'+
-      escT(tfFirst(TF.views[m.name]))+'</span></div>':'');
+      escT(TF.views[m.name])+'</span></div>':'');
   var body='<div class="sec" style="margin-top:0">최근 발언·인터뷰</div>'+tfPerson(m.name)+
     '<div class="sec">상위 보유</div>'+tfRows(m.top,'top')+
     '<div class="sec">신규 편입</div>'+tfRows(m.new_buys,'new')+
@@ -119,7 +118,7 @@ function tfNews(){
   for(var j=0;j<order.length;j++){var p=order[j].person;
     h+='<details class="coin"><summary><div class="cr1"><div class="ch"><b>'+escT(p)+
        '</b><span class="cn">'+escT(order[j].category_label||'')+'</span></div></div>'+
-       ((TF.views||{})[p]?'<div class="tfv"><b class="ai">✦</b><span>'+escT(tfFirst(TF.views[p]))+
+       ((TF.views||{})[p]?'<div class="tfv"><b class="ai">✦</b><span>'+escT(TF.views[p])+
        '</span></div>':'')+'</summary><div class="body">'+tfPerson(p)+'</div></details>'}
   return h}
 
@@ -127,14 +126,14 @@ function renderTF(){
   var ms=(TF.managers||[]).filter(function(m){return tfPass(m.category)});
   var cards='';
   for(var i=0;i<ms.length;i++)cards+=tfManager(ms[i]);
-  if(!cards)cards='<p class="note">해당 분류의 운용사가 없습니다.</p>';
+
 
   var bar='<div class="cbar"><span>'+escT(tq(TF.latest_period))+' 공시 기준</span>'+
     '<span>뉴스 '+escT(tdate(TF.news_updated_at)||'-')+'</span></div>';
 
   $('#p4').innerHTML=bar+tfBar()+
     (TF_CAT==='all'?tfConsensus():'')+
-    '<div class="hd">운용사별 포트폴리오</div>'+cards+
+    (cards?'<div class="hd">운용사별 포트폴리오</div>'+cards:'')+
     tfNews()+
     '<p class="note">'+escT(TF.note||'')+'</p>';
 
