@@ -608,6 +608,7 @@ def claude_json(prompt, max_tokens, models=("claude-sonnet-5", "claude-haiku-4-5
     key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
     if not key:
         return None
+    fails = []
     for model in models:
         body = json.dumps({"model": model, "max_tokens": max_tokens,
                            "messages": [{"role": "user", "content": prompt}]}).encode()
@@ -624,7 +625,10 @@ def claude_json(prompt, max_tokens, models=("claude-sonnet-5", "claude-haiku-4-5
             if m:
                 return json.loads(m.group(0))
         except Exception as e:
-            ERRORS.append("AI(%s): %s" % (model, str(e)[:120]))
+            fails.append("%s: %s" % (model, str(e)[:100]))
+            print("[AI 실패 → 다음 모델]", fails[-1])
+    if fails:                                  # 모든 모델이 실패했을 때만 화면 오류로
+        ERRORS.append("AI 실패 — " + " / ".join(fails))
     return None
 
 
