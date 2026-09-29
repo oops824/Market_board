@@ -731,11 +731,23 @@ def pick_candidates_cg(skip_ids, skip_syms=()):
     return out[:20]
 
 
+def news_search(q, lang, days):
+    """구글 뉴스(기간 지정) → 실패·빈 결과면 Bing. 둘 다 실패하면 빈 목록"""
+    cut = datetime.timedelta(days=days)
+    loc = "hl=ko&gl=KR&ceid=KR:ko" if lang == "ko" else "hl=en-US&gl=US&ceid=US:en"
+    try:
+        items = rss_items(get("https://news.google.com/rss/search?q=%s&%s" % (
+            urllib.parse.quote("%s when:%dd" % (q, days)), loc), 20), lang, cut=cut)
+        if items:
+            return items
+    except Exception as e:
+        print("[구글 뉴스 실패 → Bing]", str(e)[:80])
+    return quiet(lambda: bing(q, lang, cut)) or []
+
+
 def inst_evidence(c):
     q = '"%s" (ETF OR BlackRock OR Grayscale OR Fidelity OR institutional OR "Wall Street")' % c["name"]
-    items = safe("근거뉴스 " + c["sym"], lambda: bing(q, "en", datetime.timedelta(days=30)), [])
-    items += safe("근거뉴스(ko) " + c["sym"],
-                  lambda: bing("%s 기관 ETF" % c["name"], "ko", datetime.timedelta(days=30)), [])
+    items = news_search(q, "en", 30) + news_search("%s 기관 ETF" % c["name"], "ko", 30)
     name_pat = re.compile(r"(?<![A-Za-z])(%s|%s)(?![A-Za-z])" % (
         re.escape(c["name"]), re.escape(c["sym"])), re.I if len(c["sym"]) > 3 else 0)
     name_ci = re.compile(r"(?<![A-Za-z])%s(?![A-Za-z])" % re.escape(c["name"]), re.I)
