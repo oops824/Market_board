@@ -124,6 +124,79 @@ def coingecko_krw():
     return {k: num(v.get("krw")) for k, v in j.items()}
 
 
+# ---------- CoinGecko 대체: CoinPaprika (+ OKX 2시간봉, 원/달러 환율) ----------
+# 2026-09-29 부터 CoinGecko 무료 API 가 GitHub Actions 요청에 403 을 반환 → 실패 시 사용
+_PAP = None
+STABLE_SYMS = {"USDT", "USDC", "DAI", "USDE", "FDUSD", "TUSD", "USDD", "PYUSD", "USDS", "USD1",
+               "RLUSD", "USDTB", "FRAX", "USDG", "BUIDL", "USDF", "USD0", "GHO", "CRVUSD",
+               "XAUT", "PAXG"}
+
+
+def paprika_all():
+    global _PAP
+    if _PAP is None:
+        _PAP = [r for r in json.loads(get("https://api.coinpaprika.com/v1/tickers?quotes=USD", 60))
+                if r.get("rank")]
+        _PAP.sort(key=lambda r: r["rank"])
+    return _PAP
+
+
+def paprika_by_sym(sym):
+    for r in paprika_all():                       # 순위순 → 같은 심볼이면 시총 큰 것
+        if r["symbol"].upper() == sym.upper():
+            return r
+    return None
+
+
+def okx_spark(ccy):
+    """7일 차트용 2시간봉 종가 84개 (과거->최신)"""
+    rows = json.loads(get("%s/market/candles?instId=%s-USDT-SWAP&bar=2H&limit=84"
+                          % (OKX, ccy))).get("data") or []
+    return [round(float(r[4]), 6) for r in rows[::-1]]
+
+
+def usdkrw():
+    j = json.loads(get("https://query1.finance.yahoo.com/v8/finance/chart/KRW=X?range=5d&interval=1d"))
+    return float(j["chart"]["result"][0]["meta"]["regularMarketPrice"])
+
+
+def market_paprika():
+    rate = quiet(usdkrw)
+    out = {}
+    for sym, _ko, cg_id, _hl, okx_ccy, _q1, _q2 in COINS:
+        r = paprika_by_sym(sym)
+        if not r:
+            continue
+        q = r["quotes"]["USD"]
+        px = num(q.get("price"))
+        out[cg_id] = {
+            "price": px, "mcap": num(q.get("market_cap")), "rank": r.get("rank"),
+            "vol": num(q.get("volume_24h")), "high24": None, "low24": None,
+            "ch24": num(q.get("percent_change_24h")), "ch7": num(q.get("percent_change_7d")),
+            "ch30": num(q.get("percent_change_30d")), "ath": num(q.get("ath_price")),
+            "athPct": num(q.get("percent_from_price_ath")),
+            "spark": quiet(lambda c=okx_ccy: okx_spark(c)) or [],
+            "sparkEnd": int(now.timestamp() * 1000), "sparkStepH": 2,
+            "krw": px * rate if px and rate else None, "src": "CoinPaprika",
+        }
+    if not out:
+        raise ValueError("CoinPaprika 데이터 없음")
+    return out
+
+
+def market_data():
+    """CoinGecko 우선, 막히면 CoinPaprika. 둘 다 실패할 때만 오류로 기록"""
+    try:
+        cg = coingecko()
+        krw = quiet(coingecko_krw) or {}
+        for k, m in cg.items():
+            m["krw"] = krw.get(k)
+        return cg
+    except Exception as e:
+        print("[CoinGecko 실패 → CoinPaprika]", e)
+    return market_paprika()
+
+
 # ---------- Hyperliquid ----------
 def hyperliquid():
     raw = json.loads(post("https://api.hyperliquid.xyz/info", {"type": "metaAndAssetCtxs"}))
@@ -604,7 +677,31 @@ def load_picks():
         return []
 
 
-def pick_candidates(skip_ids):
+def pick_candidates(skip_ids, skip_syms=()):
+    try:
+        return pick_candidates_cg(skip_ids, skip_syms)
+    except Exception as e:
+        print("[후보: CoinGecko 실패 → CoinPaprika]", e)
+    out = []
+    for r in paprika_all()[:250]:
+        q, rank, sym = r["quotes"]["USD"], r["rank"], r["symbol"].upper()
+        mcap, vol = num(q.get("market_cap")), num(q.get("volume_24h"))
+        if rank <= 10 or not mcap or sym in STABLE_SYMS or sym in skip_syms or r["id"] in skip_ids:
+            continue
+        if EXCL_NAME.search(r.get("name", "")) or EXCL_NAME.search(sym):
+            continue
+        ch7 = num(q.get("percent_change_7d")) or 0
+        ch30 = num(q.get("percent_change_30d")) or 0
+        turn = min((vol or 0) / mcap, 1.0)
+        score = max(-1, min(ch30, 150)) / 50 + max(-1, min(ch7, 60)) / 20 + turn * 3
+        out.append({"id": r["id"], "sym": sym, "name": r["name"], "rank": rank,
+                    "price": num(q.get("price")), "mcap": mcap, "vol": vol, "ch7": ch7,
+                    "ch30": ch30, "trending": False, "score": round(score, 3), "src": "paprika"})
+    out.sort(key=lambda x: x["score"], reverse=True)
+    return out[:20]
+
+
+def pick_candidates_cg(skip_ids, skip_syms=()):
     rows = cg_get("coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1"
                   "&price_change_percentage=7d,30d")
     excl = set()
@@ -616,7 +713,8 @@ def pick_candidates(skip_ids):
     out = []
     for r in rows:
         rank, mcap, vol = r.get("market_cap_rank"), num(r.get("market_cap")), num(r.get("total_volume"))
-        if not rank or rank <= 10 or not mcap or r["id"] in excl or r["id"] in skip_ids:
+        if not rank or rank <= 10 or not mcap or r["id"] in excl or r["id"] in skip_ids \
+                or r["symbol"].upper() in skip_syms:
             continue
         if EXCL_NAME.search(r.get("name", "")) or EXCL_NAME.search(r.get("symbol", "")):
             continue
@@ -660,7 +758,8 @@ def daily_pick(held_ids):
         return picks  # 오늘은 이미 소개함
     cutoff = (now - datetime.timedelta(days=90)).strftime("%Y-%m-%d")
     recent = {p["id"] for p in picks if p.get("date", "") >= cutoff}
-    cands = pick_candidates(set(held_ids) | recent)
+    recent_syms = {p["sym"] for p in picks if p.get("date", "") >= cutoff}
+    cands = pick_candidates(set(held_ids) | recent, recent_syms | {c[0] for c in COINS})
     for c in cands:
         c["evidence"] = inst_evidence(c)
     # 기관 관여 기사가 2건 이상인 후보만. 없으면 억지로 고르지 않고 다음 실행에서 재시도
@@ -671,6 +770,11 @@ def daily_pick(held_ids):
         return picks
     strong = strong[:5]
     for c in strong:
+        if c.get("src") == "paprika":
+            d = quiet(lambda i=c["id"]: json.loads(get("https://api.coinpaprika.com/v1/coins/" + i))) or {}
+            c["desc"] = (d.get("description") or "")[:700]
+            c["cats"] = [t.get("name") for t in (d.get("tags") or []) if t.get("name")][:5]
+            continue
         d = safe("CG 상세 " + c["id"], lambda i=c["id"]: cg_get(
             "coins/%s?localization=false&tickers=false&market_data=false"
             "&community_data=false&developer_data=false" % i), {}) or {}
@@ -716,8 +820,14 @@ def pick_view(picks):
     if not picks:
         return None, []
     ids = ",".join(dict.fromkeys(p["id"] for p in picks[-15:]))
-    cur = safe("CG 소개코인 시세", lambda: cg_get(
-        "simple/price?ids=%s&vs_currencies=usd&include_24hr_change=true" % ids), {}) or {}
+    cur = quiet(lambda: cg_get(
+        "simple/price?ids=%s&vs_currencies=usd&include_24hr_change=true" % ids)) or {}
+    for p in picks[-15:]:                 # CoinGecko 실패분은 CoinPaprika(심볼)로
+        if p["id"] not in cur:
+            r = quiet(lambda s_=p["sym"]: paprika_by_sym(s_))
+            if r:
+                q = r["quotes"]["USD"]
+                cur[p["id"]] = {"usd": q.get("price"), "usd_24h_change": q.get("percent_change_24h")}
     past = []
     for p in reversed(picks[-15:]):
         q = cur.get(p["id"]) or {}
@@ -802,8 +912,8 @@ def parse_farside(html):
             continue
         vals = [_flow_num(x) for x in r[1:]]
         if not vals or vals[-1] is None or \
-                all(x.strip() in ("", "-", "–", "—") for x in r[1:]):
-            continue                       # 아직 집계 전인 날 (전부 '-' 또는 빈칸)
+                all(x.strip() in ("", "-", "–", "—") for x in r[1:-1]):
+            continue                       # 아직 집계 전인 날 (ETF별 칸이 전부 '-' 또는 빈칸)
         by = {}
         if head and len(head) == len(r):
             for k, v in zip(head[1:-1], vals[:-1]):
@@ -878,16 +988,13 @@ def _streak(days):
 
 # ---------- 조립 ----------
 def build():
-    cg = safe("CoinGecko", coingecko, {})
-    krw = safe("CoinGecko KRW", coingecko_krw, {})
+    cg = safe("시세(CoinGecko/CoinPaprika)", market_data, {})
     hl = safe("Hyperliquid", hyperliquid, {})
     etf = safe("ETF 흐름", etf_flows, {})
     opts = deribit()
     coins = []
     for sym, ko, cg_id, hl_name, okx_ccy, ko_q, en_q in COINS:
         m = cg.get(cg_id)
-        if m is not None:
-            m["krw"] = krw.get(cg_id)
         coins.append({
             "sym": sym, "name": ko, "cg": cg_id,
             "market": m,
