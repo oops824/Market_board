@@ -91,7 +91,7 @@ function chMove(e){
   var ln=g.querySelector('line');ln.setAttribute('x1',px);ln.setAttribute('x2',px);
   var cc=g.querySelector('circle');cc.setAttribute('cx',px);cc.setAttribute('cy',py);
   var t=g.querySelector('text'),rc=g.querySelector('rect');
-  t.textContent=fdt(o.ts[k],o.h)+'  '+fp(o.v[k]);
+  t.textContent=fdt(o.ts[k],o.h)+'  '+(o.fmt||fp)(o.v[k]);
   var tw=t.textContent.length*6.4+14,tx=Math.max(2,Math.min(o.W-tw-2,px-tw/2));
   rc.setAttribute('x',tx);rc.setAttribute('y',2);rc.setAttribute('width',tw);
   t.setAttribute('x',tx+7);t.setAttribute('y',17)}
@@ -173,7 +173,7 @@ function etfBars(days){
   var use=H-B-T-(pm&&nm?14:0),zero=T+use*pm/tot+(pm&&nm?7:0),k=use/tot;
   var cw=(W-L-R)/n,bw=Math.min(30,cw*0.56);
   for(i=0;i<n;i++){var d=days[i],v=d.total,h=Math.max(1.5,Math.abs(v)*k),
-      cx=L+cw*i+cw/2,y=v>=0?zero-h:zero,col=v>=0?'var(--up)':'var(--dn)';
+      cx=L+cw*i+cw/2,y=v>=0?zero-h:zero,col=v>0?'var(--up)':v<0?'var(--dn)':'var(--dim)';
     var by=Object.keys(d.by||{}).sort(function(a,b){return Math.abs(d.by[b])-Math.abs(d.by[a])}).slice(0,3)
       .map(function(k){return k+' '+fM(d.by[k])}).join(', ');
     x+='<g><title>'+escA(mdS(d.d)+' 순유입 '+fM(v)+(by?' ('+by+')':''))+'</title>'+
@@ -186,19 +186,66 @@ function etfBars(days){
     '<line x1="'+L+'" x2="'+(W-R)+'" y1="'+zero.toFixed(1)+'" y2="'+zero.toFixed(1)+'" stroke="var(--line2)"/>'+x+'</svg>'}
 function etfCard(a,e){
   if(!e||!e.days||!e.days.length)return '';
-  var l=e.last,st=e.streak||0,nm=a==='BTC'?'비트코인':'이더리움';
+  var l=e.last,st=e.streak||0,nm={BTC:'비트코인',ETH:'이더리움',SOL:'솔라나',HYPE:'하이퍼리퀴드',LINK:'체인링크'}[a]||a;
   var top=Object.keys(l.by||{}).sort(function(x,y){return Math.abs(l.by[y])-Math.abs(l.by[x])}).slice(0,4);
   return '<div class="etf"><div class="eh"><b>'+nm+' 현물 ETF</b><span class="cn">'+escA(mdS(l.d))+' 기준'+
     (e.stale?' · 갱신 지연':'')+'</span></div>'+
-    '<div class="grid">'+kv('최근일 순유입','<span class="'+(l.total>=0?'tu':'td')+'">'+fM(l.total)+'</span>',
+    '<div class="grid">'+kv('최근일 순유입','<span class="'+(l.total>0?'tu':l.total<0?'td':'')+'">'+fM(l.total)+'</span>',
       st?(Math.abs(st)+'일 연속 '+(st>0?'순유입':'순유출')):'')+
-    kv('최근 5거래일 합계','<span class="'+(e.sum5>=0?'tu':'td')+'">'+fM(e.sum5)+'</span>',
+    kv('최근 5거래일 합계','<span class="'+(e.sum5>0?'tu':e.sum5<0?'td':'')+'">'+fM(e.sum5)+'</span>',
       '7거래일 '+fM(e.sum7))+'</div>'+
     '<div class="phd" style="margin-top:10px"><span>최근 '+e.days.length+'거래일 순유입 (백만 달러)</span></div>'+
     etfBars(e.days)+
     (top.length?'<div class="phd" style="margin:10px 0 0"><span>'+escA(mdS(l.d))+' ETF별 순유입 상위</span></div><div class="tags">'+top.map(function(k){var v=l.by[k];
       return '<span class="tag '+(v>=0?'up':'dn')+'">'+escA(k)+' '+escA(fM(v))+'</span>'}).join('')+'</div>':'')+
     '</div>'}
+
+/* ---------- 비트코인 도미넌스 · TOTAL2 ---------- */
+var DOM_P='90';
+function lineChart(id,ts,v,fmt,col){
+  var n=v.length,lo=Math.min.apply(null,v),hi=Math.max.apply(null,v),li=v.indexOf(lo),hx=v.indexOf(hi),
+    W=340,H=170,T=26,B=36,L=6,R=6,pad=(hi-lo)*0.08||Math.abs(hi)*0.01||1,mn=lo-pad,mx=hi+pad,i,d='';
+  function X(k){return L+k*(W-L-R)/Math.max(1,n-1)}
+  function Y(y){return T+(mx-y)/(mx-mn)*(H-T-B)}
+  for(i=0;i<n;i++)d+=(i?'L':'M')+X(i).toFixed(1)+' '+Y(v[i]).toFixed(1);
+  function lab(k,val,txt,above,cl){var x=X(k),anc=x<70?'start':x>W-70?'end':'middle';
+    return '<circle class="mk" cx="'+x.toFixed(1)+'" cy="'+Y(val).toFixed(1)+'" r="3.5" fill="'+cl+
+      '" stroke="var(--card)" stroke-width="2"/><text x="'+x.toFixed(1)+'" y="'+(above?Y(val)-8:Y(val)+16).toFixed(1)+
+      '" text-anchor="'+anc+'" class="pl" fill="'+cl+'">'+txt+'</text>'}
+  CH_D[id]={ts:ts,v:v,h:false,X:X,Y:Y,W:W,H:H,T:T,B:B,fmt:fmt};
+  return '<svg class="pc" id="'+id+'" viewBox="0 0 '+W+' '+H+'">'+
+    '<line x1="'+L+'" x2="'+(W-R)+'" y1="'+(H-18)+'" y2="'+(H-18)+'" stroke="var(--line)"/>'+
+    '<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="2" stroke-linejoin="round"/>'+
+    (n>1?lab(hx,hi,'최고 '+fmt(hi),true,'var(--up)')+lab(li,lo,'최저 '+fmt(lo),false,'var(--dn)'):'')+
+    '<text x="'+L+'" y="'+(H-4)+'" class="pa">'+fdt(ts[0])+'</text>'+
+    '<text x="'+(W-R)+'" y="'+(H-4)+'" class="pa" text-anchor="end">'+fdt(ts[n-1])+'</text>'+
+    '<g class="xh" style="display:none"><line y1="'+T+'" y2="'+(H-B)+'" stroke="var(--sub)" stroke-dasharray="3 3"/>'+
+    '<circle r="4.5" fill="'+col+'" stroke="var(--txt)" stroke-width="1.5"/>'+
+    '<rect rx="6" height="22" fill="var(--card2)" stroke="var(--line2)"/><text class="xt" fill="var(--txt)"></text></g>'+
+    '<rect class="hit" x="0" y="0" width="'+W+'" height="'+H+'" fill="transparent"/></svg>'}
+function domCard(dm){
+  if(!dm||!dm.t||!dm.t.length)return '';
+  var k=Math.min(+DOM_P,dm.t.length),ts=dm.t.slice(-k).map(function(d){return Date.parse(d+'T00:00:00')});
+  var dv=dm.dom.slice(-k),tv=dm.total2.slice(-k),n=dv.length;
+  function fpct(x){return x.toFixed(2)+'%'}
+  function fT(x){return x>=1000?'$'+(x/1000).toFixed(2)+'T':'$'+x.toFixed(0)+'B'}
+  function chg(a,j){return a.length>j?a[a.length-1]-a[a.length-1-j]:null}
+  function chgP(a,j){return a.length>j?(a[a.length-1]/a[a.length-1-j]-1)*100:null}
+  var btn='<div class="pbar">'+['30','90'].map(function(q){return '<button class="pb dp'+(q===DOM_P?' on':'')+
+    '" data-dp="'+q+'">'+q+'일</button>'}).join('')+'</div>';
+  var few=dm.t.length<7?'<p class="note">'+escA(dm.src)+' 기준 · 기록 '+dm.t.length+'일째 (매일 쌓여 추이가 길어집니다)</p>':'';
+  return '<div class="hd">비트코인 도미넌스 · TOTAL2<small>'+escA(dm.src||'')+'</small></div><div class="etf" id="domw">'+
+    '<div class="phd"><span>최근 '+n+'일 · 일 단위</span>'+btn+'</div>'+
+    '<div class="grid">'+kv('BTC 도미넌스',fpct(dv[n-1]),nz(chg(dv,7))?'7일 '+(chg(dv,7)>=0?'+':'')+chg(dv,7).toFixed(2)+'%p':'')+
+    kv('TOTAL2 (BTC 제외 시총)',fT(tv[n-1]),nz(chgP(tv,7))?'7일 '+fpc(chgP(tv,7),1):'')+'</div>'+
+    '<div class="sec">BTC 도미넌스</div>'+lineChart('dom-d',ts,dv,fpct,'#f7931a')+
+    '<div class="sec">TOTAL2</div>'+lineChart('dom-t',ts,tv,fT,'var(--acc)')+
+    '<p class="note">도미넌스 상승 = 자금이 비트코인으로 쏠림, TOTAL2 상승 = 알트코인 전반으로 자금 유입</p>'+few+'</div>'}
+document.addEventListener('click',function(e){
+  var b=e.target.closest&&e.target.closest('button.dp');if(!b||!CR)return;
+  DOM_P=b.getAttribute('data-dp');var w=document.getElementById('domw');
+  if(w){var t=document.createElement('div');t.innerHTML=domCard(CR.dom);
+    w.previousSibling.remove();w.replaceWith.apply(w,[].slice.call(t.childNodes))}});
 
 function coinCard(c){
   var m=c.market||{},hl=c.hl||{},ok=c.okx||{},op=c.options,px=m.price,x='';
@@ -277,13 +324,15 @@ function renderCrypto(){
   var err=CR.errors&&CR.errors.length?'<p class="note">일부 수집 실패 '+CR.errors.length+
     '건: '+escA(CR.errors.slice(0,4).join(' / '))+'</p>':'';
   var mk='',ef=CR.etf||{};
-  var etf=(ef.BTC||ef.ETH)?'<div class="hd">현물 ETF 자금 흐름<small>'+
-    escA((ef.BTC||ef.ETH).src||'')+' · 미국 거래일 기준</small></div>'+etfCard('BTC',ef.BTC)+etfCard('ETH',ef.ETH):'';
+  var ea=['BTC','ETH','SOL','HYPE','LINK'].filter(function(a){return ef[a]});
+  var etf=ea.length?'<div class="hd">현물 ETF 자금 흐름<small>'+escA(ef[ea[0]].src||'')+
+    ' · 미국 거래일 기준</small></div>'+ea.map(function(a){return etfCard(a,ef[a])}).join(''):'';
+  var dm=domCard(CR.dom);
   if(MKT&&MKT.secs.length)mk='<div class="hd">크립토 시장 지표<small>'+escA(MKT.updated)+'</small></div>'+
-    secTables(MKT.secs,1);
+    secTables(MKT.secs,MKT.secs.length);  // 전부 펼침
   $('#p3').innerHTML='<div class="cbar"><span id="cupd">'+escA(CR.updated||'')+
     (CR.live?' · 시세 '+CR.live+' 갱신':'')+'</span><button id="clive">시세 새로고침</button></div>'+
-    top+pickCard(CR.pick,CR.pastPicks)+ov+etf+mk+'<div class="hd">관심 코인 8종<small>4시간마다 갱신</small></div>'+LEGEND+cards+err;
+    top+pickCard(CR.pick,CR.pastPicks)+ov+etf+dm+mk+'<div class="hd">관심 코인 8종<small>4시간마다 갱신</small></div>'+LEGEND+cards+err;
   $('#clive').onclick=liveRefresh}
 
 /* 브라우저에서 바로 가격·펀딩비만 갱신 (뉴스·맥스페인은 정기 수집값 유지) */
