@@ -173,7 +173,7 @@ function etfBars(days){
   var use=H-B-T-(pm&&nm?14:0),zero=T+use*pm/tot+(pm&&nm?7:0),k=use/tot;
   var cw=(W-L-R)/n,bw=Math.min(30,cw*0.56);
   for(i=0;i<n;i++){var d=days[i],v=d.total,h=Math.max(1.5,Math.abs(v)*k),
-      cx=L+cw*i+cw/2,y=v>=0?zero-h:zero,col=v>=0?'var(--up)':'var(--dn)';
+      cx=L+cw*i+cw/2,y=v>=0?zero-h:zero,col=v>0?'var(--up)':v<0?'var(--dn)':'var(--dim)';
     var by=Object.keys(d.by||{}).sort(function(a,b){return Math.abs(d.by[b])-Math.abs(d.by[a])}).slice(0,3)
       .map(function(k){return k+' '+fM(d.by[k])}).join(', ');
     x+='<g><title>'+escA(mdS(d.d)+' 순유입 '+fM(v)+(by?' ('+by+')':''))+'</title>'+
@@ -190,9 +190,9 @@ function etfCard(a,e){
   var top=Object.keys(l.by||{}).sort(function(x,y){return Math.abs(l.by[y])-Math.abs(l.by[x])}).slice(0,4);
   return '<div class="etf"><div class="eh"><b>'+nm+' 현물 ETF</b><span class="cn">'+escA(mdS(l.d))+' 기준'+
     (e.stale?' · 갱신 지연':'')+'</span></div>'+
-    '<div class="grid">'+kv('최근일 순유입','<span class="'+(l.total>=0?'tu':'td')+'">'+fM(l.total)+'</span>',
+    '<div class="grid">'+kv('최근일 순유입','<span class="'+(l.total>0?'tu':l.total<0?'td':'')+'">'+fM(l.total)+'</span>',
       st?(Math.abs(st)+'일 연속 '+(st>0?'순유입':'순유출')):'')+
-    kv('최근 5거래일 합계','<span class="'+(e.sum5>=0?'tu':'td')+'">'+fM(e.sum5)+'</span>',
+    kv('최근 5거래일 합계','<span class="'+(e.sum5>0?'tu':e.sum5<0?'td':'')+'">'+fM(e.sum5)+'</span>',
       '7거래일 '+fM(e.sum7))+'</div>'+
     '<div class="phd" style="margin-top:10px"><span>최근 '+e.days.length+'거래일 순유입 (백만 달러)</span></div>'+
     etfBars(e.days)+
