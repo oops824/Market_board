@@ -161,6 +161,45 @@ function pickCard(p,past){
     '기관 관여가 확인된 코인을 매일 1개 선정합니다(해당 코인이 없는 날은 건너뜀). 투자 권유가 아닙니다.</p>';
   return '<div class="pick">'+x+'</div>'}
 
+/* ---------- 현물 ETF 자금 흐름 (백만 달러) ---------- */
+function fM(v){if(!nz(v))return '-';var a=Math.abs(v),sg=v>0?'+':v<0?'-':'';
+  return sg+(a>=1000?'$'+(a/1000).toFixed(2)+'B':'$'+a.toFixed(1)+'M')}
+function mdS(d){var m=String(d).match(/^\d{4}-(\d{2})-(\d{2})/);return m?(+m[1])+'/'+(+m[2]):d}
+function etfBars(days){
+  var n=days.length,W=340,H=150,L=4,R=4,T=20,B=34,i,x='';
+  // 0선 위·아래 공간을 양수·음수 최대값 비율로 나눈다 (빈 공간 최소화)
+  var pm=Math.max(0,Math.max.apply(null,days.map(function(d){return d.total}))),
+      nm=Math.max(0,-Math.min.apply(null,days.map(function(d){return d.total}))),tot=(pm+nm)||1;
+  var use=H-B-T-(pm&&nm?14:0),zero=T+use*pm/tot+(pm&&nm?7:0),k=use/tot;
+  var cw=(W-L-R)/n,bw=Math.min(30,cw*0.56);
+  for(i=0;i<n;i++){var d=days[i],v=d.total,h=Math.max(1.5,Math.abs(v)*k),
+      cx=L+cw*i+cw/2,y=v>=0?zero-h:zero,col=v>=0?'var(--up)':'var(--dn)';
+    var by=Object.keys(d.by||{}).sort(function(a,b){return Math.abs(d.by[b])-Math.abs(d.by[a])}).slice(0,3)
+      .map(function(k){return k+' '+fM(d.by[k])}).join(', ');
+    x+='<g><title>'+escA(mdS(d.d)+' 순유입 '+fM(v)+(by?' ('+by+')':''))+'</title>'+
+      '<rect x="'+(cx-bw/2).toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+
+      '" rx="3" fill="'+col+'"/>'+
+      '<text x="'+cx.toFixed(1)+'" y="'+(v>=0?y-5:y+h+12).toFixed(1)+'" text-anchor="middle" class="bl" fill="'+col+'">'+
+      escA(fM(v).replace('$','').replace('M',''))+'</text>'+
+      '<text x="'+cx.toFixed(1)+'" y="'+(H-6)+'" text-anchor="middle" class="pa">'+escA(mdS(d.d))+'</text></g>'}
+  return '<svg class="eb" viewBox="0 0 '+W+' '+H+'">'+
+    '<line x1="'+L+'" x2="'+(W-R)+'" y1="'+zero.toFixed(1)+'" y2="'+zero.toFixed(1)+'" stroke="var(--line2)"/>'+x+'</svg>'}
+function etfCard(a,e){
+  if(!e||!e.days||!e.days.length)return '';
+  var l=e.last,st=e.streak||0,nm=a==='BTC'?'비트코인':'이더리움';
+  var top=Object.keys(l.by||{}).sort(function(x,y){return Math.abs(l.by[y])-Math.abs(l.by[x])}).slice(0,4);
+  return '<div class="etf"><div class="eh"><b>'+nm+' 현물 ETF</b><span class="cn">'+escA(mdS(l.d))+' 기준'+
+    (e.stale?' · 갱신 지연':'')+'</span></div>'+
+    '<div class="grid">'+kv('최근일 순유입','<span class="'+(l.total>=0?'tu':'td')+'">'+fM(l.total)+'</span>',
+      st?(Math.abs(st)+'일 연속 '+(st>0?'순유입':'순유출')):'')+
+    kv('최근 5거래일 합계','<span class="'+(e.sum5>=0?'tu':'td')+'">'+fM(e.sum5)+'</span>',
+      '7거래일 '+fM(e.sum7))+'</div>'+
+    '<div class="phd" style="margin-top:10px"><span>최근 '+e.days.length+'거래일 순유입 (백만 달러)</span></div>'+
+    etfBars(e.days)+
+    (top.length?'<div class="phd" style="margin:10px 0 0"><span>'+escA(mdS(l.d))+' ETF별 순유입 상위</span></div><div class="tags">'+top.map(function(k){var v=l.by[k];
+      return '<span class="tag '+(v>=0?'up':'dn')+'">'+escA(k)+' '+escA(fM(v))+'</span>'}).join('')+'</div>':'')+
+    '</div>'}
+
 function coinCard(c){
   var m=c.market||{},hl=c.hl||{},ok=c.okx||{},op=c.options,px=m.price,x='';
   // 헤더: 이름·가격 / 핵심 신호·등락 / AI 한 줄
@@ -237,12 +276,14 @@ function renderCrypto(){
   for(i=0;i<CR.coins.length;i++)cards+=coinCard(CR.coins[i]);
   var err=CR.errors&&CR.errors.length?'<p class="note">일부 수집 실패 '+CR.errors.length+
     '건: '+escA(CR.errors.slice(0,4).join(' / '))+'</p>':'';
-  var mk='';
+  var mk='',ef=CR.etf||{};
+  var etf=(ef.BTC||ef.ETH)?'<div class="hd">현물 ETF 자금 흐름<small>'+
+    escA((ef.BTC||ef.ETH).src||'')+' · 미국 거래일 기준</small></div>'+etfCard('BTC',ef.BTC)+etfCard('ETH',ef.ETH):'';
   if(MKT&&MKT.secs.length)mk='<div class="hd">크립토 시장 지표<small>'+escA(MKT.updated)+'</small></div>'+
     secTables(MKT.secs,1);
   $('#p3').innerHTML='<div class="cbar"><span id="cupd">'+escA(CR.updated||'')+
     (CR.live?' · 시세 '+CR.live+' 갱신':'')+'</span><button id="clive">시세 새로고침</button></div>'+
-    top+pickCard(CR.pick,CR.pastPicks)+ov+mk+'<div class="hd">관심 코인 8종<small>4시간마다 갱신</small></div>'+LEGEND+cards+err;
+    top+pickCard(CR.pick,CR.pastPicks)+ov+etf+mk+'<div class="hd">관심 코인 8종<small>4시간마다 갱신</small></div>'+LEGEND+cards+err;
   $('#clive').onclick=liveRefresh}
 
 /* 브라우저에서 바로 가격·펀딩비만 갱신 (뉴스·맥스페인은 정기 수집값 유지) */

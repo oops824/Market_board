@@ -124,6 +124,79 @@ def coingecko_krw():
     return {k: num(v.get("krw")) for k, v in j.items()}
 
 
+# ---------- CoinGecko 대체: CoinPaprika (+ OKX 2시간봉, 원/달러 환율) ----------
+# 2026-09-29 부터 CoinGecko 무료 API 가 GitHub Actions 요청에 403 을 반환 → 실패 시 사용
+_PAP = None
+STABLE_SYMS = {"USDT", "USDC", "DAI", "USDE", "FDUSD", "TUSD", "USDD", "PYUSD", "USDS", "USD1",
+               "RLUSD", "USDTB", "FRAX", "USDG", "BUIDL", "USDF", "USD0", "GHO", "CRVUSD",
+               "XAUT", "PAXG"}
+
+
+def paprika_all():
+    global _PAP
+    if _PAP is None:
+        _PAP = [r for r in json.loads(get("https://api.coinpaprika.com/v1/tickers?quotes=USD", 60))
+                if r.get("rank")]
+        _PAP.sort(key=lambda r: r["rank"])
+    return _PAP
+
+
+def paprika_by_sym(sym):
+    for r in paprika_all():                       # 순위순 → 같은 심볼이면 시총 큰 것
+        if r["symbol"].upper() == sym.upper():
+            return r
+    return None
+
+
+def okx_spark(ccy):
+    """7일 차트용 2시간봉 종가 84개 (과거->최신)"""
+    rows = json.loads(get("%s/market/candles?instId=%s-USDT-SWAP&bar=2H&limit=84"
+                          % (OKX, ccy))).get("data") or []
+    return [round(float(r[4]), 6) for r in rows[::-1]]
+
+
+def usdkrw():
+    j = json.loads(get("https://query1.finance.yahoo.com/v8/finance/chart/KRW=X?range=5d&interval=1d"))
+    return float(j["chart"]["result"][0]["meta"]["regularMarketPrice"])
+
+
+def market_paprika():
+    rate = quiet(usdkrw)
+    out = {}
+    for sym, _ko, cg_id, _hl, okx_ccy, _q1, _q2 in COINS:
+        r = paprika_by_sym(sym)
+        if not r:
+            continue
+        q = r["quotes"]["USD"]
+        px = num(q.get("price"))
+        out[cg_id] = {
+            "price": px, "mcap": num(q.get("market_cap")), "rank": r.get("rank"),
+            "vol": num(q.get("volume_24h")), "high24": None, "low24": None,
+            "ch24": num(q.get("percent_change_24h")), "ch7": num(q.get("percent_change_7d")),
+            "ch30": num(q.get("percent_change_30d")), "ath": num(q.get("ath_price")),
+            "athPct": num(q.get("percent_from_price_ath")),
+            "spark": quiet(lambda c=okx_ccy: okx_spark(c)) or [],
+            "sparkEnd": int(now.timestamp() * 1000), "sparkStepH": 2,
+            "krw": px * rate if px and rate else None, "src": "CoinPaprika",
+        }
+    if not out:
+        raise ValueError("CoinPaprika 데이터 없음")
+    return out
+
+
+def market_data():
+    """CoinGecko 우선, 막히면 CoinPaprika. 둘 다 실패할 때만 오류로 기록"""
+    try:
+        cg = coingecko()
+        krw = quiet(coingecko_krw) or {}
+        for k, m in cg.items():
+            m["krw"] = krw.get(k)
+        return cg
+    except Exception as e:
+        print("[CoinGecko 실패 → CoinPaprika]", e)
+    return market_paprika()
+
+
 # ---------- Hyperliquid ----------
 def hyperliquid():
     raw = json.loads(post("https://api.hyperliquid.xyz/info", {"type": "metaAndAssetCtxs"}))
@@ -243,6 +316,17 @@ def deriv_signals(c):
             out.append(T("롱 쏠림 %.1f" % ls, "warn", 4))
         elif ls <= 0.8:
             out.append(T("숏 쏠림 %.1f" % ls, "warn", 4))
+    ef = c.get("etf")
+    if ef and not ef.get("stale"):
+        st = ef.get("streak") or 0
+        if ef["sum5"] > 0 and st >= 2:
+            out.append(T("ETF %d일 연속 순유입" % st, "up", 7))
+        elif ef["sum5"] < 0 and st <= -2:
+            out.append(T("ETF %d일 연속 순유출" % -st, "dn", 7))
+        elif ef["sum5"] > 0:
+            out.append(T("ETF 주간 순유입", "up", 5))
+        elif ef["sum5"] < 0:
+            out.append(T("ETF 주간 순유출", "dn", 5))
     pr = c.get("cbPrem")
     if pr is not None and abs(pr) >= 0.05:
         out.append(T("미국 매수 우위", "up", 6) if pr > 0 else T("미국 매도 우위", "dn", 6))
@@ -593,7 +677,31 @@ def load_picks():
         return []
 
 
-def pick_candidates(skip_ids):
+def pick_candidates(skip_ids, skip_syms=()):
+    try:
+        return pick_candidates_cg(skip_ids, skip_syms)
+    except Exception as e:
+        print("[후보: CoinGecko 실패 → CoinPaprika]", e)
+    out = []
+    for r in paprika_all()[:250]:
+        q, rank, sym = r["quotes"]["USD"], r["rank"], r["symbol"].upper()
+        mcap, vol = num(q.get("market_cap")), num(q.get("volume_24h"))
+        if rank <= 10 or not mcap or sym in STABLE_SYMS or sym in skip_syms or r["id"] in skip_ids:
+            continue
+        if EXCL_NAME.search(r.get("name", "")) or EXCL_NAME.search(sym):
+            continue
+        ch7 = num(q.get("percent_change_7d")) or 0
+        ch30 = num(q.get("percent_change_30d")) or 0
+        turn = min((vol or 0) / mcap, 1.0)
+        score = max(-1, min(ch30, 150)) / 50 + max(-1, min(ch7, 60)) / 20 + turn * 3
+        out.append({"id": r["id"], "sym": sym, "name": r["name"], "rank": rank,
+                    "price": num(q.get("price")), "mcap": mcap, "vol": vol, "ch7": ch7,
+                    "ch30": ch30, "trending": False, "score": round(score, 3), "src": "paprika"})
+    out.sort(key=lambda x: x["score"], reverse=True)
+    return out[:20]
+
+
+def pick_candidates_cg(skip_ids, skip_syms=()):
     rows = cg_get("coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1"
                   "&price_change_percentage=7d,30d")
     excl = set()
@@ -605,7 +713,8 @@ def pick_candidates(skip_ids):
     out = []
     for r in rows:
         rank, mcap, vol = r.get("market_cap_rank"), num(r.get("market_cap")), num(r.get("total_volume"))
-        if not rank or rank <= 10 or not mcap or r["id"] in excl or r["id"] in skip_ids:
+        if not rank or rank <= 10 or not mcap or r["id"] in excl or r["id"] in skip_ids \
+                or r["symbol"].upper() in skip_syms:
             continue
         if EXCL_NAME.search(r.get("name", "")) or EXCL_NAME.search(r.get("symbol", "")):
             continue
@@ -622,11 +731,23 @@ def pick_candidates(skip_ids):
     return out[:20]
 
 
+def news_search(q, lang, days):
+    """구글 뉴스(기간 지정) → 실패·빈 결과면 Bing. 둘 다 실패하면 빈 목록"""
+    cut = datetime.timedelta(days=days)
+    loc = "hl=ko&gl=KR&ceid=KR:ko" if lang == "ko" else "hl=en-US&gl=US&ceid=US:en"
+    try:
+        items = rss_items(get("https://news.google.com/rss/search?q=%s&%s" % (
+            urllib.parse.quote("%s when:%dd" % (q, days)), loc), 20), lang, cut=cut)
+        if items:
+            return items
+    except Exception as e:
+        print("[구글 뉴스 실패 → Bing]", str(e)[:80])
+    return quiet(lambda: bing(q, lang, cut)) or []
+
+
 def inst_evidence(c):
     q = '"%s" (ETF OR BlackRock OR Grayscale OR Fidelity OR institutional OR "Wall Street")' % c["name"]
-    items = safe("근거뉴스 " + c["sym"], lambda: bing(q, "en", datetime.timedelta(days=30)), [])
-    items += safe("근거뉴스(ko) " + c["sym"],
-                  lambda: bing("%s 기관 ETF" % c["name"], "ko", datetime.timedelta(days=30)), [])
+    items = news_search(q, "en", 30) + news_search("%s 기관 ETF" % c["name"], "ko", 30)
     name_pat = re.compile(r"(?<![A-Za-z])(%s|%s)(?![A-Za-z])" % (
         re.escape(c["name"]), re.escape(c["sym"])), re.I if len(c["sym"]) > 3 else 0)
     name_ci = re.compile(r"(?<![A-Za-z])%s(?![A-Za-z])" % re.escape(c["name"]), re.I)
@@ -649,7 +770,8 @@ def daily_pick(held_ids):
         return picks  # 오늘은 이미 소개함
     cutoff = (now - datetime.timedelta(days=90)).strftime("%Y-%m-%d")
     recent = {p["id"] for p in picks if p.get("date", "") >= cutoff}
-    cands = pick_candidates(set(held_ids) | recent)
+    recent_syms = {p["sym"] for p in picks if p.get("date", "") >= cutoff}
+    cands = pick_candidates(set(held_ids) | recent, recent_syms | {c[0] for c in COINS})
     for c in cands:
         c["evidence"] = inst_evidence(c)
     # 기관 관여 기사가 2건 이상인 후보만. 없으면 억지로 고르지 않고 다음 실행에서 재시도
@@ -660,6 +782,11 @@ def daily_pick(held_ids):
         return picks
     strong = strong[:5]
     for c in strong:
+        if c.get("src") == "paprika":
+            d = quiet(lambda i=c["id"]: json.loads(get("https://api.coinpaprika.com/v1/coins/" + i))) or {}
+            c["desc"] = (d.get("description") or "")[:700]
+            c["cats"] = [t.get("name") for t in (d.get("tags") or []) if t.get("name")][:5]
+            continue
         d = safe("CG 상세 " + c["id"], lambda i=c["id"]: cg_get(
             "coins/%s?localization=false&tickers=false&market_data=false"
             "&community_data=false&developer_data=false" % i), {}) or {}
@@ -705,8 +832,14 @@ def pick_view(picks):
     if not picks:
         return None, []
     ids = ",".join(dict.fromkeys(p["id"] for p in picks[-15:]))
-    cur = safe("CG 소개코인 시세", lambda: cg_get(
-        "simple/price?ids=%s&vs_currencies=usd&include_24hr_change=true" % ids), {}) or {}
+    cur = quiet(lambda: cg_get(
+        "simple/price?ids=%s&vs_currencies=usd&include_24hr_change=true" % ids)) or {}
+    for p in picks[-15:]:                 # CoinGecko 실패분은 CoinPaprika(심볼)로
+        if p["id"] not in cur:
+            r = quiet(lambda s_=p["sym"]: paprika_by_sym(s_))
+            if r:
+                q = r["quotes"]["USD"]
+                cur[p["id"]] = {"usd": q.get("price"), "usd_24h_change": q.get("percent_change_24h")}
     past = []
     for p in reversed(picks[-15:]):
         q = cur.get(p["id"]) or {}
@@ -722,17 +855,158 @@ def pick_view(picks):
     return today, past[1:]
 
 
+# ---------- 현물 ETF 자금 흐름 (Farside Investors) ----------
+ETF_URL = {"BTC": "https://farside.co.uk/bitcoin-etf-flow-all-data/",
+           "ETH": "https://farside.co.uk/ethereum-etf-flow-all-data/"}
+ETF_CACHE = "history/etf_flows.json"
+
+
+def _html_rows(html):
+    """HTML 표의 모든 행을 [셀 텍스트, ...] 목록으로 (표준 라이브러리만 사용)"""
+    from html.parser import HTMLParser
+
+    class P(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.rows, self.row, self.cell = [], None, None
+
+        def handle_starttag(self, tag, attrs):
+            if tag == "tr":
+                self.row = []
+            elif tag in ("td", "th") and self.row is not None:
+                self.cell = []
+
+        def handle_endtag(self, tag):
+            if tag in ("td", "th") and self.row is not None and self.cell is not None:
+                self.row.append(re.sub(r"\s+", " ", "".join(self.cell)).strip())
+                self.cell = None
+            elif tag == "tr" and self.row is not None:
+                if self.row:
+                    self.rows.append(self.row)
+                self.row = None
+
+        def handle_data(self, data):
+            if self.cell is not None:
+                self.cell.append(data)
+
+    p = P()
+    p.feed(html)
+    return p.rows
+
+
+def _flow_num(t):
+    """'123.4' / '(56.7)' = -56.7 / '-' 또는 빈칸 = 0 / 숫자 아님 = None  (단위: 백만 달러)"""
+    t = (t or "").replace(",", "").replace("$", "").strip()
+    if t in ("", "-", "–", "—"):
+        return 0.0
+    neg = t.startswith("(") and t.endswith(")")
+    t = t.strip("()")
+    try:
+        v = float(t)
+    except ValueError:
+        return None
+    return -v if neg else v
+
+
+def parse_farside(html):
+    """Farside 표 -> [{"d": 날짜, "total": 합계, "by": {티커: 값}}] (과거->최신)"""
+    rows = _html_rows(html)
+    head = None
+    for r in rows:   # 티커 행: 'Total' 이 있고 대문자 티커가 여러 개인 행
+        if r and r[-1].strip().lower() == "total" and \
+                sum(1 for x in r if re.fullmatch(r"[A-Z]{3,5}", x.strip())) >= 3:
+            head = r
+    out = []
+    for r in rows:
+        try:
+            d = datetime.datetime.strptime(r[0].strip(), "%d %b %Y").date()
+        except (ValueError, IndexError):
+            continue
+        vals = [_flow_num(x) for x in r[1:]]
+        if not vals or vals[-1] is None or \
+                all(x.strip() in ("", "-", "–", "—") for x in r[1:-1]):
+            continue                       # 아직 집계 전인 날 (ETF별 칸이 전부 '-' 또는 빈칸)
+        by = {}
+        if head and len(head) == len(r):
+            for k, v in zip(head[1:-1], vals[:-1]):
+                if v:
+                    by[k.strip()] = round(v, 1)
+        out.append({"d": d.isoformat(), "total": round(vals[-1], 1), "by": by})
+    out.sort(key=lambda x: x["d"])
+    return out
+
+
+def etf_fetch(url):
+    import requests
+    h = {"User-Agent": UA["User-Agent"], "Accept": "text/html,application/xhtml+xml",
+         "Accept-Language": "en-US,en;q=0.9", "Referer": "https://farside.co.uk/"}
+    r = requests.get(url, headers=h, timeout=30)
+    if r.status_code in (403, 503):        # 클라우드플레어 차단 시 우회 클라이언트
+        try:
+            import cloudscraper
+            r = cloudscraper.create_scraper().get(url, timeout=30)
+        except ImportError:
+            pass
+    r.raise_for_status()
+    return r.text
+
+
+def etf_flows():
+    """BTC·ETH 현물 ETF 일별 순유입(백만 달러). 실패하면 마지막 성공값을 재사용"""
+    try:
+        with open(ETF_CACHE, encoding="utf-8") as f:
+            cache = json.load(f)
+    except Exception:
+        cache = {}
+    out = {}
+    for a, url in ETF_URL.items():
+        try:
+            days = parse_farside(etf_fetch(url))
+            if len(days) < 5:
+                raise ValueError("표 파싱 결과 %d일" % len(days))
+            cache[a] = {"days": days[-30:], "at": now.isoformat()}
+        except Exception as e:
+            ERRORS.append("ETF 흐름 %s: %s" % (a, str(e)[:80]))
+        c = cache.get(a)
+        if not c:
+            continue
+        days = c["days"]
+        last7 = days[-7:]
+        out[a] = {"days": last7,
+                  "last": days[-1],
+                  "sum5": round(sum(x["total"] for x in days[-5:]), 1),
+                  "sum7": round(sum(x["total"] for x in last7), 1),
+                  "streak": _streak(days),
+                  "fetched": c["at"][:16].replace("T", " "),
+                  "stale": c["at"][:10] != now.date().isoformat() and
+                           (now - datetime.datetime.fromisoformat(c["at"])).days >= 2,
+                  "src": "Farside Investors"}
+    os.makedirs("history", exist_ok=True)
+    with open(ETF_CACHE, "w", encoding="utf-8") as f:
+        json.dump(cache, f, ensure_ascii=False)
+    return out
+
+
+def _streak(days):
+    """최근 연속 순유입(+)/순유출(-) 일수"""
+    n, sign = 0, 0
+    for x in reversed(days):
+        s_ = 1 if x["total"] > 0 else -1 if x["total"] < 0 else 0
+        if s_ == 0 or (sign and s_ != sign):
+            break
+        sign, n = s_, n + 1
+    return n * sign
+
+
 # ---------- 조립 ----------
 def build():
-    cg = safe("CoinGecko", coingecko, {})
-    krw = safe("CoinGecko KRW", coingecko_krw, {})
+    cg = safe("시세(CoinGecko/CoinPaprika)", market_data, {})
     hl = safe("Hyperliquid", hyperliquid, {})
+    etf = safe("ETF 흐름", etf_flows, {})
     opts = deribit()
     coins = []
     for sym, ko, cg_id, hl_name, okx_ccy, ko_q, en_q in COINS:
         m = cg.get(cg_id)
-        if m is not None:
-            m["krw"] = krw.get(cg_id)
         coins.append({
             "sym": sym, "name": ko, "cg": cg_id,
             "market": m,
@@ -741,6 +1015,7 @@ def build():
             "options": opts.get(sym),
             "news": news(sym, ko_q, en_q),
             "cbPrem": quiet(lambda c=okx_ccy: cb_premium(c)),  # 코인베이스 미상장이면 None
+            "etf": etf.get(sym),
         })
         cc = coins[-1]
         daily = safe("OKX 일봉 " + okx_ccy, lambda c=okx_ccy: okx_daily(c), None)
@@ -763,6 +1038,7 @@ def build():
             "fng": safe("공포탐욕", fear_greed, None),
             "overall": brief.get("overall", ""),
             "pick": pick, "pastPicks": past,
+            "etf": etf,
             "coins": coins,
             "errors": ERRORS}, picks
 

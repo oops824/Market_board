@@ -190,5 +190,91 @@
     "lang": "ko"
    }
   ]
+ },
+ {
+  "date": "2026-09-30",
+  "id": "aave-new",
+  "sym": "AAVE",
+  "name": "Aave",
+  "rank": 47,
+  "price": 172.81750712611756,
+  "mcap": 2664227791.0,
+  "ch7": 21.59000015258789,
+  "ch30": 0,
+  "cats": [],
+  "headline": "Aave, ETF 신청부터 기관 대출까지 전방위 확대",
+  "intro": "Aave는 이더리움 기반의 탈중앙화 대출·차입 프로토콜로, 스마트 컨트랙트를 통해 중개자 없이 암호자산을 빌리고 빌려줄 수 있게 해준다. 최근 Grayscale과 Bitwise가 각각 AAVE 현물 ETF를 신청하며 자산운용사 간 경쟁 구도가 형성됐고, Maple Finance·Avalanche·Tether 등과의 기관향 신용·대출 인프라 구축이 동시에 진행되고 있다. 이런 다층적인 기관 채널 확보가 최근 AAVE 가격 상승의 배경으로 지목된다.",
+  "institutions": "Grayscale과 Bitwise가 각각 AAVE 현물 ETF를 신청하며 경쟁 구도가 형성됐고, Grayscale은 AAVE 가격이 1년 내 175달러에 이를 수 있다는 전망을 내놨다. Aave는 Maple Finance와 기관용 신용 파트너십을 체결했고, Avalanche에서 Tether의 USA₮를 활용한 기관 전용 대출 코리도어를 열었다. 또한 기관을 위한 커스터디 담보 대출(Custodied Collateral Lending) 제안과 RWA 기반 기관 대출을 Avalanche에 배포하는 계획도 공개됐다.",
+  "risks": "ETF는 아직 신청 단계로 승인 여부가 확정되지 않았으며, 다수의 기관 대출·파트너십 구조가 동시다발적으로 진행 중이라 실제 자금 유입 규모와 실행 속도는 지켜봐야 한다.",
+  "evidence": [
+   {
+    "title": "에이브, 메이플 파이낸스와 기관 신용 파트너십 체결",
+    "src": "CoinMarketCap",
+    "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxNV01EbFF4NG9kT0pDcGo0eVI0Ny1WNVg2REk5OVlUd2FrN2FIcDVOMzFPMVJtRnBlTzQ3SU13dVY0S185LVdUdlBYU20tX0JsWnpxbHUxQUdMOWZpX1FBaTlIUUhQbkJZdF9vM1BGQzNoQ0l2Z1M3ZkFZdjRhN2tFeEhKcWdxUU5vRmZRRnB1YlF2cVZvbmJKaUFCTTJPdWpa?oc=5",
+    "ts": "2026-09-26 21:49",
+    "lang": "en",
+    "orig": "Aave Partners With Maple Finance for Institutional Credit",
+    "real": "https://coinmarketcap.com/academy/article/aave-partners-with-maple-finance-for-institutional-credit",
+    "ko": {
+     "sum": "대출 프로토콜 Aave가 온체인 신용 플랫폼 Maple Finance와 파트너십을 맺고 기관 자본과 탈중앙화 유동성을 연결하기로 했다. 이번 통합으로 Maple의 수익형 스테이블코인인 syrupUSDC와 syrupUSDT가 Aave 대출 시장에 도입되며, syrupUSDC는 Aave 핵심 시장에, syrupUSDT는 Plasma 인스턴스에 상장된다. Maple은 이번 조치가 Aave 시장 전반의 차입 수요를 안정화하고 자본 효율성을 개선할 것이라고 밝혔다. DefiLlama 자료에 따르면 Aave는 현재 $39 billion 이상의 총예치자산(TVL)을 보유하고 있고 Maple Finance는 약 $2.78 billion 규모로, 이는 올해 초 $296.9 million에서 크게 성장한 수치다. 이번 파트너십은 Aave가 지난달 발표한 V4 업그레이드 계획 발표 후 한 달도 안 돼 나온 것으로, 탈중앙화 대출 프로토콜은 2025년 초부터 9월 3일까지 72% 이상 성장했다.",
+     "quotes": []
+    }
+   },
+   {
+    "title": "그레이스케일, 에이브 가격 1년 내 $175 도달 가능성 제시",
+    "src": "CoinMarketCap",
+    "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxPVFNwR1A5aWhyTl9fXzZTVFVqaW1FR1p0M011VDFwRGFlSHRHZlpXcXlfZXRYRGpFMTNMM1NIcG5jc1lYOUtfMy1ibU5jUGtKakhUMXZhS1dWck1yVmpyN1U0RjN1emJrWjFGYWY4NmFQWU5yYTdPMXBvaTJWOHJncHo4YUFrQmhmZzNURUc3cTI?oc=5",
+    "ts": "2026-09-24 11:38",
+    "lang": "en",
+    "orig": "Grayscale Says AAVE Price Could Hit $175 Within a Year",
+    "real": "https://coinmarketcap.com/academy/article/grayscale-projects-aave-price-could-reach-175",
+    "ko": {
+     "sum": "Grayscale Research가 전통 금융의 밸류에이션 기법을 Aave에 적용해 향후 1년 기본 시나리오에서 AAVE 토큰이 $175에 도달할 수 있다고 전망했다. 이 분석은 할인현금흐름(DCF), 이익 배수, 은행 및 핀테크 기업과의 비교를 근거로 하며, Grayscale은 2026년 예상 순이익 약 $60 million을 바탕으로 AAVE의 현재 적정 가치를 $80~$100로 설정했다. 2023년부터 2025년까지 매출이 6배 이상 성장했고 이익률은 약 50%에 달한다는 점이 근거로 제시됐다. 다만 Grayscale은 프로토콜 수익이 자동으로 토큰 가치로 이어지지 않으며, 토큰 보유자는 전통 기업 주주와 달리 법적으로 강제 가능한 청구권을 갖지 못한다는 한계도 지적했다. CoinShares 역시 유사한 방식으로 Hyperliquid의 HYPE와 Ethereum을 평가해 2031년 기본 시나리오에서 HYPE는 $147, ETH는 $4,935로 전망했으며, Standard Chartered는 토큰화가 확대되면 2030년까지 전체 DeFi 자산이 $2.7 trillion에 이를 수 있다고 예측했다.",
+     "quotes": []
+    }
+   },
+   {
+    "title": "에이브, 기관용 담보 대출 제안",
+    "src": "CryptoRank",
+    "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxNTEtBWFZfRDZxZ1d1T2Rwc1dvcmMyckppT0VHc2pHaXg2bTVOdTMzZmFwY1hldndxajFIeXFCaFJkNnBjbVNzUFM2MUN4VnNTc0t1SWZpbUN3MWpMNm9KaW5qWS1panlfbHRxSFREazFXSXM4aDZrS0VKcGZtNXQyb2RKSWJiX20wU0dmdA?oc=5",
+    "ts": "2026-09-21 12:03",
+    "lang": "en",
+    "orig": "Aave Proposes Custodied Collateral Lending for Institutions",
+    "real": "https://cryptorank.io/news/feed/0a330-aave-custodied-collateral-lending-institutions",
+    "ko": {
+     "sum": "Aave가 기관 투자자들이 Anchorage에 보관된 자산을 담보로 스테이블코인을 대출받을 수 있는 'Custodied Collateral Lending'을 Aave V4 기반으로 도입하는 거버넌스 제안을 제출했다. 이 구조에서는 담보 자산이 대출 기간 내내 Anchorage의 커스터디에 남아 있으며, Anchorage가 담보 관리, 잔고 기록, 대출 생애주기 이벤트 처리, 청산 시 장외 매각까지 담당한다. Chainlink CustodySync가 커스터디 잔고를 양도 불가능한 영수증 토큰 형태로 온체인에 동기화하고, Chainlink Price Feeds가 Aave와 커스터디언 양측에 일관된 가격 데이터를 제공해 담보인정비율(LTV)을 맞춘다. 이 신규 시설은 Aave V4의 독립된 유동성 허브(Liquidity Hub) 내에서 운영되어 기존 시장과 리스크를 분리하며, 이는 커스터디·컴플라이언스 우려로 그동안 무허가형 프로토콜을 꺼려온 은행, 펀드, 핀테크 기업을 끌어들이려는 Aave의 기관 확대 전략의 일환이다. 승인될 경우 이는 탈중앙화 금융과 전통적 커스터디가 결합하는 또 하나의 진전으로 평가된다.",
+     "quotes": []
+    }
+   },
+   {
+    "title": "에이브 ETF 신청, 그레이스케일과 비트와이즈의 경쟁 구도 형성",
+    "src": "CoinMarketCap",
+    "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxOYXdKM01HMUI1UFRSemVRTWRheHptLUFnc2RZNzZDYWRtUU8zTkRDZnBTbzNaOGp2VkVzWmppSFp0aG1lS1hFdWR4MUkxX29sZV8xeE5QT2lNU1REa1dVTVlqUGlCd3VVUXhZYzRvWEZleWlaeElkMXdPMHBwbXU0QlhBRU0xRWItWEtGZE5QRFY5ZnlTVFFfNQ?oc=5",
+    "ts": "2026-09-19 04:45",
+    "lang": "en",
+    "orig": "AAVE ETF Filing Puts Grayscale in Race With Bitwise",
+    "real": "https://coinmarketcap.com/academy/article/aave-etf-filing-puts-grayscale-in-race-with-bitwise",
+    "ko": {
+     "sum": "Grayscale이 2월 13일 자사의 AAVE 트러스트를 상장지수펀드(ETF)로 전환하기 위한 서류를 미국 증권거래위원회(SEC)에 제출하며, 미국 최초의 DeFi 토큰 ETF 승인을 둘러싸고 Bitwise와 경쟁에 나섰다. Bitwise는 지난 12월 11개의 개별 펀드를 신청해 두 달 앞서 있는 상황이다. AAVE 토큰은 2021년 4월 $661.69로 사상 최고가를 기록했으나 현재는 최근 상승에도 불구하고 그 고점 대비 82% 하락한 상태다. 유럽 시장에는 이미 21Shares Aave ETP와 Global X Aave ETP 등 AAVE 관련 투자 상품이 존재한다. Grayscale이 제안한 AAVE ETF는 순자산가치(NAV) 대비 2.5%의 스폰서 수수료를 AAVE 토큰으로 부과할 예정이며, Coinbase가 커스터디언 겸 주요 브로커 역할을 맡고 NYSE Arca에 상장할 계획이다.",
+     "quotes": []
+    }
+   },
+   {
+    "title": "에이브, 아발란체에 기관용 RWA 대출 배포 예정",
+    "src": "blockzeit.com",
+    "url": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPckdkY3R2OUxldDlqMGF6VUFuZVZOZC1ETkp5S3RLTlZFRWhyejRYZ01BbmFHM18xWjNWRTNGem9meE02TTRzR0UzVFc0Zkh4MnJkLUNrMVlod1RHWlFmT0RHT2VySG53VzVUaFZJZWpwTHVmdS1nQWVHcmNkbGRkcWp3?oc=5",
+    "ts": "2026-09-18 04:39",
+    "lang": "en",
+    "orig": "Aave To Deploy Institutional RWA Lending On Avalanche",
+    "real": "https://blockzeit.com/aave-to-deploy-institutional-rwa-lending-on-avalanche/",
+    "ko": {
+     "sum": "Aave가 Avalanche 서밋에서 Avalanche 블록체인 위에 기관용 실물자산(RWA) 대출 시장을 출시한다고 발표했다. 이 시장은 Tether의 스테이블코인 USAT를 주요 유동성 공급원으로 삼아, 기관들이 토큰화된 금융자산을 담보로 스테이블코인을 대출받을 수 있게 한다. 새 시장은 Aave V4의 Hub and Spoke 아키텍처를 기반으로 하며, 이 구조는 출시 두 달 만에 Avalanche에서 이미 $20 million 이상의 예치금을 유치했다. Avalanche는 RWA.xyz 기준 전체 RWA 가치 $709.5 billion 중 $13 billion 이상을 차지하고 있으며, 여기에는 스테이블코인과 토큰화된 미국 국채, 신용, 주식 등이 포함된다. Aave 창업자이자 CEO인 Stani Kulechov는 기관 수요가 DeFi 대출 활동의 최대 원천 중 하나가 되고 있다며, 이번 확장이 토큰화된 RWA로의 성장 전략이라고 밝혔다.",
+     "quotes": [
+      "“기관들은 규모를 가지고 오기 때문에, 많은 수요가 거기서 나올 것입니다.” — Stani Kulechov",
+      "“토큰화와 DeFi는 더 이상 기술적 과제가 아닙니다. 저는 이것이 시장 진입(go-to-market) 과제라고 생각합니다.” — Stani Kulechov"
+     ]
+    }
+   }
+  ]
  }
 ]
