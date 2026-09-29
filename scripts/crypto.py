@@ -856,8 +856,14 @@ def pick_view(picks):
 
 
 # ---------- 현물 ETF 자금 흐름 (Farside Investors) ----------
-ETF_URL = {"BTC": "https://farside.co.uk/bitcoin-etf-flow-all-data/",
-           "ETH": "https://farside.co.uk/ethereum-etf-flow-all-data/"}
+# 자산별 후보 주소 (앞에서부터 시도). LINK 는 Farside 페이지가 확인되지 않아 추정 주소 + 홈페이지 링크 탐색
+ETF_URL = {"BTC": ["https://farside.co.uk/bitcoin-etf-flow-all-data/"],
+           "ETH": ["https://farside.co.uk/ethereum-etf-flow-all-data/"],
+           "SOL": ["https://farside.co.uk/sol/", "https://farside.co.uk/solana-etf-flow-all-data/"],
+           "HYPE": ["https://farside.co.uk/hyp/", "https://farside.co.uk/hyperliquid-etf-flow-all-data/"],
+           "LINK": ["https://farside.co.uk/link/", "https://farside.co.uk/chainlink/",
+                    "https://farside.co.uk/chainlink-etf-flow-all-data/"]}
+ETF_HOME_KEY = {"SOL": "sol", "HYPE": "hyp|hyperliquid", "LINK": "link|chainlink"}
 ETF_CACHE = "history/etf_flows.json"
 
 
@@ -959,18 +965,37 @@ def etf_flows():
     except Exception:
         cache = {}
     out = {}
-    for a, url in ETF_URL.items():
-        try:
-            days = parse_farside(etf_fetch(url))
-            if len(days) < 5:
-                raise ValueError("표 파싱 결과 %d일" % len(days))
-            cache[a] = {"days": days[-30:], "at": now.isoformat()}
-        except Exception as e:
-            ERRORS.append("ETF 흐름 %s: %s" % (a, str(e)[:80]))
+    home = None
+    for a, urls in ETF_URL.items():
+        urls = list(urls)
+        if a in ETF_HOME_KEY:              # 홈페이지 메뉴에서 해당 자산 페이지 링크 찾기
+            if home is None:
+                home = quiet(lambda: etf_fetch("https://farside.co.uk/")) or ""
+            for h in re.findall(r'href="(https://farside\.co\.uk/[^"#?]+)"', home):
+                if re.search(r"/(%s)[-/]" % ETF_HOME_KEY[a], h, re.I) and h not in urls:
+                    urls.append(h)
+        err = None
+        for url in urls:
+            try:
+                days = parse_farside(etf_fetch(url))
+                if len(days) < 3:
+                    raise ValueError("표 파싱 결과 %d일" % len(days))
+                cache[a] = {"days": days[-30:], "at": now.isoformat(), "url": url}
+                err = None
+                break
+            except Exception as e:
+                err = e
+        if err is not None:
+            if a in ("BTC", "ETH") or a in cache:   # 원래 되던 자산만 오류로 표시
+                ERRORS.append("ETF 흐름 %s: %s" % (a, str(err)[:80]))
+            else:
+                print("[ETF] %s 흐름 페이지 없음: %s" % (a, err))
         c = cache.get(a)
         if not c:
             continue
         days = c["days"]
+        if len(days) < 3:
+            continue
         last7 = days[-7:]
         out[a] = {"days": last7,
                   "last": days[-1],
@@ -998,11 +1023,101 @@ def _streak(days):
     return n * sign
 
 
+# ---------- 비트코인 도미넌스 · TOTAL2 ----------
+DOM_PATH = "history/dominance.json"
+
+
+def _find(o, pat):
+    """중첩 dict 에서 이름이 pat(정규식)에 맞는 첫 숫자 값"""
+    if isinstance(o, dict):
+        for k, v in o.items():
+            if re.fullmatch(pat, k, re.I) and num(v) is not None:
+                return num(v)
+        for v in o.values():
+            r = _find(v, pat)
+            if r is not None:
+                return r
+    elif isinstance(o, list):
+        for v in o:
+            r = _find(v, pat)
+            if r is not None:
+                return r
+    return None
+
+
+def cmc_global_history(days=100):
+    """CoinMarketCap 공개 차트 API: 일별 총 시총·BTC 도미넌스"""
+    end = int(now.timestamp())
+    j = json.loads(get("https://api.coinmarketcap.com/data-api/v3/global-metrics/quotes/historical"
+                       "?format=chart&interval=1d&timeStart=%d&timeEnd=%d" % (end - days * 86400, end)))
+    out = {}
+    for q in (j.get("data") or {}).get("quotes") or []:
+        ts = q.get("timestamp") or _find(q, "timestamp")
+        dom = _find(q, "btcDominance")
+        tot = _find(q, "totalMarketCap")
+        if not ts or dom is None or not tot:
+            continue
+        d = str(ts)[:10]
+        out[d] = {"d": d, "dom": round(dom, 3), "total": tot, "total2": tot * (1 - dom / 100)}
+    if len(out) < 10:
+        raise ValueError("CMC 응답 %d일" % len(out))
+    return out
+
+
+def global_now():
+    """현재 총 시총·도미넌스 (CoinPaprika → CoinGecko)"""
+    try:
+        g = json.loads(get("https://api.coinpaprika.com/v1/global"))
+        tot, dom = num(g.get("market_cap_usd")), num(g.get("bitcoin_dominance_percentage"))
+    except Exception:
+        g = cg_get("global")["data"]
+        tot, dom = num(g["total_market_cap"]["usd"]), num(g["market_cap_percentage"]["btc"])
+    if not tot or dom is None:
+        raise ValueError("글로벌 시총 없음")
+    return {"d": now.date().isoformat(), "dom": round(dom, 3), "total": tot,
+            "total2": tot * (1 - dom / 100)}
+
+
+def dominance():
+    """일별 도미넌스·TOTAL2. 공급처마다 총 시총 집계 범위가 달라 섞으면 가짜 급변이 생기므로
+    점마다 출처(src)를 저장하고, 차트는 한 출처의 점만 쓴다 (CMC 우선)"""
+    try:
+        with open(DOM_PATH, encoding="utf-8") as f:
+            stored = json.load(f)
+    except Exception:
+        stored = []
+    hist = {(h.get("src", "cmc"), h["d"]): h for h in stored}
+    cmc = quiet(cmc_global_history)
+    for d, h in (cmc or {}).items():
+        hist[("cmc", d)] = dict(h, src="cmc")
+    cur = quiet(global_now)
+    if cur:
+        hist[("pap", cur["d"])] = dict(cur, src="pap")      # 대체용 일별 기록
+    rows = sorted(hist.values(), key=lambda h: (h["src"], h["d"]))
+    cut = (now.date() - datetime.timedelta(days=400)).isoformat()
+    rows = [h for h in rows if h["d"] >= cut]
+    os.makedirs("history", exist_ok=True)
+    with open(DOM_PATH, "w", encoding="utf-8") as f:
+        json.dump(rows, f)
+    recent = (now.date() - datetime.timedelta(days=3)).isoformat()
+    for src, label in (("cmc", "CoinMarketCap"), ("pap", "CoinPaprika 일별 기록")):
+        sel = [h for h in rows if h["src"] == src]
+        if sel and sel[-1]["d"] >= recent:
+            sel = sel[-90:]
+            return {"t": [h["d"] for h in sel], "dom": [h["dom"] for h in sel],
+                    "total2": [round(h["total2"] / 1e9, 1) for h in sel],   # 십억 달러
+                    "src": label}
+    if not cur:
+        ERRORS.append("도미넌스: CoinMarketCap·CoinPaprika 모두 실패")
+    return None
+
+
 # ---------- 조립 ----------
 def build():
     cg = safe("시세(CoinGecko/CoinPaprika)", market_data, {})
     hl = safe("Hyperliquid", hyperliquid, {})
     etf = safe("ETF 흐름", etf_flows, {})
+    dom = safe("도미넌스", dominance, None)
     opts = deribit()
     coins = []
     for sym, ko, cg_id, hl_name, okx_ccy, ko_q, en_q in COINS:
@@ -1038,7 +1153,7 @@ def build():
             "fng": safe("공포탐욕", fear_greed, None),
             "overall": brief.get("overall", ""),
             "pick": pick, "pastPicks": past,
-            "etf": etf,
+            "etf": etf, "dom": dom,
             "coins": coins,
             "errors": ERRORS}, picks
 
