@@ -243,6 +243,17 @@ def deriv_signals(c):
             out.append(T("롱 쏠림 %.1f" % ls, "warn", 4))
         elif ls <= 0.8:
             out.append(T("숏 쏠림 %.1f" % ls, "warn", 4))
+    ef = c.get("etf")
+    if ef and not ef.get("stale"):
+        st = ef.get("streak") or 0
+        if ef["sum5"] > 0 and st >= 2:
+            out.append(T("ETF %d일 연속 순유입" % st, "up", 7))
+        elif ef["sum5"] < 0 and st <= -2:
+            out.append(T("ETF %d일 연속 순유출" % -st, "dn", 7))
+        elif ef["sum5"] > 0:
+            out.append(T("ETF 주간 순유입", "up", 5))
+        elif ef["sum5"] < 0:
+            out.append(T("ETF 주간 순유출", "dn", 5))
     pr = c.get("cbPrem")
     if pr is not None and abs(pr) >= 0.05:
         out.append(T("미국 매수 우위", "up", 6) if pr > 0 else T("미국 매도 우위", "dn", 6))
@@ -722,11 +733,155 @@ def pick_view(picks):
     return today, past[1:]
 
 
+# ---------- 현물 ETF 자금 흐름 (Farside Investors) ----------
+ETF_URL = {"BTC": "https://farside.co.uk/bitcoin-etf-flow-all-data/",
+           "ETH": "https://farside.co.uk/ethereum-etf-flow-all-data/"}
+ETF_CACHE = "history/etf_flows.json"
+
+
+def _html_rows(html):
+    """HTML 표의 모든 행을 [셀 텍스트, ...] 목록으로 (표준 라이브러리만 사용)"""
+    from html.parser import HTMLParser
+
+    class P(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.rows, self.row, self.cell = [], None, None
+
+        def handle_starttag(self, tag, attrs):
+            if tag == "tr":
+                self.row = []
+            elif tag in ("td", "th") and self.row is not None:
+                self.cell = []
+
+        def handle_endtag(self, tag):
+            if tag in ("td", "th") and self.row is not None and self.cell is not None:
+                self.row.append(re.sub(r"\s+", " ", "".join(self.cell)).strip())
+                self.cell = None
+            elif tag == "tr" and self.row is not None:
+                if self.row:
+                    self.rows.append(self.row)
+                self.row = None
+
+        def handle_data(self, data):
+            if self.cell is not None:
+                self.cell.append(data)
+
+    p = P()
+    p.feed(html)
+    return p.rows
+
+
+def _flow_num(t):
+    """'123.4' / '(56.7)' = -56.7 / '-' 또는 빈칸 = 0 / 숫자 아님 = None  (단위: 백만 달러)"""
+    t = (t or "").replace(",", "").replace("$", "").strip()
+    if t in ("", "-", "–", "—"):
+        return 0.0
+    neg = t.startswith("(") and t.endswith(")")
+    t = t.strip("()")
+    try:
+        v = float(t)
+    except ValueError:
+        return None
+    return -v if neg else v
+
+
+def parse_farside(html):
+    """Farside 표 -> [{"d": 날짜, "total": 합계, "by": {티커: 값}}] (과거->최신)"""
+    rows = _html_rows(html)
+    head = None
+    for r in rows:   # 티커 행: 'Total' 이 있고 대문자 티커가 여러 개인 행
+        if r and r[-1].strip().lower() == "total" and \
+                sum(1 for x in r if re.fullmatch(r"[A-Z]{3,5}", x.strip())) >= 3:
+            head = r
+    out = []
+    for r in rows:
+        try:
+            d = datetime.datetime.strptime(r[0].strip(), "%d %b %Y").date()
+        except (ValueError, IndexError):
+            continue
+        vals = [_flow_num(x) for x in r[1:]]
+        if not vals or vals[-1] is None or \
+                all(x.strip() in ("", "-", "–", "—") for x in r[1:]):
+            continue                       # 아직 집계 전인 날 (전부 '-' 또는 빈칸)
+        by = {}
+        if head and len(head) == len(r):
+            for k, v in zip(head[1:-1], vals[:-1]):
+                if v:
+                    by[k.strip()] = round(v, 1)
+        out.append({"d": d.isoformat(), "total": round(vals[-1], 1), "by": by})
+    out.sort(key=lambda x: x["d"])
+    return out
+
+
+def etf_fetch(url):
+    import requests
+    h = {"User-Agent": UA["User-Agent"], "Accept": "text/html,application/xhtml+xml",
+         "Accept-Language": "en-US,en;q=0.9", "Referer": "https://farside.co.uk/"}
+    r = requests.get(url, headers=h, timeout=30)
+    if r.status_code in (403, 503):        # 클라우드플레어 차단 시 우회 클라이언트
+        try:
+            import cloudscraper
+            r = cloudscraper.create_scraper().get(url, timeout=30)
+        except ImportError:
+            pass
+    r.raise_for_status()
+    return r.text
+
+
+def etf_flows():
+    """BTC·ETH 현물 ETF 일별 순유입(백만 달러). 실패하면 마지막 성공값을 재사용"""
+    try:
+        with open(ETF_CACHE, encoding="utf-8") as f:
+            cache = json.load(f)
+    except Exception:
+        cache = {}
+    out = {}
+    for a, url in ETF_URL.items():
+        try:
+            days = parse_farside(etf_fetch(url))
+            if len(days) < 5:
+                raise ValueError("표 파싱 결과 %d일" % len(days))
+            cache[a] = {"days": days[-30:], "at": now.isoformat()}
+        except Exception as e:
+            ERRORS.append("ETF 흐름 %s: %s" % (a, str(e)[:80]))
+        c = cache.get(a)
+        if not c:
+            continue
+        days = c["days"]
+        last7 = days[-7:]
+        out[a] = {"days": last7,
+                  "last": days[-1],
+                  "sum5": round(sum(x["total"] for x in days[-5:]), 1),
+                  "sum7": round(sum(x["total"] for x in last7), 1),
+                  "streak": _streak(days),
+                  "fetched": c["at"][:16].replace("T", " "),
+                  "stale": c["at"][:10] != now.date().isoformat() and
+                           (now - datetime.datetime.fromisoformat(c["at"])).days >= 2,
+                  "src": "Farside Investors"}
+    os.makedirs("history", exist_ok=True)
+    with open(ETF_CACHE, "w", encoding="utf-8") as f:
+        json.dump(cache, f, ensure_ascii=False)
+    return out
+
+
+def _streak(days):
+    """최근 연속 순유입(+)/순유출(-) 일수"""
+    n, sign = 0, 0
+    for x in reversed(days):
+        s_ = 1 if x["total"] > 0 else -1 if x["total"] < 0 else 0
+        if s_ == 0 or (sign and s_ != sign):
+            break
+        sign, n = s_, n + 1
+    return n * sign
+
+
 # ---------- 조립 ----------
 def build():
     cg = safe("CoinGecko", coingecko, {})
     krw = safe("CoinGecko KRW", coingecko_krw, {})
     hl = safe("Hyperliquid", hyperliquid, {})
+    etf = safe("ETF 흐름", etf_flows, {})
     opts = deribit()
     coins = []
     for sym, ko, cg_id, hl_name, okx_ccy, ko_q, en_q in COINS:
@@ -741,6 +896,7 @@ def build():
             "options": opts.get(sym),
             "news": news(sym, ko_q, en_q),
             "cbPrem": quiet(lambda c=okx_ccy: cb_premium(c)),  # 코인베이스 미상장이면 None
+            "etf": etf.get(sym),
         })
         cc = coins[-1]
         daily = safe("OKX 일봉 " + okx_ccy, lambda c=okx_ccy: okx_daily(c), None)
@@ -763,6 +919,7 @@ def build():
             "fng": safe("공포탐욕", fear_greed, None),
             "overall": brief.get("overall", ""),
             "pick": pick, "pastPicks": past,
+            "etf": etf,
             "coins": coins,
             "errors": ERRORS}, picks
 

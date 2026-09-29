@@ -194,3 +194,10 @@ font-size:13.5px;line-height:1.72;color:var(--txt)}
 .kol{margin-top:7px}
 .kotr{font-size:12px;font-weight:600;color:var(--sub);text-decoration:none;border-bottom:1px dotted var(--dim)}
 .tk{color:var(--dim);font-size:12px;font-weight:600;margin-left:3px}
+/* 현물 ETF 자금 흐름 */
+.etf{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 15px 12px;margin-bottom:10px}
+.eh{display:flex;align-items:baseline;gap:8px;margin-bottom:10px}
+.eh b{font-size:15.5px}
+svg.eb{width:100%;height:auto;display:block}
+svg.eb .bl{font-size:11px;font-weight:700;font-variant-numeric:tabular-nums}
+svg.eb .pa{font-size:10.5px;fill:var(--dim)}
