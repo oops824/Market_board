@@ -1,11 +1,11 @@
 {
- "updated": "2026-09-30 00:21 KST",
+ "updated": "2026-09-30 01:24 KST",
  "fng": {
   "value": 73,
   "label": "Greed",
   "week": 78
  },
- "overall": "직전 FOMC(9/16) 이후 2주가 지난 가운데 미국 30년물 국채금리 24년만 최고치 등 매크로 변수 속에서 비트코인·이더리움은 근월 옵션 맥스페인과 현재가가 근접해 중립적 포지셔닝을 보이는 반면, LINK·ONDO·SUI·VIRTUAL·HYPE 등 알트코인은 롱숏비율이 1.5~4.5배에 달하는 롱 쏠림과 거래량 급증이 동반되어 단기 과열 신호가 뚜렷하다. 다음 FOMC(10/28)는 28일 남아 임박 이슈로 보기는 이르며, 뉴스 전반은 기관 매수·기술 업그레이드·규제 대응 등 개별 호재성 이슈가 주를 이룬다.",
+ "overall": "비트코인이 경기 확장 신호를 보이며 기관 수요가 지속되는 가운데, ETH는 10월 글래머스터담 업그레이드를 앞두고 중립적 포지셔닝을 유지하고 있습니다. 대부분 코인이 선물 시장에서 롱 우위(LS비율 1.3~4.6)를 보이지만, BTC·SOL·HYPE 등은 현재가가 맥스페인보다 높아 옵션 시장에서의 헤징 압력이 존재하며, 다음 FOMC까지 28일 남은 상황에서 변동성이 지속될 가능성이 있습니다.",
  "pick": {
   "date": "2026-09-30",
   "id": "aave-new",
@@ -91,8 +91,8 @@
     }
    }
   ],
-  "now": 172.81750712611756,
-  "ch24": 17.510000228881836
+  "now": 168.92792293266868,
+  "ch24": 13.279999732971191
  },
  "pastPicks": [
   {
@@ -101,8 +101,8 @@
    "name": "XDC Network",
    "headline": "XDC, 기관 밸리데이터·인프라 합류로 주목",
    "pickPrice": 0.03430073,
-   "price": 0.03456829950237706,
-   "since": 0.7800694107007677
+   "price": 0.034461048126236606,
+   "since": 0.467389837582477
   },
   {
    "date": "2026-09-28",
@@ -110,8 +110,8 @@
    "name": "Avalanche",
    "headline": "월가, 아발란체로 24시간 토큰화 거래 테스트",
    "pickPrice": 10.4,
-   "price": 11.309179190190545,
-   "since": 8.742107597985992
+   "price": 11.268904594174273,
+   "since": 8.354851867060308
   },
   {
    "date": "2026-09-27",
@@ -119,8 +119,8 @@
    "name": "Arbitrum",
    "headline": "스탠다드차타드, ARB 2030년 10달러 전망 제시",
    "pickPrice": 0.224599,
-   "price": 0.207546053324998,
-   "since": -7.592619145678292
+   "price": 0.20568971535116598,
+   "since": -8.419131273440229
   },
   {
    "date": "2026-09-26",
@@ -128,8 +128,8 @@
    "name": "Sei",
    "headline": "세이(SEI), 스테이킹 90% ETF 신청으로 주목",
    "pickPrice": 0.072403,
-   "price": 0.07339973825740273,
-   "since": 1.376653256636784
+   "price": 0.07276601102460288,
+   "since": 0.501375667586812
   }
  ],
  "etf": {
@@ -226,7 +226,7 @@
    "sum5": 1417.8,
    "sum7": 2849.8,
    "streak": 8,
-   "fetched": "2026-09-30 00:21",
+   "fetched": "2026-09-30 01:24",
    "stale": false,
    "src": "Farside Investors"
   },
@@ -320,7 +320,7 @@
    "sum5": 436.9,
    "sum7": 850.6,
    "streak": 7,
-   "fetched": "2026-09-30 00:21",
+   "fetched": "2026-09-30 01:24",
    "stale": false,
    "src": "Farside Investors"
   }
@@ -331,19 +331,18 @@
    "name": "비트코인",
    "cg": "bitcoin",
    "market": {
-    "price": 83279.93104106875,
-    "mcap": 1673190086215.0,
+    "price": 83056.66765994715,
+    "mcap": 1668705546532.0,
     "rank": 1,
-    "vol": 22871201956.254383,
+    "vol": 23227157062.29267,
     "high24": null,
     "low24": null,
-    "ch24": -0.33000001311302185,
-    "ch7": -3.25,
+    "ch24": -1.1100000143051147,
+    "ch7": -3.690000057220459,
     "ch30": 0.0,
     "ath": 126173.1777846797,
-    "athPct": -33.88,
+    "athPct": -34.2,
     "spark": [
-     86537.5,
      86152.3,
      86154.3,
      86167.5,
@@ -426,94 +425,95 @@
      84206.3,
      84310.7,
      84168.3,
-     83199.3
+     83049.8,
+     83168.0
     ],
-    "sparkEnd": 1790695271222,
+    "sparkEnd": 1790699041142,
     "sparkStepH": 2,
-    "krw": 112907599.30823937,
+    "krw": 112442116.67803645,
     "src": "CoinPaprika"
    },
    "hl": {
     "funding": 1.25e-05,
     "fundingApr": 10.950000000000001,
-    "oiUsd": 2884320283.56822,
-    "mark": 83199.0,
-    "basis": -0.038447213177783546,
-    "vol24": 2325470976.3404512
+    "oiUsd": 2998481785.53216,
+    "mark": 83172.0,
+    "basis": -0.02776605833757495,
+    "vol24": 2390657094.802204
    },
    "okx": {
-    "funding": 2.14082656165e-05,
+    "funding": 4.66804807307e-05,
     "nextFunding": null,
-    "oiUsd": 2299118667.5780563,
-    "oiCcy": 27633.803900000075,
-    "lsRatio": 1.24,
-    "oiChg24": -1.1910618839614417
+    "oiUsd": 2360986970.4632154,
+    "oiCcy": 28388.199900000065,
+    "lsRatio": 1.35,
+    "oiChg24": -1.9076420916521952
    },
    "options": {
     "nearest": {
      "exp": "2026-09-30",
-     "days": 0.7,
+     "days": 0.6,
      "maxPain": 84000.0,
-     "callOi": 3610.3,
-     "putOi": 3358.5,
-     "pcr": 0.93
+     "callOi": 3721.2,
+     "putOi": 3317.5,
+     "pcr": 0.89
     },
     "major": {
      "exp": "2026-10-30",
-     "days": 30.7,
+     "days": 30.6,
      "maxPain": 75000.0,
-     "callOi": 91269.1,
-     "putOi": 29327.2,
+     "callOi": 91268.0,
+     "putOi": 29409.4,
      "pcr": 0.32
     },
     "pcr": 0.54,
-    "underlying": 83246.15,
+    "underlying": 83222.96,
     "expiries": [
      {
       "exp": "2026-09-30",
-      "days": 0.7,
+      "days": 0.6,
       "maxPain": 84000.0,
-      "callOi": 3610.3,
-      "putOi": 3358.5,
-      "pcr": 0.93
+      "callOi": 3721.2,
+      "putOi": 3317.5,
+      "pcr": 0.89
      },
      {
       "exp": "2026-10-01",
-      "days": 1.7,
+      "days": 1.6,
       "maxPain": 83500.0,
-      "callOi": 553.7,
-      "putOi": 426.3,
+      "callOi": 558.8,
+      "putOi": 428.4,
       "pcr": 0.77
      },
      {
       "exp": "2026-10-02",
-      "days": 2.7,
+      "days": 2.6,
       "maxPain": 83000.0,
-      "callOi": 12977.3,
-      "putOi": 14933.9,
-      "pcr": 1.15
+      "callOi": 12982.4,
+      "putOi": 15038.7,
+      "pcr": 1.16
      },
      {
       "exp": "2026-10-03",
-      "days": 3.7,
+      "days": 3.6,
       "maxPain": 84000.0,
-      "callOi": 54.7,
-      "putOi": 33.1,
-      "pcr": 0.61
+      "callOi": 85.8,
+      "putOi": 43.2,
+      "pcr": 0.5
      },
      {
       "exp": "2026-10-09",
-      "days": 9.7,
+      "days": 9.6,
       "maxPain": 84000.0,
-      "callOi": 7587.4,
-      "putOi": 8220.8,
-      "pcr": 1.08
+      "callOi": 7665.0,
+      "putOi": 8351.0,
+      "pcr": 1.09
      },
      {
       "exp": "2026-10-16",
-      "days": 16.7,
+      "days": 16.6,
       "maxPain": 84000.0,
-      "callOi": 1219.2,
+      "callOi": 1219.5,
       "putOi": 1786.8,
       "pcr": 1.47
      }
@@ -521,8 +521,22 @@
    },
    "news": [
     {
+     "title": "비트코인(BTC), 50개월 침체 뚫고 '경기 확장' 진입...\"알트코인 위험도 최저\"",
+     "src": "코인리더스",
+     "url": "https://news.google.com/rss/articles/CBMiSkFVX3lxTE1UWnEydXBkY1dDbUhDclVoTjdsdnZqMTN4RnFnc0FUTjNOY0tPUlUxU2gxS3Q1SW5KZUFpeXA3YlllU2Y0T2RVbmVR?oc=5",
+     "ts": "2026-09-30 01:00",
+     "lang": "ko"
+    },
+    {
+     "title": "비트코인 버티자 알트코인으로 자금 이동…AI·밈·레이어1 ‘선별적 순환매’",
+     "src": "cbci.co.kr",
+     "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFB3eHRQcUhCdmhHa0VuelRaOEUyang4VVdOMnd6YzRZWnk4ZjB3NHFCMUE5VU84anM2YkVWUFFPM2lXakgzMThsYVo2MjgwVmswQzZRYmVlOFQzVHY1WHM1N0pWbUlfa2NU?oc=5",
+     "ts": "2026-09-30 00:20",
+     "lang": "ko"
+    },
+    {
      "title": "美 자산운용사 스트라이브, 비트코인 1107개 추가 매수…총 2.7만개",
-     "src": "newsis.com",
+     "src": "뉴시스",
      "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTFBuUVRxdlN5YWJHX3VzUkxLenNRNjBReTVyQktURndENXk1YnBXcFVpVHU3MFJKMTYySnhOTHJWa2xKRzdLM09nZWkzelJ2Nm5nZHFiRnZVaHZHX2I1WmZacdIBeEFVX3lxTE5kdk9VY0lWcGNSdWFFWU9qclBnSC1kb0VER2RlLWNIaHR2bmNSMnJGWWFQQ2JyVjB1YklGWm0wYU5GZW83Vk91eXJIbExLSFpTeUFYYnhwOXZ3UDVUZjBPV1Q1X2tpWmFTclBKYXhKYkJHQW9SLXE4bw?oc=5",
      "ts": "2026-09-30 00:09",
      "lang": "ko"
@@ -535,75 +549,51 @@
      "lang": "ko"
     },
     {
-     "title": "퀀트 QNT 급등 뒤 변동성 확대…비트코인 8만3000달러대, 코인시장 ‘엇갈린 흐름’",
-     "src": "CBC뉴스",
-     "url": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1GckN1RG9NakQ3MzZNcmFsd2dlUW9ZWU9ObjZlVHR5SmRINTdSY05pU29OZjY2M29SaEp5dTJpSndRamJJZVhFZ2Q3enI1dHdWX2lITlZTc25XSEk3aE1SY0hGd3JTeWxT?oc=5",
-     "ts": "2026-09-30 00:00",
-     "lang": "ko"
-    },
-    {
-     "title": "피터 브랜트 \"비트코인, 2029년 최대 60만달러 가능…10월 조정은 매수 기회\"",
-     "src": "블루밍비트",
-     "url": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE83TFBNWXAyTGZ3TnRCZFg0ajJ0eGIzRm1TdXFLS2NPdDRoZW5QUWlSdXczdUFzbThKMHF3R25vTTVRR0QyNE5QVTNaRGZyRjZ6?oc=5",
-     "ts": "2026-09-29 23:41",
-     "lang": "ko"
-    },
-    {
-     "title": "비트코인, 장기 보유자 공급 클러스터 테스트 중 레버리지 청산 진행 중 - 분석가",
-     "src": "The Block",
-     "url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxOR1ZZQW9aRHd6OXQxTUJLYmdENjFwZzdZLUg4c0l3NlNQdGpkNDBsVFhPQ0F5YUkzXzV2OXNZTUF3WkJtTTN4bXZXTGktYjJYLWNjZDR6aGJTTXNYTzRpem4xOVRWOTdUX0UxZENwUFl2SzZmWmY5SWFMelFGb012bnVDQmpKOHpRUmxLdG1qU1dhajNmUjN5R19QaWptdElyeUE5UXpZeV9DcTc1cjhGUElRa21kRWl5NVdOMjBaUzItQkZ5UFZjOQ?oc=5",
-     "ts": "2026-09-30 00:09",
+     "title": "ProShares 비트코인 ETF (BITO), 불규칙한 분배와 높은 수수료로 부진 중 - 매도 추천",
+     "src": "Pluang",
+     "url": "https://news.google.com/rss/articles/CBMijAFBVV95cUxOYW5USjNuS0tzc0pJUVhjY2RyOFVKUXBGdnBDNmNHUVRvSTRLMGp2Nk0wbWwtYXliTVE0eEYwakF4M3QtSVB4aUpuTkl5Rno0blhEb0UwTzlEVmdsNmJlN3ZsQ3ZOZkR2LW15c0R4NFpRaEpFS2JhM1ZGUy1NekwxTVd0U0lScUk2VFhoSA?oc=5",
+     "ts": "2026-09-30 01:14",
      "lang": "en",
-     "orig": "Bitcoin tests long-term holder supply cluster as leverage clears, analysts say",
-     "real": "https://www.theblock.co/news/markets/2026-09-29-bitcoin-tests-long-term-holder-supply-cluster-leverage-clears-analysts-say-417162",
+     "orig": "ProShares Bitcoin ETF (BITO) underperforms with erratic, sharply reduced distributions and high costs, making it a sell.",
+     "real": "https://pluang.com/en/news-feed/bito-peningkatan-dividen-besar-tetap-harus-dihindari"
+    },
+    {
+     "title": "바이낸스에서 선물 주도로 비트코인 반등",
+     "src": "Pluang",
+     "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxNMlNJcW1ONkt6Vjg0eDBBUXBhd0dEVzVNYmtNdTkwZnBqWXRsMlFObTdMUEZqOGhFMVFReFdRNktrYlZ2QzgtQUhzZVBETXVldW5EZXpnZ3dIR2RMek5DazVNbjhMeVFtRmdYTkNkNGVQWmQ4WDVmSjdpdE1lZXpiSklkaWl3SXFlZHM3WGItUDZfWDhYUXc?oc=5",
+     "ts": "2026-09-30 00:54",
+     "lang": "en",
+     "orig": "Bitcoin rebound on Binance driven by futures, w...",
+     "real": "https://pluang.com/en/news-feed/volume-futures-bitcoin-dorong-90-persen-volume-spot-binance"
+    },
+    {
+     "title": "비트코인 가격 예측: $80K–$82K 매수 구간, $90K 주목",
+     "src": "FXEmpire",
+     "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNRHRpOWhWUHVldkdrMWtqSGFkNG53T3ZoQmphOEpaRGxnU1VtYXlZUHRsbWtjSTV0YVFrcUNNeUVYM0ZHa0FxOVpadTlWYlc0QVlJV1FmUkgxUlVSQUdpcm5aeHNNZHB1MC02SVg4N1RERkI3YWRoSWp1SHFmWmhGUWE3eHJ4Nm9rRFg0bzF5UFZJVVJaTFFhUDBTTkVqRmFERm9XUWlpbHlCbTNWZzRuOFRrbURTZw?oc=5",
+     "ts": "2026-09-30 00:32",
+     "lang": "en",
+     "orig": "Bitcoin Price Prediction: $80K–$82K Buy Zone Puts $90K in Focus",
+     "real": "https://www.fxempire.com/forecasts/article/bitcoin-price-prediction-this-hot-buy-zone-could-push-btc-to-90k-1633063",
      "ko": {
-      "sum": "비트코인이 화요일 84,000달러 선에서 거래되며 Glassnode가 지목한 장기 보유자의 최대 매집 구간인 84,000~85,000달러를 재시험했다. 비트코인은 지난주 87,000달러까지 올랐다가 후퇴했으며, 8월 저점인 62,000달러보다 약 35% 높은 수준을 유지하고 있다. 코인 단위 미결제약정(open interest)은 3월 이후 최저치로 8월 대비 거의 20% 감소해 87,000달러 돌파 당시 쌓였던 레버리지가 대부분 해소된 것으로 분석된다. Bitfinex 분석가들은 9월 30일 월말·분기 마감까지 비트코인이 84,000달러 장기 보유자 구간과 87,722달러 연중 시가 사이에서 횡보할 것으로 전망했다. 한편 10년물 국채 수익률이 9월 25일 5.17%로 상승하며 실질 수익률 부담이 커지는 등 매크로 여건도 긴축적으로 흐르고 있다.",
-      "quotes": [
-       "\"우리의 기본 시나리오는 비트코인이 9월 30일 월말·분기 마감까지 84,000달러 장기 보유자 구간과 87,722달러 연중 시가 사이에서 통합될 것이라는 것이다. 스프레드가 어떻게 해소될지는 현재의 금융 여건보다는 현물 수요가 결정할 것으로 예상된다\" — Bitfinex 분석가들",
-       "\"이번 주 비트코인의 주요 제약 요인은 결국 심리가 아니라 저위험 자산의 실질 수익률 상승이다. 어떤 상승이든 현물 수요가 뒷받침해야 한다\" — Bitfinex 분석가들"
-      ]
+      "sum": "비트코인(BTC)이 최근 24시간 동안 1.3% 상승했으나, 최근 랠리 이후 시장이 잠시 숨 고르기를 하고 있다. 비트코인은 장기 목표치인 $85,000를 찍은 뒤 정상적인 차익 실현으로 하락세를 보였지만, 여전히 상승 흐름은 이어질 것으로 전망된다. 시장은 핵심 인플레이션 지표인 PCE 물가지수가 전월 대비 0.4%로 두 배 뛸 것으로 예상하며, 2분기 GDP 성장률은 1분기 2%에서 1.5%로 둔화될 것으로 보고 있다. FedWatch 데이터에 따르면 10월 FOMC 회의에서 금리 인상 가능성은 68%이며, 예상보다 높은 PCE 지표가 나오면 단기적으로 BTC 등 위험자산 가격이 하락할 수 있다. 한편 비트코인 연계 ETF는 8일 연속 순유입을 기록했고 이 기간 동안 약 $3 billion이 유입되어 월가의 낙관적 포지션을 시사하며, 차트 분석상 $82,000~$80,000 구간이 강한 매수 지지 구간으로 지목되며 이 구간이 유지될 경우 $90,000 돌파가 다음 목표로 제시된다.",
+      "quotes": []
      }
     },
     {
-     "title": "유콘과 스타크웨어, 비트코인 비용 80% 감소 '양자' 잠금 해제",
-     "src": "Quantum Zeitgeist",
-     "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE1wZ2I0YTFqMEIwZE5pUk5QaVdENG10dHQzSDRaWFRwbDRRLUI3aFYxV2UyT3lDU0NUQzBmRi0yWERlUHNrbjJIcFpXZ1BwN3d5UnJWbTVZOG04bjI5OHJSVmFxZUh5elBMLTllSjdEcnJub1JRWVhN?oc=5",
-     "ts": "2026-09-30 00:08",
+     "title": "Strategy, 비트코인 1,665개 추가 매입 및 STRC 주식 $152M 매입",
+     "src": "TradingView",
+     "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxPcHZ3VEZIUHU3TzkxeF9oS1loN3VIQldSXzAxN3dEMkVvbUF5T2lnVVhrcnlJV2VlbjkwQWUtaXJ3MGY0Znk2QXFxR2J4UXlGWGZvd2VZSVI2d2w4TGtRTGFoaC00WWtwakt2SW1WSjlTX0ppWW9ITHdoX0REbDloSzZwSzFNelpNVVlaUWhmU2JMMnVCdUVRcy1jVG5fWm9ZcWppLV9ZcUJ4X0ZHek93OXhxN1pLN1hPdWtmRU5rdzE?oc=5",
+     "ts": "2026-09-30 00:30",
      "lang": "en",
-     "orig": "Yukon & StarkWare Unlock Quantum 80% Drop In Bitcoin Costs",
-     "real": "https://quantumzeitgeist.com/quantum-bitcoin-costs-yukon-80-percent/"
-    },
-    {
-     "title": "피터 브란트, 비트코인 2029년 말 $600,000 도달 가능성 제시, 10월 하락을 매수 기회로 평가",
-     "src": "finance.biggo.com",
-     "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE1tOFREYVU3Qno1ODl3ak8zY0J3cHptUFkxNmFLc0RtQnQ0QnNkbmZXb1pzcTZFYWFWdlZhTk1HNFl4Mm9oX1lQcmZVUTJrbkZIWkYxVW1zLWJrMHJMc1p6ZmlLSTRQWkZZenpIYUFEaVNLWXM0dmc?oc=5",
-     "ts": "2026-09-30 00:05",
-     "lang": "en",
-     "orig": "Peter Brandt Says Bitcoin Could Reach $600,000 by Late 2029, Sees October Dip as Buying Window",
-     "real": "https://finance.biggo.com/news/62d541a5-72aa-4c04-b403-571f9d0f4978",
+     "orig": "Strategy Buys 1,665 More Bitcoin And Spends $152M Buying Back STRC",
+     "real": "https://www.tradingview.com/news/newsbtc:d00c70d36094b:0-strategy-buys-1-665-more-bitcoin-and-spends-152m-buying-back-strc/",
      "ko": {
-      "sum": "차트 분석가 피터 브랜트가 비트코인의 장기 목표가를 대폭 상향 조정하며, 과거 사이클 패턴이 반복될 경우 2029년 말까지 최고 $600,000에 도달할 수 있다고 밝혔다. 그는 6월 말 약 $58,000까지 하락했던 약세장이 이미 끝났을 가능성이 있으며, 새로운 강세 사이클이 시작됐을 수 있다고 말했다. 다만 단기적으로는 10월 초 $65,000~$66,000, 최악의 경우 $61,000까지 조정이 나올 가능성도 열어두었으며, 이는 오히려 매수 기회가 될 수 있다고 설명했다. 그는 2028년 반감기를 기준으로 2029년 초 $200,000~$250,000, 최종적으로 $300,000~$600,000의 사이클 고점을 예상했다. 브랜트는 XRP에 대해 회의적인 입장을 밝히며 결제 수단으로서의 효용이 투자 가치로 직결되지는 않는다고 지적했다.",
-      "quotes": [
-       "저점을 이미 확인했고 이제 비트코인의 새로운 강세장 사이클에 진입했을 가능성이 크다 — 피터 브랜트",
-       "너무 많은 사람들이 이제 시장을 뒤쫓았을 수 있다. 그들은 비트코인 저점이 끝났다는 생각을 받아들이고 랠리에 올라탔다 — 피터 브랜트"
-      ]
-     }
-    },
-    {
-     "title": "비트코인(BTC), 다음 대규모 상승 전 매수 기회 제공 가능성 - 분석가",
-     "src": "CryptoRank",
-     "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxNd3ZUMlhJTUJQN25aMlpxeEtvZzhub0pKN1loTE5OZTJyR3JlZEptczhuR2NWT0RCY3VKLUNGalhOZnZ2OXNKOE9sQm9KU1pOMVM0TklpMWdNRmwweWY0NDI5aGp1QXlGVHdxSm9HdG1Wck5GTURkc1kweGFiWHRadE5aWkoxdkRhb1hTemVOZlFBZElDRW93ZWdFaFk1cUc2NTdVRzR0LXBHdTdubEJwb2lNeEI?oc=5",
-     "ts": "2026-09-30 00:03",
-     "lang": "en",
-     "orig": "Bitcoin (BTC) May Offer a Buying Opportunity Before the Next Big Pump: Analysts",
-     "real": "https://cryptorank.io/news/feed/0263b-bitcoin-btc-may-offer-a-buying-opportunity-before-the-next-big-pump-analysts",
-     "ko": {
-      "sum": "비트코인이 9월 중 기록한 지역 고점 $87,000 이상에서 밀려나며 최근 며칠간 변동성이 컸다. 일부 유명 분석가들은 이러한 하락이 $90,000에서 $100,000까지 이어질 추가 랠리 전 매수 기회를 제공할 수 있다고 전망했다. 이들은 암호화폐 채택 확대와 가격 회복을 뒷받침하는 우호적 요인들을 근거로 들었다.",
+      "sum": "Strategy가 9월 21일부터 27일 사이 1,665 BTC를 약 $142.7 million에 매입하며 비트코인 매입세를 다시 강화했다. 이로써 회사의 총 비트코인 보유량은 847,666 BTC, 총 매입 비용은 약 $63.95 billion(평균 매입가 $75,437/BTC)에 달한다. 이번 매입은 평균 $85,681의 가격으로 이루어졌으며, 지난주 950 BTC 매입에 이어 별도의 거래로 진행됐다. 회사는 자사 보통주(MSTR) 약 1.47 million주를 시장에서 매각해 약 $246.2 million의 순수익을 확보했고, 이 중 $142.7 million은 비트코인 매입에, $103.5 million은 STRC 우선주 매입에 사용했다. 같은 주에 회사는 약 1.53 million주의 STRC 우선주를 총 $151.7 million에 재매입했으며, 이는 기존 현금 약 $48.1 million으로 일부 충당했다. 이는 Strategy가 비트코인 매입과 자본구조 관리(우선주 재매입)를 동시에 수행하며 재무 전략을 정교화하고 있음을 보여준다.",
       "quotes": []
      }
     }
    ],
-   "cbPrem": 0.0011572645959301298,
+   "cbPrem": -0.008616719873699719,
    "etf": {
     "days": [
      {
@@ -697,13 +687,12 @@
     "sum5": 1417.8,
     "sum7": 2849.8,
     "streak": 8,
-    "fetched": "2026-09-30 00:21",
+    "fetched": "2026-09-30 01:24",
     "stale": false,
     "src": "Farside Investors"
    },
    "daily": {
     "t": [
-     1782921600000,
      1783008000000,
      1783094400000,
      1783180800000,
@@ -792,10 +781,10 @@
      1790352000000,
      1790438400000,
      1790524800000,
-     1790611200000
+     1790611200000,
+     1790697600000
     ],
     "c": [
-     61583.4,
      61899.9,
      62906.6,
      62710.0,
@@ -884,7 +873,8 @@
      84105.9,
      84424.9,
      83329.5,
-     83240.9
+     83049.8,
+     83167.9
     ]
    },
    "tags": [
@@ -909,26 +899,25 @@
      "p": 3
     }
    ],
-   "brief": "스트라이브의 추가 매수와 국채금리 급등 속 8.4만달러 회복 등 기관 수요와 매크로 이슈가 부각됐다. 근월 옵션 맥스페인(8.4만)은 현재가와 거의 일치해 중립적이나, 10월물 맥스페인(7.5만)은 현재가보다 크게 낮아 콜 쪽 쏠림이 확인되며 롱숏비율 1.24로 완만한 롱 우위다."
+   "brief": "비트코인이 경기 확장 신호로 진입하며 기관 투자자들의 추가 매수가 이어지고 있습니다. 선물 시장은 과열(펀딩비 10.95% APR, LS 1.35)을 보이지만 옵션 맥스페인(75,000~84,000)이 현재가(83,057)보다 낮아 하방 헤징이 작동 중입니다."
   },
   {
    "sym": "ETH",
    "name": "이더리움",
    "cg": "ethereum",
    "market": {
-    "price": 2687.8228454656532,
-    "mcap": 328156804577.0,
+    "price": 2677.792307748431,
+    "mcap": 326932174311.0,
     "rank": 2,
-    "vol": 12164060332.90086,
+    "vol": 12484656433.32976,
     "high24": null,
     "low24": null,
-    "ch24": 0.2800000011920929,
-    "ch7": -1.5499999523162842,
+    "ch24": -1.100000023841858,
+    "ch7": -2.4200000762939453,
     "ch30": 0.0,
     "ath": 4946.229669645212,
-    "athPct": -45.48,
+    "athPct": -45.86,
     "spark": [
-     2752.44,
      2750.18,
      2746.18,
      2752.68,
@@ -1011,92 +1000,93 @@
      2716.5,
      2731.04,
      2725.85,
-     2684.15
+     2672.88,
+     2680.29
     ],
-    "sparkEnd": 1790695271222,
+    "sparkEnd": 1790699041142,
     "sparkStepH": 2,
-    "krw": 3644042.700968514,
+    "krw": 3625195.226229826,
     "src": "CoinPaprika"
    },
    "hl": {
     "funding": 1.25e-05,
     "fundingApr": 10.950000000000001,
-    "oiUsd": 3142844090.484118,
-    "mark": 2685.1,
-    "basis": 0.0,
-    "vol24": 1372843651.3800685
+    "oiUsd": 3138057006.52962,
+    "mark": 2681.7,
+    "basis": 0.01976748956611374,
+    "vol24": 1419124985.4600022
    },
    "okx": {
-    "funding": 6.07862840956e-05,
+    "funding": 6.28410864335e-05,
     "nextFunding": null,
-    "oiUsd": 1553436751.7343535,
-    "oiCcy": 578744.3890000014,
-    "lsRatio": 1.1,
-    "oiChg24": 5.721405408800528
+    "oiUsd": 1548705529.3151727,
+    "oiCcy": 577812.673000001,
+    "lsRatio": 1.29,
+    "oiChg24": 0.06245573975012242
    },
    "options": {
     "nearest": {
      "exp": "2026-09-30",
-     "days": 0.7,
+     "days": 0.6,
      "maxPain": 2700.0,
-     "callOi": 16783.0,
-     "putOi": 28718.0,
-     "pcr": 1.71
+     "callOi": 17399.0,
+     "putOi": 29424.0,
+     "pcr": 1.69
     },
     "major": {
      "exp": "2026-10-30",
-     "days": 30.7,
+     "days": 30.6,
      "maxPain": 2500.0,
-     "callOi": 101992.0,
+     "callOi": 101989.0,
      "putOi": 94543.0,
      "pcr": 0.93
     },
     "pcr": 0.57,
-    "underlying": 2772.64,
+    "underlying": 2769.4,
     "expiries": [
      {
       "exp": "2026-09-30",
-      "days": 0.7,
+      "days": 0.6,
       "maxPain": 2700.0,
-      "callOi": 16783.0,
-      "putOi": 28718.0,
-      "pcr": 1.71
+      "callOi": 17399.0,
+      "putOi": 29424.0,
+      "pcr": 1.69
      },
      {
       "exp": "2026-10-01",
-      "days": 1.7,
+      "days": 1.6,
       "maxPain": 2700.0,
-      "callOi": 6071.0,
-      "putOi": 8220.0,
-      "pcr": 1.35
+      "callOi": 6563.0,
+      "putOi": 9210.0,
+      "pcr": 1.4
      },
      {
       "exp": "2026-10-02",
-      "days": 2.7,
+      "days": 2.6,
       "maxPain": 2600.0,
-      "callOi": 42239.0,
-      "putOi": 31422.0,
+      "callOi": 42337.0,
+      "putOi": 31436.0,
       "pcr": 0.74
      },
      {
       "exp": "2026-10-03",
-      "days": 3.7,
+      "days": 3.6,
       "maxPain": 2700.0,
-      "callOi": 1626.0,
-      "putOi": 729.0,
-      "pcr": 0.45
+      "callOi": 2219.0,
+      "putOi": 909.0,
+      "pcr": 0.41
      },
      {
       "exp": "2026-10-09",
-      "days": 9.7,
+      "days": 9.6,
       "maxPain": 2650.0,
-      "callOi": 32132.0,
-      "putOi": 24431.0,
+      "callOi": 32225.0,
+      "putOi": 24478.0,
       "pcr": 0.76
      },
      {
       "exp": "2026-10-16",
-      "days": 16.7,
+      "days": 16.6,
       "maxPain": 2700.0,
       "callOi": 5962.0,
       "putOi": 9815.0,
@@ -1106,10 +1096,10 @@
    },
    "news": [
     {
-     "title": "\"양자컴퓨터에도 안 뚫린다\"…창시자 부테린이 그린 10년 뒤 '이더리움'",
-     "src": "newsis.com",
-     "url": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE1Ldm1oTFYyenU2UVE4aWgza3BhQjF0ZWhVUFJ3NWRfamNyUnlhZWs0RER2WUxzM2NZMlAxaGp1NFBtdC0yM3JlS1V1cE9zUlEyUENweHRwel9UWHN4ZmNlNQ?oc=5",
-     "ts": "2026-09-30 00:05",
+     "title": "“양자컴퓨터에도 안 뚫린다”…창시자 부테린이 그린 10년 뒤 ‘이더리움’",
+     "src": "동아일보",
+     "url": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1iV2N5T3BwbDNDbUNSQkgxcC1YNWlzeWRkN0hkbDQzdTdJWWJRSkItRWxXWDNsUGl4S0lEelRPSHhqWGU5RzlwVHFjZUtKdTJ6dGVwQll1WTJWVDNxU29DN2l1d3c2d9IBZkFVX3lxTE1iV2N5T3BwbDNDbUNSQkgxcC1YNWlzeWRkN0hkbDQzdTdJWWJRSkItRWxXWDNsUGl4S0lEelRPSHhqWGU5RzlwVHFjZUtKdTJ6dGVwQll1WTJWVDNxU29DN2l1d3c2dw?oc=5",
+     "ts": "2026-09-30 00:39",
      "lang": "ko"
     },
     {
@@ -1134,51 +1124,64 @@
      "lang": "ko"
     },
     {
-     "title": "이더리움 네트워크, 10월 6일 대규모 속도 업그레이드 테스트 실시",
-     "src": "Gadgets 360",
-     "url": "https://news.google.com/rss/articles/CBMi-AFBVV95cUxPMHh5ZVNpSkIzTGlqQWY4RjNnbHhSa1JsTnV2WXZ1REl5OXU5RmhBS0tyOFFvRTI3R092RGJSRTlrSmtESTB1ckNEX0ItVUhranNUYWtEUk1PLWliUGtXTGhFM0w0ZmZQWjZmWnU1a2VqVXNIRUZCeUNaSTdhc1Q4UUswUzRmdEFUWW83WWJDZGtEajhVMVZwOGl2MElmbzVSVHB4UlBHWmNXUncwSW01dHQtNVBhVzdmbE1Jc21mYy03R28xZi1NQkhKNTUyTnh5TG9nUWdSbTdTV3J2UDJ3S2dFV3JrUXZFLUlyNnZMM0VqY0R1Z2h1dtIB_gFBVV95cUxPNmhkeDVVSmpkX0hEUzJLYkJKYjY3MWExUC1TSXc2QzN4eUJzNmVDM2RKOFlXMmZWd1p3STVjMlZmV1U5UXBaS3Yyc1NmX0NTWXR0akJqdGROYTFOMXd3TDVqVGhmU05JQzZsbzRDejVNWGhrWEdVZm5FcWxQbGRUQkt6blpicmlqY3ZjV0RLVURxcEZxemQtX3RpQzZib3JZSEFoR0tabnkzZlZrOGRQcHktbE52REFrdGZSekk3VkkyZElOODg5ZTNXSF90ZWxoOUpIVFV6WVZVcll3U3d6N0FUR0xidTdiYXZYX1RpV2xRQVp2aGQzdGVYTThXZw?oc=5",
-     "ts": "2026-09-29 23:34",
+     "title": "이더리움의 새로운 글래머스터담 블록체인 업그레이드가 10월 예정, 관심 증폭 이유",
+     "src": "The Motley Fool",
+     "url": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNMEU3OHVDOUhDcHdvemVMeENGaFZqem04VFVXOHVzdjBtLXBlek1JT3YyaDdmeWh5dEVVdmRsYURTeU5TYU5zQ3U3WjlOdFZ2S3UwZUZUaElmdG9KbC01a1cweWVYSTM4ZklQbjJUUnhTX2VMaGxqZkhSMlJoNmhDMlpYVDdHV0RXTTd0clpleWJfbnBpZzdaZA?oc=5",
+     "ts": "2026-09-30 01:08",
      "lang": "en",
-     "orig": "Ethereum Network to Undergo Major Speed Upgrade Test on October 6",
-     "real": "https://www.gadgets360.com/cryptocurrency/news/ethereum-network-to-undergo-major-speed-upgrade-test-on-october-6-crypto-markets-crypto-networks-eth-adoption-12114787"
+     "orig": "Ethereum's New Glamsterdam Blockchain Upgrade is Coming in October. Here's Why I'm Buying Into the Hype.",
+     "real": "https://www.fool.com/investing/2026/09/29/ethereums-new-glamsterdam-blockchain-upgrade-is-co/",
+     "ko": {
+      "sum": "세계 최대 개발자 중심 블록체인인 이더리움(ETH)이 10월 대규모 업그레이드 'Glamsterdam'을 실행할 예정이며, 이는 2022년 PoW에서 PoS로 전환한 'The Merge' 이후 최대 업그레이드로 평가된다. Glamsterdam은 실행 계층 업그레이드인 'Amsterdam'과 합의 계층 업그레이드인 'Gloas'를 결합한 것으로, 병렬 처리 도입으로 여러 트랜잭션을 동시에 처리하고 저장 가격을 조정해 네트워크 혼잡을 줄인다. 또한 검증자가 외부 중계자 없이 이더리움 핵심 프로토콜 내에서 직접 블록을 구성할 수 있게 해 보안성을 높이고 블록 전파 시간을 9초에서 2초로 단축한다. 이번 업그레이드는 구조적 병목을 해소해 개발자들이 가스 한도를 높일 수 있게 하며, 이는 거래당 가스비를 낮춰 확장성을 개선한다. 필자는 이러한 구조적 개선이 이더리움 생태계의 고착성과 Solana 같은 경쟁 PoS 블록체인 대비 경쟁우위를 강화할 것으로 보고, 현재 사상 최고가 대비 45% 낮은 가격에서 ETH를 매수하는 것이 합리적이라고 평가한다.",
+      "quotes": []
+     }
     },
     {
-     "title": "2026년 비트코인과 이더리움, 어느 것을 사야 할까?",
+     "title": "이더리움 사용자, zk.money 복귀로 개인 결제의 새로운 방법 확보",
+     "src": "CoinDesk",
+     "url": "https://news.google.com/rss/articles/CBMi1wFBVV95cUxNeEMxZ3hXdTdMMDFSM21QbUdiZ2VCVS1MWXJEYkk4Q3lxa2dsdko5OGtQb0ZGVGhGakpEd3J2VHd2V2R6RHB3b09FOWEtUktMTWNhUTh6SXR5Q080U2lDR1R6azNrMTE1WHFSYTNTUWJWSHhGMWFSR29CY0htUldNaktzblBqdW5TdU5hQ2Q2NXFuLUMweDNmM0RjNE9GOWRVNTRGd0s0alNSVDM2TkpvT05HN29wb015aHFTRXFLRDA4Y0JBdE1XX0hFM3VFZ2k0ZDc3bGVWcw?oc=5",
+     "ts": "2026-09-30 01:00",
+     "lang": "en",
+     "orig": "Ethereum users get another way to pay privately as zk.money returns after three years",
+     "real": "https://www.coindesk.com/tech/2026/09/29/embargo-12-et-ethereum-users-get-another-way-to-pay-privately-as-zk-money-returns-after-three-years",
+     "ko": {
+      "sum": "프라이버시 개발사 Aztec Labs가 3년 만에 셀프커스터디 지갑 zk.money를 재출시했다. 이 지갑은 Aztec Network를 이용해 결제 금액, 잔액, 수신자 정보를 숨기면서도 읽기 쉬운 이름이나 링크로 송금할 수 있게 해준다. 사용자는 이더리움에서 DAI, USDC, USDT를 예치할 수 있으며 USDC와 USDT는 DAI로 전환되지만, 예치 자체는 공개적으로 추적 가능하고 이후 활동만 비공개로 처리된다. 초기 알파 버전에서는 예치·결제·출금이 각각 $2,500 이하로 제한되고 전체 사용자에게 하루 $50,000의 예치 한도가 적용되며, 제재 대상 주소를 걸러내는 정책도 적용된다. 소프트웨어가 완전히 감사되지 않아 보안 위험이 존재하며, 초기 버전인 zk.money는 2021년 출시 후 2024년 종료되기 전까지 75,000개 이상의 지갑과 $100 million 이상의 거래량을 처리한 바 있다.",
+      "quotes": [
+       "\"두 개인 간의 온체인 거래가 전 세계에 자신의 금융 기록을 공개하는 것을 의미해서는 안 된다\" — Joe Andrews, Aztec Labs CEO"
+      ]
+     }
+    },
+    {
+     "title": "Aztec, 이더리움 레이어2 상에서 zk.money 프라이빗 월렛 재출시",
+     "src": "The Block",
+     "url": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxQUXhocFFlMEFOS3Izc3lNazR0R0NhVG1QMG9DQk5OR3NLSGFNTHdHN2kydnpTWXdPMXBoLVN0eXMyM3VVQUNaUVBYUW1MOEVQR3hEcEJ6YmNublRhdFduVWJlMzJiRVFQV2hTMDM4SGx0Y08teGl0bWtkQWRsVDZnRjFMY0tqblNncjI0dHdGQXRRZWxRSEtvbmNJWWdub1JwUnpDR2ZpczlES0NoN2RHZU1Mcm9JUjBRV2JWX2JhLU1MOTJOZWtpU3BFckY0UHJEQkE?oc=5",
+     "ts": "2026-09-30 01:00",
+     "lang": "en",
+     "orig": "Aztec relaunches zk.money privacy wallet on its Ethereum Layer 2",
+     "real": "https://www.theblock.co/news/defi/2026-09-29-aztec-zk-money-privacy-wallet-ethereum-layer-2-417174?utm_source=tradingview&utm_medium=rss",
+     "ko": {
+      "sum": "Aztec Labs가 2023년 서비스를 종료한 지 3년 만에 셀프커스터디 프라이버시 지갑 zk.money를 자사의 이더리움 레이어2인 Aztec Network에서 재출시했다. 이 지갑은 사용자의 잔액, 결제 금액, 거래 상대방 정보를 공개 원장에 기록하지 않으며, bob.zk.money 같은 읽기 쉬운 핸들과 결제 링크를 통해 송금할 수 있다. 원래 zk.money는 2021년 출시돼 75,000개 이상의 고유 지갑과 $100 million 이상의 거래량을 처리했지만, 확장성 문제로 2023년 서비스를 중단했었다. Aztec Labs는 이후 3년간 이더리움 상에서 프라이버시 애플리케이션을 지원하는 분산형 레이어2인 Aztec Network를 구축했으며, 현재는 비영리 Aztec Foundation이 네트워크를 관리하고 Aztec Labs가 그 위에서 제품을 개발하고 있다. 재출시는 지난 6월 별도의 구형 Aztec 스마트 계약 두 건이 해킹된 사건 이후 이루어졌으나, 회사는 새로운 zk.money는 최신 네트워크에서 운영되어 영향을 받지 않았다고 밝혔다.",
+      "quotes": [
+       "\"두 개인 간의 온체인 거래가 전 세계에 자신의 금융 기록을 공개하는 것을 의미해서는 안 된다. zk.money는 당신의 금융 기록이 당신 것으로 남는 셀프커스터디 암호화폐 지갑이다\" — Joe Andrews, Aztec Labs CEO",
+       "\"우리는 2023년에 서비스를 종료했는데, 프라이버시 결제가 실패한 아이디어였기 때문이 아니라 아직 존재하지 않는 인프라가 필요했기 때문이다. 당시 시스템은 기능을 추가하기 매우 어려웠고 전 세계적으로 확장되지 않았다\" — Joe Andrews, Aztec Labs CEO"
+      ]
+     }
+    },
+    {
+     "title": "XRP가 이더리움을 추월할까? 시가총액으로 ETH를 따라잡으려면 무엇이 필요할까",
      "src": "24/7 Wall St.",
-     "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNcm1JS3kwOEZBeUFZYnU0T2V6NWpwTS1XWDJWNVFjUTBGdndrb2tsdHhwaklaZUpjbEVEelJtLWFnekRfa3ozSkNVU2I0MXlpdTZYRmpsbFNJQW1TaWR4TGhLcm9oZkMxbkJrdk44cWFobkZkd1psMm9hS0wzOEExQUZfTXhSVWJrLTduQ19Tb3RqMFpaWDdfczJCTlYxWnp1VGo0?oc=5",
-     "ts": "2026-09-29 23:30",
+     "url": "https://news.google.com/rss/articles/CBMi1wFBVV95cUxNbzhUYWhXRGExT0pQQTg3cmlzMWNYMWJuOHRzZDFNNnVsU0lFVVltRGNUeUMxdXJOemlicFhEMUVwdTdrdVlma1RHS3BFT0hDTkhNZ040VVduS3BpaDllak5FRmx3RHh1YmtrTnpRdDZrT1pKLVA0V1VoaFFVQW15Z3N1cFdKS2RnNGVMNzNSTnFZdUtuRTh1bmo0UVRXMG4tRkpLNTZQNFV3NnV6WlVyeWsxUVRpM0lMM25FdEg1SDdzQW9iQjNKZGgxQi1yR1JjelZrQ1RTTQ?oc=5",
+     "ts": "2026-09-30 01:00",
      "lang": "en",
-     "orig": "Should You Buy Bitcoin or Ethereum in 2026?",
-     "real": "https://247wallst.com/investing/cryptocurrency/2026/09/29/should-you-buy-bitcoin-or-ethereum-in-2026/",
+     "orig": "Will XRP Overtake Ethereum? Exploring What It Would Take to Flip ETH by Market Cap",
+     "real": "https://247wallst.com/investing/cryptocurrency/2026/09/29/will-xrp-overtake-ethereum-exploring-what-it-would-take-to-flip-eth-by-market-cap/",
      "ko": {
-      "sum": "비트코인은 현재 $84,018로 2025년 10월 6일 기록한 사상 최고가 약 $126,000 대비 약 3분의 1 낮은 수준이며, 이더리움은 $2,711로 2025년 8월 24일 고점 $4,946 대비 약 45% 낮다. 비트코인은 2026년 연초 대비 3.5%, 1년 전 대비 24.7% 하락했지만 이더리움은 같은 기간 각각 9.5%, 35.2% 하락해 비트코인이 상대적으로 더 안정적인 흐름을 보였다. 반면 최근 3개월간은 이더리움이 71% 상승해 비트코인의 44.3% 상승보다 더 빠르게 반등했다. 비트코인은 총 발행량이 21 million개로 제한되어 있고 현재 약 20.09 million개가 유통 중이며, 미국 현물 비트코인 ETF 자산은 약 $108.4 billion으로 이더리움 ETF의 약 $17.8 billion보다 훨씬 크다. 장기적으로 안정성을 원하는 투자자에게는 비트코인이, 빠른 반등 가능성을 노리는 투자자에게는 이더리움이 더 적합할 수 있다는 분석이다.",
+      "sum": "XRP가 최근 3개월간 46% 급등하며 이더리움(ETH) 시가총액을 추월하는 '플리퍼닝' 가능성이 다시 거론되고 있으나, 실제로는 넘어야 할 격차가 매우 크다는 분석이다. 2026년 9월 29일 기준 XRP 시가총액은 $95 billion, 이더리움은 약 $331 billion으로 이더리움이 약 3.5배 더 크며, XRP가 이를 추월하려면 시가총액을 약 $236 billion 늘려야 한다. 현재 유통량 62.9 billion개 기준으로 XRP가 이더리움과 동일한 시가총액을 가지려면 가격이 $5.26까지 올라야 하는데, 이는 2018년 1월 사상 최고가 $3.84를 훌쩍 넘는 수치다. 게다가 리플이 매달 최대 10억 개의 XRP를 에스크로에서 추가로 풀 수 있어, 이는 현재 가격 기준 약 $1.5 billion에 해당해 가격 상승에 부담을 준다. 반면 이더리움은 최근 90일간 71% 올라 XRP의 46% 상승률을 앞질렀고, 2026년 들어서도 이더리움은 9.5% 하락에 그친 반면 XRP는 17.6% 하락해 격차가 오히려 벌어졌다.",
       "quotes": []
      }
-    },
-    {
-     "title": "초보자를 위한 이더리움: 지갑, 수수료, 확인 이해하기",
-     "src": "findarticles.com",
-     "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQM0I1UG5rUVRqckNMVVFjUWhveUFWTThKcTJCX3RvcFNXbHNtWG9Cc21EVlYxb2tjV0RFa1BNSlpDb0lMOFkyaXlhUEN6em1pQlpveGpNRm5pZlM1alg5T3ctbnQ2dW1OZUpha083Q0ZzU2IteUJtYUowOHY0YnhqYnZmYlUtdkN6LVh1MHlMQkU3THRfdERrejI4MUMwd9IBpgFBVV95cUxOUEViR3NHcVpPZUp6bVpuTVFweTNkLTVfeHc2RXM3WkhhWW04d2tKV19FdW5MU2NuazBmOVpBR0d2dlhPb2htcmh2TU1Udlg2NE9VRDdhNDFaT0tfNU12UVJXR19QeVBoeFpycnlSd2VzWERHZk9yR0E0ZS1jUy1kYmN3bWN5a2t3eDF1Vm01b2IyemhVMkFRbTB4dk52RW02cDZzQjBn?oc=5",
-     "ts": "2026-09-29 23:15",
-     "lang": "en",
-     "orig": "Ethereum for Beginners: Understanding Wallets, Fees, and Confirmations",
-     "real": "https://www.findarticles.com/ethereum-for-beginners-understanding-wallets-fees-and-confirmations/",
-     "ko": {
-      "sum": "이 기사는 이더리움(ETH) 초보자를 위해 지갑, 네트워크 수수료(가스비), 컨펌(확인) 개념을 알기 쉽게 설명한다. 2026년 9월 29일 기준 ETH 가격은 약 $2,735 USD였으며, 시세는 실시간으로 변동한다. 지갑은 개인키를 직접 관리하는 방식과 온라인 서비스가 관리하는 방식으로 나뉘며, 복구 문구는 오프라인으로 안전하게 보관해야 한다고 강조한다. 거래소, 금융 플랫폼, 비트코인 ATM 등 다양한 접근 경로가 있으며 각각 신원 확인, 결제 수단, 한도, 수수료가 다르므로 총비용을 꼼꼼히 확인해야 한다. 거래 제출 후에는 지갑이나 블록체인 탐색기에서 목적지 주소, 금액, 거래 식별자를 대조해 완료 여부를 확인할 것을 권장한다.",
-      "quotes": []
-     }
-    },
-    {
-     "title": "해커들이 이더리움을 악성소프트웨어 비밀 메시징 시스템으로 변용",
-     "src": "CyberSecurityNews",
-     "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9GQzNtVVdJR0pTT0lXTlN2UjFlLXlSMjJCdy1qa0lxLVdnS1pQUmxRbklOZU5JaFJuNEhmVldQU214RFQzTllxbExhZmVTR2pjR2gyZVNuNmY4WmhCMGVjenV0eDc2clFKYTFhVk1nMk9WRW5rM0HSAXZBVV95cUxPRkMzbVVXSUdKU09JV05TdlIxZS15UjIyQnctamtJcS1XZ0taUFJsUW5JTmVOSWhSbjRIZlZXUFNteERUM05ZcWxMYWZlU0dqY0doMmVTbjZmOFpoQjBlY3p1dHg3NnJRSmExYVZNZzJPVkVuazNB?oc=5",
-     "ts": "2026-09-29 23:15",
-     "lang": "en",
-     "orig": "Hackers Turned Ethereum Into a Secret Messaging System for Malware",
-     "real": "https://cybersecuritynews.com/ethereum-secret-messaging-system/amp/"
     }
    ],
-   "cbPrem": -0.009448070664674901,
+   "cbPrem": -0.00433369773815695,
    "etf": {
     "days": [
      {
@@ -1269,13 +1272,12 @@
     "sum5": 436.9,
     "sum7": 850.6,
     "streak": 7,
-    "fetched": "2026-09-30 00:21",
+    "fetched": "2026-09-30 01:24",
     "stale": false,
     "src": "Farside Investors"
    },
    "daily": {
     "t": [
-     1782921600000,
      1783008000000,
      1783094400000,
      1783180800000,
@@ -1364,10 +1366,10 @@
      1790352000000,
      1790438400000,
      1790524800000,
-     1790611200000
+     1790611200000,
+     1790697600000
     ],
     "c": [
-     1696.19,
      1730.47,
      1790.57,
      1773.99,
@@ -1456,7 +1458,8 @@
      2691.57,
      2688.85,
      2676.57,
-     2686.17
+     2672.88,
+     2679.77
     ]
    },
    "tags": [
@@ -1476,26 +1479,25 @@
      "p": 5
     }
    ],
-   "brief": "부테린의 장기 로드맵 공개와 10월 6일 세폴리아 테스트넷 업그레이드 소식이 중심이며 ETF 자금 둔화에도 반등세가 유지되고 있다. OKX 미결제약정이 24시간 +5.7% 증가했고 근월 풋콜비율 1.71로 풋 우위를 보이나 맥스페인(2700)과 현재가(2688)는 거의 일치해 위축이나 과열보다는 중립에 가깝다."
+   "brief": "이더리움의 10월 글래머스터담 업그레이드 기대감이 주목받고 있습니다. 선물 시장 롱 쏠림(LS 1.29)과 높은 펀딩비(10.95%)는 유지되지만 옵션 풋콜비율(0.93)이 높아 하방 보호 수요가 상대적으로 강하며, 맥스페인(2,500)이 현재가(2,678)보다 낮은 상태입니다."
   },
   {
    "sym": "SOL",
    "name": "솔라나",
    "cg": "solana",
    "market": {
-    "price": 119.02158651626621,
-    "mcap": 69967115644.0,
+    "price": 118.341458329973,
+    "mcap": 69567295742.0,
     "rank": 7,
-    "vol": 2558231841.0934587,
+    "vol": 2637499868.9786935,
     "high24": null,
     "low24": null,
-    "ch24": -0.09000000357627869,
-    "ch7": 1.940000057220459,
+    "ch24": -1.2799999713897705,
+    "ch7": 0.6899999976158142,
     "ch30": 0.0,
     "ath": 294.1631972172844,
-    "athPct": -59.46,
+    "athPct": -59.75,
     "spark": [
-     117.91,
      118.2,
      118.01,
      118.49,
@@ -1578,84 +1580,85 @@
      119.87,
      120.07,
      120.93,
-     118.77
+     118.15,
+     118.46
     ],
-    "sparkEnd": 1790695271222,
+    "sparkEnd": 1790699041142,
     "sparkStepH": 2,
-    "krw": 161364.7061352931,
+    "krw": 160210.66628711743,
     "src": "CoinPaprika"
    },
    "hl": {
     "funding": 1.25e-05,
     "fundingApr": 10.950000000000001,
-    "oiUsd": 664640837.7308,
-    "mark": 118.78,
-    "basis": -0.048385400231409914,
-    "vol24": 248171571.80669987
+    "oiUsd": 668853466.7892005,
+    "mark": 118.47,
+    "basis": -0.0460663862185684,
+    "vol24": 247092364.4458
    },
    "okx": {
-    "funding": -9.7518816854e-06,
+    "funding": -1.73327255232e-05,
     "nextFunding": null,
-    "oiUsd": 348902227.21020013,
-    "oiCcy": 2937629.260000001,
-    "lsRatio": 1.53,
-    "oiChg24": 0.030412986131311825
+    "oiUsd": 354043746.32340014,
+    "oiCcy": 2988719.7900000014,
+    "lsRatio": 1.57,
+    "oiChg24": -2.5323810914539058
    },
    "options": {
     "nearest": {
      "exp": "2026-09-30",
-     "days": 0.7,
+     "days": 0.6,
      "maxPain": 120.0,
      "callOi": 13980.0,
-     "putOi": 10870.0,
-     "pcr": 0.78
+     "putOi": 10830.0,
+     "pcr": 0.77
     },
     "major": {
      "exp": "2026-10-30",
-     "days": 30.7,
+     "days": 30.6,
      "maxPain": 103.0,
      "callOi": 95590.0,
      "putOi": 61870.0,
      "pcr": 0.65
     },
     "pcr": 0.75,
-    "underlying": 119.4061,
+    "underlying": 119.1429,
     "expiries": [
      {
       "exp": "2026-09-30",
-      "days": 0.7,
+      "days": 0.6,
       "maxPain": 120.0,
       "callOi": 13980.0,
-      "putOi": 10870.0,
-      "pcr": 0.78
+      "putOi": 10830.0,
+      "pcr": 0.77
      },
      {
       "exp": "2026-10-01",
-      "days": 1.7,
+      "days": 1.6,
       "maxPain": 120.0,
       "callOi": 2110.0,
-      "putOi": 780.0,
-      "pcr": 0.37
+      "putOi": 1040.0,
+      "pcr": 0.49
      },
      {
       "exp": "2026-10-02",
-      "days": 2.7,
+      "days": 2.6,
       "maxPain": 117.0,
-      "callOi": 43410.0,
-      "putOi": 42720.0,
+      "callOi": 43430.0,
+      "putOi": 42700.0,
       "pcr": 0.98
      },
      {
       "exp": "2026-10-09",
-      "days": 9.7,
+      "days": 9.6,
       "maxPain": 120.0,
       "callOi": 9500.0,
-      "putOi": 16150.0,
+      "putOi": 16190.0,
       "pcr": 1.7
      },
      {
       "exp": "2026-10-30",
-      "days": 30.7,
+      "days": 30.6,
       "maxPain": 103.0,
       "callOi": 95590.0,
       "putOi": 61870.0,
@@ -1663,10 +1666,10 @@
      },
      {
       "exp": "2026-12-25",
-      "days": 86.7,
+      "days": 86.6,
       "maxPain": 95.0,
       "callOi": 205930.0,
-      "putOi": 144770.0,
+      "putOi": 144470.0,
       "pcr": 0.7
      }
     ]
@@ -1694,14 +1697,23 @@
      "lang": "ko"
     },
     {
-     "title": "美 증시, 국채 금리 쇼크에 7,200억 달러 '증발'...솔라나(SOL) 역습 이유는?",
-     "src": "코인리더스",
-     "url": "https://news.google.com/rss/articles/CBMiSkFVX3lxTE1rM1dfOHhvNDV6TDZCUDRTb1hpbjlaX0E1Ukc2Z1BKalFDNDVQVmdvWWxWRVZMMTcyRllPYjJ0bHdsak1oTVNmaHJB?oc=5",
-     "ts": "2026-09-29 21:30",
+     "title": "솔라나 250ms 구간, 투표 크레딧 손실률 1.6360%",
+     "src": "토큰포스트",
+     "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTFBOTGRkRF94eTdSRXpUbEJhdkdDYlpwUjJNVnljZzB0WVRSeW81RTBrekdGN0w0UFZ4VnJQN1V4QTI0cmpONlF6OUdZN1hjV3BDRjhSdXlvMHF4WUE?oc=5",
+     "ts": "2026-09-29 21:38",
      "lang": "ko"
     },
     {
-     "title": "차세대 주요 암호화폐가 이미 출시됐나? 페페토, 솔라나, 카르다노의 답변",
+     "title": "Metaplex, 솔라나 기반 규정 준수 현물자산 거래를 위한 새로운 토큰 표준 MPL-3643 출시",
+     "src": "Pluang",
+     "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxOQjdQMzR1RnZrY2pFeEMwM3dYWVNBVHdkY21LTXlfbC1mR2RZeWhjQWlkbHF6bjQxVkNrRzJqVnU2TXJuVk5DV1Bja2IwY0kxaGQ1LWZzVGRBc1MyellVdDZnbzRIRTVCTjByWTBoYTZ3QzRLbkF5V2h4elVMajBLZV9lY2c0elVWajd6YS1tNTd4dFFjb3RsUDZwckRJekpUbi0w?oc=5",
+     "ts": "2026-09-30 00:35",
+     "lang": "en",
+     "orig": "Metaplex launches MPL-3643, a new Solana token standard for compliant real-world asset trading.",
+     "real": "https://pluang.com/en/news-feed/metaplex-perkenalkan-standar-mpl-3643-untuk-sekuritas-token-di-solana"
+    },
+    {
+     "title": "차세대 대형 암호화폐가 이미 출시됐을까? 페페토, 솔라나, 카르다노가 제시하는 해답",
      "src": "TechBullion",
      "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxOOXpLMFByekNVNS1DRzN6ZXBqWnpmU0NlYUJxUHdhczd3LVRfZUp1NUpkbjZ6ZXJQVzI0YTBVc2JUR01kMG1leWY3bjB4Nk8tM0hIcjE3TC1PVEJib2twR1VfbGVORm1yMy1Ma0xFTXVwTUdWemRYbW1WeXVOcVRaRHJzTkVvTTN3MTdPc2lvNHZKOTF0M3JjQWlaNVVlbDVtLXBweDlacmEyLVdaZXA5YUNB?oc=5",
      "ts": "2026-09-30 00:08",
@@ -1714,7 +1726,7 @@
      }
     },
     {
-     "title": "솔라나(SOL) 가격이 주요 저항선에 접근하면서 상승 모멘텀 냉각 - 다음은?",
+     "title": "강세 모멘텀 약화, 솔라나 (SOL) 가격 주요 저항선 접근 - 다음은?",
      "src": "CryptoRank",
      "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxOYndpYUM1Y3U1WTgxOVh5ajc3SllNSi10Qnl1c2ZfQS12VEtpamRMMFVlVnN6RkVyZHhPOFhTOXBzVHUxUGFCVk40b3dqQlJKVFhOWEdHN2hNMDZvMGt3R3QwNjFGa1JSMHo5emdPYUxCeTFnbktuZnJYVEc2YjQwN0ttbWhNbVh2cmxrMEJDd25SZzlkdVFTMDlKQjEyZ0pMemU2bkhvRHlJZDV0Z1o3UnhjNTlOd25hN0c4?oc=5",
      "ts": "2026-09-30 00:01",
@@ -1727,33 +1739,19 @@
      }
     },
     {
-     "title": "솔라나 가격 전망: 분석가, 11주 ETF 자금 유입 후 $150 목표",
-     "src": "coingape.com",
+     "title": "솔라나 가격 전망: 분석가, 11주 ETF 순유입 후 $150 목표",
+     "src": "CoinGape",
      "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQWnd0ZThqMGlyVVM5MGpzSkJ0TGR4REYyeDZ1YkZreUtSVGdSVTVhQ185VmJXMW5DTEdITmJudWlwUV9mbVZlcU1ZMkUyNjhldkloTlZ5bnl6T2M4TkZFYTZmczd5WjBNeXk3M3FhdVdzX3AzSEtxSnlYaHgtc2R1SUJvbi1jSDR4NFdwUG1fSTVyb0lyNmxqcnBYWDVRQWc?oc=5",
      "ts": "2026-09-29 22:55",
      "lang": "en",
      "orig": "Solana Price Forecast: Analyst Eyes $150 After 11 Weeks of ETF Inflows",
      "real": "https://coingape.com/markets/solana-price-forecast-analyst-eyes-150-after-11-weeks-of-etf-inflows/"
-    },
-    {
-     "title": "페페토, 솔라나, 도지코인 중 10월 말 전에 당신을 부자로 만들 암호화폐는?",
-     "src": "TechBullion",
-     "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPdEUwb3dWZEpsZmN0SDVPU1lpTEVQcW1NQ0ExTDA1U2xmWF9HQ01kSHdVMzlvMGpSZV94UGNOQ1pMRU1RRUdCdENXWlA5cV92ZTZOY3NJQTFFRTVvY09qLVJnb05kRlpXUDRhQWMwT3YxZDV1YjZSNUNER0xpdTROTEJDczZKbWE4T2FudWdNaGpNVWd3RmlieXUzbFJ2dTFQNVp1OHNwdV9wVVVpSHZkT0lB?oc=5",
-     "ts": "2026-09-29 22:48",
-     "lang": "en",
-     "orig": "Could Pepeto, Solana, or Dogecoin Be the Next Crypto to Make You Rich Before October Ends?",
-     "real": "https://techbullion.com/could-pepeto-solana-or-dogecoin-be-the-next-crypto-to-make-you-rich-before-october-ends/",
-     "ko": {
-      "sum": "암호화폐 시장에서 다음 대박 종목을 찾는 투자자들의 관심이 커지는 가운데, The Clearing House가 9월 24일 은행 결제 네트워크 구동을 위해 Quant(QNT)를 선정하면서 QNT가 하루 만에 75% 급등했다. 이 소식은 25개 주요 미국 은행이 토큰화된 예금을 결제하는 데 사용될 예정이며 Bank of America와 JPMorgan이 뒤를 받치고 있다. 이런 흐름 속에서 프리세일 중인 Pepeto가 주목받고 있는데, 42개 항목을 검사하는 보안 스캐너와 수수료 없는 거래소 PepetoSwap, 5개 체인을 연결하는 무료 브릿지 등을 이미 갖췄으며 현재까지 $11.1 million을 모금했고 토큰 가격은 $0.0000001897이다. 반면 Solana(SOL)는 $118.57, Dogecoin(DOGE)은 $0.0929에 거래되며 각각 이번 주 5.9%, 4.5% 상승했지만 시가총액이 각각 $69 billion, $14.5 billion에 달해 상승 여력이 상대적으로 제한적이라는 평가다. 기사는 이미 검증된 실사용 도구를 갖춘 저가 토큰이 상장 전 더 큰 수익 기회를 제공할 수 있다고 강조한다.",
-      "quotes": []
-     }
     }
    ],
-   "cbPrem": -0.0036145297370837604,
+   "cbPrem": -0.006757098678256135,
    "etf": null,
    "daily": {
     "t": [
-     1782921600000,
      1783008000000,
      1783094400000,
      1783180800000,
@@ -1842,10 +1840,10 @@
      1790352000000,
      1790438400000,
      1790524800000,
-     1790611200000
+     1790611200000,
+     1790697600000
     ],
     "c": [
-     80.82,
      81.16,
      82.19,
      81.31,
@@ -1934,7 +1932,8 @@
      121.82,
      121.69,
      118.63,
-     118.91
+     118.15,
+     118.42
     ]
    },
    "tags": [
@@ -1949,26 +1948,25 @@
      "p": 3
     }
    ],
-   "brief": "ETF 순유입 지속과 125달러 저항선 시험 속 상승 모멘텀 둔화 우려가 뉴스의 핵심이다. 롱숏비율 1.53으로 롱 우위이며 근월 맥스페인(120)은 현재가와 근접하지만 10월물 맥스페인(103)과는 약 13% 괴리가 있어 콜 쪽 쏠림이 확인된다."
+   "brief": "솔라나의 토큰화 증권 표준 공개와 ETF 순유입으로 생태계 확대가 진행 중입니다. 선물 시장 롱 우위(LS 1.57)와 OKX 음의 펀딩비(-0.00173%)는 중립~약한 수요를 나타내며, 맥스페인(103)이 현재가(118)보다 낮아 -13% 괴리를 보입니다."
   },
   {
    "sym": "HYPE",
    "name": "하이퍼리퀴드",
    "cg": "hyperliquid",
    "market": {
-    "price": 86.95121539050379,
-    "mcap": 19341925190.0,
+    "price": 86.79625095109137,
+    "mcap": 19307454015.0,
     "rank": 11,
-    "vol": 238214601.39688346,
+    "vol": 245045278.1423275,
     "high24": null,
     "low24": null,
-    "ch24": -1.840000033378601,
-    "ch7": -8.199999809265137,
+    "ch24": -2.7699999809265137,
+    "ch7": -9.989999771118164,
     "ch30": 0.0,
     "ath": 97.92856835740224,
-    "athPct": -10.99,
+    "athPct": -11.46,
     "spark": [
-     96.826,
      96.242,
      97.162,
      97.195,
@@ -2051,60 +2049,61 @@
      88.502,
      88.563,
      88.022,
-     86.692
+     86.215,
+     86.717
     ],
-    "sparkEnd": 1790695271222,
+    "sparkEnd": 1790699041142,
     "sparkStepH": 2,
-    "krw": 117884.97977782942,
+    "krw": 117504.76453758749,
     "src": "CoinPaprika"
    },
    "hl": {
     "funding": 1.25e-05,
     "fundingApr": 10.950000000000001,
-    "oiUsd": 1786131244.5684006,
-    "mark": 86.7705,
-    "basis": -0.016707956444084182,
-    "vol24": 478728974.40943015
+    "oiUsd": 1802348094.3099618,
+    "mark": 86.781,
+    "basis": -0.05493575280983709,
+    "vol24": 476285768.08563024
    },
    "okx": {
     "funding": 0.0001,
     "nextFunding": null,
-    "oiUsd": 97924707.9602,
-    "oiCcy": 1128932.2,
-    "lsRatio": 1.54,
-    "oiChg24": 2.478272828566319
+    "oiUsd": 98964873.516,
+    "oiCcy": 1141108.0,
+    "lsRatio": 1.6,
+    "oiChg24": 0.5213232880872276
    },
    "options": {
     "nearest": {
      "exp": "2026-09-30",
-     "days": 0.7,
+     "days": 0.6,
      "maxPain": 88.0,
      "callOi": 630.0,
-     "putOi": 770.0,
-     "pcr": 1.22
+     "putOi": 790.0,
+     "pcr": 1.25
     },
     "major": {
      "exp": "2026-10-30",
-     "days": 30.7,
+     "days": 30.6,
      "maxPain": 88.0,
-     "callOi": 112930.0,
+     "callOi": 113020.0,
      "putOi": 112450.0,
-     "pcr": 1.0
+     "pcr": 0.99
     },
     "pcr": 1.21,
-    "underlying": 89.114,
+    "underlying": 89.372,
     "expiries": [
      {
       "exp": "2026-09-30",
-      "days": 0.7,
+      "days": 0.6,
       "maxPain": 88.0,
       "callOi": 630.0,
-      "putOi": 770.0,
-      "pcr": 1.22
+      "putOi": 790.0,
+      "pcr": 1.25
      },
      {
       "exp": "2026-10-01",
-      "days": 1.7,
+      "days": 1.6,
       "maxPain": 87.0,
       "callOi": 200.0,
       "putOi": 110.0,
@@ -2112,15 +2111,15 @@
      },
      {
       "exp": "2026-10-02",
-      "days": 2.7,
+      "days": 2.6,
       "maxPain": 92.0,
       "callOi": 21780.0,
-      "putOi": 12250.0,
+      "putOi": 12300.0,
       "pcr": 0.56
      },
      {
       "exp": "2026-10-09",
-      "days": 9.7,
+      "days": 9.6,
       "maxPain": 93.0,
       "callOi": 9400.0,
       "putOi": 3910.0,
@@ -2128,15 +2127,15 @@
      },
      {
       "exp": "2026-10-30",
-      "days": 30.7,
+      "days": 30.6,
       "maxPain": 88.0,
-      "callOi": 112930.0,
+      "callOi": 113020.0,
       "putOi": 112450.0,
-      "pcr": 1.0
+      "pcr": 0.99
      },
      {
       "exp": "2026-12-25",
-      "days": 86.7,
+      "days": 86.6,
       "maxPain": 72.0,
       "callOi": 90810.0,
       "putOi": 155790.0,
@@ -2150,6 +2149,13 @@
      "src": "토큰포스트",
      "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE0yS1RCMkVhRmZaRktJZTNMeUZfa2dudU82dHRnVjVraGduXzJBVTY1YUxWeC1OLWo2cXRrd0xETC1tM2dRcjc1SHVORlhOYzNPMzF5ZEM2UVU?oc=5",
      "ts": "2026-09-30 00:11",
+     "lang": "ko"
+    },
+    {
+     "title": "하이퍼리퀴드, 비트코인 변동성 지수 선물 출시… 최대 5배 레버리지 지원 (BTC, Hyperliquid, 변동성 지수, 선물)",
+     "src": "민심뉴스",
+     "url": "https://news.google.com/rss/articles/CBMibEFVX3lxTE9PRTc2bTBHc3RkcTlLYkp3VzlVV0FiWkJqWkpvS3EyME5hZ3lHdzlmQko3YnVtWnp4ZnY4MU1WMDBzTlhsaFE0MTVMZzhaYThZWU1pcU9wQ29VMk5EaExpTTNrMFFEb3pBOVhmbg?oc=5",
+     "ts": "2026-09-29 22:23",
      "lang": "ko"
     },
     {
@@ -2167,15 +2173,8 @@
      "lang": "ko"
     },
     {
-     "title": "HYPE 44만7824개, 하이퍼코어서 키네틱으로 이동 관측",
-     "src": "토큰포스트",
-     "url": "https://news.google.com/rss/articles/CBMiWEFVX3lxTFBBNm50Mm43WDc4dG1DQzRNTkw2dEhfN3pMZmNURVo4cHktcllUMDFoNFNPUGNCSEZTUk9INFNESWFON3JhMUtMYWwyRGlLYTgxNHdUNzZDeVk?oc=5",
-     "ts": "2026-09-29 20:32",
-     "lang": "ko"
-    },
-    {
-     "title": "하이퍼리퀴드 가격 전망: HYPE $100 vs 알파페페 $0.08",
-     "src": "openpr.com",
+     "title": "하이퍼리퀴드 가격 예측: HYPE $100 또는 AlphaPepe $0.08",
+     "src": "openPR.com",
      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxNQnROcDZkdnVWQzVyRUx6V3c2NU5Od2VseTktWnVPbHNBekcxaHNMM0RxaDZhamNucTNYSko2MWd4c2JLalU3LUxoZ0xkYk1jaUpacGhWQnh3SmhGQ214Y1BQcGMtSk85TENzSWNBYmN1VUxONHBSTHlva3UzbDNvRmFlNU5ObnVHQkhCYjVPRVVOYnA3dV9qTUlSOG9adw?oc=5",
      "ts": "2026-09-29 23:05",
      "lang": "en",
@@ -2187,7 +2186,7 @@
      }
     },
     {
-     "title": "하이퍼리퀴드 HYPE 토큰 6.5% 하락, 상위 10위 이탈...",
+     "title": "하이퍼리퀴드 HYPE 토큰 6.5% 하락, 상위권 이탈",
      "src": "Pluang",
      "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxPdGdvN0phcmRLTTBnOGwxVG1fZzg0ZzR4c1VyUXpONFI3aVItWmhiRWpMMDZiekFHMmhpVk5VNlBRZzFqR0RoVDBRQTNxQVM5dUVMaUVfNHZXUk5ROEozWjF2dVBsQ1ZYSmFGbFRwUkZ3bGhxNWFvNjF5N05qdHBfWm1XMHppM1d4N21XT0txRFQ5bm5rSXVLNmZB?oc=5",
      "ts": "2026-09-29 21:54",
@@ -2196,7 +2195,7 @@
      "real": "https://pluang.com/en/news-feed/hype-turun-dari-10-besar-kripto-setelah-penurunan-mingguan-6-5"
     },
     {
-     "title": "하이퍼리퀴드 가격 전망, HYPE 토큰화 확대에 따라 $84 지지선 주시",
+     "title": "하이퍼리퀴드 가격 전망, HYPE $84 지지선 주목 - 토큰화 주목 집중",
      "src": "FXLeaders",
      "url": "https://news.google.com/rss/articles/CBMijgFBVV95cUxOU2NGVHRJMG5hVUlCdVFZR1hOSmFHbFNzcUlvNU9tY1NjS3RKcjBBQzZJNjNQbWJPWmc5QV8xMFEydXQwUThLR2ttWHJmUGtoclFhWUcxaHFYcXFoQmpKRkZxT0hhSERPbUtGN2FNMmJFTGxxVGdsZDVCNWU2SDZkbll0dEg2TjBzeDhQTmdn?oc=5",
      "ts": "2026-09-29 21:10",
@@ -2209,7 +2208,7 @@
      }
     },
     {
-     "title": "하이퍼리퀴드(HYPE) 6.5% 급락 후 상위 10위 이탈 - 왜?",
+     "title": "하이퍼리퀴드 (HYPE) 6.5% 폭락으로 상위 10개 암호화폐 순위 이탈: 이유는?",
      "src": "Watcher Guru",
      "url": "https://news.google.com/rss/articles/CBMiigFBVV95cUxNdzFuamt1bExPcWdaLURYVE9DR3NBN0U4dmFVUjR4S3I3Y290M2hPbDRtcnhJNElNc2hnOGtFYXNYQWFFdXQxLXZDZ3VNem5lb3hLTGxCbjExLUI5UHdubDdCWDRJMWVma1gza0x2NUF5N3NtNTExdm8tTjduemRzbVVVVnBLTzg0X0E?oc=5",
      "ts": "2026-09-29 21:07",
@@ -2222,11 +2221,10 @@
      }
     }
    ],
-   "cbPrem": -0.08400302704011375,
+   "cbPrem": 0.02585505311325509,
    "etf": null,
    "daily": {
     "t": [
-     1782921600000,
      1783008000000,
      1783094400000,
      1783180800000,
@@ -2315,10 +2313,10 @@
      1790352000000,
      1790438400000,
      1790524800000,
-     1790611200000
+     1790611200000,
+     1790697600000
     ],
     "c": [
-     65.409,
      69.927,
      70.631,
      69.503,
@@ -2407,7 +2405,8 @@
      92.495,
      91.342,
      88.246,
-     86.725
+     86.215,
+     86.715
     ]
    },
    "tags": [
@@ -2415,33 +2414,27 @@
      "t": "모멘텀 약화",
      "c": "dn",
      "p": 6
-    },
-    {
-     "t": "미국 매도 우위",
-     "c": "dn",
-     "p": 6
     }
    ],
-   "brief": "미 하원의 KYC 자료 요구와 대형 롱 청산, 6.5% 하락에 따른 시총 10위권 이탈이 겹치며 부정적 뉴스 흐름이 우세하다. OKX 펀딩비가 상대적으로 높고 롱숏비율 1.54로 롱 쏠림이 있음에도 가격 하락이 지속돼 모멘텀 약화가 나타나며, 근월 맥스페인(88)은 현재가(87)와 근접한 수준이다."
+   "brief": "미 하원의 규제 요구와 가격 조정으로 시장 신뢰도에 압박이 있습니다. 선물은 과열(LS 1.6, 펀딩비 10%)을 유지하지만 옵션 맥스페인(88)이 현재가(86.8)에 가까워 양방향 중립적 포지셔닝을 보이고 있습니다."
   },
   {
    "sym": "LINK",
    "name": "체인링크",
    "cg": "chainlink",
    "market": {
-    "price": 14.907613547518967,
-    "mcap": 11152385247.0,
+    "price": 14.815370311110236,
+    "mcap": 11083378085.0,
     "rank": 14,
-    "vol": 1033458161.5549054,
+    "vol": 1005369183.988335,
     "high24": null,
     "low24": null,
-    "ch24": 1.0099999904632568,
-    "ch7": 15.579999923706055,
+    "ch24": -3.4600000381469727,
+    "ch7": 13.979999542236328,
     "ch30": 0.0,
     "ath": 53.01223529,
-    "athPct": -71.75,
+    "athPct": -72.04,
     "spark": [
-     13.005,
      12.997,
      12.902,
      13.043,
@@ -2524,28 +2517,29 @@
      15.453,
      15.339,
      15.127,
-     14.86
+     14.79,
+     14.847
     ],
-    "sparkEnd": 1790695271222,
+    "sparkEnd": 1790699041142,
     "sparkStepH": 2,
-    "krw": 20211.146143184313,
+    "krw": 20057.048327181037,
     "src": "CoinPaprika"
    },
    "hl": {
-    "funding": 1.25e-05,
-    "fundingApr": 10.950000000000001,
-    "oiUsd": 101075908.20479998,
-    "mark": 14.866,
-    "basis": -0.06050420168067783,
-    "vol24": 67196814.23569994
+    "funding": 9.9446e-06,
+    "fundingApr": 8.7114696,
+    "oiUsd": 101446643.71199998,
+    "mark": 14.848,
+    "basis": -0.060577505552927846,
+    "vol24": 64639271.99289997
    },
    "okx": {
-    "funding": 9.47549080774e-05,
+    "funding": 0.0001,
     "nextFunding": null,
-    "oiUsd": 32184634.992,
-    "oiCcy": 2162945.9,
-    "lsRatio": 1.52,
-    "oiChg24": 7.7370396318581225
+    "oiUsd": 31914876.617399994,
+    "oiCcy": 2149584.1999999997,
+    "lsRatio": 1.5,
+    "oiChg24": 1.8041152190529486
    },
    "options": null,
    "news": [
@@ -2578,53 +2572,49 @@
      "lang": "ko"
     },
     {
-     "title": "체인링크의 CCIP 2.0 업그레이드가 LINK 가격에 미칠 영향",
-     "src": "BeInCrypto",
-     "url": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBMeTlwdEQ5cVRvcllmaWJtcVpma0UxUV85QWsxU05tQVo3Z0diS3JEWURCY3BNdHdlVVJXLUlqQTU0QlFna0lvaF9meEgwZ0Q5MVh2U1NqdzB4NHQ4X1NVdHFMMTNRTGhGTnc?oc=5",
-     "ts": "2026-09-29 22:11",
-     "lang": "en",
-     "orig": "How Will Chainlink’s CCIP 2.0 Upgrade Impact LINK Price?",
-     "real": "https://beincrypto.com/chainlink-ccip-2-launch-link-price/",
-     "ko": {
-      "sum": "체인링크는 CCIP 2.0 업그레이드를 통해 교차 체인 보안과 규제 준수 기능을 강화했다. 지난 4월 LayerZero 기반 브릿지를 사용하던 Kelp DAO가 단일 검증자 구조의 취약점으로 약 $292 million을 탈취당한 사건이 있었는데, 이는 체인링크가 아니었지만 CCIP 2.0이 해결하려는 문제를 잘 보여준 사례로 언급된다. 새로운 교차 체인 검증기(CCV)는 체인링크의 기본 16개 노드 운영자 위원회와 별도로 추가 독립 승인 계층을 요구할 수 있게 했고, 자동 컴플라이언스 엔진을 통해 기관들이 자금 이동 전 KYC, 제재 심사, 이체 한도를 적용할 수 있게 됐다. LINK는 주간 차트에서 0.382 피보나치 되돌림 구간인 약 $14.97 저항선을 시험 중이며, $15 위로 주간 종가가 형성되면 약 15% 위쪽인 0.5 피보나치 레벨 $17.43까지 상승 여력이 열릴 수 있다. 다만 $15.78 부근에서 윗꼬리가 나타나고 RSI도 과매수권에 근접해 있어, $15를 지키지 못할 경우 약 22% 아래인 $11.92까지 하락할 수 있다고 분석된다.",
-      "quotes": []
-     }
-    },
-    {
-     "title": "체인링크, 토큰화된 자산의 보안 강화 CCIP 2.0 출시",
-     "src": "kucoin.com",
-     "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQVnpwRzNGcUJDdkxRLWU5b1FXb0d6YU5fNUdBdFYtOWxTYm96OWhIQjdWTVBTY1AzZVlUR1RTNjlRYXUxS3N2dTR6eFpEdUFqbjd6aVNtemZ1eGFDZDlzY2NFcmdkSGVFUjJ1REF4LVVOUFFTZEdxb1VqYVVjT3dONTlneFE1cm1aeUowWEh3dmtuSnNlVFBpZERNQ1NMLS1SeE01dDgwSDU?oc=5",
-     "ts": "2026-09-29 21:45",
-     "lang": "en",
-     "orig": "Chainlink Launches CCIP 2.0 With Enhanced Security for Tokenized Assets",
-     "real": "https://www.kucoin.com/news/flash/chainlink-launches-ccip-2-0-with-enhanced-security-for-tokenized-assets",
-     "ko": {
-      "sum": "Chainlink이 9월 28일 자사의 크로스체인 상호운용성 프로토콜을 대폭 업그레이드한 CCIP 2.0을 출시했다. 이번 업그레이드는 발행기관이나 제3자가 운영할 수 있는 선택적 검증 계층인 Cross-Chain Verifiers를 추가해 은행이나 규제 대상 자산 발행기관이 자체 보안 검증을 추가할 수 있도록 했다. 또한 최종성 확정 전에도 거래를 처리할 수 있는 '파이널리티 이전 전송' 기능과 자동화된 컴플라이언스 엔진 통합, 모듈형 수수료 구조, 유연한 실행 옵션 등이 포함됐다. 이는 토큰화된 자산을 여러 블록체인 간에 이동시키려는 은행과 자산 발행기관을 겨냥한 것으로, 자산 발행 자체는 쉽지만 여러 네트워크에서 안전하게 사용 가능하게 만드는 것이 어렵다는 문제를 해결하기 위한 것이다.",
-      "quotes": []
-     }
-    },
-    {
-     "title": "체인링크 가격 전망: 기관 투자 관심 증가 속 LINK가 $17.40 돌파 가능할까?",
-     "src": "Cryptonews.net",
-     "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE5QQ18yeUhJQVZMdjhnOUc2bFJmbWQ4SE1OcEFRaWVKOGxYb09JbGJ4SWZXeVBwNlNmbGtfSFJuZzNVSmtSRlZxQzFNSUdmclFoaUY0N0swZEV6MmM?oc=5",
-     "ts": "2026-09-29 21:43",
+     "title": "체인링크 가격 예측: 기관 관심 증대 속 LINK가 $17.40을 돌파할 수 있을까?",
+     "src": "CryptoRank",
+     "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxOWU8tMjkyOGYyRF9VT2NPZHdtSFo5SW5yR0VqSnNJWWhBNUNFWUJ6Y1pGbFp1VGJ0a0tGMnJuNmsyTC1mZUdmSXpGTDBrV0dad2lqX3loQ3JySWZDb0xyTFVRdjdCV3pXM0puV3NjTlF0THJKSW9aRVdSeHY5YlVsQmc3d2xrVTJSQUl2QnRzS2o2b2lEdGpLWjN3cXBrcVBBZFZQRlJhRXdZYnJoS0NCYjlKN28xX1VmRFE?oc=5",
+     "ts": "2026-09-29 23:20",
      "lang": "en",
      "orig": "Chainlink Price Prediction: Can LINK Clear $17.40 as Institutional Interest Builds?",
-     "real": "https://cryptonews.net/news/analytics/33512737/",
+     "real": "https://cryptorank.io/news/feed/56e39-chainlink-price-prediction-can-link-clear-17-40-as-institutional-interest-builds",
      "ko": {
-      "sum": "Chainlink의 LINK 가격은 CCIP 2.0이 AWS, Google Cloud, Infosys 등과 함께 출시되면서 강세 흐름을 보이고 있으며, $13.06 지지선을 지키는 것이 관건으로 분석된다. LINK는 현재 $14.99 근처에서 거래되며 $15.76를 터치한 후 2.89% 하락했는데, 이는 상승 트렌드라인 돌파 후 자연스러운 재확인 구간으로 해석된다. CCIP 2.0은 기업들이 기존 16개 독립 검증자 네트워크 위에 자체 커스텀 보안 검사를 추가할 수 있게 하는 것이 핵심 변화로, 이는 지난 4월 단일 검증자 구조의 취약점으로 인해 LayerZero 관련 브릿지 해킹에서 Kelp DAO가 약 $292 million을 잃은 사건 이후 5개월 만에 나온 대응이다. 트레이더 Tim Warren은 LINK가 현재 기관 관련 알트코인 중 가장 안전한 종목이라며 저항선 $15~$17.40, 지지선 $12.70~$14.13 구간을 제시했다. LINK 파생상품 거래량은 24시간 동안 206% 증가한 $2.02 billion을 기록했고, 미결제약정(open interest)은 10.6% 증가한 $852 million을 기록했다.",
-      "quotes": [
-       "\"지금 이 순간을 위해 만들어진 코인\" — Tim Warren",
-       "레거시 브릿지들은 안전하지 않은 인프라로 수십억 달러를 잃었으며, 자체적으로 보안을 구축하는 것은 느리고 비용이 많이 드는 경향이 있다 — Johann Eid, Chainlink Labs 최고사업책임자"
-      ]
+      "sum": "체인링크(Chainlink)가 CCIP 2.0을 출시하며 16개 오퍼레이터로 구성된 검증 네트워크에 선택적 맞춤 보안 검사 기능을 추가하고, AWS, Google Cloud, Infosys를 새로 도입해 프로토콜 보안과 기업 채택을 강화했다. LINK 가격은 $15.76에서 2.89% 하락해 $14.99 부근에서 거래되고 있으며, $13.06과 20일 이동평균선 위에서는 강세 흐름을 유지하고 있다. 파생상품 거래량은 206% 급증해 $2.02 billion을 기록했고, 이 과정에서 공매도 세력의 청산 규모는 $2.38 million에 달했다. 기사는 LINK가 $17.40을 돌파할 수 있을지에 초점을 맞추고 있으며, 최근 하락은 이전 상승 추세선을 위에서 재테스트하는 흐름으로 해석된다.",
+      "quotes": []
+     }
+    },
+    {
+     "title": "체인링크, 금융기관과 Swift 블록체인 원장 연결로 24/7 토큰화 결제 지원",
+     "src": "KuCoin",
+     "url": "https://news.google.com/rss/articles/CBMi1wFBVV95cUxNenRVMy1hMHpFLUdfRlFxX3VXTjZ2RnJlVGdVZGRQQkVOZ3ljTU0yUzdYeVhqUlNQckJCNzMtb2R6M0gySmRxekpDSXN4ckZUUWZteURmUEdLYThwdjFoOTFMaGVBbVBROW1iNEJkRndCUTRSWkItSTk3c3VyVlFITjlYN1BtTE8zenRrQkNBXzlUOVZITG9mMy14WDZ0WGxVeE0ySXZTVnZHbXhteEhIbjVhUmxZMVR5Z3JUYTM0Q0tkei05Y0hScTkyTi1ac0N4QTA0dlVJbw?oc=5",
+     "ts": "2026-09-29 23:12",
+     "lang": "en",
+     "orig": "Chainlink Helps Financial Institutions Connect to the Swift Blockchain Ledger for 24/7 Tokenized Payments",
+     "real": "https://www.kucoin.com/news/flash/chainlink-aids-financial-institutions-in-connecting-to-swift-blockchain-ledger-for-24-7-tokenized-payments",
+     "ko": {
+      "sum": "체인링크가 자사의 Creative Runtime Environment(CRE)를 통해 금융기관들이 Swift 블록체인 원장에 시스템과 키 서명 인프라를 연동할 수 있도록 지원한다고 발표했다. 이를 통해 은행들은 기존 보안 거버넌스와 승인 절차를 바꾸지 않으면서도 거래 승인 키에 대한 통제권을 유지한 채 24시간 연중무휴 토큰화 결제 방식을 도입할 수 있다. Swift 원장은 토큰화된 예금을 통해 참여 금융기관 간 자금 이체를 지원하며, 야간과 주말 시간대도 포함하지만 최종 결제는 여전히 실시간총액결제(RTGS) 시스템 등 기존 방식으로 처리된다. 2025년 Sibos에서 공개된 Swift 원장은 현재 전 세계 200개 이상 시장의 11,500개 이상 금융기관과 연결되어 있다.",
+      "quotes": []
+     }
+    },
+    {
+     "title": "체인링크, 17개 은행이 파일럿 준비 중인 SWIFT 원장 연결 프레임워크 출시",
+     "src": "KuCoin",
+     "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxONF9DNGx1TGl1MVFEWHFfY2FEVGJTYk56ZWxTeG44MmVhM0RfSjZFdUlCTk8tc3Ntcjk4YUpiMFJoWXY1elVhZkZVUW9ERDJnLXFyM25jMzB0Vkw2UkZkUjAzTmtWWHdwek5jeUROVTJqNVp3TUxwNHBnLTNrbzV5MklGUXFTZFI0em4xaFhjWWRORVh3Mk1yWWV5QkJOTHlTX2FtQ2NaOV9FNFdjTFlZOW5TdURoVlltdTJ6UWx3aw?oc=5",
+     "ts": "2026-09-29 22:52",
+     "lang": "en",
+     "orig": "Chainlink Launches Connectivity Framework for SWIFT Ledger with 17 Banks Preparing Pilot",
+     "real": "https://www.kucoin.com/news/flash/chainlink-launches-connectivity-framework-for-swift-ledger-with-17-banks-preparing-pilot",
+     "ko": {
+      "sum": "체인링크가 은행들이 거래 서명 키에 대한 통제권을 유지한 채 자사 플랫폼을 통해 SWIFT 블록체인 원장에 연결할 수 있는 연동 프레임워크를 발표했다. 이 프레임워크는 체인링크의 런타임 환경을 통해 기관 시스템과 원장 간 상호작용을 조율하며, 자체 서명 방식을 쓰는 은행은 키를 체인링크에 넘길 필요가 없다. SWIFT 원장은 24시간 연중무휴 토큰화 예금 결제를 지원하지만, 최종 결제는 여전히 실시간총액결제 등 기존 방식으로 이루어진다. ANZ, HSBC, Citibank, Standard Chartered, UBS를 포함해 6개 대륙에 걸친 17개 은행이 SWIFT 원장에서 토큰화 예금 시범 사업을 준비 중이며, 이는 블록체인 인프라의 기관 도입에서 중요한 이정표로 평가된다.",
+      "quotes": []
      }
     }
    ],
-   "cbPrem": 0.016589361031549288,
+   "cbPrem": -0.04032829018665307,
    "etf": null,
    "daily": {
     "t": [
-     1782921600000,
      1783008000000,
      1783094400000,
      1783180800000,
@@ -2713,10 +2703,10 @@
      1790352000000,
      1790438400000,
      1790524800000,
-     1790611200000
+     1790611200000,
+     1790697600000
     ],
     "c": [
-     7.781,
      7.843,
      8.084,
      7.961,
@@ -2805,7 +2795,8 @@
      14.242,
      14.11,
      14.422,
-     14.883
+     14.79,
+     14.839
     ]
    },
    "tags": [
@@ -2815,7 +2806,7 @@
      "p": 7
     },
     {
-     "t": "거래량 급증 2.0배",
+     "t": "거래량 급증 3.2배",
      "c": "warn",
      "p": 7
     },
@@ -2825,26 +2816,25 @@
      "p": 5
     }
    ],
-   "brief": "SWIFT 블록체인 원장 연동과 CCIP 2.0 출시 등 토큰화 자산 인프라 확장 소식이 이어졌다. RSI 과매수(71)와 거래량 2배 급증, 롱숏비율 1.52가 맞물려 과열 신호가 나타나고 있으며 옵션 데이터는 없다."
+   "brief": "체인링크가 SWIFT 블록체인 연결과 CCIP 2.0 출시로 기관 관심을 끌며 주간 +14% 상승했습니다. 선물 시장 롱 우위(LS 1.5, 펀딩비 8.7%)와 거래량 급증(3.2배) 신호가 강세를 뒷받침하지만, 옵션 데이터 부재로 포지셔닝 상세 분석은 불가능합니다."
   },
   {
    "sym": "ONDO",
    "name": "온도파이낸스",
    "cg": "ondo-finance",
    "market": {
-    "price": 0.5132444636232077,
-    "mcap": 2499156996.0,
+    "price": 0.5072193348986328,
+    "mcap": 2469818652.0,
     "rank": 50,
-    "vol": 327163038.27155054,
+    "vol": 319420632.288961,
     "high24": null,
     "low24": null,
-    "ch24": -1.0700000524520874,
-    "ch7": 20.489999771118164,
+    "ch24": -2.549999952316284,
+    "ch7": 18.0,
     "ch30": 0.0,
     "ath": 2.1387028356370714,
-    "athPct": -76.01,
+    "athPct": -76.3,
     "spark": [
-     0.431,
      0.4367,
      0.4349,
      0.4414,
@@ -2927,28 +2917,29 @@
      0.5275,
      0.524,
      0.5158,
-     0.5111
+     0.5063,
+     0.5077
     ],
-    "sparkEnd": 1790695271222,
+    "sparkEnd": 1790699041142,
     "sparkStepH": 2,
-    "krw": 695.8363140018001,
+    "krw": 686.6735355857691,
     "src": "CoinPaprika"
    },
    "hl": {
     "funding": 1.25e-05,
     "fundingApr": 10.950000000000001,
-    "oiUsd": 63444497.73728,
-    "mark": 0.51152,
-    "basis": -0.015637216575470347,
-    "vol24": 50050957.69171003
+    "oiUsd": 62344023.627510004,
+    "mark": 0.507915,
+    "basis": -0.06591244466305213,
+    "vol24": 47329074.17173003
    },
    "okx": {
-    "funding": -2.66367974106e-05,
+    "funding": 2.37059927235e-05,
     "nextFunding": null,
-    "oiUsd": 21828472.215,
-    "oiCcy": 42675410.0,
-    "lsRatio": 3.83,
-    "oiChg24": -1.0015528083416325
+    "oiUsd": 21704352.054,
+    "oiCcy": 42741930.0,
+    "lsRatio": 3.82,
+    "oiChg24": -2.4308610206111414
    },
    "options": null,
    "news": [
@@ -2981,7 +2972,35 @@
      "lang": "ko"
     },
     {
-     "title": "온도와 카카오페이 증권, 한국 주식의 글로벌 유통 확대 협력",
+     "title": "카카오페이, 온도파이낸스·디나리와 함께 토큰화된 한국 주식 탐색",
+     "src": "Hokanews",
+     "url": "https://news.google.com/rss/articles/CBMifkFVX3lxTE5pRWMyenJ6REZHcXY3T29kRkdIeXJCUWNOS3BDei1NN0V0ZC1FQjM2a3dhOGM4U2JDbWI2b0hvanR4LVBnZklJQWNvcUw2aExTLVRwWjJnMHJwR205SmJHbjVRRjctZ0JJVUVOcTM0bE1HTWxRazAyaVBiVnlJUQ?oc=5",
+     "ts": "2026-09-30 00:55",
+     "lang": "en",
+     "orig": "Kakao Pay Explores Tokenized Korean Stocks With Ondo Finance, Dinari",
+     "real": "https://www.hokanews.com/2026/09/kakao-pay-explores-tokenized-korean.html",
+     "ko": {
+      "sum": "카카오페이가 Ondo Finance, Dinari와 함께 한국 주식의 토큰화 방안을 검토하고 있다는 내용의 기사이나, 제공된 본문에는 구체적인 세부 내용이 담겨 있지 않고 기자 소개와 면책 조항만 포함되어 있다. 이에 따라 기사에서 확인 가능한 정보는 카카오페이가 관련 논의를 진행 중이라는 사실 정도로 제한된다.",
+      "quotes": []
+     }
+    },
+    {
+     "title": "온도파이낸스·카카오페이, 토큰화된 한국 주식을 글로벌 투자자에게 제공하기 위해 제휴",
+     "src": "Yahoo Finance",
+     "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxOS2xNbXlvRy1GWmdVckJWSEJmNkVaSXRuUEd5NU9LMjRhLWprSzBEcTJWazJydWZGUzMwczlYUmtHdmRJU1E0cnE2TGhfS09PbHNKRngwcks2NUNtODM0blJkV25PYUllSTc0VHlITW9pS3JEdTB0dVQ0MGRweHJEZDJ4NWU3SFRNUWsxaGZIZGVHZnN0akhHVURFT09GMUdBb1E?oc=5",
+     "ts": "2026-09-30 00:16",
+     "lang": "en",
+     "orig": "Ondo Finance, Kakaopay Partner to Bring Tokenized Korean Stocks to Global Investors",
+     "real": "https://finance.yahoo.com/markets/crypto/articles/ondo-finance-kakaopay-partner-bring-151600601.html",
+     "ko": {
+      "sum": "온도 파이낸스(Ondo Finance, CRYPTO: $ONDO)가 카카오페이증권(KRX: 377300)과 파트너십을 맺고 토큰화를 통해 해외 투자자들이 한국 주식에 더 쉽게 접근할 수 있도록 하는 방안을 모색한다. 두 회사는 9월 28일 경기도 판교 카카오페이증권 본사에서 업무협약을 체결했다고 화요일 발표했다. 이번 협약에 따라 양사는 한국 상장 주식의 해외 유통을 위한 프레임워크를 개발하고, 토큰화 인프라를 연구하며, 해외 개인투자자를 겨냥한 상품을 공동으로 검토할 계획이다. 첫 단계로 카카오페이증권은 외국인 투자자 계정을 관리해 한국 주식을 매수·보유·관리하고, 이를 향후 토큰화 자산으로 전환할 수 있도록 준비한다. 또한 양사는 토큰화된 주식의 발행 및 상환에 필요한 인프라와 잔고 관리·거래 정산 시스템도 함께 연구할 예정이며, 연내 공동 태스크포스를 구성해 주식 소싱과 커스터디 방안을 논의할 계획이다.",
+      "quotes": [
+       "세계 최대 토큰화 주식 플랫폼인 온도 파이낸스의 글로벌 유통망과 카카오페이증권의 국내 시장 인프라를 연결함으로써, 한국 주식의 해외 유통을 실질적으로 작동하는 서비스로 발전시키는 것이 목표입니다. — 정인영 카카오페이증권 부사장"
+      ]
+     }
+    },
+    {
+     "title": "온도파이낸스와 카카오페이증권, 한국 주식의 글로벌 유통 확대를 위해 제휴",
      "src": "Ondo Finance",
      "url": "https://news.google.com/rss/articles/CBMib0FVX3lxTE9Nek5jb3BJVkticXA4TXFRd0gxMUw1eWRlZFVUTGtBWHBsdVZ1Z1J5TVpoQkdfYkNDbVJvMUFhUDM3WDNwcWpHMUdiY1lrNWZtWGlmMV9PR0pkdU9xMy1LUHR2QUlGSks3bXNkLUt1VQ?oc=5",
      "ts": "2026-09-29 22:11",
@@ -2997,46 +3016,23 @@
      }
     },
     {
-     "title": "온도 펀딩, 미국을 영구 선물의 큰 시장으로 보지만 출시 일정 미정",
-     "src": "Pluang",
-     "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxPU2hZRGd0OHdnRmR5SlYyOU9DM0x5RjByZ2xRaXM4UXpBRkFjR29LRWEzWG1GUlFOTVhKdWNFVi14TVBVTVJ4UGtMdTJzaHpvSUVwWEMzb0pvOG1FMUxWX1BmYkd1TVpqcTVBT05SVG5GaVNVNnppckR4NERqdFFTMk1EeEZOWU1GMVpMZmVBeVlsNkJ1enROMGE4bTBiZXJINnpkUFN3?oc=5",
-     "ts": "2026-09-29 20:08",
+     "title": "온도 (ONDO) 가격 $0.50 돌파 - 온도, 블랙록 기반 포트폴리오 출시",
+     "src": "KuCoin",
+     "url": "https://news.google.com/rss/articles/CBMinAFBVV95cUxOSEZqLWVXRlFYZ0kzRS1sMUgtZDAyaFRlZ3dkYTBtYnEtMkZiMHgxaGFWWHc1RGNpM1U2UzEydnp0UG9IekFZVTNIQzZRNkxBMUR0d2RmX3hnTXhwcHFnbkJoRklvYUtXZTNhUnR4R2xySVFIdEVVZmd4Q3FXa0NNR01uMFVGYmNqbWRRc3pGcm5GRVVfUXFDT3lYS0w?oc=5",
+     "ts": "2026-09-29 20:13",
      "lang": "en",
-     "orig": "Ondo Perps sees US as big market for perpetual futures but no launch date set yet",
-     "real": "https://pluang.com/en/news-feed/peluang-besar-ondo-perps-di-pasar-as-futures-perpetual-tanpa-konfirmasi"
-    },
-    {
-     "title": "온도 펀딩 CEO, 영구 선물의 미국 시장 기회 언급하나 출시 확정되지 않음",
-     "src": "Crypto Briefing",
-     "url": "https://news.google.com/rss/articles/CBMie0FVX3lxTFBBYlltd29fcGdjXzZhQ2pKSUp1WjJ1TFA2b2YzdjkwYnN4Y1FJSHREdm1rR2lNTElJeXRNYmt0VWM5MGV3ZHpfdjJoNERoUW9QY3BKZFhCNFF0bUtDcHIybENLMTJUelJTNElna1hyZHpyR1VzcThFd0FyYw?oc=5",
-     "ts": "2026-09-29 20:05",
-     "lang": "en",
-     "orig": "Ondo Perps CEO sees major US opportunity for perpetual futures, but no launch confirmed",
-     "real": "https://cryptobriefing.com/ondo-perps-us-perpetual-futures-opportunity/",
+     "orig": "ONDO Price Breaks $0.50 as Ondo Launches BlackRock-Powered Portfolios",
+     "real": "https://www.kucoin.com/blog/ondo-price-breaks-0-50-as-ondo-launches-blackrock-powered-portfolios",
      "ko": {
-      "sum": "Ondo Perps의 David Wells CEO가 미국을 무기한 선물(perpetual futures) 거래의 중요한 기회로 지목했지만, 미국 내 출시 계획을 확정하지는 않았다. 올해 단계적으로 출시된 이 오프쇼어 플랫폼은 미국 외 사용자를 대상으로 운영되며 이미 누적 거래량 $8 billion을 넘어섰다. Ondo Finance와 Oasis Pro는 최근 SEC와 CFTC에 서한을 보내 현금 정산 방식의 무기한 선물이 새로운 법 제정 없이도 기존 미국 규제 체계 안에서 가능하다고 주장했다. Ondo Perps는 Ondo Global Panama Inc.를 통해 운영되며 미국 주식, ETF, 지수, 원자재에 대해 최대 20배 레버리지 거래를 지원하고 토큰화된 증권과 스테이블코인을 담보로 받는다. 9월 28일에는 NVDAon, TSLAon, SPYon 등 12개 토큰화 주식·ETF에 대한 현물 거래를 추가로 출시하며 초기 30일간 거래 수수료를 면제했다. 플랫폼은 여전히 미국인과 일부 다른 관할권 사용자에게는 명시적으로 접근이 차단되어 있다.",
-      "quotes": []
-     }
-    },
-    {
-     "title": "온도, 관심 받을 가치가 있나? 디지탭이 다음 대규모 암호화폐 사냥에 10,000개 이상의 발급 카드 선보임",
-     "src": "openpr.com",
-     "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxPMUljUVFEdlJQLTFfcERNU2VHOWpqYjR5R3ZqblFkYkpUcndLdVRZTzBFTng4SHhOM1RVbzg5OHgzZFlZRVF5R0ZmLU0xeGxlSGRaZkQ1S0pBcVY3MlQ3LXdfNmgweFAwaGI2cmJaVE5Qc0c2R2l5Q0ZjM29hYzMtamJtVFR6bnNTZENFUmhqWEVLd0c5OGpv?oc=5",
-     "ts": "2026-09-29 18:21",
-     "lang": "en",
-     "orig": "Ondo on Your Radar? DigiTap Brings 10,000+ Issued Cards to the Next Big Crypto Hunt",
-     "real": "https://www.openpr.com/news/4647249/ondo-on-your-radar-digitap-brings-10-000-issued-cards-to",
-     "ko": {
-      "sum": "이 기사는 암호화폐 프로젝트 DigiTap의 프리세일을 홍보하는 내용으로, $TAP의 토큰 생성 이벤트(TGE) 전에 10,000장 이상의 카드가 발급되었다고 밝혔다. DigiTap의 베타 앱은 앱스토어와 구글플레이에서 다운로드 가능하며, 토큰은 아직 거래소에 상장되지 않은 프리세일 단계에 있다. 같은 날 Ondo Stocks가 near.com과 NEAR Intents에서 서비스를 시작(9월 22일)해 지원 지역의 이용자들에게 토큰화된 주식과 ETF에 대한 추가 접근 경로를 제공했다고 언급된다. 기사는 이미 상장된 ONDO와 달리 $TAP는 아직 거래소에서 거래되지 않았으며, 현재 4라운드 가격은 $0.0589로 92% 이상 판매되었고 다음 라운드 가격은 $0.0594로 오른다고 설명한다. 전반적으로 ONDO의 확장 소식과 비교하며 DigiTap 프리세일의 초기 진입 기회를 강조하는 홍보성 기사다.",
+      "sum": "Ondo Finance가 BlackRock이 개발한 포트폴리오 모델을 기반으로 한 토큰화 투자상품 'Ondo Intelligent Portfolios'를 9월 24일 출시하면서 ONDO 가격이 $0.50를 돌파했다. 발표 이후 24시간 내 ONDO는 약 22% 상승했으며, 최근에는 약 $0.538, 시가총액 약 $2.63 billion, 유통량 약 4.87 billion ONDO, 7일간 약 31.9% 상승을 기록했다. BlackRock은 포트폴리오 모델만 제공하고 Ondo가 이를 발행·운영하는 구조로, BlackRock이 ONDO 토큰에 직접 투자하는 것은 아니라는 점이 중요하다. 첫 세 상품인 BLKHIon, BLKDIGon, BLKGRWon은 각각 수익형, 다각화 성장형, 고성장형 자산군을 목표로 한다. 이번 발표는 9월 16일 Oasis Pro Markets의 DTCC Fund/SERV 네트워크 합류, 9월 22일 near.com 및 NEAR Intents를 통한 Ondo Stocks 유통 확대 등 Ondo의 광범위한 RWA(실물자산) 토큰화 확장 흐름과 함께 시장의 주목을 받았다. 다만 현재 문서상으로는 Intelligent Portfolios에서 ONDO 토큰으로의 직접적인 수수료나 수익 배분 구조는 확립되어 있지 않다.",
       "quotes": []
      }
     }
    ],
-   "cbPrem": 0.0612439781895624,
+   "cbPrem": 0.011298299853890192,
    "etf": null,
    "daily": {
     "t": [
-     1782921600000,
      1783008000000,
      1783094400000,
      1783180800000,
@@ -3125,10 +3121,10 @@
      1790352000000,
      1790438400000,
      1790524800000,
-     1790611200000
+     1790611200000,
+     1790697600000
     ],
     "c": [
-     0.3331,
      0.3318,
      0.336,
      0.3299,
@@ -3217,20 +3213,11 @@
      0.5464,
      0.5424,
      0.5136,
-     0.5121
+     0.5063,
+     0.5087
     ]
    },
    "tags": [
-    {
-     "t": "거래량 급증 3.2배",
-     "c": "warn",
-     "p": 7
-    },
-    {
-     "t": "미국 매수 우위",
-     "c": "up",
-     "p": 6
-    },
     {
      "t": "추세 상승",
      "c": "up",
@@ -3242,26 +3229,25 @@
      "p": 4
     }
    ],
-   "brief": "카카오페이증권과의 한국 주식 해외 유통 협약 소식이 이어졌고, 미국 영구선물 시장 진출은 계획 단계로 일정은 미정이다. 롱숏비율 3.83의 극단적 롱 쏠림과 거래량 3.2배 급증이 동반돼 과열 양상이며 옵션 데이터는 없다."
+   "brief": "카카오페이증권과의 한국 주식 토큰화 협약이 진행 중이며 주간 +18% 상승을 기록했습니다. 선물 시장에서 강한 롱 쏠림(LS 3.82)이 주목되지만 펀딩비(10.95%)는 표준 수준이며, 옵션 데이터 부재로 추가 분석은 제한적입니다."
   },
   {
    "sym": "SUI",
    "name": "수이",
    "cg": "sui",
    "market": {
-    "price": 1.149414939262756,
-    "mcap": 4708620996.0,
+    "price": 1.14274928464307,
+    "mcap": 4681314894.0,
     "rank": 33,
-    "vol": 852084150.4701097,
+    "vol": 835000041.4552839,
     "high24": null,
     "low24": null,
-    "ch24": -1.190000057220459,
-    "ch7": 15.369999885559082,
+    "ch24": -1.9800000190734863,
+    "ch7": 13.979999542236328,
     "ch30": 0.0,
     "ath": 5.350860800897782,
-    "athPct": -78.54,
+    "athPct": -78.62,
     "spark": [
-     1.0068,
      1.0045,
      1.0096,
      1.0233,
@@ -3344,28 +3330,29 @@
      1.167,
      1.1802,
      1.1619,
-     1.1458
+     1.1377,
+     1.1444
     ],
-    "sparkEnd": 1790695271222,
+    "sparkEnd": 1790699041142,
     "sparkStepH": 2,
-    "krw": 1558.330798054874,
+    "krw": 1547.0539815497882,
     "src": "CoinPaprika"
    },
    "hl": {
     "funding": 1.25e-05,
     "fundingApr": 10.950000000000001,
-    "oiUsd": 81609841.251972,
-    "mark": 1.14642,
-    "basis": 0.0061063375059955405,
-    "vol24": 50468912.852280006
+    "oiUsd": 80863677.90348001,
+    "mark": 1.1454,
+    "basis": 0.0,
+    "vol24": 49273996.53129997
    },
    "okx": {
-    "funding": 1.61559887218e-05,
+    "funding": 8.26575103709e-05,
     "nextFunding": null,
-    "oiUsd": 41783536.668,
-    "oiCcy": 36365132.0,
-    "lsRatio": 2.0,
-    "oiChg24": -1.1173641439192528
+    "oiUsd": 41336155.67,
+    "oiCcy": 36101446.0,
+    "lsRatio": 1.97,
+    "oiChg24": -6.752904287014916
    },
    "options": null,
    "news": [
@@ -3398,7 +3385,7 @@
      "lang": "ko"
     },
     {
-     "title": "SUI 그룹, 2026년 수이 베이스캠프 플래티넘 스폰서 역할 수행",
+     "title": "SUI 그룹, 수이 베이스캠프 2026 플래티넘 스폰서로 참여",
      "src": "Voice of Alexandria",
      "url": "https://news.google.com/rss/articles/CBMigAJBVV95cUxObXFwRjAwRzhjcVpscFBYem1sTWdJaFBLZlVnMkh3WUtBZXBGUlMtcDNJRnZZR3JmcFYtUllsaUdwM3I0Z19RZ25tS0ZDdG14elpYcFNSTWQ5YmY5cGFwRU5MVnJ5Y1A4aEZPQnlGaHoxN2QxN0k4VGxNX0xuUFVJYVhfM3hvQkFCY19EdGktR3B0WnFVZE5xblUzV3RiUTZSQV93dDVOUmhCWVFTN25KWG5FRnZoaHBJTF9xM1l2Y0RILXIwWTdOR2hXcDdGV1lPaUl1eHB1cmFKQXRKS2hYRVZENEJrSkZKSkFyWmNVY0NfNHY2X1dwcU1XejhCeDJ6?oc=5",
      "ts": "2026-09-29 21:32",
@@ -3411,7 +3398,7 @@
      }
     },
     {
-     "title": "수이 가격 전망: 200일 EMA 돌파, $1.42 목표 - 현재 기준선은 $1.09",
+     "title": "수이 가격 예측: 200일 EMA 돌파 시 $1.42 목표 - 현재 $1.09가 중요 저항선",
      "src": "blockchain.news",
      "url": "https://news.google.com/rss/articles/CBMikgFBVV95cUxPbHUxSjlESC13ZXo0RC1nWTdFclF5N1hPbHhYb1hjcXl2bkxnMlUxS3A5dHJ6YWFnNnpxX1Zsa3JWSXpvOGh6RVM3d3dnVUtKaTJRWXljRjNhZTVBUU9DR2tBenVaaEk4Q01DNlhoVHhoSUh4ZE94MFF0eFl5eHV2Zm52NFJyZmNuV0t1OUh3SncxQQ?oc=5",
      "ts": "2026-09-29 18:57",
@@ -3424,7 +3411,7 @@
      }
     },
     {
-     "title": "수이 가격 전망: 분석가, 50배 상승 세대적 돌파 가능성 주시",
+     "title": "수이 가격 예측: 분석가, 50배 상승 전망 - 세대적 돌파 임박?",
      "src": "Coin Gabbar",
      "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNTVhHVmhJV0daTTZsd0lJODJIT2NISzRscUlDeVVuTWt5SHRXcXRMbjdtY0ZwRS1OaDB5YWV1WTNCWHYzUmVHX1l2Q0g5aklaUzlRMTNWT09tX18waWdydGE1akU5dW5qaV9fZ3MzZUF1WWhfTWRLYnRvTkxaejdtYjlrMllfRDJv?oc=5",
      "ts": "2026-09-29 14:48",
@@ -3437,7 +3424,7 @@
      }
     },
     {
-     "title": "수이 가격 전망: 렘미틱스의 1,000명 사용자 페이파이 접근 개방에 따라 SUI가 차세대 레이어1 랠리를 주도할 수 있을까?",
+     "title": "수이 가격 예측: 렘틱스가 1,000명 사용자에게 PayFi 접근성 개방 속 SUI가 다음 레이어1 랠리를 주도할 수 있을까?",
      "src": "StreetInsider",
      "url": "https://news.google.com/rss/articles/CBMi-wFBVV95cUxOdzZwQ1hBTlhMXzNhZkJhTmNDQmthX0xsbnFIUzlpUFFSamUxemlZbUVKai1QVkhVTzQzZW9uS0ttVVlNdWpQdXRxdHVUWnR5LVhwc2plbHF0VHZQM0hJSXozWVlOTWQyVkZMem5nX3RUUmQ5ekY3OVZNNkRpaVlkX3NFUDZZWHRZVEh0M2Y3ZTJ0Mjd1alRBb2tEMS05UmJCdTFoZmlsZ3V1eEZrSWFzWU1uVnBmYkpWdGJIZ0w1d053OExob2NQS0otWUJiYXJRMlhJWDZzMVNtWlZGQ3VOWkxWeThaQldIMmxLWVE2SFBwYlhiRFdBNTFoYw?oc=5",
      "ts": "2026-09-29 10:09",
@@ -3446,11 +3433,10 @@
      "real": "https://www.streetinsider.com/MarketMediaWire/Sui+Price+Prediction%3A+Can+SUI+Lead+the+Next+Layer-1+Rally+as+Remittix+Opens+PayFi+Access+to+1%2C000+Users/27115805.html"
     }
    ],
-   "cbPrem": 0.03872090036696196,
+   "cbPrem": -0.06905496403009082,
    "etf": null,
    "daily": {
     "t": [
-     1782921600000,
      1783008000000,
      1783094400000,
      1783180800000,
@@ -3539,10 +3525,10 @@
      1790352000000,
      1790438400000,
      1790524800000,
-     1790611200000
+     1790611200000,
+     1790697600000
     ],
     "c": [
-     0.74,
      0.7525,
      0.7718,
      0.7527,
@@ -3631,46 +3617,41 @@
      1.1831,
      1.2375,
      1.1496,
-     1.1483
+     1.1377,
+     1.1448
     ]
    },
    "tags": [
     {
-     "t": "거래량 급증 2.4배",
-     "c": "warn",
-     "p": 7
+     "t": "미국 매도 우위",
+     "c": "dn",
+     "p": 6
     },
     {
      "t": "추세 상승",
      "c": "up",
      "p": 5
-    },
-    {
-     "t": "롱 쏠림 2.0",
-     "c": "warn",
-     "p": 4
     }
    ],
-   "brief": "단기간 급락과 급등이 반복되는 변동성 장세 속 200일 EMA 돌파 시도가 부각됐다. 롱숏비율 2.0의 롱 쏠림과 거래량 2.4배 증가가 확인되나 옵션 데이터는 없어 맥스페인 비교는 불가하다."
+   "brief": "수이가 생태계 성장과 현물 매수에 주간 +14% 상승했으나 단기 변동성이 큽니다. 선물 시장 강한 롱 우위(LS 1.97)와 높은 펀딩비(10.95%)가 과열을 시사하지만 옵션 데이터 부재로 맥스페인 거리는 파악 불가능합니다."
   },
   {
    "sym": "VIRTUAL",
    "name": "버추얼프로토콜",
    "cg": "virtual-protocol",
    "market": {
-    "price": 0.8047274074331,
-    "mcap": 521941647.0,
+    "price": 0.8009521347935564,
+    "mcap": 519493026.0,
     "rank": 119,
-    "vol": 81601391.29710352,
+    "vol": 81298723.11940776,
     "high24": null,
     "low24": null,
-    "ch24": -0.019999999552965164,
-    "ch7": 11.489999771118164,
+    "ch24": -1.7999999523162842,
+    "ch7": 9.949999809265137,
     "ch30": 0.0,
     "ath": 5.0961813833879255,
-    "athPct": -84.13,
+    "athPct": -84.26,
     "spark": [
-     0.7305,
      0.7393,
      0.7442,
      0.7511,
@@ -3753,33 +3734,34 @@
      0.8196,
      0.8306,
      0.8195,
-     0.802
+     0.7966,
+     0.8031
     ],
-    "sparkEnd": 1790695271222,
+    "sparkEnd": 1790699041142,
     "sparkStepH": 2,
-    "krw": 1091.0172299014996,
+    "krw": 1084.3290000835166,
     "src": "CoinPaprika"
    },
    "hl": {
-    "funding": 1.81958e-05,
-    "fundingApr": 15.939520799999999,
-    "oiUsd": 11964760.147782,
-    "mark": 0.80327,
-    "basis": 0.07101034010217333,
-    "vol24": 5036926.7391409995
+    "funding": 1.25e-05,
+    "fundingApr": 10.950000000000001,
+    "oiUsd": 11958153.078380002,
+    "mark": 0.80477,
+    "basis": 0.05843590699987633,
+    "vol24": 5056755.138979
    },
    "okx": {
-    "funding": 5e-05,
+    "funding": 3.26983526705e-05,
     "nextFunding": null,
-    "oiUsd": 3376327.4256,
-    "oiCcy": 4197324.0,
-    "lsRatio": 4.48,
-    "oiChg24": -3.9113500140497193
+    "oiUsd": 3486010.099,
+    "oiCcy": 4341233.0,
+    "lsRatio": 4.63,
+    "oiChg24": -2.687550858298926
    },
    "options": null,
    "news": [
     {
-     "title": "버추얼프로토콜(VIRTUAL) 투표 소식 속에 1시간 3.36% 변동",
+     "title": "버추얼프로토콜 (VIRTUAL), 투표 화제 속 1시간 변동률 3.36%",
      "src": "CoinMarketCap",
      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE1BOHhkbkJkYW5hQkp1ZmZ6c1JRU1ZmbE9JOTdDTnBuZWs3R21PMG5mcE5mNHhmUWk5WGJtM3prMG1nSGtJLU40NU5WQ2ZfQVBHaEpNVHFiRUlucHdQbWwwa1MzcllYTnY5T2J3ZUZxQ0c?oc=5",
      "ts": "2026-09-28 22:05",
@@ -3794,7 +3776,7 @@
      }
     },
     {
-     "title": "2027년 이전 주목할 상위 암호화폐 프로젝트: VOIDTRACE AI, Pyth, 버추얼프로토콜, Render, Bittensor와 함께 유틸리티 중심 관심 목록 합류",
+     "title": "2027년 전 주목할 차세대 암호화폐 프로젝트: VOIDTRACE AI, Pyth·버추얼프로토콜·Render·Bittensor와 함께 유틸리티 중심 관찰 리스트 진입",
      "src": "Big News Network.com",
      "url": "https://news.google.com/rss/articles/CBMiigJBVV95cUxOSW1FZnBtcWlfSXhjSFNQeGJZVmV6aVJSc0Q3M21BNEFVNGNKa0xCN2ZLcU53cXBCYWYyX29xMFJBaUpoU3FOSGpJMlZZWVlvMlVVN0dTbDF5ajFITENFNUd5bjNrd1FJSjlJRC01OGthSjlxQW9vcUFRTzl4ZE0ySWFPUUYweUNudVNEMlZXeFdmeXBNZGxibW45dW5Yb1ZsQjJHTWNjbWFwcEs2YWo2MVJKZHhJWGlFWU9fMHI1YTdSbmplem9rRG1weHFJakd5ZGItRWdiQnNGSDNnbVhTRzM1X0k3dVdJNVlBQ2NxNDh6UzVPbGpXM0RieVB4NWEydEdiQXM1Z1RwQQ?oc=5",
      "ts": "2026-09-28 16:21",
@@ -3807,11 +3789,10 @@
      }
     }
    ],
-   "cbPrem": 0.05487971602817776,
+   "cbPrem": -0.09737346815547054,
    "etf": null,
    "daily": {
     "t": [
-     1782921600000,
      1783008000000,
      1783094400000,
      1783180800000,
@@ -3900,10 +3881,10 @@
      1790352000000,
      1790438400000,
      1790524800000,
-     1790611200000
+     1790611200000,
+     1790697600000
     ],
     "c": [
-     0.5524,
      0.5664,
      0.5753,
      0.568,
@@ -3992,18 +3973,19 @@
      0.8131,
      0.8012,
      0.7933,
-     0.8038
+     0.7966,
+     0.803
     ]
    },
    "tags": [
     {
-     "t": "거래량 급증 3.3배",
+     "t": "거래량 급증 2.1배",
      "c": "warn",
      "p": 7
     },
     {
-     "t": "미국 매수 우위",
-     "c": "up",
+     "t": "미국 매도 우위",
+     "c": "dn",
      "p": 6
     },
     {
@@ -4012,12 +3994,12 @@
      "p": 5
     },
     {
-     "t": "롱 쏠림 4.5",
+     "t": "롱 쏠림 4.6",
      "c": "warn",
      "p": 4
     }
    ],
-   "brief": "거버넌스 투표 이슈로 인한 변동성과 함께 중장기 유망 프로젝트 리스트 편입 소식이 전해졌다. 롱숏비율 4.48의 매우 강한 롱 쏠림과 펀딩비 상승, 거래량 3.3배 급증이 뚜렷한 과열 신호를 보이며 옵션 데이터는 없다."
+   "brief": "버추얼프로토콜이 AI 중심 유틸리티 관심으로 주간 +9.95% 상승했습니다. 선물 시장에서 가장 강한 롱 쏠림(LS 4.63)을 보이며 거래량도 2.1배 증가했으나, 옵션 데이터 부재로 옵션 시장의 포지셔닝 평가는 불가능합니다."
   }
  ],
  "errors": []
