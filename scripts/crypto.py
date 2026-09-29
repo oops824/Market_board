@@ -918,10 +918,12 @@ def parse_farside(html):
     """Farside 표 -> [{"d": 날짜, "total": 합계, "by": {티커: 값}}] (과거->최신)"""
     rows = _html_rows(html)
     head = None
-    for r in rows:   # 티커 행: 'Total' 이 있고 대문자 티커가 여러 개인 행
-        if r and r[-1].strip().lower() == "total" and \
-                sum(1 for x in r if re.fullmatch(r"[A-Z]{3,5}", x.strip())) >= 3:
-            head = r
+    for r in rows:   # 티커 행: 대문자 티커(2~6자)가 2개 이상인 마지막 머리글 행
+        tick = [x.strip() for x in r if re.fullmatch(r"[A-Z][A-Z0-9]{1,5}", x.strip())
+                and x.strip() != "TOTAL"]
+        if len(tick) >= 2 and not re.match(r"\d{1,2} [A-Z][a-z]{2} \d{4}", r[0].strip()):
+            head = tick
+    print("[ETF] 머리글 티커:", head)
     out = []
     for r in rows:
         try:
@@ -933,10 +935,12 @@ def parse_farside(html):
                 all(x.strip() in ("", "-", "–", "—") for x in r[1:-1]):
             continue                       # 아직 집계 전인 날 (ETF별 칸이 전부 '-' 또는 빈칸)
         by = {}
-        if head and len(head) == len(r):
-            for k, v in zip(head[1:-1], vals[:-1]):
+        etf_vals = vals[:-1]                # 마지막 칸은 합계
+        if head and len(head) <= len(etf_vals):
+            # 앞쪽에 수수료·기타 칸이 끼어 있어도 오른쪽(합계 바로 앞) 기준으로 맞춘다
+            for k, v in zip(head, etf_vals[len(etf_vals) - len(head):]):
                 if v:
-                    by[k.strip()] = round(v, 1)
+                    by[k] = round(v, 1)
         out.append({"d": d.isoformat(), "total": round(vals[-1], 1), "by": by})
     out.sort(key=lambda x: x["d"])
     return out
