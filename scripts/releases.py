@@ -322,14 +322,31 @@ def claude(prompt, max_tokens=3000, search=False, _retry=True):
         return None
 
 
+def period_label(key, period):
+    y, m = int(period[:4]), int(period[5:7])
+    if key == "gdp":
+        q = (m - 1) // 3 + 1
+        return "%d년 %d분기(%d~%d월)" % (y, q, m, m + 2)
+    return "%d년 %d월" % (y, m)
+
+
+def period_end(key, period):
+    """기준기간의 마지막 날 (발표일은 반드시 이보다 뒤)"""
+    y, m = int(period[:4]), int(period[5:7]) + (3 if key == "gdp" else 1)
+    if m > 12:
+        y, m = y + 1, m - 12
+    return (datetime.date(y, m, 1) - datetime.timedelta(days=1)).isoformat()
+
+
 def lookup_release(items):
     """발표일·시장 예상치 웹검색. items: [(key, 제목, 기준기간)]"""
-    q = "\n".join("- %s: %s 기준 (key=%s)" % (t, p[:7], k) for k, t, p in items)
+    q = "\n".join("- %s: 기준기간 %s (key=%s)" % (t, period_label(k, p), k) for k, t, p in items)
     prompt = (
         "오늘은 %s이다. 아래 미국 경제지표의 해당 기준기간 발표에 대해 웹에서 확인하라.\n%s\n"
         "각 지표마다: 실제 발표일(미국 동부 기준 YYYY-MM-DD), 발표 전 시장 예상치(컨센서스).\n"
         "물가지표는 헤드라인과 근원의 전월비·전년비 예상치를, 실업률은 예상 실업률을, "
-        "GDP는 예상 성장률(연율)을 한 줄로.\n"
+        "GDP는 해당 분기의 가장 최근 추정치(속보·잠정·확정 중 최신) 발표일과 그 발표의 예상 성장률(연율)을, "
+        "어느 추정치인지 함께 한 줄로.\n"
         "확인 못하면 빈 문자열. 추측 금지.\n"
         "출력은 JSON 하나만: {\"key\": {\"release_date\": \"YYYY-MM-DD\", \"consensus\": \"...\"}, ...}"
         % (now.strftime("%Y-%m-%d"), q))
@@ -364,6 +381,12 @@ def main():
     inds = build_indicators(state)
     us_today = datetime.datetime.now(datetime.timezone.utc).date().isoformat()  # 실행: 미 동부 17:30 무렵
 
+    for k, d in inds.items():                      # 기준기간보다 이른 발표일(잘못된 검색 결과)은 폐기
+        st = state.get(k) or {}
+        if st.get("release") and st.get("period") == d["period"] and st["release"] <= period_end(k, d["period"]):
+            print("  ! %s 발표일 %s 이 기준기간보다 빠름 → 다시 확인" % (k, st["release"]))
+            st.update({"release": None, "consensus": "", "market": [], "ai": "", "looked_up2": False})
+
     need_lookup = []
     for k, d in inds.items():
         st = state.get(k) or {}
@@ -381,7 +404,7 @@ def main():
         for k, _, period in need_lookup:
             f = found.get(k) or {}
             rd = str(f.get("release_date") or "")
-            ok = re.fullmatch(r"\d{4}-\d{2}-\d{2}", rd) and period < rd <= us_today
+            ok = re.fullmatch(r"\d{4}-\d{2}-\d{2}", rd) and period_end(k, period) < rd <= us_today
             if ok and not state[k].get("release"):
                 state[k]["release"] = rd
             if f.get("consensus"):
@@ -400,7 +423,8 @@ def main():
         if not st.get("ai") or bad_ai or st.get("ai_basis") != basis:
             todo[k] = {x: d.get(x) for x in ("title", "period", "head", "core", "value", "prev", "chg",
                                              "contrib", "detail")} | \
-                {"release": st.get("release"), "consensus": st.get("consensus"), "market": st.get("market")}
+                {"release": st.get("release"), "consensus": st.get("consensus"), "market": st.get("market"),
+                 "period_label": period_label(k, d["period"])}
     if todo:
         ai = interpret(todo)
         for k in todo:
