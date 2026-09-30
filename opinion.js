@@ -55,7 +55,7 @@ function opPort(o){
     var arrow=d==null||Math.abs(d)<2?'':d>0?' <span class="tu">▲</span>':' <span class="td">▼</span>';
     return '<div class="pf-r"><div class="pf-1"><b>'+opT(r.sym)+(r.cash?' <span class="dim">USDT</span>':'')+'</b>'+
       (opNum(r.pnl)?'<span class="badge '+(r.pnl>=0?'up':'dn')+'">'+opPct(r.pnl)+'</span>':
-        r.cash?'':'<span class="dim">비중 미입력</span>')+
+        r.cash?'':'<span class="dim">비중 미입력</span>')+(r.note?'<span class="dim">'+opT(r.note)+'</span>':'')+
       '<span class="pf-w">'+(opNum(r.w)?r.w.toFixed(1)+'%':'-')+' → '+(opNum(r.t)?r.t+'%':'-')+arrow+'</span></div>'+
       '<div class="pf-bar">'+(opNum(r.w)?'<i style="width:'+(r.w/mx*100).toFixed(1)+'%"></i>':'')+
       (opNum(r.t)?'<u style="left:calc('+(r.t/mx*100).toFixed(1)+'% - 1px)"></u>':'')+'</div>'+

@@ -7,7 +7,7 @@
 - 중장기: 직전 의견을 기본으로 유지. 모델이 '유지'로 판단하면 문구까지 그대로 두고, 바뀔 때만 이력에 남긴다.
 하루 1회(12시간 이내 재실행은 건너뜀, OPINION_FORCE=1 이면 강제). 지난 단기 의견의 이후 성과는 매 실행 갱신.
 """
-import datetime, json, os, re, sys, urllib.parse, urllib.request
+import datetime, hashlib, json, os, re, sys, urllib.parse, urllib.request
 
 sys.path.insert(0, os.path.dirname(__file__))
 import calendar_ctx
@@ -148,15 +148,17 @@ def portfolio(C):
     for h in P.get("holdings", []):
         r = usd[h["sym"]] / h["ref"] if usd.get(h["sym"]) and h.get("ref") else 1.0
         vals[h["sym"]] = h["w"] * r
-        rows.append({"sym": h["sym"], "cur": h["cur"], "avg": h["avg"],
+        rows.append({"sym": h["sym"], "cur": h["cur"], "avg": h["avg"], "note": h.get("note"),
                      "pnl": round(((1 + h["pnl"] / 100) * r - 1) * 100, 1)})
     cash = sum(c["w"] for c in P.get("cash", []))
     tot = (sum(vals.values()) + cash) or 1
     for x in rows:
         x["w"] = round(vals[x["sym"]] / tot * 100, 1)
     rows.sort(key=lambda x: -x["w"])
+    sig = hashlib.sha1(json.dumps([P.get("holdings"), P.get("cash"), P.get("unknown")],
+                                  sort_keys=True).encode()).hexdigest()[:12]
     return {"asof": P.get("asof"), "rows": rows, "cash": round(cash / tot * 100, 1),
-            "unknown": [u["sym"] for u in P.get("unknown", [])]}
+            "unknown": [u["sym"] for u in P.get("unknown", [])], "sig": sig}
 
 
 def fmt_avg(r):
@@ -170,7 +172,10 @@ def port_digest(pf):
     if not pf:
         return "## 내 코인 포트폴리오\n입력되지 않음"
     L = ["## 내 코인 포트폴리오 (%s 사진 기준, 이후 가격 변동 반영 추정 · 코인 계좌 안의 비중)" % pf["asof"]]
-    L += ["- %s: 비중 %.1f%%, 평단 %s, 수익률 %+.1f%%" % (r["sym"], r["w"], fmt_avg(r), r["pnl"]) for r in pf["rows"]]
+    L += ["- %s: 비중 %.1f%%, 평단 %s, 수익률 %+.1f%%%s" % (
+        r["sym"], r["w"], fmt_avg(r), r["pnl"],
+        " (스테이킹 중: 팔려면 언스테이킹 대기가 필요)" if "스테이킹" in (r.get("note") or "") else
+        (" (%s)" % r["note"] if r.get("note") else "")) for r in pf["rows"]]
     L.append("- 현금(USDT): 비중 %.1f%%" % pf["cash"])
     L += ["- %s: 보유 중이나 비중·평단 미입력(비중 계산에서 제외)" % s for s in pf["unknown"]]
     L.append("HYPE 는 USDT 로 거래하는 해외 거래소, 나머지는 원화 거래소에서 보유. 미국 주식 보유 내역은 미입력.")
@@ -265,7 +270,7 @@ SYSTEM = (
 )
 
 
-def prev_context(prev):
+def prev_context(prev, port_changed):
     """직전 의견: 중장기는 전문(유지 판단용), 단기는 행동만"""
     op = prev.get("opinion") or {}
     if prev.get("version") != 2 or not op.get("long"):
@@ -277,8 +282,11 @@ def prev_context(prev):
         days = "-"
     sh = op.get("short") or {}
     st = sh.get("stance") or {}
-    return ("## 직전 중장기 의견 (%s 수립, 오늘 %s)\n%s\n\n## 직전 단기 행동 (%s)\n주식 %s · 코인 %s · 현금 %s / %s" % (
-        since, days, json.dumps(op["long"], ensure_ascii=False), (prev.get("generated") or "")[:10],
+    note = ("\n※ 이 중장기 의견을 세운 뒤 포트폴리오가 갱신되었다(보유 코인 추가·매매 반영). 이번에는 long 을 새 포트폴리오 "
+            "기준으로 다시 작성한다. 전략 방향이 같으면 status '일부 수정', change_note 에 '포트폴리오 갱신 반영: …'을 쓴다."
+            if port_changed else "")
+    return ("## 직전 중장기 의견 (%s 수립, 오늘 %s)\n%s%s\n\n## 직전 단기 행동 (%s)\n주식 %s · 코인 %s · 현금 %s / %s" % (
+        since, days, json.dumps(op["long"], ensure_ascii=False), note, (prev.get("generated") or "")[:10],
         st.get("stocks"), st.get("crypto"), st.get("cash"),
         ", ".join("%s %s" % (c["sym"], c["action"]) for c in sh.get("coins", []))))
 
@@ -400,21 +408,25 @@ def main():
         pass
 
     op, model, generated = (prev.get("opinion"), prev.get("model"), prev.get("generated")) if v2 else (None, None, None)
-    long_since, long_check = prev.get("long_since"), prev.get("long_check")
+    long_since, long_check, long_port = prev.get("long_since"), prev.get("long_check"), prev.get("long_port")
+    port_changed = bool(pf) and long_port != pf["sig"]
     long_log, prev_short = prev.get("long_log") or [], prev.get("prev_short")
     if not os.environ.get("ANTHROPIC_API_KEY"):
         print("[의견] ANTHROPIC_API_KEY 없음 — 이전 의견 유지")
     elif not fresh or force or not v2:
         try:
-            new, model = ask(digest(D, C, T) + "\n" + port_digest(pf), prev_context(prev))
+            new, model = ask(digest(D, C, T) + "\n" + port_digest(pf), prev_context(prev, port_changed))
             normalize(new)
             pl, judged = (op or {}).get("long"), new["long"]["status"]
-            if pl and judged == "유지":
+            if pl and judged == "유지" and not port_changed:
                 long_check = {"date": TODAY, "note": new["long"]["change_note"]}
                 new["long"] = pl                            # 문구까지 그대로: 중장기 의견이 매일 흔들리지 않게
             else:
                 if not pl:                                   # 직전 중장기 의견이 없으면 첫 의견
                     new["long"]["status"] = "변경"
+                elif judged == "유지":                        # 포트폴리오 갱신으로 목표 비중을 다시 씀
+                    new["long"]["status"] = "일부 수정"
+                long_port = (pf or {}).get("sig")
                 long_since, long_check = TODAY, None
                 long_log = ([{"date": TODAY, "status": new["long"]["status"], "note": new["long"]["change_note"]}] +
                             [x for x in long_log if x.get("date") != TODAY])[:12]
@@ -436,7 +448,8 @@ def main():
 
     past = track(hist[:-1] if hist and hist[-1].get("date") == TODAY else hist, coin_prices(C))
     out = {"version": 2, "generated": generated, "model": model, "opinion": op,
-           "long_since": long_since, "long_check": long_check, "long_log": long_log, "prev_short": prev_short,
+           "long_since": long_since, "long_check": long_check, "long_log": long_log, "long_port": long_port,
+           "prev_short": prev_short,
            "portfolio": pf, "track": past,
            "asof": {"지표": (D or {}).get("updated"), "코인": (C or {}).get("updated"),
                     "기관": (T or {}).get("latest_period")}}
