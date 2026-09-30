@@ -88,7 +88,7 @@ function eBars(list,mx){
     h+='<div class="cbr"><span class="cn2">'+esc(x.name)+'<i>비중 '+x.w+'%'+
       (typeof x.mom==='number'?' · 전월비 '+ePct(x.mom,2):'')+'</i></span>'+
       '<span class="ctr"><b class="'+(pos?'up':'dn')+'" style="'+(pos?'left:50%':'right:50%')+';width:'+w.toFixed(1)+'%"></b></span>'+
-      '<span class="cv '+(pos?'tu':'td')+'">'+(x.pp>0?'+':'')+x.pp.toFixed(2)+'%p</span></div>'});
+      '<span class="cv '+(Math.abs(x.pp)<0.005?'':pos?'tu':'td')+'">'+(x.pp>0?'+':'')+x.pp.toFixed(2)+'%p</span></div>'});
   return h}
 function eTrend(tr,key,unit){
   if(!tr||tr.length<3)return '';

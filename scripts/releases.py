@@ -409,7 +409,7 @@ def main():
                 state[k]["release"] = rd
             if f.get("consensus"):
                 state[k]["consensus"] = str(f["consensus"])[:200]
-            if k in found:                    # 검색이 실제로 답했을 때만 '확인 완료'
+            if ok:                            # 유효한 발표일을 찾았을 때만 '확인 완료' (아니면 다음 실행에서 재검색)
                 state[k]["looked_up2"] = True
 
     todo = {}
