@@ -275,55 +275,55 @@
     "cur": "KRW",
     "avg": 3717636,
     "note": null,
-    "pnl": -1.0,
-    "w": 21.7
+    "pnl": -1.8,
+    "w": 21.5
    },
    {
     "sym": "HYPE",
     "cur": "USDT",
     "avg": 49.358,
     "note": null,
-    "pnl": 74.7,
-    "w": 19.1
+    "pnl": 80.6,
+    "w": 19.7
    },
    {
     "sym": "SOL",
     "cur": "KRW",
     "avg": 201322,
     "note": "스테이킹 중",
-    "pnl": -18.9,
-    "w": 17.9
+    "pnl": -20.3,
+    "w": 17.6
    },
    {
     "sym": "LINK",
     "cur": "KRW",
     "avg": 17579,
     "note": null,
-    "pnl": 11.9,
-    "w": 11.0
+    "pnl": 10.8,
+    "w": 10.9
    },
    {
     "sym": "VIRTUAL",
     "cur": "KRW",
     "avg": 2210,
     "note": null,
-    "pnl": -51.4,
-    "w": 8.6
+    "pnl": -50.9,
+    "w": 8.7
    },
    {
     "sym": "SUI",
     "cur": "KRW",
     "avg": 2765,
     "note": null,
-    "pnl": -43.2,
-    "w": 8.0
+    "pnl": -42.7,
+    "w": 8.1
    },
    {
     "sym": "BTC",
     "cur": "KRW",
     "avg": 107199665,
     "note": null,
-    "pnl": 6.8,
+    "pnl": 6.4,
     "w": 6.7
    },
    {
@@ -331,7 +331,7 @@
     "cur": "KRW",
     "avg": 590.3,
     "note": null,
-    "pnl": 16.1,
+    "pnl": 14.2,
     "w": 3.7
    }
   ],
@@ -339,10 +339,139 @@
   "unknown": [],
   "sig": "2fb2a86ba657"
  },
- "track": [],
+ "track": [
+  {
+   "date": "2026-09-30",
+   "headline": "단기: 반등을 이용해 HYPE·SUI·VIRTUAL을 줄이고 BTC를 분할 매수 / 중장기: 10년물 5.26% 고점권에서 현금 25%, 코인은 BTC 중심으로 재편",
+   "stance": {
+    "stocks": "중립",
+    "crypto": "중립",
+    "cash": "확대"
+   },
+   "calls": [
+    {
+     "name": "BTC",
+     "kind": "coin",
+     "action": "분할 매수",
+     "px": 83877.0,
+     "now": 83587.0,
+     "chg": -0.35,
+     "hit": false
+    },
+    {
+     "name": "ETH",
+     "kind": "coin",
+     "action": "유지",
+     "px": 2696.52,
+     "now": 2674.51,
+     "chg": -0.82,
+     "hit": null
+    },
+    {
+     "name": "SOL",
+     "kind": "coin",
+     "action": "유지",
+     "px": 119.63,
+     "now": 117.62,
+     "chg": -1.68,
+     "hit": null
+    },
+    {
+     "name": "HYPE",
+     "kind": "coin",
+     "action": "일부 차익실현",
+     "px": 86.41,
+     "now": 89.35,
+     "chg": 3.4,
+     "hit": false
+    },
+    {
+     "name": "LINK",
+     "kind": "coin",
+     "action": "일부 차익실현",
+     "px": 14.41,
+     "now": 14.27,
+     "chg": -0.97,
+     "hit": true
+    },
+    {
+     "name": "ONDO",
+     "kind": "coin",
+     "action": "유지",
+     "px": 0.50232,
+     "now": 0.494138,
+     "chg": -1.63,
+     "hit": null
+    },
+    {
+     "name": "SUI",
+     "kind": "coin",
+     "action": "비중 축소",
+     "px": 1.15,
+     "now": 1.16,
+     "chg": 0.87,
+     "hit": false
+    },
+    {
+     "name": "VIRTUAL",
+     "kind": "coin",
+     "action": "비중 축소",
+     "px": 0.787046,
+     "now": 0.795183,
+     "chg": 1.03,
+     "hit": false
+    },
+    {
+     "name": "TSM",
+     "kind": "stock",
+     "action": "매수",
+     "px": 457.69,
+     "now": 456.19,
+     "chg": -0.33,
+     "hit": false
+    },
+    {
+     "name": "MSFT",
+     "kind": "stock",
+     "action": "매수",
+     "px": 517.39,
+     "now": 512.9,
+     "chg": -0.87,
+     "hit": false
+    },
+    {
+     "name": "AVGO",
+     "kind": "stock",
+     "action": "회피",
+     "px": 354.28,
+     "now": 351.19,
+     "chg": -0.87,
+     "hit": true
+    },
+    {
+     "name": "XLU",
+     "kind": "stock",
+     "action": "회피",
+     "px": 39.605,
+     "now": 39.44,
+     "chg": -0.42,
+     "hit": true
+    },
+    {
+     "name": "ALB",
+     "kind": "stock",
+     "action": "회피",
+     "px": 107.19,
+     "now": 105.78,
+     "chg": -1.32,
+     "hit": true
+    }
+   ]
+  }
+ ],
  "asof": {
-  "지표": "2026-09-30 23:35 KST",
-  "코인": "2026-09-30 21:30 KST",
+  "지표": "2026-10-01 06:44 KST",
+  "코인": "2026-10-01 05:21 KST",
   "기관": "2026-06-30"
  }
 }
