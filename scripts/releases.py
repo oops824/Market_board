@@ -294,12 +294,18 @@ def claude(prompt, max_tokens=3000, search=False):
                                  headers={"content-type": "application/json", "x-api-key": KEY,
                                           "anthropic-version": "2023-06-01"})
     try:
-        with urllib.request.urlopen(req, timeout=420) as r:
+        with urllib.request.urlopen(req, timeout=600) as r:
             res = json.loads(r.read().decode())
         txt = "".join(b.get("text", "") for b in res.get("content", [])
                       if isinstance(b, dict) and b.get("type") == "text")
         m = re.search(r"\{[\s\S]*\}", txt)
-        return json.loads(m.group(0)) if m else None
+        if not m:
+            print("  ! Claude 응답에 JSON 없음: stop=%s, 텍스트 %d자" % (res.get("stop_reason"), len(txt)))
+            return None
+        return json.loads(m.group(0))
+    except urllib.error.HTTPError as e:
+        print("  ! Claude HTTP %s: %s" % (e.code, e.read().decode("utf-8", "replace")[:500]))
+        return None
     except Exception as e:
         print("  ! Claude:", str(e)[:200])
         return None
@@ -316,7 +322,7 @@ def lookup_release(items):
         "확인 못하면 빈 문자열. 추측 금지.\n"
         "출력은 JSON 하나만: {\"key\": {\"release_date\": \"YYYY-MM-DD\", \"consensus\": \"...\"}, ...}"
         % (now.strftime("%Y-%m-%d"), q))
-    return claude(prompt, 2500, search=True) or {}
+    return claude(prompt, 16000, search=True) or {}
 
 
 def interpret(ind):
@@ -335,7 +341,7 @@ def interpret(ind):
         "'약'을 붙일 것. 매수/매도 추천 금지.\n" + calendar_ctx.RULE +
         "출력은 JSON 하나만. 값은 반드시 하나의 문자열(3~4문장 한 문단)이며 하위 객체로 나누지 말 것: "
         "{\"key\": \"해석 문단\", ...}\n\n" + json.dumps(ind, ensure_ascii=False))
-    return claude(prompt, 4000) or {}
+    return claude(prompt, 16000) or {}
 
 
 def main():
