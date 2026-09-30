@@ -26,17 +26,74 @@ def get(url, timeout=30):
         return r.read().decode("utf-8", "replace")
 
 
-def fred(sid, start="2022-01-01"):
-    """[(YYYY-MM-DD, float)] 과거->최신"""
-    txt = get("https://fred.stlouisfed.org/graph/fredgraph.csv?id=%s&cosd=%s" % (sid, start))
-    rows = list(csv.reader(io.StringIO(txt)))
+# FRED 시리즈 → BLS 원 시리즈 (FRED 가 느리거나 막힐 때 BLS 공식 API 로 대체)
+BLS_ID = {"UNRATE": "LNS14000000", "CPIAUCSL": "CUSR0000SA0", "CPILFESL": "CUSR0000SA0L1E",
+          "PPIFIS": "WPSFD4", "PPIFES": "WPSFD49104", "PPIFDG": "WPSFD41", "PPIFDS": "WPSFD42"}
+_BLS = None
+
+
+_FRED_DOWN = False       # 한 번 완전히 실패하면 이번 실행에서는 FRED 를 건너뛴다 (시간 초과 누적 방지)
+
+
+def _fred_csv(sid, start):
+    global _FRED_DOWN
+    if _FRED_DOWN:
+        raise RuntimeError("FRED 건너뜀")
+    txt = None
+    for t in (30, 60):
+        try:
+            txt = get("https://fred.stlouisfed.org/graph/fredgraph.csv?id=%s&cosd=%s" % (sid, start), t)
+            break
+        except Exception as e:
+            print("  ! FRED %s (%ss): %s" % (sid, t, e))
+    if txt is None:
+        _FRED_DOWN = True
+        raise RuntimeError("FRED 응답 없음")
     out = []
-    for r in rows[1:]:
+    for r in list(csv.reader(io.StringIO(txt)))[1:]:
         if len(r) >= 2 and r[1] not in ("", "."):
             try:
                 out.append((r[0], float(r[1])))
             except ValueError:
                 pass
+    return out
+
+
+def _bls_all():
+    """BLS 공개 API v1 (키 없음, 1회 25개 시리즈) — 필요한 BLS 시리즈를 한 번에"""
+    global _BLS
+    if _BLS is None:
+        ids = sorted(set(BLS_ID.values()) | {sid for sid, _, _ in CPI_MAIN + CPI_DETAIL})
+        y = now.year
+        body = json.dumps({"seriesid": ids[:25], "startyear": str(y - 3), "endyear": str(y)}).encode()
+        req = urllib.request.Request("https://api.bls.gov/publicAPI/v1/timeseries/data/", data=body,
+                                     headers=dict(UA, **{"Content-Type": "application/json"}))
+        with urllib.request.urlopen(req, timeout=60) as r:
+            j = json.loads(r.read().decode())
+        _BLS = {}
+        for ser in (j.get("Results") or {}).get("series") or []:
+            pts = []
+            for x in ser.get("data") or []:
+                if re.fullmatch(r"M\d\d", x.get("period", "")) and x["period"] != "M13":
+                    try:
+                        pts.append(("%s-%s-01" % (x["year"], x["period"][1:]), float(x["value"])))
+                    except ValueError:
+                        pass
+            _BLS[ser["seriesID"]] = sorted(pts)
+        print("  BLS API 시리즈 %d개" % len(_BLS))
+    return _BLS
+
+
+def fred(sid, start="2022-01-01"):
+    """[(YYYY-MM-DD, float)] 과거->최신. FRED 실패 시 BLS 원 시리즈로 대체"""
+    try:
+        out = _fred_csv(sid, start)
+    except Exception:
+        out = []
+    if len(out) < 3:
+        bid = BLS_ID.get(sid, sid if sid.startswith("CUSR") else None)
+        if bid:
+            out = [x for x in _bls_all().get(bid, []) if x[0] >= start]
     if len(out) < 3:
         raise ValueError("%s 데이터 부족" % sid)
     return out
@@ -111,15 +168,15 @@ def contrib(parts, period):
     return out
 
 
-def build_indicators():
-    out = {}
-    # 실업률
+def ind_unemp():
     u = fred("UNRATE")
-    out["unemp"] = {"key": "unemp", "title": "실업률", "period": u[-1][0],
-                    "value": u[-1][1], "prev": u[-2][1],
-                    "chg": round(u[-1][1] - u[-2][1], 2),
-                    "trend": [{"d": d, "v": v} for d, v in u[-13:]]}
-    # CPI
+    return {"key": "unemp", "title": "실업률", "period": u[-1][0],
+            "value": u[-1][1], "prev": u[-2][1],
+            "chg": round(u[-1][1] - u[-2][1], 2),
+            "trend": [{"d": d, "v": v} for d, v in u[-13:]]}
+
+
+def ind_cpi():
     h, c, b = monthly_block("CPIAUCSL", "CPILFESL", "CPI", "근원 CPI")
     main = contrib(CPI_MAIN, b["period"])
     pp = {x["name"]: x["pp"] for x in main}
@@ -128,22 +185,42 @@ def build_indicators():
                      "mom": None, "pp": round(CPI_CORE_W / 100 * mom(c) - pp["주거비"] - pp["근원 상품"], 3)})
     b.update({"key": "cpi", "title": "소비자물가 CPI", "contrib": sorted(main, key=lambda x: -abs(x["pp"])),
               "detail": sorted(contrib(CPI_DETAIL, b["period"]), key=lambda x: -abs(x["pp"]))})
-    out["cpi"] = b
-    # PPI
+    return b
+
+
+def ind_ppi():
     h, c, b = monthly_block("PPIFIS", "PPIFES", "PPI", "근원 PPI")
     b.update({"key": "ppi", "title": "생산자물가 PPI",
               "contrib": sorted(contrib(PPI_PARTS, b["period"]), key=lambda x: -abs(x["pp"]))})
-    out["ppi"] = b
-    # PCE
+    return b
+
+
+def ind_pce():
     h, c, b = monthly_block("PCEPI", "PCEPILFE", "PCE", "근원 PCE")
     b.update({"key": "pce", "title": "개인소비지출 물가 PCE",
               "contrib": sorted(contrib(PCE_PARTS, b["period"]), key=lambda x: -abs(x["pp"]))})
-    out["pce"] = b
-    # GDP (전기 대비 연율)
+    return b
+
+
+def ind_gdp():
     g = fred("A191RL1Q225SBEA", "2019-01-01")
-    out["gdp"] = {"key": "gdp", "title": "GDP 성장률 (전기비 연율)", "period": g[-1][0],
-                  "value": g[-1][1], "prev": g[-2][1],
-                  "trend": [{"d": d, "v": v} for d, v in g[-8:]]}
+    return {"key": "gdp", "title": "GDP 성장률 (전기비 연율)", "period": g[-1][0],
+            "value": g[-1][1], "prev": g[-2][1],
+            "trend": [{"d": d, "v": v} for d, v in g[-8:]]}
+
+
+def build_indicators(state):
+    """지표별로 따로 수집. 실패한 지표는 마지막 성공값(state[k]['data'])을 재사용"""
+    out = {}
+    for k, fn in (("cpi", ind_cpi), ("ppi", ind_ppi), ("pce", ind_pce),
+                  ("unemp", ind_unemp), ("gdp", ind_gdp)):
+        try:
+            out[k] = fn()
+        except Exception as e:
+            print("  ! %s 수집 실패: %s" % (k, e))
+            cached = (state.get(k) or {}).get("data")
+            if cached:
+                out[k] = dict(cached, stale=True)
     return out
 
 
@@ -241,7 +318,7 @@ def main():
             state = json.load(f)
     except Exception:
         state = {}
-    inds = build_indicators()
+    inds = build_indicators(state)
     us_today = datetime.datetime.now(datetime.timezone.utc).date().isoformat()  # 실행: 미 동부 17:30 무렵
 
     need_lookup = []
@@ -285,7 +362,11 @@ def main():
 
     items = []
     for k in ("cpi", "ppi", "pce", "unemp", "gdp"):
+        if k not in inds:
+            continue
         d, st = inds[k], state[k]
+        if not d.get("stale"):
+            st["data"] = {x: y for x, y in d.items() if x not in ("release", "consensus", "market", "ai")}
         d.update({"release": st.get("release"), "consensus": st.get("consensus", ""),
                   "market": st.get("market", []), "ai": st.get("ai", "")})
         items.append(d)
