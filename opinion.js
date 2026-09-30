@@ -62,7 +62,7 @@ function opPort(o){
       (s||l?'<div class="tags">'+(s?'<span class="tag '+(OP_ACT[s.action]||'na')+'">단기 '+opT(s.action)+'</span>':'')+
         (l?'<span class="tag '+(OP_ROLE[l.role]||'na')+'">중장기 '+opT(l.role)+'</span>':'')+'</div>':'')+'</div>'}).join('');
   return '<div class="etf"><div class="eh"><b>내 코인 포트폴리오</b><span class="dim">'+opMD(pf.asof)+
-    ' 사진 기준 · 이후 가격 반영</span></div><div class="legend"><span><i style="background:var(--sub)"></i>현재 비중</span>'+
+    ' 기준 · 이후 시세 반영</span></div><div class="legend"><span><i style="background:var(--sub)"></i>현재 비중</span>'+
     '<span><i class="tk2"></i>중장기 목표 비중</span><span>수익률은 평단 대비</span></div>'+h+'</div>'}
 
 /* 모델 포트폴리오: 누적 막대(2px 간격) + 색 견본·이름·비중 목록 */

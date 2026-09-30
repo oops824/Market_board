@@ -183,50 +183,27 @@ def port_digest(pf):
 
 
 # ---------------------------------------------------------------- 출력 스키마
-CONF = {"type": "string", "enum": ["높음", "중간", "낮음"]}
-STANCE = {"type": "string", "enum": ["적극 확대", "확대", "중립", "축소", "적극 축소"]}
-STANCE3 = {"type": "object", "additionalProperties": False, "required": ["stocks", "crypto", "cash"],
-           "properties": {"stocks": STANCE, "crypto": STANCE, "cash": STANCE}}
-PICK = {"type": "object", "additionalProperties": False,
-        "required": ["name", "ticker", "why", "confidence"],
-        "properties": {"name": {"type": "string"}, "ticker": {"type": "string"},
-                       "why": {"type": "string"}, "confidence": CONF}}
-PICKS = {"type": "array", "items": PICK}
-STRS = {"type": "array", "items": {"type": "string"}}
-SYM = {"type": "string", "enum": COIN_SYMS}
-SHORT = {
-    "type": "object", "additionalProperties": False,
-    "required": ["view", "confidence", "stance", "coins", "stocks_buy", "stocks_avoid",
-                 "actions_now", "wait_for", "risks"],
-    "properties": {
-        "view": {"type": "string"}, "confidence": CONF, "stance": STANCE3,
-        "coins": {"type": "array", "items": {
-            "type": "object", "additionalProperties": False,
-            "required": ["sym", "action", "why", "condition", "confidence"],
-            "properties": {"sym": SYM, "action": {"type": "string", "enum": SHORT_ACT},
-                           "why": {"type": "string"}, "condition": {"type": "string"}, "confidence": CONF}}},
-        "stocks_buy": PICKS, "stocks_avoid": PICKS,
-        "actions_now": STRS, "wait_for": STRS, "risks": STRS}}
-LONG = {
-    "type": "object", "additionalProperties": False,
-    "required": ["status", "change_note", "thesis", "confidence", "stance", "allocation", "coins",
-                 "crypto_cash_pct", "stocks_overweight", "stocks_underweight", "risks", "change_mind"],
-    "properties": {
-        "status": {"type": "string", "enum": ["유지", "일부 수정", "변경"]},
-        "change_note": {"type": "string"}, "thesis": {"type": "string"}, "confidence": CONF, "stance": STANCE3,
-        "allocation": {"type": "array", "items": {
-            "type": "object", "additionalProperties": False, "required": ["asset", "pct", "why"],
-            "properties": {"asset": {"type": "string"}, "pct": {"type": "integer"}, "why": {"type": "string"}}}},
-        "coins": {"type": "array", "items": {
-            "type": "object", "additionalProperties": False, "required": ["sym", "role", "target_pct", "why"],
-            "properties": {"sym": SYM, "role": {"type": "string", "enum": LONG_ROLE},
-                           "target_pct": {"type": "integer"}, "why": {"type": "string"}}}},
-        "crypto_cash_pct": {"type": "integer"},
-        "stocks_overweight": PICKS, "stocks_underweight": PICKS,
-        "risks": STRS, "change_mind": STRS}}
-SCHEMA = {"type": "object", "additionalProperties": False, "required": ["headline", "summary", "short", "long"],
-          "properties": {"headline": {"type": "string"}, "summary": {"type": "string"},
-                         "short": SHORT, "long": LONG}}
+# 값 목록(enum)을 스키마에 넣으면 컴파일된 문법이 너무 커져 400 이 난다 → 문자열로 받고 clean() 에서 정규화
+S, I = {"type": "string"}, {"type": "integer"}
+STRS = {"type": "array", "items": S}
+
+
+def obj(**props):
+    return {"type": "object", "additionalProperties": False, "required": list(props), "properties": props}
+
+
+STANCE3 = obj(stocks=S, crypto=S, cash=S)
+STOCKS = {"type": "array", "items": obj(side=S, name=S, ticker=S, why=S, confidence=S)}
+SCHEMA = obj(
+    headline=S, summary=S,
+    short=obj(view=S, confidence=S, stance=STANCE3,
+              coins={"type": "array", "items": obj(sym=S, action=S, why=S, condition=S, confidence=S)},
+              stocks=STOCKS, actions_now=STRS, wait_for=STRS, risks=STRS),
+    long=obj(status=S, change_note=S, thesis=S, confidence=S, stance=STANCE3,
+             allocation={"type": "array", "items": obj(asset=S, pct=I, why=S)},
+             coins={"type": "array", "items": obj(sym=S, role=S, target_pct=I, why=S)},
+             crypto_cash_pct=I, stocks=STOCKS, risks=STRS, change_mind=STRS))
+STANCES = ["적극 확대", "확대", "중립", "축소", "적극 축소"]
 
 SYSTEM = (
     "너는 이 사용자 전용 투자 파트너다. 사용자는 이 대시보드의 데이터로 미국 주식과 가상자산 투자 결정을 내리며, "
@@ -263,11 +240,24 @@ SYSTEM = (
     "- 코인 8종은 short.coins 와 long.coins 모두 빠짐없이 판단한다. short.coins 의 condition 에는 행동을 실행하거나 바꿀 "
     "구체적 조건을 쓴다.\n"
     "- 주식 ticker 는 미국 티커(예: SMH, NVDA). 모르면 빈 문자열.\n"
+    "- 값은 정확히 다음 표현 중 하나로 쓴다. stance(stocks·crypto·cash): 적극 확대/확대/중립/축소/적극 축소. "
+    "confidence: 높음/중간/낮음. short.coins[].action: 분할 매수/비중 확대/유지/일부 차익실현/비중 축소/관망. "
+    "long.coins[].role: 핵심 보유/보유/비중 확대/비중 축소/정리. long.status: 유지/일부 수정/변경. "
+    "short.stocks[].side: 매수/회피. long.stocks[].side: 비중 확대/비중 축소. "
+    "coins 의 sym 은 BTC·ETH·SOL·HYPE·LINK·ONDO·SUI·VIRTUAL 8종을 이 순서로 모두.\n"
     "- headline 은 단기 대응과 중장기 전략을 함께 담은 한 줄, summary 는 3~5문장.\n"
     "- 오늘 날짜와 FOMC 일정은 사용자 메시지 첫 줄의 날짜 정보를 따른다.\n"
     + calendar_ctx.RULE +
     "- 한국어로, 짧고 명확하게."
 )
+
+
+def long_for_prompt(lg):
+    """저장 형식(stocks_overweight/underweight)을 출력 형식(stocks[].side)으로 되돌려 직전 의견으로 제시"""
+    lg = dict(lg)
+    lg["stocks"] = ([dict(x, side="비중 확대") for x in lg.pop("stocks_overweight", [])] +
+                    [dict(x, side="비중 축소") for x in lg.pop("stocks_underweight", [])])
+    return lg
 
 
 def prev_context(prev, port_changed):
@@ -286,9 +276,17 @@ def prev_context(prev, port_changed):
             "기준으로 다시 작성한다. 전략 방향이 같으면 status '일부 수정', change_note 에 '포트폴리오 갱신 반영: …'을 쓴다."
             if port_changed else "")
     return ("## 직전 중장기 의견 (%s 수립, 오늘 %s)\n%s%s\n\n## 직전 단기 행동 (%s)\n주식 %s · 코인 %s · 현금 %s / %s" % (
-        since, days, json.dumps(op["long"], ensure_ascii=False), note, (prev.get("generated") or "")[:10],
-        st.get("stocks"), st.get("crypto"), st.get("cash"),
+        since, days, json.dumps(long_for_prompt(op["long"]), ensure_ascii=False), note,
+        (prev.get("generated") or "")[:10], st.get("stocks"), st.get("crypto"), st.get("cash"),
         ", ".join("%s %s" % (c["sym"], c["action"]) for c in sh.get("coins", []))))
+
+
+def parse_json(text):
+    t = text.strip()
+    try:
+        return json.loads(t)
+    except ValueError:
+        return json.loads(t[t.index("{"):t.rindex("}") + 1])   # 코드 블록·앞뒤 설명이 섞인 경우
 
 
 def ask(dig, ctx):
@@ -296,22 +294,41 @@ def ask(dig, ctx):
     client = anthropic.Anthropic()
     user = (calendar_ctx.macro_context(now.date()) + "\n\n아래는 오늘 대시보드 데이터와 내 포트폴리오 요약, 그리고 직전 의견이다. "
             "이 데이터를 근거로 네가 이 사용자라면 어떻게 투자할지 단기·중장기로 나눠 작성하라.\n\n" + dig + "\n\n" + ctx)
-    kw = dict(model=MODEL, max_tokens=48000, system=SYSTEM, messages=[{"role": "user", "content": user}],
-              output_config={"effort": "high", "format": {"type": "json_schema", "schema": SCHEMA}})
-    try:
-        # 안전 분류기 거절 시 서버가 대체 모델로 다시 실행
-        with client.beta.messages.stream(betas=["server-side-fallback-2026-07-01"], fallbacks="default", **kw) as stream:
-            msg = stream.get_final_message()
-    except anthropic.BadRequestError as e:
-        print("[의견] 대체 모델 옵션 없이 재시도:", str(e)[:200])
-        with client.beta.messages.stream(**kw) as stream:
-            msg = stream.get_final_message()
+    last, bad_schema = None, False
+    # (스키마 강제, 서버 대체 모델): 스키마가 거부되면 JSON 지시로, 대체 모델 옵션이 거부되면 옵션 없이
+    for strict, fb in ((True, True), (True, False), (False, True), (False, False)):
+        if strict and bad_schema:
+            continue
+        oc = {"effort": "high"}
+        content = user
+        if strict:
+            oc["format"] = {"type": "json_schema", "schema": SCHEMA}
+        else:
+            content = user + ("\n\n출력은 아래 JSON 스키마를 따르는 JSON 객체 하나만 쓴다. 코드 블록이나 다른 글은 쓰지 않는다.\n"
+                              + json.dumps(SCHEMA, ensure_ascii=False))
+        kw = dict(model=MODEL, max_tokens=48000, system=SYSTEM, output_config=oc,
+                  messages=[{"role": "user", "content": content}])
+        if fb:                                   # 안전 분류기 거절 시 서버가 대체 모델로 다시 실행
+            kw.update(betas=["server-side-fallback-2026-07-01"], fallbacks="default")
+        try:
+            with client.beta.messages.stream(**kw) as stream:
+                msg = stream.get_final_message()
+            break
+        except anthropic.BadRequestError as e:
+            last = e
+            bad_schema = bad_schema or (strict and ("grammar" in str(e) or "schema" in str(e)))
+            print("[의견] 요청 거부(스키마 %s, 대체 모델 %s) — 다른 방식으로 재시도: %s" % (
+                "O" if strict else "X", "O" if fb else "X", str(e)[:160]))
+    else:
+        raise last
     if msg.stop_reason == "refusal":
         raise RuntimeError("모델이 응답을 거절함: %s" % (getattr(msg, "stop_details", None),))
     if msg.stop_reason == "max_tokens":
         raise RuntimeError("출력 한도 초과")
-    text = next(b.text for b in msg.content if b.type == "text")
-    return json.loads(text), msg.model
+    op = parse_json(next(b.text for b in msg.content if b.type == "text"))
+    if not isinstance(op.get("short"), dict) or not isinstance(op.get("long"), dict):
+        raise RuntimeError("응답에 short/long 이 없음")
+    return op, msg.model
 
 
 def norm100(items, key):
@@ -324,15 +341,61 @@ def norm100(items, key):
     max(items, key=lambda x: x[key])[key] += 100 - sum(x[key] for x in items)
 
 
-def normalize(op):
-    lg = op["long"]
-    norm100(lg.get("allocation") or [], "pct")
-    parts = (lg.get("coins") or []) + [{"cash": True, "target_pct": lg.get("crypto_cash_pct", 0)}]
-    norm100(parts, "target_pct")
-    lg["crypto_cash_pct"] = parts[-1]["target_pct"]
+def pick(v, allowed, rules, default):
+    """자유 문자열을 허용 값으로: 정확히 일치 → 그대로, 아니면 (포함 단어, 값) 규칙 순서대로"""
+    v = str(v or "").strip()
+    if v in allowed:
+        return v
+    for kw, val in rules:
+        if kw in v:
+            return val
+    return default
+
+
+def stance(v):
+    return pick(v, STANCES, [("적극", "적극 확대" if "확대" in str(v) else "적극 축소"), ("확대", "확대"),
+                             ("비중 증가", "확대"), ("축소", "축소"), ("감소", "축소")], "중립")
+
+
+def conf(v):
+    return pick(v, ["높음", "중간", "낮음"], [("높", "높음"), ("낮", "낮음")], "중간")
+
+
+def clean(op):
+    """자유 문자열 값을 허용 값으로 맞추고, 저장 형식(화면이 읽는 모양)으로 바꾼다"""
     order = {s: i for i, s in enumerate(COIN_SYMS)}
     for k in ("short", "long"):
-        op[k]["coins"] = sorted(op[k].get("coins") or [], key=lambda c: order.get(c["sym"], 99))
+        h = op[k]
+        h["stance"] = {x: stance((h.get("stance") or {}).get(x)) for x in ("stocks", "crypto", "cash")}
+        h["confidence"] = conf(h.get("confidence"))
+        coins, seen = [], set()
+        for c in h.get("coins") or []:
+            c["sym"] = str(c.get("sym") or "").strip().upper()
+            if c["sym"] in order and c["sym"] not in seen:
+                seen.add(c["sym"])
+                coins.append(c)
+        h["coins"] = sorted(coins, key=lambda c: order[c["sym"]])
+    for c in op["short"]["coins"]:
+        c["action"] = pick(c.get("action"), SHORT_ACT, [("차익", "일부 차익실현"), ("분할", "분할 매수"), ("매수", "분할 매수"),
+                                                        ("확대", "비중 확대"), ("축소", "비중 축소"), ("매도", "비중 축소"),
+                                                        ("관망", "관망"), ("대기", "관망")], "유지")
+        c["confidence"] = conf(c.get("confidence"))
+    for c in op["long"]["coins"]:
+        c["role"] = pick(c.get("role"), LONG_ROLE, [("핵심", "핵심 보유"), ("정리", "정리"), ("매도", "정리"),
+                                                   ("축소", "비중 축소"), ("확대", "비중 확대")], "보유")
+    lg = op["long"]
+    lg["status"] = pick(lg.get("status"), ["유지", "일부 수정", "변경"], [("수정", "일부 수정"), ("유지", "유지")], "변경")
+    for k, sides in (("short", (("stocks_buy", ("매수", "확대")), ("stocks_avoid", ("회피", "축소", "매도")))),
+                     ("long", (("stocks_overweight", ("확대", "매수")), ("stocks_underweight", ("축소", "회피", "매도"))))):
+        stocks = op[k].pop("stocks", None) or []
+        for dst, kws in sides:
+            op[k][dst] = [{"name": x.get("name"), "ticker": str(x.get("ticker") or "").strip().upper(),
+                           "why": x.get("why"), "confidence": conf(x.get("confidence"))}
+                          for x in stocks if any(w in str(x.get("side") or "") for w in kws)]
+    norm100(lg.get("allocation") or [], "pct")
+    parts = lg["coins"] + [{"cash": True, "target_pct": lg.get("crypto_cash_pct") or 0}]
+    norm100(parts, "target_pct")
+    lg["crypto_cash_pct"] = parts[-1]["target_pct"]
 
 
 def short_snapshot(prev):
@@ -416,7 +479,7 @@ def main():
     elif not fresh or force or not v2:
         try:
             new, model = ask(digest(D, C, T) + "\n" + port_digest(pf), prev_context(prev, port_changed))
-            normalize(new)
+            clean(new)
             pl, judged = (op or {}).get("long"), new["long"]["status"]
             if pl and judged == "유지" and not port_changed:
                 long_check = {"date": TODAY, "note": new["long"]["change_note"]}
