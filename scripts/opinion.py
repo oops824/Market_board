@@ -1,8 +1,11 @@
 """마켓보드 종합 투자의견 -> opinion.json, history/opinions.json
 
-대시보드가 모은 데이터(매크로·경제지표·섹터·COT·코인·ETF 흐름·도미넌스·13F)를 요약해
-Claude 에게 "이 사용자라면 지금 어떻게 투자하겠는가"를 묻고, 구조화된 의견을 저장한다.
-하루 1회(12시간 이내 재실행은 건너뜀, OPINION_FORCE=1 이면 강제). 지난 의견의 이후 성과는 매 실행 갱신.
+대시보드가 모은 데이터(매크로·경제지표·섹터·COT·코인·ETF 흐름·도미넌스·13F)와 코인 포트폴리오
+(portfolio.json: 비중·평단·수익률만, 수량·금액 없음)를 요약해 Claude 에게 "이 사용자라면 어떻게 투자하겠는가"를
+단기(1~4주)와 중장기(3~12개월)로 나눠 묻는다.
+- 단기: 매일 갱신. 직전 단기 행동을 함께 줘서 데이터가 실제로 바뀐 코인만 바꾸게 한다.
+- 중장기: 직전 의견을 기본으로 유지. 모델이 '유지'로 판단하면 문구까지 그대로 두고, 바뀔 때만 이력에 남긴다.
+하루 1회(12시간 이내 재실행은 건너뜀, OPINION_FORCE=1 이면 강제). 지난 단기 의견의 이후 성과는 매 실행 갱신.
 """
 import datetime, json, os, re, sys, urllib.parse, urllib.request
 
@@ -11,13 +14,16 @@ import calendar_ctx
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
 now = datetime.datetime.now(KST)
-OUT, HIST = "opinion.json", "history/opinions.json"
+TODAY = now.strftime("%Y-%m-%d")
+OUT, HIST, PORT = "opinion.json", "history/opinions.json", "portfolio.json"
 MODEL = "claude-opus-5-5"
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
                     "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
 COIN_SYMS = ["BTC", "ETH", "SOL", "HYPE", "LINK", "ONDO", "SUI", "VIRTUAL"]
-BUY = {"분할 매수", "비중 확대"}
-SELL = {"일부 차익실현", "비중 축소"}
+SHORT_ACT = ["분할 매수", "비중 확대", "유지", "일부 차익실현", "비중 축소", "관망"]
+LONG_ROLE = ["핵심 보유", "보유", "비중 확대", "비중 축소", "정리"]
+BUY = {"분할 매수", "비중 확대", "매수"}
+SELL = {"일부 차익실현", "비중 축소", "회피"}
 
 
 def load(p):
@@ -131,78 +137,157 @@ def digest(D, C, T):
     return "\n".join(L)
 
 
+# ---------------------------------------------------------------- 포트폴리오
+def portfolio(C):
+    """portfolio.json(사진 시점 비중·수익률)을 이후 달러 가격 변동만큼 굴려 현재 비중·수익률을 추정"""
+    P = load(PORT)
+    if not P:
+        return None
+    usd = {c["sym"]: (c.get("market") or {}).get("price") for c in (C or {}).get("coins", [])}
+    rows, vals = [], {}
+    for h in P.get("holdings", []):
+        r = usd[h["sym"]] / h["ref"] if usd.get(h["sym"]) and h.get("ref") else 1.0
+        vals[h["sym"]] = h["w"] * r
+        rows.append({"sym": h["sym"], "cur": h["cur"], "avg": h["avg"],
+                     "pnl": round(((1 + h["pnl"] / 100) * r - 1) * 100, 1)})
+    cash = sum(c["w"] for c in P.get("cash", []))
+    tot = (sum(vals.values()) + cash) or 1
+    for x in rows:
+        x["w"] = round(vals[x["sym"]] / tot * 100, 1)
+    rows.sort(key=lambda x: -x["w"])
+    return {"asof": P.get("asof"), "rows": rows, "cash": round(cash / tot * 100, 1),
+            "unknown": [u["sym"] for u in P.get("unknown", [])]}
+
+
+def fmt_avg(r):
+    a = r["avg"]
+    if r["cur"] != "KRW":
+        return "%g %s" % (a, r["cur"])
+    return ("{:,.1f}" if a < 1000 and a != int(a) else "{:,.0f}").format(a) + "원"
+
+
+def port_digest(pf):
+    if not pf:
+        return "## 내 코인 포트폴리오\n입력되지 않음"
+    L = ["## 내 코인 포트폴리오 (%s 사진 기준, 이후 가격 변동 반영 추정 · 코인 계좌 안의 비중)" % pf["asof"]]
+    L += ["- %s: 비중 %.1f%%, 평단 %s, 수익률 %+.1f%%" % (r["sym"], r["w"], fmt_avg(r), r["pnl"]) for r in pf["rows"]]
+    L.append("- 현금(USDT): 비중 %.1f%%" % pf["cash"])
+    L += ["- %s: 보유 중이나 비중·평단 미입력(비중 계산에서 제외)" % s for s in pf["unknown"]]
+    L.append("HYPE 는 USDT 로 거래하는 해외 거래소, 나머지는 원화 거래소에서 보유. 미국 주식 보유 내역은 미입력.")
+    return "\n".join(L)
+
+
 # ---------------------------------------------------------------- 출력 스키마
 CONF = {"type": "string", "enum": ["높음", "중간", "낮음"]}
 STANCE = {"type": "string", "enum": ["적극 확대", "확대", "중립", "축소", "적극 축소"]}
+STANCE3 = {"type": "object", "additionalProperties": False, "required": ["stocks", "crypto", "cash"],
+           "properties": {"stocks": STANCE, "crypto": STANCE, "cash": STANCE}}
 PICK = {"type": "object", "additionalProperties": False,
         "required": ["name", "ticker", "why", "confidence"],
         "properties": {"name": {"type": "string"}, "ticker": {"type": "string"},
                        "why": {"type": "string"}, "confidence": CONF}}
-SCHEMA = {
+PICKS = {"type": "array", "items": PICK}
+STRS = {"type": "array", "items": {"type": "string"}}
+SYM = {"type": "string", "enum": COIN_SYMS}
+SHORT = {
     "type": "object", "additionalProperties": False,
-    "required": ["headline", "summary", "horizon", "confidence", "stance", "allocation",
-                 "stocks", "crypto", "actions_now", "wait_for", "risks", "change_mind"],
+    "required": ["view", "confidence", "stance", "coins", "stocks_buy", "stocks_avoid",
+                 "actions_now", "wait_for", "risks"],
     "properties": {
-        "headline": {"type": "string"},
-        "summary": {"type": "string"},
-        "horizon": {"type": "string"},
-        "confidence": CONF,
-        "stance": {"type": "object", "additionalProperties": False,
-                   "required": ["stocks", "crypto", "cash"],
-                   "properties": {"stocks": STANCE, "crypto": STANCE, "cash": STANCE}},
+        "view": {"type": "string"}, "confidence": CONF, "stance": STANCE3,
+        "coins": {"type": "array", "items": {
+            "type": "object", "additionalProperties": False,
+            "required": ["sym", "action", "why", "condition", "confidence"],
+            "properties": {"sym": SYM, "action": {"type": "string", "enum": SHORT_ACT},
+                           "why": {"type": "string"}, "condition": {"type": "string"}, "confidence": CONF}}},
+        "stocks_buy": PICKS, "stocks_avoid": PICKS,
+        "actions_now": STRS, "wait_for": STRS, "risks": STRS}}
+LONG = {
+    "type": "object", "additionalProperties": False,
+    "required": ["status", "change_note", "thesis", "confidence", "stance", "allocation", "coins",
+                 "crypto_cash_pct", "stocks_overweight", "stocks_underweight", "risks", "change_mind"],
+    "properties": {
+        "status": {"type": "string", "enum": ["유지", "일부 수정", "변경"]},
+        "change_note": {"type": "string"}, "thesis": {"type": "string"}, "confidence": CONF, "stance": STANCE3,
         "allocation": {"type": "array", "items": {
             "type": "object", "additionalProperties": False, "required": ["asset", "pct", "why"],
             "properties": {"asset": {"type": "string"}, "pct": {"type": "integer"}, "why": {"type": "string"}}}},
-        "stocks": {"type": "object", "additionalProperties": False,
-                   "required": ["view", "overweight", "underweight", "watch"],
-                   "properties": {"view": {"type": "string"},
-                                  "overweight": {"type": "array", "items": PICK},
-                                  "underweight": {"type": "array", "items": PICK},
-                                  "watch": {"type": "array", "items": PICK}}},
-        "crypto": {"type": "object", "additionalProperties": False, "required": ["view", "coins"],
-                   "properties": {"view": {"type": "string"}, "coins": {"type": "array", "items": {
-                       "type": "object", "additionalProperties": False,
-                       "required": ["sym", "action", "why", "condition", "confidence"],
-                       "properties": {"sym": {"type": "string", "enum": COIN_SYMS},
-                                      "action": {"type": "string", "enum": ["분할 매수", "비중 확대", "유지",
-                                                                            "일부 차익실현", "비중 축소", "관망"]},
-                                      "why": {"type": "string"}, "condition": {"type": "string"},
-                                      "confidence": CONF}}}}},
-        "actions_now": {"type": "array", "items": {"type": "string"}},
-        "wait_for": {"type": "array", "items": {"type": "string"}},
-        "risks": {"type": "array", "items": {"type": "string"}},
-        "change_mind": {"type": "array", "items": {"type": "string"}},
-    },
-}
+        "coins": {"type": "array", "items": {
+            "type": "object", "additionalProperties": False, "required": ["sym", "role", "target_pct", "why"],
+            "properties": {"sym": SYM, "role": {"type": "string", "enum": LONG_ROLE},
+                           "target_pct": {"type": "integer"}, "why": {"type": "string"}}}},
+        "crypto_cash_pct": {"type": "integer"},
+        "stocks_overweight": PICKS, "stocks_underweight": PICKS,
+        "risks": STRS, "change_mind": STRS}}
+SCHEMA = {"type": "object", "additionalProperties": False, "required": ["headline", "summary", "short", "long"],
+          "properties": {"headline": {"type": "string"}, "summary": {"type": "string"},
+                         "short": SHORT, "long": LONG}}
 
 SYSTEM = (
     "너는 이 사용자 전용 투자 파트너다. 사용자는 이 대시보드의 데이터로 미국 주식과 가상자산 투자 결정을 내리며, "
     "투자 판단과 책임은 전적으로 본인에게 있다고 분명히 밝혔다. 사용자가 원하는 것은 "
     "'네가 이 사람이라면 지금 실제로 어떻게 투자하겠는가'에 대한 솔직하고 구체적인 의견이다.\n\n"
-    "사용자 상황(가정): 한국 거주 개인투자자, 투자 시계 1~3개월, 중간 이상의 위험 감수, "
-    "관심 코인 8종(BTC·ETH·SOL·HYPE·LINK·ONDO·SUI·VIRTUAL)을 보유 중이고 미국 주식은 섹터 ETF·대형주 위주로 관심.\n\n"
-    "원칙:\n"
+    "사용자 상황: 한국 거주 개인투자자, 중간 이상의 위험 감수. 가상자산은 데이터의 '내 코인 포트폴리오'대로 보유 중이다"
+    "(HYPE 는 USDT 로 거래하는 해외 거래소, 나머지는 원화 거래소). 보유 수량·금액은 모르고 비중(%)과 수익률(%)만 안다. "
+    "미국 주식은 섹터 ETF·대형주 위주로 관심이 있고 보유 내역은 입력되지 않았다.\n\n"
+    "의견은 두 시계로 나눈다.\n"
+    "- short(단기, 1~4주): 매일 갱신하는 전술. 지금 할 행동, 코인별 매매와 실행 조건, 단기 매수·회피 주식.\n"
+    "- long(중장기, 3~12개월): 전략. 전체 자산 목표 배분, 코인별 역할과 코인 계좌 안의 목표 비중, 비중 확대·축소할 주식.\n\n"
+    "일관성 원칙(가장 중요): 사용자는 의견이 매일 바뀌는 것을 원하지 않는다.\n"
+    "- long: '직전 중장기 의견'이 있으면 그대로 유지하는 것이 기본이다(status '유지'). 매크로 체제 전환(금리·달러·신용·유동성의 "
+    "추세적 변화), 보유 자산 투자 논리의 훼손, 1~2주 이상 이어진 추세 전환처럼 분명한 근거가 있을 때만 '일부 수정'이나 '변경'을 "
+    "쓰고, change_note 에 무엇을 왜 바꿨는지 쓴다. 하루 이틀의 가격 변동이나 뉴스로는 바꾸지 않는다. '유지'면 change_note 에 "
+    "오늘 점검한 유지 근거를 한 문장으로 쓰고, 나머지 long 항목은 직전 의견과 같게 쓴다. 직전 의견이 없으면 status 는 '변경', "
+    "change_note 는 '첫 중장기 의견'.\n"
+    "- short: '직전 단기 행동'이 있으면 데이터가 실제로 바뀐 코인만 행동을 바꾸고, 바꾼 코인은 why 첫머리에 무엇이 바뀌었는지 쓴다.\n"
+    "- short 는 long 과 모순되지 않는다. 예를 들어 long 에서 '정리'인 코인을 short 에서 '분할 매수'하지 않는다. "
+    "단, long 목표 비중으로 가는 경로로서의 단기 매매는 쓴다.\n\n"
+    "판단 원칙:\n"
     "- 면책 문구, '투자 권유가 아니다', '전문가와 상담하라', '투자 결정은 본인 몫' 같은 말은 쓰지 않는다.\n"
-    "- 입장을 분명히 한다(비중 확대·축소, 분할 매수, 일부 차익실현, 관망). 양쪽 다 가능하다는 식의 얼버무림 금지.\n"
-    "- 모든 판단은 주어진 데이터에 근거하고, 근거 수치를 짧게 인용한다. 데이터에 없는 가격 목표·사건·수치를 지어내지 않는다. "
-    "가격 수준을 말할 때는 데이터에 있는 값(현재가, 맥스페인, 20일 신고가·신저가 신호 등)만 쓴다.\n"
-    "- 신호가 엇갈리면 인정하고, 어느 쪽에 무게를 두는지와 이유를 말한다.\n"
-    "- 확신도(높음·중간·낮음)를 솔직하게 매기고, 확신이 낮을수록 비중을 작게 제안한다.\n"
-    "- 한 번에 몰아서 사지 않고 분할·현금 비중으로 위험을 관리한다. allocation(모델 포트폴리오)의 pct 합은 100.\n"
-    "- 코인 8종은 빠짐없이 각각 판단한다. condition 에는 행동을 바꾸거나 실행할 구체적 조건을 쓴다.\n"
-    "- stocks 의 ticker 는 미국 티커(예: SMH, NVDA). 모르면 빈 문자열.\n"
-    "- change_mind 에는 이 의견이 틀렸다고 보고 바꿀 구체적 신호를 쓴다.\n"
+    "- 입장을 분명히 한다. 양쪽 다 가능하다는 식의 얼버무림 금지.\n"
+    "- 모든 판단은 주어진 데이터에 근거하고 근거 수치를 짧게 인용한다. 데이터에 없는 가격 목표·사건·수치를 지어내지 않는다. "
+    "가격 수준을 말할 때는 데이터에 있는 값(현재가, 맥스페인, 평단, 20일 신고가·신저가 신호 등)만 쓴다.\n"
+    "- 평단은 매몰비용이다. 손익 여부가 아니라 앞으로의 기대수익과 위험으로 판단한다. 다만 큰 이익 구간은 차익실현 계획을, "
+    "큰 손실 구간은 보유·손절·반등 시 축소 중 무엇을 할지 분명히 말한다.\n"
+    "- 보유 금액·수량을 추정해 쓰지 않는다. 매매 규모는 '보유분의 1/3', '코인 계좌 비중 5%p'처럼 비율로 말한다.\n"
+    "- 신호가 엇갈리면 인정하고 어느 쪽에 무게를 두는지와 이유를 말한다. 확신도(높음·중간·낮음)를 솔직하게 매긴다.\n"
+    "- 분할 매매와 현금 비중으로 위험을 관리한다.\n"
+    "- long.allocation 은 전체 투자자산(주식·코인·현금)의 목표 배분이고 pct 합은 100.\n"
+    "- long.coins 의 target_pct 는 코인 계좌 안의 목표 비중이다. 8종 target_pct 와 crypto_cash_pct(코인 계좌의 현금·스테이블 "
+    "목표)의 합이 100. 현재 비중과 비교해 리밸런싱 방향이 드러나게 하고, 비중이 미입력인 코인도 목표 비중은 정한다.\n"
+    "- 코인 8종은 short.coins 와 long.coins 모두 빠짐없이 판단한다. short.coins 의 condition 에는 행동을 실행하거나 바꿀 "
+    "구체적 조건을 쓴다.\n"
+    "- 주식 ticker 는 미국 티커(예: SMH, NVDA). 모르면 빈 문자열.\n"
+    "- headline 은 단기 대응과 중장기 전략을 함께 담은 한 줄, summary 는 3~5문장.\n"
     "- 오늘 날짜와 FOMC 일정은 사용자 메시지 첫 줄의 날짜 정보를 따른다.\n"
     + calendar_ctx.RULE +
     "- 한국어로, 짧고 명확하게."
 )
 
 
-def ask(dig):
+def prev_context(prev):
+    """직전 의견: 중장기는 전문(유지 판단용), 단기는 행동만"""
+    op = prev.get("opinion") or {}
+    if prev.get("version") != 2 or not op.get("long"):
+        return "## 직전 중장기 의견\n없음 — 첫 중장기 의견을 작성한다.\n\n## 직전 단기 행동\n없음"
+    since = prev.get("long_since") or "-"
+    try:
+        days = "%d일째" % ((now.date() - datetime.date.fromisoformat(since)).days + 1)
+    except ValueError:
+        days = "-"
+    sh = op.get("short") or {}
+    st = sh.get("stance") or {}
+    return ("## 직전 중장기 의견 (%s 수립, 오늘 %s)\n%s\n\n## 직전 단기 행동 (%s)\n주식 %s · 코인 %s · 현금 %s / %s" % (
+        since, days, json.dumps(op["long"], ensure_ascii=False), (prev.get("generated") or "")[:10],
+        st.get("stocks"), st.get("crypto"), st.get("cash"),
+        ", ".join("%s %s" % (c["sym"], c["action"]) for c in sh.get("coins", []))))
+
+
+def ask(dig, ctx):
     import anthropic
     client = anthropic.Anthropic()
-    user = (calendar_ctx.macro_context(now.date()) + "\n\n아래는 오늘 대시보드 데이터 요약이다. "
-            "이 데이터를 근거로 네가 이 사용자라면 어떻게 투자할지 종합의견을 작성하라.\n\n" + dig)
+    user = (calendar_ctx.macro_context(now.date()) + "\n\n아래는 오늘 대시보드 데이터와 내 포트폴리오 요약, 그리고 직전 의견이다. "
+            "이 데이터를 근거로 네가 이 사용자라면 어떻게 투자할지 단기·중장기로 나눠 작성하라.\n\n" + dig + "\n\n" + ctx)
     kw = dict(model=MODEL, max_tokens=48000, system=SYSTEM, messages=[{"role": "user", "content": user}],
               output_config={"effort": "high", "format": {"type": "json_schema", "schema": SCHEMA}})
     try:
@@ -219,6 +304,37 @@ def ask(dig):
         raise RuntimeError("출력 한도 초과")
     text = next(b.text for b in msg.content if b.type == "text")
     return json.loads(text), msg.model
+
+
+def norm100(items, key):
+    """합계 100 으로 비율 보정, 반올림 오차는 가장 큰 항목에"""
+    tot = sum(max(0, x.get(key) or 0) for x in items)
+    if not items or not tot:
+        return
+    for x in items:
+        x[key] = round(max(0, x.get(key) or 0) * 100 / tot)
+    max(items, key=lambda x: x[key])[key] += 100 - sum(x[key] for x in items)
+
+
+def normalize(op):
+    lg = op["long"]
+    norm100(lg.get("allocation") or [], "pct")
+    parts = (lg.get("coins") or []) + [{"cash": True, "target_pct": lg.get("crypto_cash_pct", 0)}]
+    norm100(parts, "target_pct")
+    lg["crypto_cash_pct"] = parts[-1]["target_pct"]
+    order = {s: i for i, s in enumerate(COIN_SYMS)}
+    for k in ("short", "long"):
+        op[k]["coins"] = sorted(op[k].get("coins") or [], key=lambda c: order.get(c["sym"], 99))
+
+
+def short_snapshot(prev):
+    """'전일 대비 변경' 표시용: 직전 날짜의 단기 입장·코인 행동"""
+    op = prev.get("opinion") or {}
+    if prev.get("version") != 2 or not op.get("short"):
+        return None
+    sh = op["short"]
+    return {"date": (prev.get("generated") or "")[:10], "stance": sh.get("stance"),
+            "coins": {c["sym"]: c["action"] for c in sh.get("coins", [])}}
 
 
 # ---------------------------------------------------------------- 가격 · 성과
@@ -245,12 +361,10 @@ def coin_prices(C):
 
 
 def calls_of(op, cp):
-    out = []
-    for c in (op.get("crypto") or {}).get("coins", []):
-        out.append({"name": c["sym"], "kind": "coin", "action": c["action"], "px": cp.get(c["sym"])})
-    st = op.get("stocks") or {}
-    for side, act in (("overweight", "비중 확대"), ("underweight", "비중 축소")):
-        for s in st.get(side, []):
+    sh = op.get("short") or {}
+    out = [{"name": c["sym"], "kind": "coin", "action": c["action"], "px": cp.get(c["sym"])} for c in sh.get("coins", [])]
+    for side, act in (("stocks_buy", "매수"), ("stocks_avoid", "회피")):
+        for s in sh.get(side, []):
             if s.get("ticker"):
                 out.append({"name": s["ticker"], "kind": "stock", "action": act, "px": stock_price(s["ticker"])})
     return out
@@ -275,33 +389,44 @@ def main():
     D, C, T = load("data.json"), load("crypto.json"), load("thirteenf.json")
     prev = load(OUT) or {}
     hist = load(HIST) or []
+    pf = portfolio(C)
+    v2 = prev.get("version") == 2
     force = os.environ.get("OPINION_FORCE") == "1"
     fresh = False
     try:
-        last = datetime.datetime.fromisoformat(prev.get("generated", "2000-01-01T00:00:00+09:00"))
+        last = datetime.datetime.fromisoformat(prev.get("generated") or "2000-01-01T00:00:00+09:00")
         fresh = (now - last) < datetime.timedelta(hours=12)
     except (ValueError, TypeError):
         pass
 
-    op, model = prev.get("opinion"), prev.get("model")
+    op, model, generated = (prev.get("opinion"), prev.get("model"), prev.get("generated")) if v2 else (None, None, None)
+    long_since, long_check = prev.get("long_since"), prev.get("long_check")
+    long_log, prev_short = prev.get("long_log") or [], prev.get("prev_short")
     if not os.environ.get("ANTHROPIC_API_KEY"):
         print("[의견] ANTHROPIC_API_KEY 없음 — 이전 의견 유지")
-    elif not fresh or force:
+    elif not fresh or force or not v2:
         try:
-            op, model = ask(digest(D, C, T))
-            al = op.get("allocation") or []
-            tot = sum(max(0, a.get("pct", 0)) for a in al) or 100
-            for a in al:                                    # 합계 100 으로 보정
-                a["pct"] = round(max(0, a.get("pct", 0)) * 100 / tot)
-            if al:
-                max(al, key=lambda a: a["pct"])["pct"] += 100 - sum(a["pct"] for a in al)
+            new, model = ask(digest(D, C, T) + "\n" + port_digest(pf), prev_context(prev))
+            normalize(new)
+            pl, judged = (op or {}).get("long"), new["long"]["status"]
+            if pl and judged == "유지":
+                long_check = {"date": TODAY, "note": new["long"]["change_note"]}
+                new["long"] = pl                            # 문구까지 그대로: 중장기 의견이 매일 흔들리지 않게
+            else:
+                if not pl:                                   # 직전 중장기 의견이 없으면 첫 의견
+                    new["long"]["status"] = "변경"
+                long_since, long_check = TODAY, None
+                long_log = ([{"date": TODAY, "status": new["long"]["status"], "note": new["long"]["change_note"]}] +
+                            [x for x in long_log if x.get("date") != TODAY])[:12]
+            if (prev.get("generated") or "")[:10] != TODAY:   # 같은 날 재실행이면 비교 기준(전일)은 그대로
+                prev_short = short_snapshot(prev)
+            op, generated = new, now.isoformat(timespec="minutes")
             cp = coin_prices(C)
-            hist = [h for h in hist if h.get("date") != now.strftime("%Y-%m-%d")] + [{
-                "date": now.strftime("%Y-%m-%d"), "headline": op.get("headline"),
-                "stance": op.get("stance"), "calls": calls_of(op, cp)}]
+            hist = [h for h in hist if h.get("date") != TODAY] + [{
+                "date": TODAY, "headline": op.get("headline"), "stance": op["short"].get("stance"),
+                "long_stance": op["long"].get("stance"), "calls": calls_of(op, cp)}]
             hist = hist[-60:]
-            prev["generated"] = now.isoformat(timespec="minutes")
-            print("[의견] 새로 생성:", op.get("headline"))
+            print("[의견] 새로 생성:", op.get("headline"), "| 중장기 판단:", judged)
         except Exception as e:
             print("[의견] 생성 실패 — 이전 의견 유지:", str(e)[:300])
     else:
@@ -309,9 +434,10 @@ def main():
     if not op:
         return
 
-    past = track(hist[:-1] if hist and hist[-1].get("date") == now.strftime("%Y-%m-%d") else hist,
-                 coin_prices(C))
-    out = {"generated": prev.get("generated"), "model": model, "opinion": op, "track": past,
+    past = track(hist[:-1] if hist and hist[-1].get("date") == TODAY else hist, coin_prices(C))
+    out = {"version": 2, "generated": generated, "model": model, "opinion": op,
+           "long_since": long_since, "long_check": long_check, "long_log": long_log, "prev_short": prev_short,
+           "portfolio": pf, "track": past,
            "asof": {"지표": (D or {}).get("updated"), "코인": (C or {}).get("updated"),
                     "기관": (T or {}).get("latest_period")}}
     with open(OUT, "w", encoding="utf-8") as f:
