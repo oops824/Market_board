@@ -100,7 +100,7 @@ function renderOP(){
   var o=OP.opinion||{},st=o.stance||{},asof=OP.asof||{},
     age=(Date.now()-Date.parse(OP.generated||''))/36e5;
   var bar='<div class="cbar"><span>'+opT(opWhen(OP.generated))+' 작성 · 하루 1회</span>'+
-    '<span>지표 '+opT(opWhen(asof['지표']))+' 기준</span></div>';
+    (asof['지표']?'<span>지표 '+opT(opWhen(asof['지표']))+' 기준</span>':'')+'</div>';
   var stale=age>36?'<p class="note" style="color:var(--warn)">최근 생성에 실패해 '+Math.floor(age/24)+
     '일 전 의견을 표시하고 있습니다.</p>':'';
   $('#p5').innerHTML=bar+stale+opHero(o)+
