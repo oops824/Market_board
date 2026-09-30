@@ -84,6 +84,26 @@ def _bls_all():
     return _BLS
 
 
+# FRED 시리즈 → DBnomics 의 BEA 원 시리즈 (PCE·GDP 는 BLS 에 없으므로)
+DBN_ID = {"PCEPI": "BEA/NIPA-T20804/DPCERG-M", "PCEPILFE": "BEA/NIPA-T20804/DPCCRG-M",
+          "DGDSRG3M086SBEA": "BEA/NIPA-T20804/DGDSRG-M", "DSERRG3M086SBEA": "BEA/NIPA-T20804/DSERRG-M",
+          "DFXARG3M086SBEA": "BEA/NIPA-T20804/DFXARG-M", "DNRGRG3M086SBEA": "BEA/NIPA-T20804/DNRGRG-M",
+          "A191RL1Q225SBEA": "BEA/NIPA-T10101/A191RL-Q"}
+
+
+def _dbnomics(code):
+    j = json.loads(get("https://api.db.nomics.world/v22/series/%s?observations=1" % code, 60))
+    doc = j["series"]["docs"][0]
+    out = []
+    for p, v in zip(doc["period"], doc["value"]):
+        if v in (None, "NA"):
+            continue
+        m = re.fullmatch(r"(\d{4})-Q(\d)", p)
+        d = "%s-%02d-01" % (m.group(1), (int(m.group(2)) - 1) * 3 + 1) if m else p + "-01"
+        out.append((d, float(v)))
+    return out
+
+
 def fred(sid, start="2022-01-01"):
     """[(YYYY-MM-DD, float)] 과거->최신. FRED 실패 시 BLS 원 시리즈로 대체"""
     try:
@@ -94,6 +114,11 @@ def fred(sid, start="2022-01-01"):
         bid = BLS_ID.get(sid, sid if sid.startswith("CUSR") else None)
         if bid:
             out = [x for x in _bls_all().get(bid, []) if x[0] >= start]
+    if len(out) < 3 and sid in DBN_ID:
+        try:
+            out = [x for x in _dbnomics(DBN_ID[sid]) if x[0] >= start]
+        except Exception as e:
+            print("  ! DBnomics %s: %s" % (sid, e))
     if len(out) < 3:
         raise ValueError("%s 데이터 부족" % sid)
     return out
@@ -262,7 +287,7 @@ def claude(prompt, max_tokens=3000, search=False):
     body = {"model": "claude-sonnet-5", "max_tokens": max_tokens,
             "messages": [{"role": "user", "content": prompt}]}
     if search:
-        body["tools"] = [{"type": "web_search_20250305", "name": "web_search", "max_uses": 6,
+        body["tools"] = [{"type": "web_search_20260209", "name": "web_search", "max_uses": 6,
                           "allowed_domains": ["bls.gov", "bea.gov", "reuters.com", "cnbc.com",
                                               "investing.com", "tradingeconomics.com", "marketwatch.com"]}]
     req = urllib.request.Request("https://api.anthropic.com/v1/messages", data=json.dumps(body).encode(),
@@ -308,7 +333,8 @@ def interpret(ind):
         "4) 연준 정책 경로에 주는 함의 한 문장\n"
         "규칙: 주어진 숫자만 사용, 없는 수치·사건을 만들지 말 것. 기여도는 가중치 근사치 기반임을 감안해 "
         "'약'을 붙일 것. 매수/매도 추천 금지.\n" + calendar_ctx.RULE +
-        "출력은 JSON 하나만: {\"key\": \"해석\", ...}\n\n" + json.dumps(ind, ensure_ascii=False))
+        "출력은 JSON 하나만. 값은 반드시 하나의 문자열(3~4문장 한 문단)이며 하위 객체로 나누지 말 것: "
+        "{\"key\": \"해석 문단\", ...}\n\n" + json.dumps(ind, ensure_ascii=False))
     return claude(prompt, 4000) or {}
 
 
@@ -329,7 +355,7 @@ def main():
             state[k] = {"period": d["period"], "release": us_today if first_seen else None,
                         "consensus": "", "ai": "", "market": []}
             need_lookup.append((k, d["title"], d["period"]))
-        elif not state[k].get("release") and not state[k].get("looked_up"):
+        elif not state[k].get("release") and not state[k].get("looked_up2"):
             need_lookup.append((k, d["title"], d["period"]))
 
     if need_lookup:
@@ -343,22 +369,31 @@ def main():
                 state[k]["release"] = rd
             if f.get("consensus"):
                 state[k]["consensus"] = str(f["consensus"])[:200]
-            state[k]["looked_up"] = True
+            if k in found:                    # 검색이 실제로 답했을 때만 '확인 완료'
+                state[k]["looked_up2"] = True
 
     todo = {}
     for k, d in inds.items():
         st = state[k]
         if st.get("release") and not st.get("market"):
             st["market"] = reaction(st["release"])
-        if not st.get("ai"):
+        # 해석의 근거(발표일·예상치·시장 반응)가 바뀌면 다시 쓴다
+        basis = "%s|%s|%d" % (st.get("release"), st.get("consensus"), len(st.get("market") or []))
+        if not st.get("ai") or st.get("ai_basis") != basis:
+            st["ai_basis"] = basis
             todo[k] = {x: d.get(x) for x in ("title", "period", "head", "core", "value", "prev", "chg",
                                              "contrib", "detail")} | \
                 {"release": st.get("release"), "consensus": st.get("consensus"), "market": st.get("market")}
     if todo:
         ai = interpret(todo)
         for k in todo:
-            if ai.get(k):
-                state[k]["ai"] = str(ai[k]).strip()
+            v = ai.get(k)
+            if isinstance(v, dict):           # 항목별로 나눠 답한 경우 한 문단으로
+                v = " ".join(str(x).strip() for x in v.values())
+            elif isinstance(v, list):
+                v = " ".join(str(x).strip() for x in v)
+            if v:
+                state[k]["ai"] = str(v).strip()
 
     items = []
     for k in ("cpi", "ppi", "pce", "unemp", "gdp"):
