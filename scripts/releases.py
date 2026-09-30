@@ -281,15 +281,19 @@ def reaction(day):
 
 
 # ---------- Claude ----------
-def claude(prompt, max_tokens=3000, search=False):
+SEARCH_DOMAINS = ["bls.gov", "bea.gov", "cnbc.com", "investing.com", "tradingeconomics.com",
+                  "fxstreet.com"]
+
+
+def claude(prompt, max_tokens=3000, search=False, _retry=True):
     if not KEY:
         return None
     body = {"model": "claude-sonnet-5", "max_tokens": max_tokens,
             "messages": [{"role": "user", "content": prompt}]}
     if search:
+        # reuters.com·marketwatch.com 은 Anthropic 크롤러를 막아 목록에 넣으면 요청 전체가 400
         body["tools"] = [{"type": "web_search_20260209", "name": "web_search", "max_uses": 6,
-                          "allowed_domains": ["bls.gov", "bea.gov", "reuters.com", "cnbc.com",
-                                              "investing.com", "tradingeconomics.com", "marketwatch.com"]}]
+                          "allowed_domains": list(SEARCH_DOMAINS)}]
     req = urllib.request.Request("https://api.anthropic.com/v1/messages", data=json.dumps(body).encode(),
                                  headers={"content-type": "application/json", "x-api-key": KEY,
                                           "anthropic-version": "2023-06-01"})
@@ -304,7 +308,14 @@ def claude(prompt, max_tokens=3000, search=False):
             return None
         return json.loads(m.group(0))
     except urllib.error.HTTPError as e:
-        print("  ! Claude HTTP %s: %s" % (e.code, e.read().decode("utf-8", "replace")[:500]))
+        msg = e.read().decode("utf-8", "replace")
+        print("  ! Claude HTTP %s: %s" % (e.code, msg[:500]))
+        blocked = re.findall(r"'([a-z0-9.-]+\.[a-z]+)'", msg) if "not accessible" in msg else []
+        if search and _retry and blocked:    # 크롤러 차단 도메인을 빼고 한 번 더
+            for d in blocked:
+                if d in SEARCH_DOMAINS:
+                    SEARCH_DOMAINS.remove(d)
+            return claude(prompt, max_tokens, search, _retry=False)
         return None
     except Exception as e:
         print("  ! Claude:", str(e)[:200])
@@ -385,8 +396,8 @@ def main():
             st["market"] = reaction(st["release"])
         # 해석의 근거(발표일·예상치·시장 반응)가 바뀌면 다시 쓴다
         basis = "%s|%s|%d" % (st.get("release"), st.get("consensus"), len(st.get("market") or []))
-        if not st.get("ai") or st.get("ai_basis") != basis:
-            st["ai_basis"] = basis
+        bad_ai = str(st.get("ai", "")).startswith("{")      # 예전 버그로 저장된 객체 문자열
+        if not st.get("ai") or bad_ai or st.get("ai_basis") != basis:
             todo[k] = {x: d.get(x) for x in ("title", "period", "head", "core", "value", "prev", "chg",
                                              "contrib", "detail")} | \
                 {"release": st.get("release"), "consensus": st.get("consensus"), "market": st.get("market")}
@@ -400,6 +411,8 @@ def main():
                 v = " ".join(str(x).strip() for x in v)
             if v:
                 state[k]["ai"] = str(v).strip()
+                state[k]["ai_basis"] = "%s|%s|%d" % (state[k].get("release"), state[k].get("consensus"),
+                                                    len(state[k].get("market") or []))
 
     items = []
     for k in ("cpi", "ppi", "pce", "unemp", "gdp"):
