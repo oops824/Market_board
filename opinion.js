@@ -43,18 +43,24 @@ function opHero(o){
 /* 내 코인 포트폴리오: 현재 비중(막대)과 중장기 목표 비중(세로선), 단기 행동·중장기 역할 */
 function opPort(o){
   var pf=OP.portfolio;if(!pf||!pf.rows)return '';
-  var sa={},lr={};
-  (o.short.coins||[]).forEach(function(c){sa[c.sym]=c});
-  (o.long.coins||[]).forEach(function(c){lr[c.sym]=c});
   var rows=pf.rows.slice();
-  (pf.unknown||[]).forEach(function(s){rows.push({sym:s,w:null,pnl:null})});
-  rows.push({sym:'현금',cash:true,w:pf.cash});
-  rows.forEach(function(r){r.t=r.cash?o.long.crypto_cash_pct:(lr[r.sym]||{}).target_pct});
+  (pf.unknown||[]).forEach(function(x){rows.push({sym:x,w:null,pnl:null})});
+  rows.push({sym:'현금',cash:true,w:pf.cash,t:o.long.crypto_cash_pct});
+  var h=opPortCard('내 코인 포트폴리오',pf.asof,rows,o.short.coins,o.long.coins,'USDT');
+  var st=pf.stocks;
+  if(st&&st.rows)h+=opPortCard('내 미국 주식 포트폴리오',st.asof,st.rows.slice(),o.short.holdings,o.long.holdings,'');
+  return h}
+/* 계좌 카드: 현재 비중(막대)과 중장기 목표 비중(세로선), 단기 행동·중장기 역할 */
+function opPortCard(title,asof,rows,shortL,longL,cashSub){
+  var sa={},lr={};
+  (shortL||[]).forEach(function(c){sa[c.sym]=c});
+  (longL||[]).forEach(function(c){lr[c.sym]=c});
+  rows.forEach(function(r){if(!r.cash)r.t=(lr[r.sym]||{}).target_pct});
   var mx=Math.max.apply(null,rows.map(function(r){return Math.max(r.w||0,r.t||0)}))||1;
   var h=rows.map(function(r){
     var s=sa[r.sym],l=lr[r.sym],d=opNum(r.w)&&opNum(r.t)?r.t-r.w:null;
     var arrow=d==null||Math.abs(d)<2?'':d>0?' <span class="tu">▲</span>':' <span class="td">▼</span>';
-    return '<div class="pf-r"><div class="pf-1"><b>'+opT(r.sym)+(r.cash?' <span class="dim">USDT</span>':'')+'</b>'+
+    return '<div class="pf-r"><div class="pf-1"><b>'+opT(r.sym)+(r.cash&&cashSub?' <span class="dim">'+cashSub+'</span>':'')+'</b>'+
       (opNum(r.pnl)?'<span class="badge '+(r.pnl>=0?'up':'dn')+'">'+opPct(r.pnl)+'</span>':
         r.cash?'':'<span class="dim">비중 미입력</span>')+(r.note?'<span class="dim">'+opT(r.note)+'</span>':'')+
       '<span class="pf-w">'+(opNum(r.w)?r.w.toFixed(1)+'%':'-')+' → '+(opNum(r.t)?r.t+'%':'-')+arrow+'</span></div>'+
@@ -62,8 +68,8 @@ function opPort(o){
       (opNum(r.t)?'<u style="left:calc('+(r.t/mx*100).toFixed(1)+'% - 1px)"></u>':'')+'</div>'+
       (s||l?'<div class="tags">'+(s?'<span class="tag '+(OP_ACT[s.action]||'na')+'">단기 '+opT(s.action)+'</span>':'')+
         (l?'<span class="tag '+(OP_ROLE[l.role]||'na')+'">중장기 '+opT(l.role)+'</span>':'')+'</div>':'')+'</div>'}).join('');
-  return '<div class="etf"><div class="eh"><b>내 코인 포트폴리오</b><span class="dim">'+opMD(pf.asof)+
-    ' 기준 · 이후 시세 반영</span></div><div class="legend"><span><i style="background:var(--sub)"></i>현재 비중</span>'+
+  return '<div class="etf"><div class="eh"><b>'+title+'</b><span class="dim">'+opMD(asof)+
+    ' 기준 · 시세 반영</span></div><div class="legend"><span><i style="background:var(--sub)"></i>현재 비중</span>'+
     '<span><i class="tk2"></i>중장기 목표 비중</span><span>수익률은 평단 대비</span></div>'+h+'</div>'}
 
 /* 모델 포트폴리오: 누적 막대(2px 간격) + 색 견본·이름·비중 목록 */
@@ -104,7 +110,8 @@ function opShort(o){
   return opCard('단기 시각','<div class="brief">'+opT(sh.view)+'</div>','확신 '+opT(sh.confidence))+
     opCard('지금 할 일',opList('바로 실행',sh.actions_now,'')+opList('기다릴 신호',sh.wait_for,'op-q'))+
     opCard('코인 단기 대응','<ul class="opl">'+coins+'</ul>')+
-    opCard('주식 단기',opPicks(sh.stocks_buy,'매수','up')+opPicks(sh.stocks_avoid,'회피','dn'))+
+    opCard('보유 주식 단기 대응',opHold(sh.holdings,true))+
+    opCard('주식 단기 · 새로 볼 종목',opPicks(sh.stocks_buy,'매수','up')+opPicks(sh.stocks_avoid,'회피','dn'))+
     opCard('단기 리스크',opList('',sh.risks,'op-w'))}
 
 function opLong(o){
@@ -120,7 +127,8 @@ function opLong(o){
   return opCard('중장기 전략','<div class="brief">'+opT(lg.thesis)+'</div>','확신 '+opT(lg.confidence))+
     opAlloc(lg.allocation)+
     opCard('코인 중장기','<ul class="opl">'+coins+'</ul>','코인 계좌 목표 · 현금 '+opT(lg.crypto_cash_pct)+'%')+
-    opCard('주식 중장기',opPicks(lg.stocks_overweight,'비중 확대','up')+opPicks(lg.stocks_underweight,'비중 축소','dn'))+
+    opCard('보유 주식 중장기',opHold(lg.holdings,false),'주식 계좌 목표 비중'+(lg.holdings_new_pct?' · 신규 편입 '+lg.holdings_new_pct+'%':''))+
+    opCard('주식 중장기 · 테마',opPicks(lg.stocks_overweight,'비중 확대','up')+opPicks(lg.stocks_underweight,'비중 축소','dn'))+
     opCard('리스크 점검',opList('주요 리스크',lg.risks,'op-w')+opList('이 의견을 바꿀 신호',lg.change_mind,'op-q'))+
     (log?opCard('중장기 의견 변경 이력','<ul class="opl">'+log+'</ul>'):'')}
 
@@ -141,14 +149,39 @@ function opTrack(tr){
   return h+(n?'<div class="ops">방향 적중 <b>'+w+'/'+n+'</b> <span class="dim">('+Math.round(w*100/n)+'%) · '+
     '매수·확대는 오르면, 축소·차익실현·회피는 내리면 적중</span></div>':'')+'<ul class="opl">'+rows+'</ul></div>'}
 
-/* 웹 검색으로 모은 최근 뉴스·전문가 전망 (접힘) */
+/* 보유 종목별 판단 (단기: 행동·조건, 중장기: 역할·목표 비중) */
+function opHold(list,isShort){
+  if(!list||!list.length)return '';
+  var pw={};(((OP.portfolio||{}).stocks||{}).rows||[]).forEach(function(r){pw[r.sym]=r.w});
+  return '<ul class="opl">'+list.map(function(c){
+    var k=isShort?c.action:c.role;
+    return '<li><div class="opr"><b>'+opT(c.sym)+'</b><span class="tag '+((isShort?OP_ACT:OP_ROLE)[k]||'na')+'">'+opT(k)+'</span>'+
+      (!isShort?'<span class="cf">목표 '+c.target_pct+'%'+(opNum(pw[c.sym])?' · 현재 '+pw[c.sym].toFixed(1)+'%':'')+'</span>':'')+
+      '</div><div class="opw">'+opT(c.why)+'</div>'+(isShort&&c.condition?'<div class="opc"><em>조건</em>'+opT(c.condition)+'</div>':'')+
+      '</li>'}).join('')+'</ul>'}
+
+/* 웹 검색으로 모은 최근 뉴스·전문가 전망: 영역(##)별 접이식, 글머리표·굵게 표시, 출처는 접어 둠 */
+function opMd(t){return opT(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')}
 function opOutlook(){
   if(!OP.outlook)return '';
+  var secs=[],cur=null;
+  OP.outlook.split('\n').forEach(function(line){
+    var m=line.match(/^#{1,4}\s*(.+)$/);
+    if(m){cur={t:m[1].replace(/\*\*/g,''),items:[]};secs.push(cur);return}
+    if(!line.trim()||/^\*\*기준일/.test(line.trim()))return;
+    if(!cur){cur={t:'요약',items:[]};secs.push(cur)}
+    var b=line.match(/^(\s*)[-*•]\s+(.*)$/);
+    cur.items.push(b?{sub:b[1].length>=2,t:b[2]}:{p:true,t:line.trim()})});
+  var body=secs.map(function(x,i){
+    var lis=x.items.map(function(it){
+      return it.p?'<p class="ol-p">'+opMd(it.t)+'</p>':'<li'+(it.sub?' class="sub"':'')+'>'+opMd(it.t)+'</li>'}).join('');
+    return '<details class="ol-s"'+(i===0?' open':'')+'><summary>'+opT(x.t.replace(/^[①-⑩]\s*/,''))+
+      '<span class="ol-n">'+(i+1)+'</span></summary><ul class="ol-l">'+lis+'</ul></details>'}).join('');
   var src=(OP.sources||[]).map(function(x){
     return '<li><a href="'+escA(x.url)+'" target="_blank" rel="noopener">'+opT(x.title)+'</a></li>'}).join('');
-  return '<details class="etf econ"><summary>뉴스·전문가 전망<span class="cn">출처 '+(OP.sources||[]).length+
-    '곳</span></summary><div class="body"><div class="brief op-ol">'+opT(OP.outlook)+'</div>'+
-    (src?'<div class="sec">출처</div><ul class="news op-src">'+src+'</ul>':'')+'</div></details>'}
+  return '<div class="etf op-news"><div class="eh"><b>뉴스·전문가 전망</b><span class="dim">'+opMD(OP.generated)+
+    ' 웹 검색 · 출처 '+(OP.sources||[]).length+'곳</span></div>'+body+
+    (src?'<details class="ko"><summary>출처 보기</summary><ul class="news op-src">'+src+'</ul></details>':'')+'</div>'}
 
 function opBody(){return OP_H==='l'?opLong(OP.opinion):opShort(OP.opinion)}
 function renderOP(){

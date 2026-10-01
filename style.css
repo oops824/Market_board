@@ -289,5 +289,20 @@ border-radius:9px;padding:9px 0;cursor:pointer}
 #p5 .tags .tag{max-width:100%;white-space:normal}
 .op-fw{margin-top:12px;background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13.5px;line-height:1.7}
 .op-fw b{display:block;color:var(--acc);font-size:12.5px;margin-bottom:4px}
-.op-ol{white-space:pre-wrap;font-size:13.5px}
 .op-src a{font-size:13px;font-weight:500;color:var(--sub)}
+/* 뉴스·전문가 전망: 강조선 + 영역별 접이식 */
+.op-news{border-left:3px solid var(--acc)}
+details.ol-s{background:none;border:0;border-top:1px solid var(--line);border-radius:0;margin:0;overflow:visible}
+.op-news .eh+details.ol-s{border-top:none}
+details.ol-s>summary{padding:11px 0;font-size:14.5px;justify-content:flex-start}
+details.ol-s>summary .ol-n{order:-1;flex:none;width:20px;height:20px;border-radius:6px;background:var(--acc-bg);
+color:var(--acc);font-size:12px;font-weight:700;text-align:center;line-height:20px}
+details.ol-s>summary::after{margin-left:auto}
+.ol-l{list-style:none;margin:0 0 10px;padding:0}
+.ol-l li{position:relative;padding:6px 0 6px 14px;font-size:13.5px;line-height:1.7;color:var(--sub)}
+.ol-l li::before{content:'';position:absolute;left:2px;top:15px;width:5px;height:5px;border-radius:50%;background:var(--acc)}
+.ol-l li.sub{padding-left:28px;font-size:13px}
+.ol-l li.sub::before{left:16px;background:var(--dim)}
+.ol-l b{color:var(--txt);font-weight:700}
+.ol-p{margin:4px 0 8px;font-size:13.5px;line-height:1.7;color:var(--sub)}
+.op-news details.ko{margin-top:6px}

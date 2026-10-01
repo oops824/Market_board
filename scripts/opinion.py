@@ -21,7 +21,7 @@ UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.3
                     "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
 COIN_SYMS = ["BTC", "ETH", "SOL", "HYPE", "LINK", "ONDO", "SUI", "VIRTUAL"]
 SHORT_ACT = ["분할 매수", "비중 확대", "유지", "일부 차익실현", "비중 축소", "관망"]
-PROFILE = "|risk7.5-8|outlook"                       # 투자 성향·판단 방식 버전 (바뀌면 중장기 재작성)
+PROFILE = "|risk7.5-8|outlook|stock-targets"                       # 투자 성향·판단 방식 버전 (바뀌면 중장기 재작성)
 LONG_ROLE = ["핵심 보유", "보유", "비중 확대", "비중 축소", "정리"]
 BUY = {"분할 매수", "비중 확대", "매수"}
 SELL = {"일부 차익실현", "비중 축소", "회피"}
@@ -156,10 +156,26 @@ def portfolio(C):
     for x in rows:
         x["w"] = round(vals[x["sym"]] / tot * 100, 1)
     rows.sort(key=lambda x: -x["w"])
-    sig = hashlib.sha1(json.dumps([P.get("holdings"), P.get("cash"), P.get("unknown")],
+    sig = hashlib.sha1(json.dumps([P.get("holdings"), P.get("cash"), P.get("unknown"), P.get("stocks")],
                                   sort_keys=True).encode()).hexdigest()[:12]
-    return {"asof": P.get("asof"), "rows": rows, "cash": round(cash / tot * 100, 1),
-            "unknown": [u["sym"] for u in P.get("unknown", [])], "sig": sig}
+    out = {"asof": P.get("asof"), "rows": rows, "cash": round(cash / tot * 100, 1),
+           "unknown": [u["sym"] for u in P.get("unknown", [])], "sig": sig}
+    st = P.get("stocks")
+    if st and st.get("holdings"):                    # 미국 주식 계좌: 현재가(야후)로 같은 방식 추정
+        srows, sv = [], {}
+        for h in st["holdings"]:
+            px = stock_price(h["sym"])
+            r = px / h["ref"] if px and h.get("ref") else 1.0
+            sv[h["sym"]] = h["w"] * r
+            srows.append({"sym": h["sym"], "cur": "USD", "avg": h["avg"], "px": px or h.get("ref"),
+                          "pnl": round(((1 + h["pnl"] / 100) * r - 1) * 100, 1)})
+        stot = sum(sv.values()) or 1
+        for x in srows:
+            x["w"] = round(sv[x["sym"]] / stot * 100, 1)
+        srows.sort(key=lambda x: -x["w"])
+        out["stocks"] = {"asof": st.get("asof"), "rows": srows}
+        out["split"] = P.get("split")
+    return out
 
 
 def fmt_avg(r):
@@ -179,7 +195,17 @@ def port_digest(pf):
         (" (%s)" % r["note"] if r.get("note") else "")) for r in pf["rows"]]
     L.append("- 현금(USDT): 비중 %.1f%%" % pf["cash"])
     L += ["- %s: 보유 중이나 비중·평단 미입력(비중 계산에서 제외)" % s for s in pf["unknown"]]
-    L.append("HYPE 는 USDT 로 거래하는 해외 거래소, 나머지는 원화 거래소에서 보유. 미국 주식 보유 내역은 미입력.")
+    L.append("HYPE 는 USDT 로 거래하는 해외 거래소, 나머지는 원화 거래소에서 보유.")
+    st = pf.get("stocks")
+    if st:
+        sp = pf.get("split") or {}
+        L.append("## 내 미국 주식 포트폴리오 (%s 기준, 이후 가격 반영 추정 · 주식 계좌 안의 비중)" % st["asof"])
+        L += ["- %s: 비중 %.1f%%, 평단 $%g, 현재가 %s, 수익률 %+.1f%%" % (
+            r["sym"], r["w"], r["avg"], ("$%g" % r["px"]) if r.get("px") else "-", r["pnl"]) for r in st["rows"]]
+        if sp:
+            L.append("계좌 규모 비율: 주식 계좌 %s%% : 코인 계좌 %s%% (금액 미공개)" % (sp.get("stocks"), sp.get("crypto")))
+    else:
+        L.append("미국 주식 보유 내역은 미입력.")
     return "\n".join(L)
 
 
@@ -199,11 +225,14 @@ SCHEMA = obj(
     headline=S, summary=S, forward=S,
     short=obj(view=S, confidence=S, stance=STANCE3,
               coins={"type": "array", "items": obj(sym=S, action=S, why=S, condition=S, confidence=S)},
+              holdings={"type": "array", "items": obj(sym=S, action=S, why=S, condition=S)},
               stocks=STOCKS, actions_now=STRS, wait_for=STRS, risks=STRS),
     long=obj(status=S, change_note=S, thesis=S, confidence=S, stance=STANCE3,
              allocation={"type": "array", "items": obj(asset=S, pct=I, why=S)},
              coins={"type": "array", "items": obj(sym=S, role=S, target_pct=I, why=S)},
-             crypto_cash_pct=I, stocks=STOCKS, risks=STRS, change_mind=STRS))
+             crypto_cash_pct=I,
+             holdings={"type": "array", "items": obj(sym=S, role=S, target_pct=I, why=S)},
+             stocks=STOCKS, risks=STRS, change_mind=STRS))
 STANCES = ["적극 확대", "확대", "중립", "축소", "적극 축소"]
 
 SYSTEM = (
@@ -212,7 +241,7 @@ SYSTEM = (
     "'네가 이 사람이라면 지금 실제로 어떻게 투자하겠는가'에 대한 솔직하고 구체적인 의견이다.\n\n"
     "사용자 상황: 한국 거주 개인투자자. 위험 성향은 1점(위험 회피 최고)~10점(위험 감내 최고) 중 7.5~8점으로 공격적인 편이다. 가상자산은 데이터의 '내 코인 포트폴리오'대로 보유 중이다"
     "(HYPE 는 USDT 로 거래하는 해외 거래소, 나머지는 원화 거래소). 보유 수량·금액은 모르고 비중(%)과 수익률(%)만 안다. "
-    "미국 주식은 섹터 ETF·대형주 위주로 관심이 있고 보유 내역은 입력되지 않았다.\n\n"
+    "미국 주식은 데이터의 '내 미국 주식 포트폴리오'대로 보유 중이다(성장·AI 인프라·크립토 관련주 위주).\n\n"
     "의견은 두 시계로 나눈다.\n"
     "- short(단기, 1~4주): 매일 갱신하는 전술. 지금 할 행동, 코인별 매매와 실행 조건, 단기 매수·회피 주식.\n"
     "- long(중장기, 3~12개월): 전략. 전체 자산 목표 배분, 코인별 역할과 코인 계좌 안의 목표 비중, 비중 확대·축소할 주식.\n\n"
@@ -249,6 +278,9 @@ SYSTEM = (
     "- long.allocation 은 전체 투자자산(주식·코인·현금)의 목표 배분이고 pct 합은 100.\n"
     "- long.coins 의 target_pct 는 코인 계좌 안의 목표 비중이다. 8종 target_pct 와 crypto_cash_pct(코인 계좌의 현금·스테이블 "
     "목표)의 합이 100. 현재 비중과 비교해 리밸런싱 방향이 드러나게 하고, 비중이 미입력인 코인도 목표 비중은 정한다.\n"
+    "- 보유 미국 주식은 short.holdings(action: 분할 매수/비중 확대/유지/일부 차익실현/비중 축소/관망, condition 포함)와 "
+    "long.holdings(role: 핵심 보유/보유/비중 확대/비중 축소/정리, target_pct 는 주식 계좌 안 목표 비중, 보유 종목 합은 100 이하이고 나머지는 stocks 의 새 비중 확대 종목 몫)에서 "
+    "보유 종목을 빠짐없이 판단한다. 새로 살 종목·피할 종목은 stocks 에 쓴다. 손실 종목은 매몰비용이 아니라 앞으로의 논리로 판단한다.\n"
     "- 코인 8종은 short.coins 와 long.coins 모두 빠짐없이 판단한다. short.coins 의 condition 에는 행동을 실행하거나 바꿀 "
     "구체적 조건을 쓴다.\n"
     "- 주식 ticker 는 미국 티커(예: SMH, NVDA). 모르면 빈 문자열.\n"
@@ -406,8 +438,26 @@ def conf(v):
     return pick(v, ["높음", "중간", "낮음"], [("높", "높음"), ("낮", "낮음")], "중간")
 
 
-def clean(op):
+def clean(op, ssyms=()):
     """자유 문자열 값을 허용 값으로 맞추고, 저장 형식(화면이 읽는 모양)으로 바꾼다"""
+    sorder = {s: i for i, s in enumerate(ssyms)}
+    for k, key in (("short", "action"), ("long", "role")):
+        hs, seen = [], set()
+        for c in op[k].get("holdings") or []:
+            c["sym"] = str(c.get("sym") or "").strip().upper()
+            if c["sym"] in sorder and c["sym"] not in seen:
+                seen.add(c["sym"])
+                c[key] = (pick(c.get(key), SHORT_ACT, [("차익", "일부 차익실현"), ("분할", "분할 매수"), ("매수", "분할 매수"),
+                                                     ("확대", "비중 확대"), ("축소", "비중 축소"), ("매도", "비중 축소"),
+                                                     ("관망", "관망")], "유지") if key == "action" else
+                          pick(c.get(key), LONG_ROLE, [("핵심", "핵심 보유"), ("정리", "정리"), ("매도", "정리"),
+                                                      ("축소", "비중 축소"), ("확대", "비중 확대")], "보유"))
+                hs.append(c)
+        op[k]["holdings"] = sorted(hs, key=lambda c: sorder[c["sym"]])
+    hs = op["long"]["holdings"]                      # 합이 100 미만이면 나머지는 신규 편입 몫으로 두고, 넘칠 때만 줄인다
+    if sum(max(0, h.get("target_pct") or 0) for h in hs) > 100:
+        norm100(hs, "target_pct")
+    op["long"]["holdings_new_pct"] = max(0, 100 - sum(h.get("target_pct") or 0 for h in hs))
     order = {s: i for i, s in enumerate(COIN_SYMS)}
     for k in ("short", "long"):
         h = op[k]
@@ -479,6 +529,8 @@ def coin_prices(C):
 def calls_of(op, cp):
     sh = op.get("short") or {}
     out = [{"name": c["sym"], "kind": "coin", "action": c["action"], "px": cp.get(c["sym"])} for c in sh.get("coins", [])]
+    for h in sh.get("holdings", []):
+        out.append({"name": h["sym"], "kind": "stock", "action": h["action"], "px": stock_price(h["sym"])})
     for side, act in (("stocks_buy", "매수"), ("stocks_avoid", "회피")):
         for s in sh.get(side, []):
             if s.get("ticker"):
@@ -532,7 +584,7 @@ def main():
                 print("[의견] 전망 검색 실패 — 직전 전망 사용:", str(e)[:200])
             new, model = ask(digest(D, C, T) + "\n" + port_digest(pf) +
                              "\n\n## 뉴스·전문가 전망 (웹 검색 요약)\n" + (view or "없음"), prev_context(prev, port_changed))
-            clean(new)
+            clean(new, [r["sym"] for r in ((pf or {}).get("stocks") or {}).get("rows", [])])
             pl, judged = (op or {}).get("long"), new["long"]["status"]
             if pl and judged == "유지" and not port_changed:
                 long_check = {"date": TODAY, "note": new["long"]["change_note"]}
