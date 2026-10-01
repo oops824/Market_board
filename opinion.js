@@ -36,6 +36,7 @@ function opHero(o){
     return '<div class="rl">'+lab+'<small>'+sub+'</small></div>'+opCell(st.stocks)+opCell(st.crypto)+opCell(st.cash)};
   return '<div class="pick op-hero"><div class="pk-tag">오늘의 종합의견</div>'+
     '<div class="op-hl">'+opT(o.headline)+'</div><div class="op-sm">'+opT(o.summary)+'</div>'+
+    (o.forward?'<div class="op-fw"><b>앞으로의 시나리오</b>'+opT(o.forward)+'</div>':'')+
     '<div class="stg"><div></div><div class="h">주식</div><div class="h">코인</div><div class="h">현금</div>'+
     row('단기','1~4주',o.short.stance)+row('중장기','3~12개월',o.long.stance)+'</div>'+opLongStatus(o)+'</div>'}
 
@@ -140,6 +141,15 @@ function opTrack(tr){
   return h+(n?'<div class="ops">방향 적중 <b>'+w+'/'+n+'</b> <span class="dim">('+Math.round(w*100/n)+'%) · '+
     '매수·확대는 오르면, 축소·차익실현·회피는 내리면 적중</span></div>':'')+'<ul class="opl">'+rows+'</ul></div>'}
 
+/* 웹 검색으로 모은 최근 뉴스·전문가 전망 (접힘) */
+function opOutlook(){
+  if(!OP.outlook)return '';
+  var src=(OP.sources||[]).map(function(x){
+    return '<li><a href="'+escA(x.url)+'" target="_blank" rel="noopener">'+opT(x.title)+'</a></li>'}).join('');
+  return '<details class="etf econ"><summary>뉴스·전문가 전망<span class="cn">출처 '+(OP.sources||[]).length+
+    '곳</span></summary><div class="body"><div class="brief op-ol">'+opT(OP.outlook)+'</div>'+
+    (src?'<div class="sec">출처</div><ul class="news op-src">'+src+'</ul>':'')+'</div></details>'}
+
 function opBody(){return OP_H==='l'?opLong(OP.opinion):opShort(OP.opinion)}
 function renderOP(){
   var o=OP.opinion||{},asof=OP.asof||{},age=(Date.now()-Date.parse(OP.generated||''))/36e5;
@@ -150,8 +160,8 @@ function renderOP(){
     '일 전 의견을 표시하고 있습니다.</p>':'';
   var seg='<div class="seg">'+[['s','단기','1~4주'],['l','중장기','3~12개월']].map(function(x){
     return '<button data-h="'+x[0]+'"'+(OP_H===x[0]?' class="on"':'')+'>'+x[1]+'<small>'+x[2]+'</small></button>'}).join('')+'</div>';
-  $('#p5').innerHTML=bar+stale+opHero(o)+opPort(o)+seg+'<div id="opb">'+opBody()+'</div>'+opTrack(OP.track)+
-    '<p class="note">단기 의견은 매일 아침 지표 갱신 직후 새로 쓰고, 중장기 의견은 매크로 체제 전환처럼 분명한 근거가 있을 때만 '+
+  $('#p5').innerHTML=bar+stale+opHero(o)+opOutlook()+opPort(o)+seg+'<div id="opb">'+opBody()+'</div>'+opTrack(OP.track)+
+    '<p class="note">위험 성향 10점 중 7.5~8점(공격적) 기준. 대시보드 데이터에 웹 검색한 최근 뉴스·전문가 전망을 더해 판단합니다. 단기 의견은 매일 아침 지표 갱신 직후 새로 쓰고, 중장기 의견은 매크로 체제 전환처럼 분명한 근거가 있을 때만 '+
     '바꿉니다. 포트폴리오는 '+opT(opMD((OP.portfolio||{}).asof))+' 사진 기준 비중·평단·수익률(수량·금액은 저장하지 않음)에 '+
     '이후 가격 변동을 반영한 추정치입니다. 데이터 기준: 지표 '+opT(asof['지표']||'-')+', 코인 '+opT(asof['코인']||'-')+
     ', 기관 13F '+opT(asof['기관']||'-')+' 공시.'+(OP.model?' 작성 모델 '+opT(OP.model)+'.':'')+'</p>';
