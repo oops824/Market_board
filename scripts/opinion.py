@@ -310,13 +310,18 @@ def outlook():
              "최근 1~2주 뉴스와 전문가 의견을 웹에서 검색해 앞으로 1~12개월 시장 전망을 정리하라. 대상: ① 미국 금리·연준·물가와 "
              "10년물 전망 ② 미국 주식(월가 주요 전략가·IB의 지수·섹터 전망, AI·반도체) ③ 가상자산(BTC·ETH·SOL·HYPE 등, ETF 자금, "
              "규제, 크립토 리서치 기관 전망). 각 항목마다 컨센서스, 낙관론과 비관론(누가 무엇을 근거로), 시장이 아직 반영하지 않았을 "
-             "수 있는 변화를 쓴다. 발언자·기관과 날짜를 밝히고, 확인되지 않은 수치는 쓰지 않는다. 한국어로 2,500자 이내."}]
+             "수 있는 변화를 쓴다. 세 영역을 모두 다루도록 검색을 고르게 나눠 쓴다(영역마다 최소 3번). 발언자·기관과 날짜를 밝히고, "
+             "확인되지 않은 수치는 쓰지 않는다. 인사말·검색 과정 설명 없이 결과만, 한국어로 3,000자 이내."}]
     texts, src = [], []
     for _ in range(3):                                   # 서버 검색이 길어지면 pause_turn → 이어서 요청
         with client.messages.stream(model=MODEL, max_tokens=16000, messages=msgs, output_config={"effort": "medium"},
-                                    tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 8}]) as st:
+                                    tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 20}]) as st:
             msg = st.get_final_message()
         for b in msg.content:
+            for r in (getattr(b, "content", None) if b.type.endswith("tool_result") else None) or []:
+                u = getattr(r, "url", None)              # 검색 결과 블록의 출처
+                if isinstance(u, str) and u.startswith("http") and u not in [x["url"] for x in src]:
+                    src.append({"url": u, "title": (getattr(r, "title", None) or u)[:90]})
             if b.type == "text":
                 texts.append(b.text)
                 for c in getattr(b, "citations", None) or []:
@@ -326,7 +331,7 @@ def outlook():
         if msg.stop_reason != "pause_turn":
             break
         msgs = msgs + [{"role": "assistant", "content": msg.content}]
-    return re.sub(r"\n{3,}", "\n\n", "".join(texts)).strip(), src[:10]
+    return re.sub(r"\n{3,}", "\n\n", "".join(texts)).strip(), src[:12]
 
 
 def ask(dig, ctx):
