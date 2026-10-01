@@ -127,7 +127,7 @@ function opLong(o){
   return opCard('중장기 전략','<div class="brief">'+opT(lg.thesis)+'</div>','확신 '+opT(lg.confidence))+
     opAlloc(lg.allocation)+
     opCard('코인 중장기','<ul class="opl">'+coins+'</ul>','코인 계좌 목표 · 현금 '+opT(lg.crypto_cash_pct)+'%')+
-    opCard('보유 주식 중장기',opHold(lg.holdings,false),'주식 계좌 목표 비중')+
+    opCard('보유 주식 중장기',opHold(lg.holdings,false),'주식 계좌 목표 비중'+(lg.holdings_new_pct?' · 신규 편입 '+lg.holdings_new_pct+'%':''))+
     opCard('주식 중장기 · 테마',opPicks(lg.stocks_overweight,'비중 확대','up')+opPicks(lg.stocks_underweight,'비중 축소','dn'))+
     opCard('리스크 점검',opList('주요 리스크',lg.risks,'op-w')+opList('이 의견을 바꿀 신호',lg.change_mind,'op-q'))+
     (log?opCard('중장기 의견 변경 이력','<ul class="opl">'+log+'</ul>'):'')}

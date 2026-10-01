@@ -21,7 +21,7 @@ UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.3
                     "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
 COIN_SYMS = ["BTC", "ETH", "SOL", "HYPE", "LINK", "ONDO", "SUI", "VIRTUAL"]
 SHORT_ACT = ["분할 매수", "비중 확대", "유지", "일부 차익실현", "비중 축소", "관망"]
-PROFILE = "|risk7.5-8|outlook"                       # 투자 성향·판단 방식 버전 (바뀌면 중장기 재작성)
+PROFILE = "|risk7.5-8|outlook|stock-targets"                       # 투자 성향·판단 방식 버전 (바뀌면 중장기 재작성)
 LONG_ROLE = ["핵심 보유", "보유", "비중 확대", "비중 축소", "정리"]
 BUY = {"분할 매수", "비중 확대", "매수"}
 SELL = {"일부 차익실현", "비중 축소", "회피"}
@@ -279,7 +279,7 @@ SYSTEM = (
     "- long.coins 의 target_pct 는 코인 계좌 안의 목표 비중이다. 8종 target_pct 와 crypto_cash_pct(코인 계좌의 현금·스테이블 "
     "목표)의 합이 100. 현재 비중과 비교해 리밸런싱 방향이 드러나게 하고, 비중이 미입력인 코인도 목표 비중은 정한다.\n"
     "- 보유 미국 주식은 short.holdings(action: 분할 매수/비중 확대/유지/일부 차익실현/비중 축소/관망, condition 포함)와 "
-    "long.holdings(role: 핵심 보유/보유/비중 확대/비중 축소/정리, target_pct 는 주식 계좌 안 목표 비중, 합 100)에서 "
+    "long.holdings(role: 핵심 보유/보유/비중 확대/비중 축소/정리, target_pct 는 주식 계좌 안 목표 비중, 보유 종목 합은 100 이하이고 나머지는 stocks 의 새 비중 확대 종목 몫)에서 "
     "보유 종목을 빠짐없이 판단한다. 새로 살 종목·피할 종목은 stocks 에 쓴다. 손실 종목은 매몰비용이 아니라 앞으로의 논리로 판단한다.\n"
     "- 코인 8종은 short.coins 와 long.coins 모두 빠짐없이 판단한다. short.coins 의 condition 에는 행동을 실행하거나 바꿀 "
     "구체적 조건을 쓴다.\n"
@@ -454,7 +454,10 @@ def clean(op, ssyms=()):
                                                       ("축소", "비중 축소"), ("확대", "비중 확대")], "보유"))
                 hs.append(c)
         op[k]["holdings"] = sorted(hs, key=lambda c: sorder[c["sym"]])
-    norm100(op["long"]["holdings"], "target_pct")
+    hs = op["long"]["holdings"]                      # 합이 100 미만이면 나머지는 신규 편입 몫으로 두고, 넘칠 때만 줄인다
+    if sum(max(0, h.get("target_pct") or 0) for h in hs) > 100:
+        norm100(hs, "target_pct")
+    op["long"]["holdings_new_pct"] = max(0, 100 - sum(h.get("target_pct") or 0 for h in hs))
     order = {s: i for i, s in enumerate(COIN_SYMS)}
     for k in ("short", "long"):
         h = op[k]
