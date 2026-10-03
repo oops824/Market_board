@@ -41,15 +41,15 @@ function opHero(o){
     row('단기','1~4주',o.short.stance)+row('중장기','3~12개월',o.long.stance)+'</div>'+opLongStatus(o)+'</div>'}
 
 /* 내 코인 포트폴리오: 현재 비중(막대)과 중장기 목표 비중(세로선), 단기 행동·중장기 역할 */
-function opPort(o){
+function opPortCoin(o){
   var pf=OP.portfolio;if(!pf||!pf.rows)return '';
   var rows=pf.rows.slice();
   (pf.unknown||[]).forEach(function(x){rows.push({sym:x,w:null,pnl:null})});
   rows.push({sym:'현금',cash:true,w:pf.cash,t:o.long.crypto_cash_pct});
-  var h=opPortCard('내 코인 포트폴리오',pf.asof,rows,o.short.coins,o.long.coins,'USDT');
-  var st=pf.stocks;
-  if(st&&st.rows)h+=opPortCard('내 미국 주식 포트폴리오',st.asof,st.rows.slice(),o.short.holdings,o.long.holdings,'');
-  return h}
+  return opPortCard('내 코인 포트폴리오',pf.asof,rows,o.short.coins,o.long.coins,'USDT')}
+function opPortStock(o){
+  var st=(OP.portfolio||{}).stocks;if(!st||!st.rows)return '';
+  return opPortCard('내 미국 주식 포트폴리오',st.asof,st.rows.slice(),o.short.holdings,o.long.holdings,'')}
 /* 계좌 카드: 현재 비중(막대)과 중장기 목표 비중(세로선), 단기 행동·중장기 역할 */
 function opPortCard(title,asof,rows,shortL,longL,cashSub){
   var sa={},lr={};
@@ -100,37 +100,59 @@ function opCard(t,inner,sub){
   return inner?'<div class="etf"><div class="eh"><b>'+t+'</b>'+(sub?'<span class="dim">'+sub+'</span>':'')+'</div>'+
     inner+'</div>':''}
 
-function opShort(o){
-  var sh=o.short,ps=OP.prev_short;
-  var coins=(sh.coins||[]).map(function(c){
-    var was=ps&&ps.coins?ps.coins[c.sym]:null;
-    return '<li><div class="opr"><b>'+opT(c.sym)+'</b><span class="tag '+(OP_ACT[c.action]||'na')+'">'+opT(c.action)+'</span>'+
-      (was&&was!==c.action?'<span class="chgd">'+opMD(ps.date)+' '+opT(was)+'에서 변경</span>':'')+opCf(c.confidence)+'</div>'+
-      '<div class="opw">'+opT(c.why)+'</div>'+(c.condition?'<div class="opc"><em>조건</em>'+opT(c.condition)+'</div>':'')+'</li>'}).join('');
-  return opCard('단기 시각','<div class="brief">'+opT(sh.view)+'</div>','확신 '+opT(sh.confidence))+
-    opCard('지금 할 일',opList('바로 실행',sh.actions_now,'')+opList('기다릴 신호',sh.wait_for,'op-q'))+
-    opCard('코인 단기 대응','<ul class="opl">'+coins+'</ul>')+
-    opCard('보유 주식 단기 대응',opHold(sh.holdings,true))+
-    opCard('주식 단기 · 새로 볼 종목',opPicks(sh.stocks_buy,'매수','up')+opPicks(sh.stocks_avoid,'회피','dn'))+
-    opCard('단기 리스크',opList('',sh.risks,'op-w'))}
-
-function opLong(o){
-  var lg=o.long,pw={};
+function opCoinList(o,isShort){
+  var ps=OP.prev_short,pw={};
   ((OP.portfolio||{}).rows||[]).forEach(function(r){pw[r.sym]=r.w});
-  var coins=(lg.coins||[]).map(function(c){
-    return '<li><div class="opr"><b>'+opT(c.sym)+'</b><span class="tag '+(OP_ROLE[c.role]||'na')+'">'+opT(c.role)+'</span>'+
-      '<span class="cf">목표 '+c.target_pct+'%'+(opNum(pw[c.sym])?' · 현재 '+pw[c.sym].toFixed(1)+'%':'')+'</span></div>'+
-      '<div class="opw">'+opT(c.why)+'</div></li>'}).join('');
+  return '<ul class="opl">'+((isShort?o.short:o.long).coins||[]).map(function(c){
+    var was=isShort&&ps&&ps.coins?ps.coins[c.sym]:null,k=isShort?c.action:c.role;
+    return '<li><div class="opr"><b>'+opT(c.sym)+'</b><span class="tag '+((isShort?OP_ACT:OP_ROLE)[k]||'na')+'">'+opT(k)+'</span>'+
+      (was&&was!==c.action?'<span class="chgd">'+opMD(ps.date)+' '+opT(was)+'에서 변경</span>':'')+
+      (isShort?opCf(c.confidence):'<span class="cf">목표 '+c.target_pct+'%'+(opNum(pw[c.sym])?' · 현재 '+pw[c.sym].toFixed(1)+'%':'')+'</span>')+
+      '</div><div class="opw">'+opT(c.why)+'</div>'+(isShort&&c.condition?'<div class="opc"><em>조건</em>'+opT(c.condition)+'</div>':'')+
+      '</li>'}).join('')+'</ul>'}
+/* 관심 종목(보유 외): 그룹별로 단기 행동 + 중장기 역할 */
+function opWatch(o,filter){
+  var meta=OP.watch_meta||{},groups={},order=[];
+  (o.watch||[]).forEach(function(w){
+    var m=meta[w.sym]||{},g=m.group||'기타';
+    if(filter&&!filter(g))return;
+    if(!groups[g]){groups[g]=[];order.push(g)}
+    groups[g].push(w)});
+  if(!order.length)return '';
+  return order.map(function(g){
+    return '<div class="oph"><span class="tag acc">'+opT(g)+'</span></div><ul class="opl">'+groups[g].map(function(w){
+      var m=meta[w.sym]||{};
+      return '<li><div class="opr"><b>'+opT(w.sym)+'</b><span class="tk">'+opT(m.name||'')+'</span>'+
+        '<span class="cf"><span class="tag '+(OP_ACT[w.action]||'na')+'">단기 '+opT(w.action)+'</span> '+
+        '<span class="tag '+(OP_ROLE[w.role]||'na')+'">중장기 '+opT(w.role)+'</span></span></div>'+
+        '<div class="opw">'+opT(w.why)+'</div></li>'}).join('')+'</ul>'}).join('')}
+
+/* 종합 탭 본문 */
+function opMain(o,isShort){
+  if(isShort){var sh=o.short;
+    return opCard('단기 시각','<div class="brief">'+opT(sh.view)+'</div>','확신 '+opT(sh.confidence))+
+      opCard('지금 할 일',opList('바로 실행',sh.actions_now,'')+opList('기다릴 신호',sh.wait_for,'op-q'))+
+      opCard('단기 리스크',opList('',sh.risks,'op-w'))}
+  var lg=o.long;
   var log=(OP.long_log||[]).map(function(x){
     return '<li><div class="opr"><b>'+opMD(x.date)+'</b><span class="tag '+(x.status==='변경'?'warn':'na')+'">'+
       opT(x.status)+'</span></div><div class="opw">'+opT(x.note)+'</div></li>'}).join('');
   return opCard('중장기 전략','<div class="brief">'+opT(lg.thesis)+'</div>','확신 '+opT(lg.confidence))+
     opAlloc(lg.allocation)+
-    opCard('코인 중장기','<ul class="opl">'+coins+'</ul>','코인 계좌 목표 · 현금 '+opT(lg.crypto_cash_pct)+'%')+
-    opCard('보유 주식 중장기',opHold(lg.holdings,false),'주식 계좌 목표 비중'+(lg.holdings_new_pct?' · 신규 편입 '+lg.holdings_new_pct+'%':''))+
-    opCard('주식 중장기 · 테마',opPicks(lg.stocks_overweight,'비중 확대','up')+opPicks(lg.stocks_underweight,'비중 축소','dn'))+
     opCard('리스크 점검',opList('주요 리스크',lg.risks,'op-w')+opList('이 의견을 바꿀 신호',lg.change_mind,'op-q'))+
     (log?opCard('중장기 의견 변경 이력','<ul class="opl">'+log+'</ul>'):'')}
+/* 미국주식 탭 본문 */
+function opStock(o,isShort){
+  var sh=o.short,lg=o.long;
+  return (isShort?opCard('보유 주식 단기 대응',opHold(sh.holdings,true)):
+      opCard('보유 주식 중장기',opHold(lg.holdings,false),'주식 계좌 목표 비중'+(lg.holdings_new_pct?' · 신규 편입 '+lg.holdings_new_pct+'%':'')))+
+    opCard('관심 종목 의견',opWatch(o,function(g){return g.indexOf('13F')<0}),'하이퍼스케일러 · 섹터 대장주')+
+    (isShort?opCard('새로 볼 종목 · 피할 종목',opPicks(sh.stocks_buy,'매수','up')+opPicks(sh.stocks_avoid,'회피','dn')):
+      opCard('중장기 테마',opPicks(lg.stocks_overweight,'비중 확대','up')+opPicks(lg.stocks_underweight,'비중 축소','dn')))}
+/* 가상자산 탭 본문 */
+function opCoin(o,isShort){
+  return isShort?opCard('코인 단기 대응',opCoinList(o,true)):
+    opCard('코인 중장기',opCoinList(o,false),'코인 계좌 목표 · 현금 '+opT(o.long.crypto_cash_pct)+'%')}
 
 /* 지난 단기 의견: 당시 가격 대비 지금, 매수·확대는 상승이면 적중, 축소·차익실현·회피는 하락이면 적중 */
 function opTrack(tr){
@@ -183,7 +205,11 @@ function opOutlook(){
     ' 웹 검색 · 출처 '+(OP.sources||[]).length+'곳</span></div>'+body+
     (src?'<details class="ko"><summary>출처 보기</summary><ul class="news op-src">'+src+'</ul></details>':'')+'</div>'}
 
-function opBody(){return OP_H==='l'?opLong(OP.opinion):opShort(OP.opinion)}
+function opSeg(){return '<div class="seg">'+[['s','단기','1~4주'],['l','중장기','3~12개월']].map(function(x){
+  return '<button data-h="'+x[0]+'"'+(OP_H===x[0]?' class="on"':'')+'>'+x[1]+'<small>'+x[2]+'</small></button>'}).join('')+'</div>'}
+function opBodies(){
+  var o=OP.opinion,s=OP_H!=='l',set=function(id,h){var e=$(id);if(e)e.innerHTML=h};
+  set('#opb',opMain(o,s));set('#opb-st',opStock(o,s));set('#opb-cr',opCoin(o,s))}
 function renderOP(){
   var o=OP.opinion||{},asof=OP.asof||{},age=(Date.now()-Date.parse(OP.generated||''))/36e5;
   if(!o.short||!o.long){$('#p5').innerHTML='<p class="err">단기·중장기 의견을 준비하고 있습니다.</p>';return}
@@ -191,18 +217,24 @@ function renderOP(){
     (asof['지표']?'<span>지표 '+opT(opWhen(asof['지표']))+' 기준</span>':'')+'</div>';
   var stale=age>36?'<p class="note" style="color:var(--warn)">최근 생성에 실패해 '+Math.floor(age/24)+
     '일 전 의견을 표시하고 있습니다.</p>':'';
-  var seg='<div class="seg">'+[['s','단기','1~4주'],['l','중장기','3~12개월']].map(function(x){
-    return '<button data-h="'+x[0]+'"'+(OP_H===x[0]?' class="on"':'')+'>'+x[1]+'<small>'+x[2]+'</small></button>'}).join('')+'</div>';
-  $('#p5').innerHTML=bar+stale+opHero(o)+opOutlook()+opPort(o)+seg+'<div id="opb">'+opBody()+'</div>'+opTrack(OP.track)+
-    '<p class="note">위험 성향 10점 중 7.5~8점(공격적) 기준. 대시보드 데이터에 웹 검색한 최근 뉴스·전문가 전망을 더해 판단합니다. 단기 의견은 매일 아침 지표 갱신 직후 새로 쓰고, 중장기 의견은 매크로 체제 전환처럼 분명한 근거가 있을 때만 '+
-    '바꿉니다. 포트폴리오는 '+opT(opMD((OP.portfolio||{}).asof))+' 사진 기준 비중·평단·수익률(수량·금액은 저장하지 않음)에 '+
-    '이후 가격 변동을 반영한 추정치입니다. 데이터 기준: 지표 '+opT(asof['지표']||'-')+', 코인 '+opT(asof['코인']||'-')+
-    ', 기관 13F '+opT(asof['기관']||'-')+' 공시.'+(OP.model?' 작성 모델 '+opT(OP.model)+'.':'')+'</p>';
-  [].forEach.call(document.querySelectorAll('#p5 .seg button'),function(b){b.onclick=function(){
+  var hd=function(t,sub){return '<div class="hd">'+t+(sub?'<small>'+sub+'</small>':'')+'</div>'};
+  $('#p5').innerHTML=bar+stale+opHero(o)+opOutlook()+opSeg()+'<div id="opb"></div>'+opTrack(OP.track)+
+    '<p class="note">위험 성향 10점 중 7.5~8점(공격적) 기준. 대시보드 데이터에 웹 검색한 최근 뉴스·전문가 전망을 더해 판단합니다. '+
+    '미국주식·가상자산·기관 탭에 영역별 의견이 있습니다. 단기 의견은 매일 아침 새로 쓰고, 중장기 의견은 매크로 체제 전환처럼 분명한 근거가 있을 때만 '+
+    '바꿉니다. 포트폴리오는 사진 기준 비중·평단·수익률(수량·금액은 저장하지 않음)에 이후 가격 변동을 반영한 추정치입니다. '+
+    '데이터 기준: 지표 '+opT(asof['지표']||'-')+', 코인 '+opT(asof['코인']||'-')+', 기관 13F '+opT(asof['기관']||'-')+' 공시.'+
+    (OP.model?' 작성 모델 '+opT(OP.model)+'.':'')+'</p>';
+  $('#st-op').innerHTML=hd('미국 주식 의견',opWhen(OP.generated)+' · 종합의견 기준')+opPortStock(o)+opSeg()+'<div id="opb-st"></div>';
+  $('#cr-op').innerHTML=hd('가상자산 의견',opWhen(OP.generated)+' · 종합의견 기준')+opPortCoin(o)+opSeg()+'<div id="opb-cr"></div>';
+  var tw=opWatch(o,function(g){return g.indexOf('13F')>=0});
+  $('#tf-op').innerHTML=tw?'<div class="etf"><div class="eh"><b>기관이 함께 사고판 종목, 내 의견</b><span class="dim">13F 공동 매수·정리</span></div>'+
+    tw+'</div>':'';
+  opBodies();
+  [].forEach.call(document.querySelectorAll('.seg button'),function(b){b.onclick=function(){
     OP_H=this.getAttribute('data-h');try{localStorage.setItem('opH',OP_H)}catch(e){}
-    [].forEach.call(document.querySelectorAll('#p5 .seg button'),function(x){
+    [].forEach.call(document.querySelectorAll('.seg button'),function(x){
       x.className=x.getAttribute('data-h')===OP_H?'on':''});
-    $('#opb').innerHTML=opBody()}})}
+    opBodies()}})}
 
 function loadOP(){
   fetch('opinion.json?t='+Date.now()).then(function(r){if(!r.ok)throw 0;return r.json()})

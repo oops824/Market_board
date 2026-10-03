@@ -55,8 +55,15 @@ function badges(it){
     return s}
   return it.change?'<br><span class="badge '+cls(it.change)+'">'+
          esc(it.change)+'</span>':''}
+// 섹터 표는 미국주식 탭, COT 포지셔닝은 기관 탭으로 나눠 그린다
 function tables(){
-  $('#app').innerHTML=secTables(CUR.sections.filter(function(s){return !hiddenSec(s.title)}),2)}
+  var sec=function(k){return CUR.sections.filter(function(s){return s.title.indexOf(k)===0})};
+  $('#app').innerHTML=secTables(CUR.sections.filter(function(s){
+    return !hiddenSec(s.title)&&s.title.indexOf('섹터')!==0&&s.title.indexOf('CFTC')!==0}),2);
+  var st=sec('섹터'),ct=sec('CFTC');
+  $('#st-sec').innerHTML=st.length?'<div class="hd">섹터 ETF · 대장주</div>'+LEGEND+secTables(st,st.length):'';
+  $('#cot').innerHTML=ct.length?'<div class="hd">CFTC 선물 포지셔닝<small>레버리지펀드 vs 자산운용사</small></div>'+
+    secTables(ct,ct.length):''}
 function secTables(secs,nOpen){
   var h='';
   for(var i=0;i<secs.length;i++){
