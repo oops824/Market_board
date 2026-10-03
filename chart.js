@@ -42,50 +42,40 @@ function spark(pts,color,unit){
     String(pts[pts.length-1].d).slice(5)+'</text>'+
     '<text x="2" y="10" fill="'+color+'" font-size="11" font-weight="600">'+
     fm(last)+unit+'</text></svg>'}
+// 추이 그래프는 카테고리별 탭에 나눠 배치: 지표(금리·달러·변동성·위험선호), 미국주식(시장 폭·반도체 주도력), 가상자산(프리미엄·디파이)
+var TR_DEFS={
+  macro:[['tnx','10년 국채금리','#ff9f43','%'],['irx','3개월 국채금리','#feca57','%'],['dxy','달러지수 DXY','#48dbfb',''],
+         ['vix','변동성 VIX','#ff6b6b',''],['risk','위험선호 HYG/TLT','#1dd1a1','']],
+  stock:[['breadth','시장 폭 RSP/SPY','#a29bfe',''],['smh','반도체 주도력 SMH/SPY','#00d2d3','']],
+  crypto:[['btc_prem','BTC 코인베이스 프리미엄','#f7931a','%'],['eth_prem','ETH 코인베이스 프리미엄','#7c9cff','%']]};
+function trCharts(h,defs){
+  var x='';
+  defs.forEach(function(d){
+    var p=[];h.forEach(function(r){if(typeof r[d[0]]==='number')p.push({d:r.date,v:r[d[0]]})});
+    x+='<div class="chart"><div class="t">'+d[1]+'</div><div class="s">'+(d[0].indexOf('prem')>=0?
+       '양수=미국 매수 우위 · 일별':'일별 추이')+'</div>'+spark(p,d[2],d[3])+'</div>'});
+  return x}
+function defiCharts(h){
+  var cnt={},n,x='';
+  h.forEach(function(r){var o=r.defi||{};for(n in o)if(o.hasOwnProperty(n))cnt[n]=(cnt[n]||0)+1});
+  var top=Object.keys(cnt).sort(function(a,b){return cnt[b]-cnt[a]}).slice(0,3),cols=['#4ade80','#38bdf8','#f472b6'];
+  top.forEach(function(k,i){
+    var p=[];h.forEach(function(r){if(r.defi&&typeof r.defi[k]==='number')p.push({d:r.date,v:r.defi[k]})});
+    x+='<div class="chart"><div class="t">'+esc(k)+'</div><div class="s">24시간 프로토콜 수익 (M$)</div>'+
+       spark(p,cols[i],'')+'</div>'});
+  return x}
 function drawTrends(h){
-  if(!h||!h.length)return '<p class="err">기록이 아직 없습니다.</p>';
-  var x='',i,j,n;
-  var defs=[['tnx','10년 국채금리','#ff9f43','%'],
-            ['irx','3개월 국채금리','#feca57','%'],
-            ['dxy','달러지수 DXY','#48dbfb',''],
-            ['vix','변동성 VIX','#ff6b6b',''],
-            ['risk','위험선호 HYG/TLT','#1dd1a1',''],
-            ['breadth','시장 폭 RSP/SPY','#a29bfe',''],
-            ['smh','반도체 주도력 SMH/SPY','#00d2d3',''],
-            ['btc_prem','BTC 코인베이스 프리미엄','#f7931a','%'],
-            ['eth_prem','ETH 코인베이스 프리미엄','#7c9cff','%']];
-  for(i=0;i<defs.length;i++){
-    var k=defs[i][0],p=[];
-    for(j=0;j<h.length;j++){
-      if(typeof h[j][k]==='number')p.push({d:h[j].date,v:h[j][k]})}
-    x+='<div class="chart"><div class="t">'+defs[i][1]+
-       '</div><div class="s">'+(defs[i][0].indexOf('prem')>=0?
-       '양수=미국 매수 우위':'일별 추이')+'</div>'+
-       spark(p,defs[i][2],defs[i][3])+'</div>'}
-  var cnt={};
-  for(j=0;j<h.length;j++){var o=h[j].defi||{};
-    for(n in o){if(o.hasOwnProperty(n))cnt[n]=(cnt[n]||0)+1}}
-  var names=[];
-  for(n in cnt){if(cnt.hasOwnProperty(n))names.push(n)}
-  names.sort(function(a,b){return cnt[b]-cnt[a]});
-  var top=names.slice(0,3),cols=['#4ade80','#38bdf8','#f472b6'];
-  for(i=0;i<top.length;i++){
-    var p2=[];
-    for(j=0;j<h.length;j++){
-      if(h[j].defi&&typeof h[j].defi[top[i]]==='number')
-        p2.push({d:h[j].date,v:h[j].defi[top[i]]})}
-    x+='<div class="chart"><div class="t">'+esc(top[i])+
-       '</div><div class="s">24시간 프로토콜 수익 (M$)</div>'+
-       spark(p2,cols[i],'')+'</div>'}
-  return x||'<p class="err">그릴 데이터가 없습니다.</p>'}
+  if(!h||!h.length)return;
+  var hd=function(t){return '<div class="hd">'+t+'<small>일별 기록</small></div>'};
+  $('#tr-macro').innerHTML=hd('매크로 추이')+trCharts(h,TR_DEFS.macro);
+  $('#tr-stock').innerHTML=hd('미국 주식 추이')+trCharts(h,TR_DEFS.stock);
+  $('#tr-crypto').innerHTML=hd('가상자산 추이')+trCharts(h,TR_DEFS.crypto)+defiCharts(h)}
 
 function trends(){
   fetch('history/trend.json?t='+Date.now())
   .then(function(r){if(!r.ok)throw new Error('파일 없음');return r.json()})
   .then(function(h){
-    try{$('#p2').innerHTML=drawTrends(h)}
-    catch(e){$('#p2').innerHTML='<p class="err">그래프 오류: '+e.message+'</p>'}})
-  .catch(function(e){$('#p2').innerHTML='<p class="err">불러오기 실패: '+
-    (e&&e.message?e.message:'알 수 없음')+'</p>'})}
+    try{drawTrends(h)}catch(e){$('#tr-macro').innerHTML='<p class="err">그래프 오류: '+e.message+'</p>'}})
+  .catch(function(){})}
 
 trends();

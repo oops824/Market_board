@@ -141,7 +141,7 @@ function renderTF(){
   var bar='<div class="cbar"><span>'+escT(tq(TF.latest_period))+' 공시 기준</span>'+
     '<span>뉴스 '+escT(tdate(TF.news_updated_at)||'-')+'</span></div>';
 
-  $('#p4').innerHTML=bar+tfBar()+(typeof LEGEND==='string'?LEGEND:'')+
+  $('#tf').innerHTML=bar+tfBar()+(typeof LEGEND==='string'?LEGEND:'')+
     (TF_CAT==='all'?tfConsensus():'')+
     (cards?'<div class="hd">운용사별 포트폴리오</div>'+cards:'')+
     tfNews()+
@@ -156,7 +156,7 @@ function loadTF(){
   .then(function(r){if(!r.ok)throw 0;return r.json()})
   .then(function(d){TF=d;
     try{renderTF()}
-    catch(e){$('#p4').innerHTML='<p class="err">표시 오류: '+escT(e.message)+'</p>'}})
-  .catch(function(){$('#p4').innerHTML='<p class="err">thirteenf.json이 아직 없습니다.<br>'+
+    catch(e){$('#tf').innerHTML='<p class="err">표시 오류: '+escT(e.message)+'</p>'}})
+  .catch(function(){$('#tf').innerHTML='<p class="err">thirteenf.json이 아직 없습니다.<br>'+
     'Actions에서 thirteenf 워크플로를 한 번 실행해 주세요.</p>'})}
 loadTF();

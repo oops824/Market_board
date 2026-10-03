@@ -330,7 +330,7 @@ function renderCrypto(){
   var dm=domCard(CR.dom);
   if(MKT&&MKT.secs.length)mk='<div class="hd">크립토 시장 지표<small>'+escA(MKT.updated)+'</small></div>'+
     secTables(MKT.secs,MKT.secs.length);  // 전부 펼침
-  $('#p3').innerHTML='<div class="cbar"><span id="cupd">'+escA(CR.updated||'')+
+  $('#cr').innerHTML='<div class="cbar"><span id="cupd">'+escA(CR.updated||'')+
     (CR.live?' · 시세 '+CR.live+' 갱신':'')+'</span><button id="clive">시세 새로고침</button></div>'+
     top+pickCard(CR.pick,CR.pastPicks)+ov+etf+dm+mk+'<div class="hd">관심 코인 8종<small>4시간마다 갱신</small></div>'+LEGEND+cards+err;
   $('#clive').onclick=liveRefresh}
@@ -366,8 +366,8 @@ function liveRefresh(){
 function loadCrypto(){
   fetch('crypto.json?t='+Date.now()).then(function(r){if(!r.ok)throw 0;return r.json()})
   .then(function(d){CR=d;
-    try{renderCrypto()}catch(e){$('#p3').innerHTML='<p class="err">표시 오류: '+escA(e.message)+'</p>'}})
-  .catch(function(){$('#p3').innerHTML='<p class="err">crypto.json이 아직 없습니다.<br>'+
+    try{renderCrypto()}catch(e){$('#cr').innerHTML='<p class="err">표시 오류: '+escA(e.message)+'</p>'}})
+  .catch(function(){$('#cr').innerHTML='<p class="err">crypto.json이 아직 없습니다.<br>'+
     'Actions에서 crypto-board 워크플로를 한 번 실행해 주세요.</p>'})}
 function loadMarket(){
   fetch('data.json?t='+Date.now()).then(function(r){if(!r.ok)throw 0;return r.json()})
