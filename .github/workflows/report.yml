@@ -1,7 +1,11 @@
 name: market-board
 on:
   schedule:
-    - cron: "30 21 * * *"
+    # 매일 06:17 KST. GitHub 예약 실행은 가끔 누락되므로 08:47·11:17 KST 에 백업 실행
+    # (그날 06시 이후 이미 갱신됐으면 백업은 바로 끝남)
+    - cron: "17 21 * * *"
+    - cron: "47 23 * * *"
+    - cron: "17 2 * * *"
   workflow_dispatch:
 permissions:
   contents: write
@@ -14,25 +18,47 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+      - name: 오늘 이미 갱신됐는지 확인 (백업 예약 실행용)
+        id: chk
+        run: |
+          python3 - <<'EOF' >> "$GITHUB_OUTPUT"
+          import json, datetime
+          now = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
+          try:
+              u = json.load(open("data.json", encoding="utf-8")).get("updated", "")
+              t = datetime.datetime.strptime(u[:16], "%Y-%m-%d %H:%M")
+              done = t.date() == now.date() and t.hour >= 6
+          except Exception:
+              done = False
+          print("skip=%d" % (1 if done and "${{ github.event_name }}" == "schedule" else 0))
+          EOF
       - uses: actions/setup-python@v5
+        if: steps.chk.outputs.skip != '1'
         with:
           python-version: "3.11"
       - run: python scripts/collect.py
+        if: steps.chk.outputs.skip != '1'
       - run: python scripts/cot.py
+        if: steps.chk.outputs.skip != '1'
       - run: python scripts/macro.py
+        if: steps.chk.outputs.skip != '1'
       - run: python scripts/releases.py
+        if: steps.chk.outputs.skip != '1'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       - run: python scripts/analyze.py
+        if: steps.chk.outputs.skip != '1'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       # 종합 투자의견: 실패해도 데이터 커밋은 진행 (이전 의견 유지)
       - run: pip install -q "anthropic>=1.9" && python scripts/opinion.py
+        if: steps.chk.outputs.skip != '1'
         continue-on-error: true
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPINION_FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
-      - run: |
+      - if: steps.chk.outputs.skip != '1'
+        run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add -A
