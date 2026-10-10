@@ -111,21 +111,62 @@ function opCoinList(o,isShort){
       '</div><div class="opw">'+opT(c.why)+'</div>'+(isShort&&c.condition?'<div class="opc"><em>조건</em>'+opT(c.condition)+'</div>':'')+
       '</li>'}).join('')+'</ul>'}
 /* 관심 종목(보유 외): 그룹별로 단기 행동 + 중장기 역할 */
+var OP_Q={lead:['주도','up'],improve:['돌아서는 중','acc'],weaken:['약화','warn'],lag:['소외','dn']};
+var OP_QD={lead:'3개월·20일 모두 시장 상회',improve:'3개월은 열세였지만 최근 20일 우위',
+  weaken:'3개월 우위였지만 최근 20일 열세',lag:'3개월·20일 모두 시장 하회'};
+var OP_V={'비중 확대':'up','관심':'acc','중립':'na','비중 축소':'dn'};
+function opRot(){var m={};((OP.rotation||{}).items||[]).forEach(function(r){m[r.etf]=r});return m}
+function opSgn(v){return (v>=0?'+':'')+v.toFixed(1)+'%p'}
+/* 역할이 최근 7일 안에 바뀐 관심 종목 표시 */
+function opRoleChg(w){
+  if(!w.role_from||!w.role_since||w.role_from===w.role)return '';
+  var n=opDays(w.role_since);if(n==null||n>7)return '';
+  return '<span class="chgd">'+opMD(w.role_since)+' '+opT(w.role_from)+'→'+opT(w.role)+'</span>'}
+
+/* 섹터 로테이션: SPY 대비 상대강도 4분면 + 오늘의 섹터 판단 */
+function opRotation(o){
+  var R=OP.rotation;if(!R||!R.items||!R.items.length)return '';
+  var view={};(o.sectors||[]).forEach(function(x){view[x.etf]=x});
+  var mx=Math.max.apply(null,R.items.map(function(r){return Math.abs(r.rs20)}))||1;
+  var h=['lead','improve','weaken','lag'].map(function(q){
+    var items=R.items.filter(function(r){return r.q===q});
+    if(!items.length)return '';
+    return '<div class="rq"><div class="rq-h"><span class="tag '+OP_Q[q][1]+'">'+OP_Q[q][0]+'</span><span class="dim">'+
+      OP_QD[q]+'</span></div>'+items.map(function(r){var v=view[r.etf],w=Math.abs(r.rs20)/mx*50,pos=r.rs20>=0;
+        return '<div class="rr"><div class="rr-1"><b>'+opT(r.name)+'</b><span class="tk">'+opT(r.etf)+'</span>'+
+          (v?'<span class="tag '+(OP_V[v.view]||'na')+'">'+opT(v.view)+'</span>':'')+
+          '<span class="rr-v"><span class="'+(pos?'tu':'td')+'">20일 '+opSgn(r.rs20)+'</span> <span class="dim">3개월 '+opSgn(r.rs63)+
+          '</span></span></div><span class="ctr"><b class="'+(pos?'up':'dn')+'" style="'+(pos?'left:50%':'right:50%')+
+          ';width:'+w.toFixed(1)+'%"></b></span>'+(v&&v.why?'<div class="opw">'+opT(v.why)+'</div>':'')+'</div>'}).join('')+'</div>'}).join('');
+  return '<div class="etf"><div class="eh"><b>섹터 로테이션</b><span class="dim">SPY 대비 초과수익 · '+opMD(R.asof)+'</span></div>'+
+    '<p class="note" style="margin:0 0 4px">20일(최근)과 3개월 상대강도로 나눴습니다. \'돌아서는 중\'은 그동안 시장에 뒤졌지만 '+
+    '최근 20일은 시장을 이기는 섹터로, 다음 주도 섹터 후보입니다. 칩은 오늘의 섹터 판단입니다.</p>'+h+'</div>'}
+
+/* 관심 종목(보유 외): 그룹별 접이식, 섹터 그룹은 상대강도 순. 매수 의견·최근 역할 변경이 있는 그룹은 펼침 */
 function opWatch(o,filter){
-  var meta=OP.watch_meta||{},groups={},order=[];
+  var meta=OP.watch_meta||{},groups={},order=[],rot=opRot();
   (o.watch||[]).forEach(function(w){
     var m=meta[w.sym]||{},g=m.group||'기타';
     if(filter&&!filter(g))return;
     if(!groups[g]){groups[g]=[];order.push(g)}
     groups[g].push(w)});
   if(!order.length)return '';
+  var etfOf=function(g){var m=meta[groups[g][0].sym]||{};return m.etf||null};
+  var rank=function(g){if(g==='하이퍼스케일러')return 1e9;var r=rot[etfOf(g)];return r?r.rs20:-1e9};
+  order.sort(function(a,b){return rank(b)-rank(a)});
   return order.map(function(g){
-    return '<div class="oph"><span class="tag acc">'+opT(g)+'</span></div><ul class="opl">'+groups[g].map(function(w){
-      var m=meta[w.sym]||{};
-      return '<li><div class="opr"><b>'+opT(w.sym)+'</b><span class="tk">'+opT(m.name||'')+'</span>'+
-        '<span class="cf"><span class="tag '+(OP_ACT[w.action]||'na')+'">단기 '+opT(w.action)+'</span> '+
-        '<span class="tag '+(OP_ROLE[w.role]||'na')+'">중장기 '+opT(w.role)+'</span></span></div>'+
-        '<div class="opw">'+opT(w.why)+'</div></li>'}).join('')+'</ul>'}).join('')}
+    var ws=groups[g],r=/대장주$/.test(g)?rot[etfOf(g)]:null;   // 섹터 그룹에만 상대강도 칩
+    var buys=ws.filter(function(w){return w.action==='분할 매수'||w.action==='비중 확대'}).length;
+    var good=ws.filter(function(w){return w.role==='핵심 보유'||w.role==='비중 확대'||w.role==='보유'}).length;
+    var chg=ws.some(function(w){return !!opRoleChg(w)});
+    return '<details class="ws"'+(buys||chg?' open':'')+'><summary><span class="tag acc">'+opT(g)+'</span>'+
+      (r?'<span class="tag '+OP_Q[r.q][1]+'">'+OP_Q[r.q][0]+'</span>':'')+
+      '<span class="ws-n">'+(buys?'매수 '+buys+' · ':'')+'담을 만함 '+good+'/'+ws.length+'</span></summary><ul class="opl">'+
+      ws.map(function(w){var m=meta[w.sym]||{};
+        return '<li><div class="opr"><b>'+opT(w.sym)+'</b><span class="tk">'+opT(m.name||'')+'</span>'+opRoleChg(w)+
+          '<span class="cf"><span class="tag '+(OP_ACT[w.action]||'na')+'">단기 '+opT(w.action)+'</span> '+
+          '<span class="tag '+(OP_ROLE[w.role]||'na')+'">중장기 '+opT(w.role)+'</span></span></div>'+
+          '<div class="opw">'+opT(w.why)+'</div></li>'}).join('')+'</ul></details>'}).join('')}
 
 /* 종합 탭 본문 */
 function opMain(o,isShort){
@@ -146,7 +187,7 @@ function opStock(o,isShort){
   var sh=o.short,lg=o.long;
   return (isShort?opCard('보유 주식 단기 대응',opHold(sh.holdings,true)):
       opCard('보유 주식 중장기',opHold(lg.holdings,false),'주식 계좌 목표 비중'+(lg.holdings_new_pct?' · 신규 편입 '+lg.holdings_new_pct+'%':'')))+
-    opCard('관심 종목 의견',opWatch(o,function(g){return g.indexOf('13F')<0}),'하이퍼스케일러 · 섹터 대장주')+
+    opCard('관심 종목 의견',opWatch(o,function(g){return g.indexOf('13F')<0}),'하이퍼스케일러 · 17개 섹터 대장주 · 상대강도 순')+
     (isShort?opCard('새로 볼 종목 · 피할 종목',opPicks(sh.stocks_buy,'매수','up')+opPicks(sh.stocks_avoid,'회피','dn')):
       opCard('중장기 테마',opPicks(lg.stocks_overweight,'비중 확대','up')+opPicks(lg.stocks_underweight,'비중 축소','dn')))}
 /* 가상자산 탭 본문 */
@@ -224,7 +265,7 @@ function renderOP(){
     '바꿉니다. 포트폴리오는 사진 기준 비중·평단·수익률(수량·금액은 저장하지 않음)에 이후 가격 변동을 반영한 추정치입니다. '+
     '데이터 기준: 지표 '+opT(asof['지표']||'-')+', 코인 '+opT(asof['코인']||'-')+', 기관 13F '+opT(asof['기관']||'-')+' 공시.'+
     (OP.model?' 작성 모델 '+opT(OP.model)+'.':'')+'</p>';
-  $('#st-op').innerHTML=hd('미국 주식 의견',opWhen(OP.generated)+' · 종합의견 기준')+opPortStock(o)+opSeg()+'<div id="opb-st"></div>';
+  $('#st-op').innerHTML=hd('미국 주식 의견',opWhen(OP.generated)+' · 종합의견 기준')+opPortStock(o)+opRotation(o)+opSeg()+'<div id="opb-st"></div>';
   $('#cr-op').innerHTML=hd('가상자산 의견',opWhen(OP.generated)+' · 종합의견 기준')+opPortCoin(o)+opSeg()+'<div id="opb-cr"></div>';
   var tw=opWatch(o,function(g){return g.indexOf('13F')>=0});
   $('#tf-op').innerHTML=tw?'<div class="etf"><div class="eh"><b>기관이 함께 사고판 종목, 내 의견</b><span class="dim">13F 공동 매수·정리</span></div>'+

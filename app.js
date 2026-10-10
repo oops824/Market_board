@@ -60,8 +60,9 @@ function tables(){
   var sec=function(k){return CUR.sections.filter(function(s){return s.title.indexOf(k)===0})};
   $('#app').innerHTML=secTables(CUR.sections.filter(function(s){
     return !hiddenSec(s.title)&&s.title.indexOf('섹터')!==0&&s.title.indexOf('CFTC')!==0}),2);
-  var st=sec('섹터'),ct=sec('CFTC');
-  $('#st-sec').innerHTML=st.length?'<div class="hd">섹터 ETF · 대장주</div>'+LEGEND+secTables(st,st.length):'';
+  var st=sec('섹터 ETF'),ct=sec('CFTC');   // 섹터 로테이션은 미국주식 탭의 로테이션 카드로 표시
+  $('#st-sec').innerHTML=st.length?'<div class="hd">섹터 ETF · 대장주<small>17개 섹터 · 눌러서 펼치기</small></div>'+
+    LEGEND+secTables(st,0):'';
   $('#cot').innerHTML=ct.length?'<div class="hd">CFTC 선물 포지셔닝<small>레버리지펀드 vs 자산운용사</small></div>'+
     secTables(ct,ct.length):''}
 function secTables(secs,nOpen){
