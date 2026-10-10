@@ -21,7 +21,7 @@ UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.3
                     "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
 COIN_SYMS = ["BTC", "ETH", "SOL", "HYPE", "LINK", "ONDO", "SUI", "VIRTUAL"]
 SHORT_ACT = ["분할 매수", "비중 확대", "유지", "일부 차익실현", "비중 축소", "관망"]
-PROFILE = "|risk7.5-8|outlook|stock-targets"                       # 투자 성향·판단 방식 버전 (바뀌면 중장기 재작성)
+PROFILE = "|risk7.5-8|outlook|stock-targets|sectors17"                       # 투자 성향·판단 방식 버전 (바뀌면 중장기 재작성)
 LONG_ROLE = ["핵심 보유", "보유", "비중 확대", "비중 축소", "정리"]
 BUY = {"분할 매수", "비중 확대", "매수"}
 SELL = {"일부 차익실현", "비중 축소", "회피"}
@@ -58,7 +58,7 @@ def digest(D, C, T):
                 L.append("## 매크로·유동성")
                 L += ["- %s: %s (%s) %s" % (i["name"], i["value"], i.get("change", ""), cut(i.get("comment"), 80))
                       for i in s["items"]]
-            elif t.startswith("섹터"):
+            elif t.startswith("섹터 ETF"):
                 L.append("## 섹터 ETF·대장주 (5일/20일 등락, 신호)")
                 seen = set()
                 for i in s["items"]:
@@ -94,6 +94,12 @@ def digest(D, C, T):
                 it["title"], per, it["release"] + " 발표" if it.get("release") else "발표일 미확인",
                 val, it.get("consensus") or "-",
                 con or "-", mk or "-", cut(it.get("ai"), 350)))
+    rot = (D or {}).get("rotation") or {}
+    if rot.get("items"):
+        sp = rot.get("spy") or {}
+        L.append("## 섹터 로테이션 (SPY 대비 초과수익 %%p · SPY 20일 %s, 3개월 %s)" % (pct(sp.get("r20")), pct(sp.get("r63"))))
+        L += ["- %s(%s): 20일 %+.1f%%p, 3개월 %+.1f%%p, 5일 전보다 20일 상대강도 %+.1f%%p → %s" % (
+            r["name"], r["etf"], r["rs20"], r["rs63"], r["d5"], QUAD[r["q"]]) for r in rot["items"]]
     if C:
         f = C.get("fng") or {}
         L.append("## 크립토 시장\n- 공포·탐욕 %s (%s, 1주전 %s)" % (f.get("value"), f.get("label"), f.get("week")))
@@ -224,6 +230,7 @@ STOCKS = {"type": "array", "items": obj(side=S, name=S, ticker=S, why=S, confide
 SCHEMA = obj(
     headline=S, summary=S, forward=S,
     watch={"type": "array", "items": obj(sym=S, action=S, role=S, why=S)},
+    sectors={"type": "array", "items": obj(etf=S, view=S, why=S)},
     short=obj(view=S, confidence=S, stance=STANCE3,
               coins={"type": "array", "items": obj(sym=S, action=S, why=S, condition=S, confidence=S)},
               holdings={"type": "array", "items": obj(sym=S, action=S, why=S, condition=S)},
@@ -284,7 +291,12 @@ SYSTEM = (
     "보유 종목을 빠짐없이 판단한다. 새로 살 종목·피할 종목은 stocks 에 쓴다. 손실 종목은 매몰비용이 아니라 앞으로의 논리로 판단한다.\n"
     "- watch 에는 '관심 종목' 목록의 모든 종목을 빠짐없이 쓴다. action 은 단기 행동(분할 매수/비중 확대/유지/일부 차익실현/"
     "비중 축소/관망, 미보유 종목의 '유지'는 '지금은 사지 않고 지켜봄'), role 은 중장기 역할(핵심 보유/보유/비중 확대/비중 축소/정리, "
-    "미보유면 '보유'=담을 만함, '정리'=피함), why 는 데이터·전망 근거 1~2문장. 보유 종목과 비교해 더 나은 대안이면 그렇다고 쓴다.\n"
+    "미보유면 '보유'=담을 만함, '정리'=피함), why 는 근거 한 문장. 보유 종목과 비교해 더 나은 대안이면 그렇다고 쓴다. "
+    "role 은 목록에서 '역할 유지'로 표시된 종목은 직전 역할을 그대로 쓰고, '재판단' 표시 종목만 새로 판단한다. "
+    "why 가 role 과 모순되면 안 된다(예: '더 나은 대안'이라 쓰면서 role '정리' 금지).\n"
+    "- sectors 에는 '섹터 로테이션' 목록의 모든 섹터 ETF 를 빠짐없이 쓴다. view 는 비중 확대/관심/중립/비중 축소, why 는 한 문장. "
+    "'개선(돌아서는 중)' 섹터 가운데 지금 주도 섹터 다음으로 돌아서는 후보가 있으면 분명히 짚는다. "
+    "새로 볼 종목(stocks)은 특정 섹터에 몰지 말고, 섹터 판단과 근거가 맞으면 다른 섹터 대장주도 고른다.\n"
     "- 코인 8종은 short.coins 와 long.coins 모두 빠짐없이 판단한다. short.coins 의 condition 에는 행동을 실행하거나 바꿀 "
     "구체적 조건을 쓴다.\n"
     "- 주식 ticker 는 미국 티커(예: SMH, NVDA). 모르면 빈 문자열.\n"
@@ -320,8 +332,9 @@ def prev_context(prev, port_changed):
         days = "-"
     sh = op.get("short") or {}
     st = sh.get("stance") or {}
-    note = ("\n※ 이 중장기 의견을 세운 뒤 포트폴리오나 투자 성향·판단 방식이 바뀌었다(보유 코인 매매, 위험 성향 7.5~8점, "
-            "뉴스·전문가 전망 반영). 이번에는 long 을 새 기준으로 다시 작성한다. 방향이 같으면 status '일부 수정', "
+    note = ("\n※ 이 중장기 의견을 세운 뒤 포트폴리오나 투자 성향·판단 범위가 바뀌었다(보유 종목 매매, 위험 성향 7.5~8점, "
+            "뉴스·전문가 전망, 관심 섹터 17개로 확대·섹터 로테이션 반영). 이번에는 long 을 새 기준으로 다시 작성한다. "
+            "방향이 같으면 status '일부 수정', "
             "change_note 에 무엇을 반영했는지 쓴다."
             if port_changed else "")
     return ("## 직전 중장기 의견 (%s 수립, 오늘 %s)\n%s%s\n\n## 직전 단기 행동 (%s)\n주식 %s · 코인 %s · 현금 %s / %s" % (
@@ -442,8 +455,19 @@ def conf(v):
     return pick(v, ["높음", "중간", "낮음"], [("높", "높음"), ("낮", "낮음")], "중간")
 
 
-def clean(op, ssyms=(), wsyms=()):
+def clean(op, ssyms=(), wsyms=(), rsyms=()):
     """자유 문자열 값을 허용 값으로 맞추고, 저장 형식(화면이 읽는 모양)으로 바꾼다"""
+    rord = {s: i for i, s in enumerate(rsyms)}
+    secs, seen = [], set()
+    for c in op.get("sectors") or []:
+        c["etf"] = re.sub(r"[^A-Z]", "", str(c.get("etf") or "").upper())
+        if c["etf"] in rord and c["etf"] not in seen:
+            seen.add(c["etf"])
+            c["view"] = pick(c.get("view"), ["비중 확대", "관심", "중립", "비중 축소"],
+                             [("확대", "비중 확대"), ("관심", "관심"), ("주목", "관심"), ("축소", "비중 축소"),
+                              ("회피", "비중 축소")], "중립")
+            secs.append(c)
+    op["sectors"] = sorted(secs, key=lambda c: rord[c["etf"]])
     word = {s: i for i, s in enumerate(wsyms)}
     ws, seen = [], set()
     for c in op.get("watch") or []:
@@ -525,41 +549,60 @@ HYPERSCALERS = [("MSFT", "마이크로소프트"), ("AMZN", "아마존"), ("GOOG
 ALIAS = {"GOOG": "GOOGL", "BRK.A": "BRK.B"}
 
 
-def watch_universe(D, T, held):
-    """하이퍼스케일러 · 섹터 ETF 대장주(1~3등) · 기관 13F 공동 매수/정리 종목. 보유 종목은 제외(보유 카드에서 다룸)"""
-    out, seen = [], set(held)
+QUAD = {"lead": "주도", "improve": "개선(돌아서는 중)", "weaken": "약화", "lag": "소외"}
+TREND = {"up": "추세 상승", "down": "추세 하락", "flat": "추세 뚜렷하지 않음"}
 
-    def add(t, name, group, info=""):
-        t = ALIAS.get(t, t)
-        if t and t not in seen and re.fullmatch(r"[A-Z][A-Z0-9.]{0,6}", t):
-            seen.add(t)
-            out.append({"sym": t, "name": name, "group": group, "info": info})
-    for t, n in HYPERSCALERS:
-        add(t, n, "하이퍼스케일러")
-    info = {}
+
+def trend_of(tags):
+    t = set(tags)
+    for kw, v in (("골든크로스", "up"), ("데드크로스", "down"), ("추세 상승", "up"), ("추세 하락", "down"),
+                  ("20일 신고가", "up"), ("20일 신저가", "down")):
+        if kw in t:
+            return v
+    return "flat"
+
+
+def watch_universe(D, T, held):
+    """하이퍼스케일러 · 섹터 ETF 대장주(1~3등) · 기관 13F 공동 매수/정리 종목. 보유 종목은 제외(보유 카드에서 다룸)
+    각 종목: sym, name, group, etf(속한 섹터 ETF), info(섹터 표에 없을 때만 수치), trend(up/down/flat)"""
+    out, seen, trend, members = [], set(held), {}, []
     for sec in (D or {}).get("sections", []):
-        if not sec["title"].startswith("섹터"):
+        if not sec["title"].startswith("섹터 ETF"):
             continue
-        grp = None
+        grp = etf = None
         for i in sec["items"]:
             m = re.match(r"\s*(└)?\s*(.+?)\s*\(([A-Z.]+)\)", i["name"])
             if not m:
                 continue
-            tags = ",".join(x["t"] for x in i.get("tags", []))
-            info[m.group(3)] = "%s %s %s" % (i["value"], " ".join(x["t"] for x in i.get("badges", [])),
-                                             ("[" + tags + "]") if tags else "")
+            trend[m.group(3)] = i.get("trend") or trend_of([x["t"] for x in i.get("tags", [])])
             if not m.group(1):
-                grp = "%s 대장주" % re.sub(r"\s*\(.*", "", m.group(2))
+                grp, etf = "%s 대장주" % re.sub(r"\s*\(.*", "", m.group(2)), m.group(3)
             elif grp:
-                add(m.group(3), m.group(2), grp, info[m.group(3)])
+                members.append((m.group(3), m.group(2), grp, etf))
+
+    def add(t, name, group, etf=None, info="", tr=None):
+        t = ALIAS.get(t, t)
+        if t and t not in seen and re.fullmatch(r"[A-Z][A-Z0-9.]{0,6}", t):
+            seen.add(t)
+            out.append({"sym": t, "name": name, "group": group, "etf": etf, "info": info, "trend": tr})
+    sector_of = {m[0]: m[3] for m in members}
+    for t, n in HYPERSCALERS:
+        add(t, n, "하이퍼스케일러", sector_of.get(t))
+    for m in members:
+        add(*m)
     cons = (T or {}).get("consensus") or {}
     for k, lab in (("bought", "기관 13F 공동 매수"), ("sold", "기관 13F 공동 정리")):
         for r in (cons.get(k) or [])[:8]:
             if r.get("ticker"):
-                add(r["ticker"], r["name"].title()[:24], lab, "%d곳, 공시 후 %s %s" % (
-                    r["count"], pct(r.get("chg_since")), ",".join(t["t"] for t in r.get("tags", []))))
-    for w in out:                                    # 섹터 표에 있으면 그 수치, 없으면 야후 1개월 추이
-        w["info"] = w["info"] or info.get(w["sym"]) or yahoo_brief(w["sym"])
+                tags = [t["t"] for t in r.get("tags", [])]
+                add(r["ticker"], r["name"].title()[:24], lab, None, "%d곳, 공시 후 %s %s" % (
+                    r["count"], pct(r.get("chg_since")), ",".join(tags)), trend_of(tags) if tags else None)
+    for w in out:                                    # 섹터 표에 있으면 그 추세, 없으면 야후 1개월 추이
+        if w["trend"] is None:
+            if w["sym"] in trend:
+                w["trend"] = trend[w["sym"]]
+            else:
+                w["info"], w["trend"] = yahoo_brief(w["sym"])
     return out
 
 
@@ -570,18 +613,34 @@ def yahoo_brief(t):
         with urllib.request.urlopen(req, timeout=20) as r:
             c = [x for x in json.loads(r.read().decode())["chart"]["result"][0]["indicators"]["quote"][0]["close"] if x]
         _YH[t] = c[-1]
-        return "%.2f$ 5일 %s 1개월 %s" % (c[-1], pct((c[-1] / c[-6] - 1) * 100) if len(c) > 5 else "-",
-                                          pct((c[-1] / c[0] - 1) * 100))
+        m1 = (c[-1] / c[0] - 1) * 100
+        return ("%.2f$ 5일 %s 1개월 %s" % (c[-1], pct((c[-1] / c[-6] - 1) * 100) if len(c) > 5 else "-", pct(m1)),
+                "up" if m1 > 3 else "down" if m1 < -3 else "flat")
     except Exception:
-        return "가격 데이터 없음"
+        return "가격 데이터 없음", "flat"
 
 
-def watch_digest(W):
+def rejudge(w, st, force):
+    """중장기 역할을 다시 판단할 종목: 처음 보는 종목, 중장기 의견을 새로 쓰는 날, 역할을 정할 때와 추세 방향이 바뀐 종목"""
+    return force or not st or st.get("trend") == "?" or (w["trend"] != "flat" and w["trend"] != st.get("trend"))
+
+
+def watch_digest(W, wstate, force):
     if not W:
         return ""
-    L = ["## 관심 종목 (보유 외: 하이퍼스케일러·섹터 대장주·기관 13F 언급)"]
-    L += ["- %s %s [%s]: %s" % (w["sym"], w["name"], w["group"], w["info"]) for w in W]
+    L = ["## 관심 종목 (보유 외: 하이퍼스케일러·17개 섹터 대장주·기관 13F 언급. 수치는 위 섹터 표 참고)"]
+    for w in W:
+        st = wstate.get(w["sym"])
+        prev = ("직전 역할 %s(%s~)" % (st["role"], opmd(st.get("since")))) if st else "새 종목"
+        L.append("- %s %s [%s] %s%s | %s%s" % (
+            w["sym"], w["name"], w["group"], TREND[w["trend"]], (" · " + w["info"]) if w["info"] else "", prev,
+            " → 재판단" if rejudge(w, st, force) else " → 역할 유지"))
     return "\n".join(L)
+
+
+def opmd(d):
+    m = re.match(r"\d{4}-(\d\d)-(\d\d)", str(d or ""))
+    return "%d/%d" % (int(m.group(1)), int(m.group(2))) if m else "-"
 
 
 # ---------------------------------------------------------------- 가격 · 성과
@@ -610,7 +669,7 @@ def coin_prices(C):
 def calls_of(op, cp):
     sh = op.get("short") or {}
     out = [{"name": c["sym"], "kind": "coin", "action": c["action"], "px": cp.get(c["sym"])} for c in sh.get("coins", [])]
-    for h in (op.get("watch") or []) + sh.get("holdings", []):
+    for h in [w for w in op.get("watch") or [] if w["action"] in BUY] + sh.get("holdings", []):
         out.append({"name": h["sym"], "kind": "stock", "action": h["action"], "px": stock_price(h["sym"])})
     for side, act in (("stocks_buy", "매수"), ("stocks_avoid", "회피")):
         for s in sh.get(side, []):
@@ -655,6 +714,11 @@ def main():
     view, sources = prev.get("outlook") or "", prev.get("sources") or []
     long_log, prev_short = prev.get("long_log") or [], prev.get("prev_short")
     watch_meta = prev.get("watch_meta") or {}
+    rotation = prev.get("rotation")
+    wstate = prev.get("watch_state")
+    if wstate is None:                               # 처음: 직전 의견의 역할을 '추세 미상'으로 넣어 한 번 모두 재판단
+        wstate = {w["sym"]: {"role": w["role"], "since": long_since, "trend": "?"}
+                  for w in (op or {}).get("watch", [])}
     if not os.environ.get("ANTHROPIC_API_KEY"):
         print("[의견] ANTHROPIC_API_KEY 없음 — 이전 의견 유지")
     elif not fresh or force or not v2:
@@ -666,16 +730,29 @@ def main():
                 print("[의견] 전망 검색 실패 — 직전 전망 사용:", str(e)[:200])
             held = [r["sym"] for r in ((pf or {}).get("stocks") or {}).get("rows", [])]
             W = watch_universe(D, T, held)
-            new, model = ask(digest(D, C, T) + "\n" + port_digest(pf) + "\n" + watch_digest(W) +
+            rotation = (D or {}).get("rotation") or rotation
+            new, model = ask(digest(D, C, T) + "\n" + port_digest(pf) + "\n" + watch_digest(W, wstate, port_changed) +
                              "\n\n## 뉴스·전문가 전망 (웹 검색 요약)\n" + (view or "없음"), prev_context(prev, port_changed))
-            clean(new, held, [w["sym"] for w in W])
-            watch_meta = {w["sym"]: {"name": w["name"], "group": w["group"]} for w in W}
+            clean(new, held, [w["sym"] for w in W], [r["etf"] for r in (rotation or {}).get("items", [])])
+            watch_meta = {w["sym"]: {"name": w["name"], "group": w["group"], "etf": w["etf"], "trend": w["trend"]}
+                          for w in W}
             pl, judged = (op or {}).get("long"), new["long"]["status"]
-            if pl and judged == "유지" and not port_changed:
+            kept = bool(pl) and judged == "유지" and not port_changed
+            wtr = {w["sym"]: w["trend"] for w in W}
+            for w in new["watch"]:                           # 관심 종목 중장기 역할: 추세가 그대로면 유지, 바뀌면 재판단
+                st, tnow = wstate.get(w["sym"]), wtr.get(w["sym"], "flat")
+                redo = rejudge({"trend": tnow}, st, not kept)
+                if st and not redo:
+                    w["role"] = st["role"]
+                if not st or st["role"] != w["role"]:
+                    wstate[w["sym"]] = {"role": w["role"], "since": TODAY, "trend": tnow,
+                                        "from": st["role"] if st else None}
+                elif redo:                                   # 다시 봤지만 역할이 같으면 기준 추세만 갱신
+                    wstate[w["sym"]]["trend"] = tnow
+                w["role_from"], w["role_since"] = wstate[w["sym"]].get("from"), wstate[w["sym"]].get("since")
+            wstate = {k: v for k, v in wstate.items() if k in wtr}   # 관심 목록에서 빠진 종목 정리
+            if kept:
                 long_check = {"date": TODAY, "note": new["long"]["change_note"]}
-                proles = {w["sym"]: w["role"] for w in (op or {}).get("watch", [])}
-                for w in new["watch"]:                       # 관심 종목의 중장기 역할도 함께 유지
-                    w["role"] = proles.get(w["sym"], w["role"])
                 new["long"] = pl                            # 문구까지 그대로: 중장기 의견이 매일 흔들리지 않게
             else:
                 if not pl:                                   # 직전 중장기 의견이 없으면 첫 의견
@@ -704,6 +781,7 @@ def main():
 
     past = track(hist[:-1] if hist and hist[-1].get("date") == TODAY else hist, coin_prices(C))
     out = {"version": 2, "generated": generated, "model": model, "opinion": op, "watch_meta": watch_meta,
+           "watch_state": wstate, "rotation": rotation,
            "long_since": long_since, "long_check": long_check, "long_log": long_log, "long_port": long_port,
            "prev_short": prev_short, "outlook": view, "sources": sources,
            "portfolio": pf, "track": past,

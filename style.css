@@ -306,3 +306,20 @@ details.ol-s>summary::after{margin-left:auto}
 .ol-l b{color:var(--txt);font-weight:700}
 .ol-p{margin:4px 0 8px;font-size:13.5px;line-height:1.7;color:var(--sub)}
 .op-news details.ko{margin-top:6px}
+/* 섹터 로테이션 4분면 */
+.rq{border-top:1px solid var(--line);padding:10px 0 4px}
+.note+.rq{border-top:none}
+.rq-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:2px}
+.rr{padding:7px 0}
+.rr-1{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.rr-1 b{font-size:14px}
+.rr-1 .tag{padding:4px 7px}
+.rr-v{margin-left:auto;font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.rr .ctr{display:block;margin-top:6px}
+.rr .opw{margin-top:4px;font-size:13px}
+/* 관심 종목 그룹 접기 */
+details.ws{background:none;border:0;border-top:1px solid var(--line);border-radius:0;margin:0;overflow:visible}
+.eh+details.ws{border-top:none}
+details.ws>summary{padding:11px 0;justify-content:flex-start;gap:6px;flex-wrap:wrap;font-size:14px}
+details.ws>summary::after{margin-left:auto}
+.ws-n{font-size:12px;color:var(--dim);font-weight:600}
