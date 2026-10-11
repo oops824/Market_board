@@ -67,7 +67,7 @@ function opPortCard(title,asof,rows,shortL,longL,cashSub){
       '<div class="pf-bar">'+(opNum(r.w)?'<i style="width:'+(r.w/mx*100).toFixed(1)+'%"></i>':'')+
       (opNum(r.t)?'<u style="left:calc('+(r.t/mx*100).toFixed(1)+'% - 1px)"></u>':'')+'</div>'+
       (s||l?'<div class="tags">'+(s?'<span class="tag '+(OP_ACT[s.action]||'na')+'">단기 '+opT(s.action)+'</span>':'')+
-        (l?'<span class="tag '+(OP_ROLE[l.role]||'na')+'">중장기 '+opT(l.role)+'</span>':'')+'</div>':'')+'</div>'}).join('');
+        (l?'<span class="tag '+(OP_ROLE[l.role]||'na')+'">중장기 '+opT(l.role)+'</span>':'')+opOvChip(r.sym)+'</div>':'')+'</div>'}).join('');
   return '<div class="etf"><div class="eh"><b>'+title+'</b><span class="dim">'+opMD(asof)+
     ' 기준 · 시세 반영</span></div><div class="legend"><span><i style="background:var(--sub)"></i>현재 비중</span>'+
     '<span><i class="tk2"></i>중장기 목표 비중</span><span>수익률은 평단 대비</span></div>'+h+'</div>'}
@@ -100,6 +100,18 @@ function opCard(t,inner,sub){
   return inner?'<div class="etf"><div class="eh"><b>'+t+'</b>'+(sub?'<span class="dim">'+sub+'</span>':'')+'</div>'+
     inner+'</div>':''}
 
+/* 과대낙폭(역발상) 점검: 점수 칩 + 저가 매수 조건 상자 */
+var OP_OV={'항복 구간':'up','과대낙폭':'acc','조정 중':'na','과대낙폭 아님':'na'};
+function opOv(sym){return (OP.oversold||{})[sym]}
+function opDip(sym,dip){
+  var v=opOv(sym);
+  if(!dip&&!v)return '';
+  return '<div class="opc dip"><em>저가 매수</em>'+opT(dip||'-')+
+    (v?'<div class="dsig"><span class="tag '+(OP_OV[v.label]||'na')+'">역발상 점검 '+v.score+' · '+opT(v.label)+'</span>'+
+      (v.sig&&v.sig.length?'<span>'+opT(v.sig.join(' · '))+'</span>':'')+'</div>':'')+'</div>'}
+function opOvChip(sym){var v=opOv(sym);
+  return v&&v.score>=40?'<span class="tag '+(OP_OV[v.label]||'na')+'">'+opT(v.label)+' '+v.score+'</span>':''}
+
 function opCoinList(o,isShort){
   var ps=OP.prev_short,pw={};
   ((OP.portfolio||{}).rows||[]).forEach(function(r){pw[r.sym]=r.w});
@@ -109,7 +121,7 @@ function opCoinList(o,isShort){
       (was&&was!==c.action?'<span class="chgd">'+opMD(ps.date)+' '+opT(was)+'에서 변경</span>':'')+
       (isShort?opCf(c.confidence):'<span class="cf">목표 '+c.target_pct+'%'+(opNum(pw[c.sym])?' · 현재 '+pw[c.sym].toFixed(1)+'%':'')+'</span>')+
       '</div><div class="opw">'+opT(c.why)+'</div>'+(isShort&&c.condition?'<div class="opc"><em>조건</em>'+opT(c.condition)+'</div>':'')+
-      '</li>'}).join('')+'</ul>'}
+      (isShort?opDip(c.sym,c.dip):'')+'</li>'}).join('')+'</ul>'}
 /* 관심 종목(보유 외): 그룹별로 단기 행동 + 중장기 역할 */
 var OP_Q={lead:['주도','up'],improve:['돌아서는 중','acc'],weaken:['약화','warn'],lag:['소외','dn']};
 var OP_QD={lead:'3개월·20일 모두 시장 상회',improve:'3개월은 열세였지만 최근 20일 우위',
@@ -221,7 +233,7 @@ function opHold(list,isShort){
     return '<li><div class="opr"><b>'+opT(c.sym)+'</b><span class="tag '+((isShort?OP_ACT:OP_ROLE)[k]||'na')+'">'+opT(k)+'</span>'+
       (!isShort?'<span class="cf">목표 '+c.target_pct+'%'+(opNum(pw[c.sym])?' · 현재 '+pw[c.sym].toFixed(1)+'%':'')+'</span>':'')+
       '</div><div class="opw">'+opT(c.why)+'</div>'+(isShort&&c.condition?'<div class="opc"><em>조건</em>'+opT(c.condition)+'</div>':'')+
-      '</li>'}).join('')+'</ul>'}
+      (isShort?opDip(c.sym,c.dip):'')+'</li>'}).join('')+'</ul>'}
 
 /* 웹 검색으로 모은 최근 뉴스·전문가 전망: 영역(##)별 접이식, 글머리표·굵게 표시, 출처는 접어 둠 */
 function opMd(t){return opT(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')}
@@ -260,7 +272,8 @@ function renderOP(){
     '일 전 의견을 표시하고 있습니다.</p>':'';
   var hd=function(t,sub){return '<div class="hd">'+t+(sub?'<small>'+sub+'</small>':'')+'</div>'};
   $('#p5').innerHTML=bar+stale+opHero(o)+opOutlook()+opSeg()+'<div id="opb"></div>'+opTrack(OP.track)+
-    '<p class="note">위험 성향 10점 중 7.5~8점(공격적) 기준. 대시보드 데이터에 웹 검색한 최근 뉴스·전문가 전망을 더해 판단합니다. '+
+    '<p class="note">위험 성향 10점 중 7.5~8점(공격적) 기준. 대시보드 데이터에 웹 검색한 최근 뉴스·전문가 전망을 더해 판단하고, '+
+    '추세 신호와 함께 과대낙폭(역발상) 점검으로 저가 매수 기회도 따로 봅니다. '+
     '미국주식·가상자산·기관 탭에 영역별 의견이 있습니다. 단기 의견은 매일 아침 새로 쓰고, 중장기 의견은 매크로 체제 전환처럼 분명한 근거가 있을 때만 '+
     '바꿉니다. 포트폴리오는 사진 기준 비중·평단·수익률(수량·금액은 저장하지 않음)에 이후 가격 변동을 반영한 추정치입니다. '+
     '데이터 기준: 지표 '+opT(asof['지표']||'-')+', 코인 '+opT(asof['코인']||'-')+', 기관 13F '+opT(asof['기관']||'-')+' 공시.'+
