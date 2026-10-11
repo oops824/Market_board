@@ -323,3 +323,8 @@ details.ws{background:none;border:0;border-top:1px solid var(--line);border-radi
 details.ws>summary{padding:11px 0;justify-content:flex-start;gap:6px;flex-wrap:wrap;font-size:14px}
 details.ws>summary::after{margin-left:auto}
 .ws-n{font-size:12px;color:var(--dim);font-weight:600}
+/* 과대낙폭(역발상) 점검 · 저가 매수 조건 */
+.opc.dip{margin-top:6px}
+.opc.dip em{color:var(--up)}
+.dsig{margin-top:6px;display:flex;flex-wrap:wrap;gap:5px 8px;align-items:center;font-size:11.5px;color:var(--dim);line-height:1.5}
+.dsig .tag{padding:3px 7px;font-size:11.5px}

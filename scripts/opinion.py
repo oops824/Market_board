@@ -11,6 +11,7 @@ import datetime, hashlib, json, os, re, sys, urllib.parse, urllib.request
 
 sys.path.insert(0, os.path.dirname(__file__))
 import calendar_ctx
+import signals
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
 now = datetime.datetime.now(KST)
@@ -21,7 +22,7 @@ UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.3
                     "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
 COIN_SYMS = ["BTC", "ETH", "SOL", "HYPE", "LINK", "ONDO", "SUI", "VIRTUAL"]
 SHORT_ACT = ["분할 매수", "비중 확대", "유지", "일부 차익실현", "비중 축소", "관망"]
-PROFILE = "|risk7.5-8|outlook|stock-targets|sectors17"                       # 투자 성향·판단 방식 버전 (바뀌면 중장기 재작성)
+PROFILE = "|risk7.5-8|outlook|stock-targets|sectors17|contrarian"                       # 투자 성향·판단 방식 버전 (바뀌면 중장기 재작성)
 LONG_ROLE = ["핵심 보유", "보유", "비중 확대", "비중 축소", "정리"]
 BUY = {"분할 매수", "비중 확대", "매수"}
 SELL = {"일부 차익실현", "비중 축소", "회피"}
@@ -215,6 +216,91 @@ def port_digest(pf):
     return "\n".join(L)
 
 
+# ---------------------------------------------------------------- 과대낙폭(역발상) 점검
+def _step(v, rules):
+    """v 가 규칙(임계값, 점수)을 처음 만족하는 점수. 규칙은 '이하' 비교(낙폭·지표가 낮을수록 점수)"""
+    for th, pt in rules:
+        if v is not None and v <= th:
+            return pt
+    return 0
+
+
+def oversold(closes, kind, ch7=None, ch24=None, funding8h=None, ls=None, oi24=None, fng=None, etf_streak=None, vix=None):
+    """0~100 점. 가격(낙폭 깊이·과매도)에 코인은 포지션 청산·심리·ETF, 주식은 VIX 를 더한다.
+    40 이상 과대낙폭, 60 이상 항복 구간. 낙폭은 큰데 롱이 여전히 몰려 있으면 '떨어지는 칼' 주의 표시"""
+    c = [x for x in closes or [] if x]
+    if len(c) < 25:
+        return None
+    coin = kind == "coin"
+    win = 90 if coin else 63
+    dd = (c[-1] / max(c[-win:]) - 1) * 100
+    wk = ch7 if coin and ch7 is not None else (c[-1] / c[-6] - 1) * 100
+    r = signals.rsi(c)
+    gap = (c[-1] / (sum(c[-20:]) / 20) - 1) * 100
+    parts = [
+        (_step(dd, ((-50, 20), (-35, 15), (-25, 10), (-15, 5)) if coin else ((-40, 20), (-30, 15), (-20, 10), (-10, 5))),
+         "%s 고점 대비 %.0f%%" % ("90일" if coin else "3개월", dd)),
+        (_step(wk, ((-25, 10), (-15, 6), (-8, 3)) if coin else ((-12, 10), (-8, 6), (-4, 3))),
+         "%s %+.0f%%" % ("7일" if coin else "5일", wk)),
+        (_step(r, ((25, 15), (30, 12), (35, 7), (40, 3))), "RSI %.0f" % (r or 0)),
+        (_step(gap, ((-20, 10), (-12, 6), (-7, 3)) if coin else ((-12, 10), (-8, 6), (-4, 3))), "20일선 대비 %+.0f%%" % gap),
+    ]
+    price = sum(p for p, _ in parts)
+    if coin:
+        down = (ch24 or 0) < 0 or (ch7 or 0) < 0
+        parts += [
+            (_step(funding8h, ((-0.01, 10), (-1e-9, 5))), "펀딩 %+.4f%%(숏 우위)" % (funding8h or 0)),
+            (_step(ls, ((0.9, 10), (1.1, 6), (1.3, 3))), "롱숏 %.2f" % (ls or 0)),
+            (_step(oi24, ((-15, 10), (-8, 6), (-4, 3))) if down else 0, "OI 24h %+.0f%%(청산)" % (oi24 or 0)),
+            (_step(fng, ((20, 10), (30, 6), (40, 3))), "공포·탐욕 %s" % fng),
+            (_step(etf_streak, ((-5, 5),)), "ETF %s일 연속 유출" % abs(etf_streak or 0)),
+        ]
+        score = sum(p for p, _ in parts)
+    else:
+        parts.append((_step(-(vix or 0), ((-30, 10), (-25, 6), (-20, 3))), "VIX %.1f" % (vix or 0)))
+        score = round(sum(p for p, _ in parts) * 100 / 65)
+    knife = coin and price >= 25 and ((ls or 0) >= 2 or (funding8h or 0) >= 0.01)
+    label = "항복 구간" if score >= 60 else "과대낙폭" if score >= 40 else "조정 중" if score >= 20 else "과대낙폭 아님"
+    return {"score": score, "label": label, "knife": knife, "rsi": round(r or 0), "dd": round(dd, 1),
+            "sig": [t for p, t in parts if p] + (["주의: 롱 쏠림 여전(떨어지는 칼)"] if knife else [])}
+
+
+def oversold_all(C, D, pf):
+    """코인 8종 + 보유 미국 주식의 과대낙폭 점검"""
+    out = {}
+    fng = ((C or {}).get("fng") or {}).get("value")
+    etf = (C or {}).get("etf") or {}
+    for c in (C or {}).get("coins", []):
+        m, ok, hl = c.get("market") or {}, c.get("okx") or {}, c.get("hl") or {}
+        f8 = ok["funding"] * 100 if ok.get("funding") is not None else (
+            hl["funding"] * 800 if hl.get("funding") is not None else None)
+        o = oversold((c.get("daily") or {}).get("c"), "coin", m.get("ch7"), m.get("ch24"), f8, ok.get("lsRatio"),
+                     ok.get("oiChg24"), fng, (etf.get(c["sym"]) or {}).get("streak"))
+        if o:
+            out[c["sym"]] = o
+    vix = None
+    for sec in (D or {}).get("sections", []):
+        for i in sec["items"] if sec["title"].startswith("매크로") else []:
+            if "VIX" in i["name"]:
+                try:
+                    vix = float(re.sub(r"[^0-9.]", "", i["value"]))
+                except ValueError:
+                    pass
+    for r in (((pf or {}).get("stocks") or {}).get("rows") or []):
+        o = oversold(yahoo_closes(r["sym"]), "stock", vix=vix)
+        if o:
+            out[r["sym"]] = o
+    return out
+
+
+def oversold_digest(OV):
+    if not OV:
+        return ""
+    L = ["## 과대낙폭(역발상) 점검 (0~100점 · 40 이상 과대낙폭 · 60 이상 항복 구간 · 코인은 가격+포지션 청산+심리, 주식은 가격+VIX)"]
+    L += ["- %s: %d점 %s | %s" % (k, v["score"], v["label"], ", ".join(v["sig"]) or "해당 신호 없음") for k, v in OV.items()]
+    return "\n".join(L)
+
+
 # ---------------------------------------------------------------- 출력 스키마
 # 값 목록(enum)을 스키마에 넣으면 컴파일된 문법이 너무 커져 400 이 난다 → 문자열로 받고 clean() 에서 정규화
 S, I = {"type": "string"}, {"type": "integer"}
@@ -232,8 +318,8 @@ SCHEMA = obj(
     watch={"type": "array", "items": obj(sym=S, action=S, role=S, why=S)},
     sectors={"type": "array", "items": obj(etf=S, view=S, why=S)},
     short=obj(view=S, confidence=S, stance=STANCE3,
-              coins={"type": "array", "items": obj(sym=S, action=S, why=S, condition=S, confidence=S)},
-              holdings={"type": "array", "items": obj(sym=S, action=S, why=S, condition=S)},
+              coins={"type": "array", "items": obj(sym=S, action=S, why=S, condition=S, dip=S, confidence=S)},
+              holdings={"type": "array", "items": obj(sym=S, action=S, why=S, condition=S, dip=S)},
               stocks=STOCKS, actions_now=STRS, wait_for=STRS, risks=STRS),
     long=obj(status=S, change_note=S, thesis=S, confidence=S, stance=STANCE3,
              allocation={"type": "array", "items": obj(asset=S, pct=I, why=S)},
@@ -273,6 +359,16 @@ SYSTEM = (
     "- 가상자산은 변동성이 크고 상승장이 오면 폭발적으로 오른다. 상승 추세가 살아 있는 이익 코인은 일찍 다 팔지 않는다. "
     "차익실현은 소량·조건부(추세 이탈, 과열 신호 확인 시)로 하고, 나머지는 추세가 꺾일 때까지 들고 가는 방식(트레일링)으로 "
     "상승 여력을 남긴다. 손실 코인도 상승장 초입이면 반등을 더 기다릴지 판단한다.\n\n"
+    "추세 추종과 역발상을 함께 본다(중요): 추세 하락·데드크로스 같은 추세 신호만으로 축소를 결정하지 않는다.\n"
+    "- '과대낙폭(역발상) 점검' 점수와 포지션 청산 신호(펀딩 음수, 롱숏 1 이하, OI 급감, 극단적 공포)를 함께 따진다. "
+    "점수 40 이상이면 '반등 때 축소'보다 '분할 저가 매수'가 나은지 명시적으로 판단해 action·why 에 반영하고, 60 이상(항복 구간)이면 "
+    "저가 매수를 기본 후보로 놓고 하지 않을 이유가 있는지 따진다.\n"
+    "- 낙폭만 크고 청산 신호가 없으면(롱이 여전히 몰려 있으면, '떨어지는 칼' 주의 표시) 아직 바닥 신호가 아니라고 구분한다. "
+    "ATH 대비 낙폭만으로는 싸다고 보지 않는다.\n"
+    "- short.coins 와 short.holdings 의 모든 항목에 dip(저가 매수 조건)을 쓴다: 어떤 신호가 나오면(예: RSI 30 아래, 펀딩 음수 전환, "
+    "롱숏 1 이하, OI 급감, 극단적 공포, VIX 급등), 어느 수준에서(현재가 대비 %, 맥스페인, 3개월·90일 고점 대비 낙폭 등 데이터로 "
+    "계산되는 수준), 얼마나(보유분·계좌 비중 %p) 살지. 지금 과열이어도 미리 써 둔다. 저가 매수를 하지 않을 자산이면 그 이유를 쓴다.\n"
+    "- long 의 코인·보유 주식 역할도, 낙폭이 크고 청산 신호가 나온 자산은 '저가 분할 매수로 목표 비중 상향'이 나은지 검토한다.\n\n"
     "판단 원칙:\n"
     "- 면책 문구, '투자 권유가 아니다', '전문가와 상담하라', '투자 결정은 본인 몫' 같은 말은 쓰지 않는다.\n"
     "- 입장을 분명히 한다. 양쪽 다 가능하다는 식의 얼버무림 금지.\n"
@@ -333,7 +429,7 @@ def prev_context(prev, port_changed):
     sh = op.get("short") or {}
     st = sh.get("stance") or {}
     note = ("\n※ 이 중장기 의견을 세운 뒤 포트폴리오나 투자 성향·판단 범위가 바뀌었다(보유 종목 매매, 위험 성향 7.5~8점, "
-            "뉴스·전문가 전망, 관심 섹터 17개로 확대·섹터 로테이션 반영). 이번에는 long 을 새 기준으로 다시 작성한다. "
+            "뉴스·전문가 전망, 관심 섹터 17개로 확대·섹터 로테이션, 과대낙폭(역발상) 점검 반영). 이번에는 long 을 새 기준으로 다시 작성한다. "
             "방향이 같으면 status '일부 수정', "
             "change_note 에 무엇을 반영했는지 쓴다."
             if port_changed else "")
@@ -645,6 +741,23 @@ def opmd(d):
 
 # ---------------------------------------------------------------- 가격 · 성과
 _YH = {}
+_YC = {}
+
+
+def yahoo_closes(t):
+    """6개월 일봉 종가 (과대낙폭 점검용)"""
+    if not t or not re.fullmatch(r"[A-Z][A-Z0-9.\-]{0,9}", t):
+        return None
+    if t not in _YC:
+        try:
+            req = urllib.request.Request("https://query1.finance.yahoo.com/v8/finance/chart/%s?range=6mo&interval=1d"
+                                         % urllib.parse.quote(t.replace(".", "-")), headers=UA)
+            with urllib.request.urlopen(req, timeout=20) as r:
+                _YC[t] = [x for x in json.loads(r.read().decode())["chart"]["result"][0]["indicators"]["quote"][0]["close"]
+                          if x]
+        except Exception:
+            _YC[t] = None
+    return _YC[t]
 
 
 def stock_price(t):
@@ -715,6 +828,7 @@ def main():
     long_log, prev_short = prev.get("long_log") or [], prev.get("prev_short")
     watch_meta = prev.get("watch_meta") or {}
     rotation = prev.get("rotation")
+    oversold_map = prev.get("oversold") or {}
     wstate = prev.get("watch_state")
     if wstate is None:                               # 처음: 직전 의견의 역할을 '추세 미상'으로 넣어 한 번 모두 재판단
         wstate = {w["sym"]: {"role": w["role"], "since": long_since, "trend": "?"}
@@ -731,7 +845,11 @@ def main():
             held = [r["sym"] for r in ((pf or {}).get("stocks") or {}).get("rows", [])]
             W = watch_universe(D, T, held)
             rotation = (D or {}).get("rotation") or rotation
-            new, model = ask(digest(D, C, T) + "\n" + port_digest(pf) + "\n" + watch_digest(W, wstate, port_changed) +
+            OV = oversold_all(C, D, pf)
+            print("[의견] 과대낙폭 점검:", {k: v["score"] for k, v in OV.items()})
+            oversold_map = OV
+            new, model = ask(digest(D, C, T) + "\n" + port_digest(pf) + "\n" + oversold_digest(OV) + "\n" +
+                             watch_digest(W, wstate, port_changed) +
                              "\n\n## 뉴스·전문가 전망 (웹 검색 요약)\n" + (view or "없음"), prev_context(prev, port_changed))
             clean(new, held, [w["sym"] for w in W], [r["etf"] for r in (rotation or {}).get("items", [])])
             watch_meta = {w["sym"]: {"name": w["name"], "group": w["group"], "etf": w["etf"], "trend": w["trend"]}
@@ -781,7 +899,7 @@ def main():
 
     past = track(hist[:-1] if hist and hist[-1].get("date") == TODAY else hist, coin_prices(C))
     out = {"version": 2, "generated": generated, "model": model, "opinion": op, "watch_meta": watch_meta,
-           "watch_state": wstate, "rotation": rotation,
+           "watch_state": wstate, "rotation": rotation, "oversold": oversold_map,
            "long_since": long_since, "long_check": long_check, "long_log": long_log, "long_port": long_port,
            "prev_short": prev_short, "outlook": view, "sources": sources,
            "portfolio": pf, "track": past,
