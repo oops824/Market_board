@@ -170,8 +170,18 @@ def portfolio(C):
     st = P.get("stocks")
     if st and st.get("holdings"):                    # 미국 주식 계좌: 현재가(야후)로 같은 방식 추정
         srows, sv = [], {}
+        notional = {}
         for h in st["holdings"]:
             px = stock_price(h["sym"])
+            lev = h.get("lev") or 1
+            if lev > 1:                              # 레버리지: 증거금 평가액이 주가 변동의 lev 배로 움직인다
+                cur, a = px or h["ref"], h["avg"]
+                g0, g1 = 1 + lev * (h["ref"] / a - 1), 1 + lev * (cur / a - 1)
+                sv[h["sym"]] = max(h["w"] * g1 / g0, 0)
+                notional[h["sym"]] = h["w"] / g0 * lev * cur / a
+                srows.append({"sym": h["sym"], "cur": "USD", "avg": a, "px": cur, "lev": lev,
+                              "pnl": round(lev * (cur / a - 1) * 100, 1)})
+                continue
             r = px / h["ref"] if px and h.get("ref") else 1.0
             sv[h["sym"]] = h["w"] * r
             srows.append({"sym": h["sym"], "cur": "USD", "avg": h["avg"], "px": px or h.get("ref"),
@@ -179,6 +189,8 @@ def portfolio(C):
         stot = sum(sv.values()) or 1
         for x in srows:
             x["w"] = round(sv[x["sym"]] / stot * 100, 1)
+            if x["sym"] in notional:                 # 실제 노출(명목) 비중: 증거금 비중의 약 lev 배
+                x["exp"] = round(notional[x["sym"]] / stot * 100, 1)
         srows.sort(key=lambda x: -x["w"])
         out["stocks"] = {"asof": st.get("asof"), "rows": srows}
         out["split"] = P.get("split")
@@ -207,8 +219,12 @@ def port_digest(pf):
     if st:
         sp = pf.get("split") or {}
         L.append("## 내 미국 주식 포트폴리오 (%s 기준, 이후 가격 반영 추정 · 주식 계좌 안의 비중)" % st["asof"])
-        L += ["- %s: 비중 %.1f%%, 평단 $%g, 현재가 %s, 수익률 %+.1f%%" % (
-            r["sym"], r["w"], r["avg"], ("$%g" % r["px"]) if r.get("px") else "-", r["pnl"]) for r in st["rows"]]
+        L += [("- %s: %d배 레버리지 롱 — 증거금 비중 %.1f%%, 실제 노출 %.1f%%, 진입가 $%g, 현재가 %s, 증거금 수익률 %+.1f%% "
+               "(주가 1%% = 증거금 %d%%, 주가 -%.0f%%면 증거금 전액 손실)" % (
+                   r["sym"], r["lev"], r["w"], r.get("exp", 0), r["avg"], ("$%g" % r["px"]) if r.get("px") else "-",
+                   r["pnl"], r["lev"], 100 / r["lev"])) if r.get("lev") else
+              "- %s: 비중 %.1f%%, 평단 $%g, 현재가 %s, 수익률 %+.1f%%" % (
+                  r["sym"], r["w"], r["avg"], ("$%g" % r["px"]) if r.get("px") else "-", r["pnl"]) for r in st["rows"]]
         if sp:
             L.append("계좌 규모 비율: 주식 계좌 %s%% : 코인 계좌 %s%% (금액 미공개)" % (sp.get("stocks"), sp.get("crypto")))
     else:
@@ -385,6 +401,10 @@ SYSTEM = (
     "- 보유 미국 주식은 short.holdings(action: 분할 매수/비중 확대/유지/일부 차익실현/비중 축소/관망, condition 포함)와 "
     "long.holdings(role: 핵심 보유/보유/비중 확대/비중 축소/정리, target_pct 는 주식 계좌 안 목표 비중, 보유 종목 합은 100 이하이고 나머지는 stocks 의 새 비중 확대 종목 몫)에서 "
     "보유 종목을 빠짐없이 판단한다. 새로 살 종목·피할 종목은 stocks 에 쓴다. 손실 종목은 매몰비용이 아니라 앞으로의 논리로 판단한다.\n"
+    "- 'N배 레버리지 롱'으로 표시된 보유 종목은 증거금이 주가 변동의 N배로 움직이고, 주가가 1/N 하락하면 증거금이 모두 사라진다"
+    "(거래 플랫폼의 유지증거금 규칙에 따라 그 전에 강제 청산될 수 있다). short.holdings 의 condition 에 손절 가격이나 레버리지를 "
+    "줄일 조건을 반드시 쓰고, dip 에서는 레버리지 추가를 권하지 않는다(늘리려면 현물로). long.holdings 의 target_pct 는 "
+    "실제 노출(명목) 기준이다.\n"
     "- watch 에는 '관심 종목' 목록의 모든 종목을 빠짐없이 쓴다. action 은 단기 행동(분할 매수/비중 확대/유지/일부 차익실현/"
     "비중 축소/관망, 미보유 종목의 '유지'는 '지금은 사지 않고 지켜봄'), role 은 중장기 역할(핵심 보유/보유/비중 확대/비중 축소/정리, "
     "미보유면 '보유'=담을 만함, '정리'=피함), why 는 근거 한 문장. 보유 종목과 비교해 더 나은 대안이면 그렇다고 쓴다. "

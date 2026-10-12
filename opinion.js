@@ -56,15 +56,18 @@ function opPortCard(title,asof,rows,shortL,longL,cashSub){
   (shortL||[]).forEach(function(c){sa[c.sym]=c});
   (longL||[]).forEach(function(c){lr[c.sym]=c});
   rows.forEach(function(r){if(!r.cash)r.t=(lr[r.sym]||{}).target_pct});
-  var mx=Math.max.apply(null,rows.map(function(r){return Math.max(r.w||0,r.t||0)}))||1;
+  rows.forEach(function(r){r.cw=r.lev&&opNum(r.exp)?r.exp:r.w});   // 레버리지는 실제 노출 기준으로 비교
+  var mx=Math.max.apply(null,rows.map(function(r){return Math.max(r.cw||0,r.t||0)}))||1;
   var h=rows.map(function(r){
-    var s=sa[r.sym],l=lr[r.sym],d=opNum(r.w)&&opNum(r.t)?r.t-r.w:null;
+    var s=sa[r.sym],l=lr[r.sym],d=opNum(r.cw)&&opNum(r.t)?r.t-r.cw:null;
     var arrow=d==null||Math.abs(d)<2?'':d>0?' <span class="tu">▲</span>':' <span class="td">▼</span>';
     return '<div class="pf-r"><div class="pf-1"><b>'+opT(r.sym)+(r.cash&&cashSub?' <span class="dim">'+cashSub+'</span>':'')+'</b>'+
       (opNum(r.pnl)?'<span class="badge '+(r.pnl>=0?'up':'dn')+'">'+opPct(r.pnl)+'</span>':
         r.cash?'':'<span class="dim">비중 미입력</span>')+(r.note?'<span class="dim">'+opT(r.note)+'</span>':'')+
-      '<span class="pf-w">'+(opNum(r.w)?r.w.toFixed(1)+'%':'-')+' → '+(opNum(r.t)?r.t+'%':'-')+arrow+'</span></div>'+
-      '<div class="pf-bar">'+(opNum(r.w)?'<i style="width:'+(r.w/mx*100).toFixed(1)+'%"></i>':'')+
+      '<span class="pf-w">'+(opNum(r.cw)?r.cw.toFixed(1)+'%':'-')+' → '+(opNum(r.t)?r.t+'%':'-')+arrow+'</span></div>'+
+      (r.lev?'<div class="tags"><span class="tag warn">'+r.lev+'배 레버리지 롱 · 증거금 '+r.w.toFixed(1)+'% · 실제 노출 '+
+        r.exp.toFixed(1)+'%</span></div>':'')+
+      '<div class="pf-bar">'+(opNum(r.cw)?'<i style="width:'+(r.cw/mx*100).toFixed(1)+'%"></i>':'')+
       (opNum(r.t)?'<u style="left:calc('+(r.t/mx*100).toFixed(1)+'% - 1px)"></u>':'')+'</div>'+
       (s||l?'<div class="tags">'+(s?'<span class="tag '+(OP_ACT[s.action]||'na')+'">단기 '+opT(s.action)+'</span>':'')+
         (l?'<span class="tag '+(OP_ROLE[l.role]||'na')+'">중장기 '+opT(l.role)+'</span>':'')+opOvChip(r.sym)+'</div>':'')+'</div>'}).join('');
