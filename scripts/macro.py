@@ -26,6 +26,7 @@ def yh(sym, rng="1y"):
     return out
 
 def ago(series, days):
+    """days 는 달력 기준 일수(1개월=30, 3개월=91). 그날이 휴장이면 직전 거래일 값"""
     target = datetime.datetime.strptime(series[-1][0], "%Y-%m-%d") - datetime.timedelta(days=days)
     prev = [p for p in series if datetime.datetime.strptime(p[0], "%Y-%m-%d") <= target]
     return prev[-1][1] if prev else series[0][1]
@@ -84,7 +85,7 @@ def macro_items():
     try:
         h, l = cache["HYG"], cache["TLT"]
         cur = h[-1][1] / l[-1][1]
-        prev = ago(h, 21) / ago(l, 21)
+        prev = ago(h, 30) / ago(l, 30)
         hist = [(d, hv / lv) for (d, hv), (_, lv) in zip(h, l)]
         p = pctile(hist, cur)
         out.append({"name": "위험선호 HYG/TLT",
@@ -99,7 +100,7 @@ def macro_items():
     try:
         r, s = yh("RSP"), yh("SPY")
         cur = r[-1][1] / s[-1][1]
-        prev = ago(r, 63) / ago(s, 63)
+        prev = ago(r, 91) / ago(s, 91)
         out.append({"name": "시장 폭 RSP/SPY",
                     "value": "{:.4f}".format(cur),
                     "change": "{:+.2f}% (3개월)".format((cur / prev - 1) * 100),
@@ -111,7 +112,7 @@ def macro_items():
     try:
         m, s = yh("SMH"), yh("SPY")
         cur = m[-1][1] / s[-1][1]
-        prev = ago(m, 63) / ago(s, 63)
+        prev = ago(m, 91) / ago(s, 91)
         out.append({"name": "반도체 주도력 SMH/SPY",
                     "value": "{:.4f}".format(cur),
                     "change": "{:+.2f}% (3개월)".format((cur / prev - 1) * 100),
