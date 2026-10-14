@@ -187,13 +187,14 @@ def portfolio(C):
             sv[h["sym"]] = h["w"] * r
             srows.append({"sym": h["sym"], "cur": "USD", "avg": h["avg"], "px": px or h.get("ref"),
                           "pnl": round(((1 + h["pnl"] / 100) * r - 1) * 100, 1)})
-        stot = sum(sv.values()) or 1
+        scash = sum(c["w"] for c in st.get("cash", []))   # 매도 후 남은 달러 현금
+        stot = (sum(sv.values()) + scash) or 1
         for x in srows:
             x["w"] = round(sv[x["sym"]] / stot * 100, 1)
             if x["sym"] in notional:                 # 실제 노출(명목) 비중: 증거금 비중의 약 lev 배
                 x["exp"] = round(notional[x["sym"]] / stot * 100, 1)
         srows.sort(key=lambda x: -x["w"])
-        out["stocks"] = {"asof": st.get("asof"), "rows": srows}
+        out["stocks"] = {"asof": st.get("asof"), "rows": srows, "cash": round(scash / stot * 100, 1)}
         out["split"] = P.get("split")
     return out
 
@@ -230,6 +231,8 @@ def port_digest(pf):
               if r.get("lev") else
               "- %s: 비중 %.1f%%, 평단 $%g, 현재가 %s, 수익률 %+.1f%%" % (
                   r["sym"], r["w"], r["avg"], ("$%g" % r["px"]) if r.get("px") else "-", r["pnl"]) for r in st["rows"]]
+        if st.get("cash"):
+            L.append("- 현금(USD): 비중 %.1f%% (매도 대금, 아직 재투자 안 함)" % st["cash"])
         if sp:
             L.append("계좌 규모 비율: 주식 계좌 %s%% : 코인 계좌 %s%% (금액 미공개)" % (sp.get("stocks"), sp.get("crypto")))
     else:

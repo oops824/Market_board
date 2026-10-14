@@ -49,7 +49,9 @@ function opPortCoin(o){
   return opPortCard('내 코인 포트폴리오',pf.asof,rows,o.short.coins,o.long.coins,'USDT')}
 function opPortStock(o){
   var st=(OP.portfolio||{}).stocks;if(!st||!st.rows)return '';
-  return opPortCard('내 미국 주식 포트폴리오',st.asof,st.rows.slice(),o.short.holdings,o.long.holdings,'')}
+  var rows=st.rows.slice();
+  if(opNum(st.cash)&&st.cash>0)rows.push({sym:'현금',cash:true,w:st.cash});
+  return opPortCard('내 미국 주식 포트폴리오',st.asof,rows,o.short.holdings,o.long.holdings,'USD')}
 /* 계좌 카드: 현재 비중(막대)과 중장기 목표 비중(세로선), 단기 행동·중장기 역할 */
 function opPortCard(title,asof,rows,shortL,longL,cashSub){
   var sa={},lr={};
