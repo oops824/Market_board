@@ -175,11 +175,12 @@ def portfolio(C):
             px = stock_price(h["sym"])
             lev = h.get("lev") or 1
             if lev > 1:                              # 레버리지: 증거금 평가액이 주가 변동의 lev 배로 움직인다
+                k = "%s-%dX" % (h["sym"], lev)       # 같은 종목 현물과 구분되는 별도 포지션 키
                 cur, a = px or h["ref"], h["avg"]
                 g0, g1 = 1 + lev * (h["ref"] / a - 1), 1 + lev * (cur / a - 1)
-                sv[h["sym"]] = max(h["w"] * g1 / g0, 0)
-                notional[h["sym"]] = h["w"] / g0 * lev * cur / a
-                srows.append({"sym": h["sym"], "cur": "USD", "avg": a, "px": cur, "lev": lev,
+                sv[k] = max(h["w"] * g1 / g0, 0)
+                notional[k] = h["w"] / g0 * lev * cur / a
+                srows.append({"sym": k, "tk": h["sym"], "cur": "USD", "avg": a, "px": cur, "lev": lev,
                               "pnl": round(lev * (cur / a - 1) * 100, 1)})
                 continue
             r = px / h["ref"] if px and h.get("ref") else 1.0
@@ -219,10 +220,14 @@ def port_digest(pf):
     if st:
         sp = pf.get("split") or {}
         L.append("## 내 미국 주식 포트폴리오 (%s 기준, 이후 가격 반영 추정 · 주식 계좌 안의 비중)" % st["asof"])
-        L += [("- %s: %d배 레버리지 롱 — 증거금 비중 %.1f%%, 실제 노출 %.1f%%, 진입가 $%g, 현재가 %s, 증거금 수익률 %+.1f%% "
-               "(주가 1%% = 증거금 %d%%, 주가 -%.0f%%면 증거금 전액 손실)" % (
-                   r["sym"], r["lev"], r["w"], r.get("exp", 0), r["avg"], ("$%g" % r["px"]) if r.get("px") else "-",
-                   r["pnl"], r["lev"], 100 / r["lev"])) if r.get("lev") else
+        spot = {r["sym"]: r for r in st["rows"] if not r.get("lev")}
+        L += [("- %s: %s %d배 레버리지 롱 — 증거금 비중 %.1f%%, 실제 노출 %.1f%%, 진입가 $%g, 현재가 %s, 증거금 수익률 %+.1f%% "
+               "(주가 1%% = 증거금 %d%%, 주가 -%.0f%%면 증거금 전액 손실)%s" % (
+                   r["sym"], r["tk"], r["lev"], r["w"], r.get("exp", 0), r["avg"], ("$%g" % r["px"]) if r.get("px") else "-",
+                   r["pnl"], r["lev"], 100 / r["lev"],
+                   (" · %s 현물(%.1f%%)과 별도 포지션, %s 합산 실제 노출 %.1f%%" % (
+                       r["tk"], spot[r["tk"]]["w"], r["tk"], spot[r["tk"]]["w"] + r.get("exp", 0))) if r["tk"] in spot else ""))
+              if r.get("lev") else
               "- %s: 비중 %.1f%%, 평단 $%g, 현재가 %s, 수익률 %+.1f%%" % (
                   r["sym"], r["w"], r["avg"], ("$%g" % r["px"]) if r.get("px") else "-", r["pnl"]) for r in st["rows"]]
         if sp:
@@ -302,8 +307,12 @@ def oversold_all(C, D, pf):
                     vix = float(re.sub(r"[^0-9.]", "", i["value"]))
                 except ValueError:
                     pass
-    for r in (((pf or {}).get("stocks") or {}).get("rows") or []):
-        o = oversold(yahoo_closes(r["sym"]), "stock", vix=vix)
+    rows = ((pf or {}).get("stocks") or {}).get("rows") or []
+    spot = {r["sym"] for r in rows if not r.get("lev")}
+    for r in rows:
+        if r.get("lev") and r["tk"] in spot:
+            continue
+        o = oversold(yahoo_closes(r.get("tk") or r["sym"]), "stock", vix=vix)
         if o:
             out[r["sym"]] = o
     return out
@@ -404,7 +413,8 @@ SYSTEM = (
     "- 'N배 레버리지 롱'으로 표시된 보유 종목은 증거금이 주가 변동의 N배로 움직이고, 주가가 1/N 하락하면 증거금이 모두 사라진다"
     "(거래 플랫폼의 유지증거금 규칙에 따라 그 전에 강제 청산될 수 있다). short.holdings 의 condition 에 손절 가격이나 레버리지를 "
     "줄일 조건을 반드시 쓰고, dip 에서는 레버리지 추가를 권하지 않는다(늘리려면 현물로). long.holdings 의 target_pct 는 "
-    "실제 노출(명목) 기준이다.\n"
+    "실제 노출(명목) 기준이다. 레버리지 포지션은 'CRDO-4X'처럼 별도 sym 으로 표시되며, 같은 종목 현물이 있으면 현물과 레버리지를 "
+    "각각 별도 holdings 항목으로 판단하고(sym 은 목록 표기 그대로), 두 포지션을 합한 실제 노출이 그 종목에 과도하게 쏠리지 않는지 함께 본다.\n"
     "- watch 에는 '관심 종목' 목록의 모든 종목을 빠짐없이 쓴다. action 은 단기 행동(분할 매수/비중 확대/유지/일부 차익실현/"
     "비중 축소/관망, 미보유 종목의 '유지'는 '지금은 사지 않고 지켜봄'), role 은 중장기 역할(핵심 보유/보유/비중 확대/비중 축소/정리, "
     "미보유면 '보유'=담을 만함, '정리'=피함), why 는 근거 한 문장. 보유 종목과 비교해 더 나은 대안이면 그렇다고 쓴다. "
@@ -598,10 +608,14 @@ def clean(op, ssyms=(), wsyms=(), rsyms=()):
             ws.append(c)
     op["watch"] = sorted(ws, key=lambda c: word[c["sym"]])
     sorder = {s: i for i, s in enumerate(ssyms)}
+    flat = lambda s: re.sub(r"[^A-Z0-9]", "", s)
+    skey = {flat(s): s for s in ssyms}
+    skey.update({flat(s)[:-1]: s for s in ssyms if re.search(r"-\d+X$", s)})
     for k, key in (("short", "action"), ("long", "role")):
         hs, seen = [], set()
         for c in op[k].get("holdings") or []:
             c["sym"] = str(c.get("sym") or "").strip().upper()
+            c["sym"] = skey.get(flat(c["sym"]), c["sym"])
             if c["sym"] in sorder and c["sym"] not in seen:
                 seen.add(c["sym"])
                 c[key] = (pick(c.get(key), SHORT_ACT, [("차익", "일부 차익실현"), ("분할", "분할 매수"), ("매수", "분할 매수"),
@@ -780,6 +794,11 @@ def yahoo_closes(t):
     return _YC[t]
 
 
+def ticker(s):
+    """보유 키('CRDO-4X')에서 실제 티커('CRDO')"""
+    return re.sub(r"-\d+X$", "", s or "")
+
+
 def stock_price(t):
     if not t or not re.fullmatch(r"[A-Z][A-Z0-9.\-]{0,9}", t):
         return None
@@ -803,7 +822,7 @@ def calls_of(op, cp):
     sh = op.get("short") or {}
     out = [{"name": c["sym"], "kind": "coin", "action": c["action"], "px": cp.get(c["sym"])} for c in sh.get("coins", [])]
     for h in [w for w in op.get("watch") or [] if w["action"] in BUY] + sh.get("holdings", []):
-        out.append({"name": h["sym"], "kind": "stock", "action": h["action"], "px": stock_price(h["sym"])})
+        out.append({"name": h["sym"], "kind": "stock", "action": h["action"], "px": stock_price(ticker(h["sym"]))})
     for side, act in (("stocks_buy", "매수"), ("stocks_avoid", "회피")):
         for s in sh.get(side, []):
             if s.get("ticker"):
@@ -863,7 +882,7 @@ def main():
             except Exception as e:
                 print("[의견] 전망 검색 실패 — 직전 전망 사용:", str(e)[:200])
             held = [r["sym"] for r in ((pf or {}).get("stocks") or {}).get("rows", [])]
-            W = watch_universe(D, T, held)
+            W = watch_universe(D, T, [ticker(s) for s in held])
             rotation = (D or {}).get("rotation") or rotation
             OV = oversold_all(C, D, pf)
             print("[의견] 과대낙폭 점검:", {k: v["score"] for k, v in OV.items()})

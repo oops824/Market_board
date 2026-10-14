@@ -230,7 +230,7 @@ function opTrack(tr){
 /* 보유 종목별 판단 (단기: 행동·조건, 중장기: 역할·목표 비중) */
 function opHold(list,isShort){
   if(!list||!list.length)return '';
-  var pw={};(((OP.portfolio||{}).stocks||{}).rows||[]).forEach(function(r){pw[r.sym]=r.w});
+  var pw={};(((OP.portfolio||{}).stocks||{}).rows||[]).forEach(function(r){pw[r.sym]=r.lev&&opNum(r.exp)?r.exp:r.w});
   return '<ul class="opl">'+list.map(function(c){
     var k=isShort?c.action:c.role;
     return '<li><div class="opr"><b>'+opT(c.sym)+'</b><span class="tag '+((isShort?OP_ACT:OP_ROLE)[k]||'na')+'">'+opT(k)+'</span>'+
