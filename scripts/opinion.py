@@ -181,6 +181,7 @@ def portfolio(C):
                 sv[k] = max(h["w"] * g1 / g0, 0)
                 notional[k] = h["w"] / g0 * lev * cur / a
                 srows.append({"sym": k, "tk": h["sym"], "cur": "USD", "avg": a, "px": cur, "lev": lev,
+                              "liq": round(a * (1 - 1 / lev), 2),        # 증거금이 0 이 되는 주가
                               "pnl": round(lev * (cur / a - 1) * 100, 1)})
                 continue
             r = px / h["ref"] if px and h.get("ref") else 1.0
@@ -223,9 +224,9 @@ def port_digest(pf):
         L.append("## 내 미국 주식 포트폴리오 (%s 기준, 이후 가격 반영 추정 · 주식 계좌 안의 비중)" % st["asof"])
         spot = {r["sym"]: r for r in st["rows"] if not r.get("lev")}
         L += [("- %s: %s %d배 레버리지 롱 — 증거금 비중 %.1f%%, 실제 노출 %.1f%%, 진입가 $%g, 현재가 %s, 증거금 수익률 %+.1f%% "
-               "(주가 1%% = 증거금 %d%%, 주가 -%.0f%%면 증거금 전액 손실)%s" % (
+               "(주가 1%% = 증거금 %d%%, 진입가 대비 -%.0f%%인 $%g 에서 증거금 전액 손실 · 현재가에서 %.1f%% 남음)%s" % (
                    r["sym"], r["tk"], r["lev"], r["w"], r.get("exp", 0), r["avg"], ("$%g" % r["px"]) if r.get("px") else "-",
-                   r["pnl"], r["lev"], 100 / r["lev"],
+                   r["pnl"], r["lev"], 100 / r["lev"], r["liq"], (1 - r["liq"] / r["px"]) * 100 if r.get("px") else 0,
                    (" · %s 현물(%.1f%%)과 별도 포지션, %s 합산 실제 노출 %.1f%%" % (
                        r["tk"], spot[r["tk"]]["w"], r["tk"], spot[r["tk"]]["w"] + r.get("exp", 0))) if r["tk"] in spot else ""))
               if r.get("lev") else
@@ -233,6 +234,9 @@ def port_digest(pf):
                   r["sym"], r["w"], r["avg"], ("$%g" % r["px"]) if r.get("px") else "-", r["pnl"]) for r in st["rows"]]
         if st.get("cash"):
             L.append("- 현금(USD): 비중 %.1f%% (매도 대금, 아직 재투자 안 함)" % st["cash"])
+        if any(r.get("lev") for r in st["rows"]):            # 레버리지 포함 계좌 전체 노출
+            gross = sum(r.get("exp", 0) if r.get("lev") else r["w"] for r in st["rows"])
+            L.append("- 주식 계좌 총 실제 노출: 계좌 평가액의 %.0f%% (현물 + 레버리지 명목, 100%% 초과분이 차입 노출)" % gross)
         if sp:
             L.append("계좌 규모 비율: 주식 계좌 %s%% : 코인 계좌 %s%% (금액 미공개)" % (sp.get("stocks"), sp.get("crypto")))
     else:
