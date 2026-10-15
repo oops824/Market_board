@@ -68,7 +68,7 @@ function opPortCard(title,asof,rows,shortL,longL,cashSub){
         r.cash?'':'<span class="dim">비중 미입력</span>')+(r.note?'<span class="dim">'+opT(r.note)+'</span>':'')+
       '<span class="pf-w">'+(opNum(r.cw)?r.cw.toFixed(1)+'%':'-')+' → '+(opNum(r.t)?r.t+'%':'-')+arrow+'</span></div>'+
       (r.lev?'<div class="tags"><span class="tag warn">'+r.lev+'배 레버리지 롱 · 증거금 '+r.w.toFixed(1)+'% · 실제 노출 '+
-        r.exp.toFixed(1)+'%</span></div>':'')+
+        r.exp.toFixed(1)+'%'+(opNum(r.liq)?' · 증거금 0 가격 $'+r.liq.toFixed(1):'')+'</span></div>':'')+
       '<div class="pf-bar">'+(opNum(r.cw)?'<i style="width:'+(r.cw/mx*100).toFixed(1)+'%"></i>':'')+
       (opNum(r.t)?'<u style="left:calc('+(r.t/mx*100).toFixed(1)+'% - 1px)"></u>':'')+'</div>'+
       (s||l?'<div class="tags">'+(s?'<span class="tag '+(OP_ACT[s.action]||'na')+'">단기 '+opT(s.action)+'</span>':'')+
