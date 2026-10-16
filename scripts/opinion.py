@@ -382,7 +382,7 @@ SYSTEM = (
     "쓰고, change_note 에 무엇을 왜 바꿨는지 쓴다. 하루 이틀의 가격 변동이나 뉴스로는 바꾸지 않는다. '유지'면 change_note 에 "
     "오늘 점검한 유지 근거를 한 문장으로 쓰고, 나머지 long 항목은 직전 의견과 같게 쓴다. 직전 의견이 없으면 status 는 '변경', "
     "change_note 는 '첫 중장기 의견'.\n"
-    "- short: '직전 단기 행동'이 있으면 데이터가 실제로 바뀐 코인만 행동을 바꾸고, 바꾼 코인은 why 첫머리에 무엇이 바뀌었는지 쓴다. "
+    "- short: '직전 단기 행동'이 있으면 데이터가 실제로 바뀐 코인·보유 주식·매수 후보만 행동을 바꾸고, 바꾼 항목은 why 첫머리에 무엇이 바뀌었는지 쓴다. "
     "하루 두 번 갱신되므로 같은 데이터로 결론을 뒤집지 않는다. 주식 매수 시점(지금 매수 ↔ 눌림 대기)도 가격·지표가 실제로 "
     "바뀌었을 때만 바꾼다.\n"
     "- short 는 long 과 모순되지 않는다. 예를 들어 long 에서 '정리'인 코인을 short 에서 '분할 매수'하지 않는다. "
@@ -455,8 +455,9 @@ SYSTEM = (
     "- summary·forward·short.view·long.thesis·long.change_note 는 줄바꿈(\\n)으로 나눈 3~7줄, 각 줄은 '- '로 시작.\n"
     "- why·condition·dip·risks·actions_now·wait_for·change_mind 등 나머지는 한 줄에 1~3개 구절, 구절 사이는 ' · '.\n"
     "강조(중요): 사용자가 반드시 봐야 할 핵심만 ==강조할 말== 처럼 등호 두 개로 감싼다(지금 할 행동, 손절·매수 가격, "
-    "판단을 바꾼 결정적 수치). 강조 글자 수는 각 영역 글자 수의 15% 이내, 한 항목에 많아야 1곳, 한 곳은 20자 이내, "
-    "문장 전체를 감싸지 않는다. 강조가 필요 없는 항목은 강조하지 않는다."
+    "판단을 바꾼 결정적 수치, 핵심 결론 키워드). 각 영역(첫 화면·short·long·watch)마다 강조 글자 비율 8~12%를 목표로 하고 "
+    "15%를 넘기지 않는다. summary·view·thesis 의 각 줄과 actions_now 의 각 항목에는 핵심 1곳을 강조하고, 나머지 항목은 "
+    "중요한 것만. 한 항목에 많아야 2곳, 한 곳은 20자 이내, 줄 전체를 감싸지 않는다."
 )
 
 
@@ -486,10 +487,14 @@ def prev_context(prev, port_changed):
             "방향이 같으면 status '일부 수정', "
             "change_note 에 무엇을 반영했는지 쓴다."
             if port_changed else "")
-    return ("## 직전 중장기 의견 (%s 수립, 오늘 %s)\n%s%s\n\n## 직전 단기 행동 (%s)\n주식 %s · 코인 %s · 현금 %s / %s" % (
+    picks = lambda k: ", ".join("%s(%s)" % (x.get("ticker") or x.get("name"), cut(x.get("why"), 70)) for x in sh.get(k) or [])
+    return ("## 직전 중장기 의견 (%s 수립, 오늘 %s)\n%s%s\n\n## 직전 단기 행동 (%s 작성)\n주식 %s · 코인 %s · 현금 %s / %s\n"
+            "- 보유 주식: %s\n- 매수 후보(매수 시점 포함): %s\n- 회피: %s" % (
         since, days, json.dumps(long_for_prompt(op["long"]), ensure_ascii=False), note,
-        (prev.get("generated") or "")[:10], st.get("stocks"), st.get("crypto"), st.get("cash"),
-        ", ".join("%s %s" % (c["sym"], c["action"]) for c in sh.get("coins", []))))
+        (prev.get("generated") or "")[:16], st.get("stocks"), st.get("crypto"), st.get("cash"),
+        ", ".join("%s %s" % (c["sym"], c["action"]) for c in sh.get("coins", [])),
+        ", ".join("%s %s" % (h["sym"], h["action"]) for h in sh.get("holdings", [])) or "-",
+        picks("stocks_buy") or "-", picks("stocks_avoid") or "-"))
 
 
 def parse_json(text):
