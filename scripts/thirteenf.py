@@ -397,10 +397,10 @@ def summarize_views(news):
         "아래는 유명 투자자·헤지펀드 매니저·정책 인사별 최근 30일 뉴스 헤드라인이다.\n"
         + calendar_ctx.macro_context(kst_today) + "\n"
         "인물마다 그 사람이 시장·경제·투자에 대해 한 발언이나 견해, 또는 최근 투자 행보의 요지를 "
-        "한국어 1~2문장으로 정리하라. 인터뷰·발언이 헤드라인에 없으면 "
+        "한국어 개조식 1~2개 구절로 정리하라. 인터뷰·발언이 헤드라인에 없으면 "
         "'직접 발언 보도 없음'으로 시작하고 관련 이슈만 한 줄로 적어라.\n"
         "규칙:\n- 헤드라인에 있는 내용만 쓸 것. 수치·종목·시점을 지어내지 말 것\n"
-        "- 매수/매도 추천 금지\n" + calendar_ctx.RULE +
+        "- 매수/매도 추천 금지\n" + calendar_ctx.RULE + calendar_ctx.STYLE +
         "출력은 다른 말 없이 JSON 하나: {\"인물 표시명\": \"요지\", ...}\n\n"
         + json.dumps(by, ensure_ascii=False)[:40000])
     out = C.claude_json(prompt, 4000)

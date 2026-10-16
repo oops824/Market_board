@@ -5,7 +5,8 @@
 단기(1~4주)와 중장기(3~12개월)로 나눠 묻는다.
 - 단기: 매일 갱신. 직전 단기 행동을 함께 줘서 데이터가 실제로 바뀐 코인만 바꾸게 한다.
 - 중장기: 직전 의견을 기본으로 유지. 모델이 '유지'로 판단하면 문구까지 그대로 두고, 바뀔 때만 이력에 남긴다.
-하루 1회(12시간 이내 재실행은 건너뜀, OPINION_FORCE=1 이면 강제). 지난 단기 의견의 이후 성과는 매 실행 갱신.
+하루 두 번(10시·22시 KST 시간대마다 1회, 같은 시간대 재실행은 건너뜀, OPINION_FORCE=1 이면 강제).
+지난 단기 의견의 이후 성과는 매 실행 갱신.
 """
 import datetime, hashlib, json, os, re, sys, urllib.parse, urllib.request
 
@@ -22,7 +23,7 @@ UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.3
                     "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
 COIN_SYMS = ["BTC", "ETH", "SOL", "HYPE", "LINK", "ONDO", "SUI", "VIRTUAL"]
 SHORT_ACT = ["분할 매수", "비중 확대", "유지", "일부 차익실현", "비중 축소", "관망"]
-PROFILE = "|risk7.5-8|outlook|stock-targets|sectors17|contrarian"                       # 투자 성향·판단 방식 버전 (바뀌면 중장기 재작성)
+PROFILE = "|risk7.5-8|outlook|stock-targets|sectors17|contrarian|gaejo-hl|fedwatch"                       # 투자 성향·판단 방식 버전 (바뀌면 중장기 재작성)
 LONG_ROLE = ["핵심 보유", "보유", "비중 확대", "비중 축소", "정리"]
 BUY = {"분할 매수", "비중 확대", "매수"}
 SELL = {"일부 차익실현", "비중 축소", "회피"}
@@ -58,6 +59,10 @@ def digest(D, C, T):
             if t.startswith("매크로"):
                 L.append("## 매크로·유동성")
                 L += ["- %s: %s (%s) %s" % (i["name"], i["value"], i.get("change", ""), cut(i.get("comment"), 80))
+                      for i in s["items"]]
+            elif t.startswith("FOMC"):
+                L.append("## FOMC 금리 확률 (연방기금금리 선물 기반, CME FedWatch 방식 · 1주 전 대비)")
+                L += ["- %s: %s (%s) %s" % (i["name"], i["value"], i.get("change") or "1주 비교 없음", i.get("comment", ""))
                       for i in s["items"]]
             elif t.startswith("섹터 ETF"):
                 L.append("## 섹터 ETF·대장주 (5일/20일 등락, 신호)")
@@ -369,7 +374,7 @@ SYSTEM = (
     "(HYPE 는 USDT 로 거래하는 해외 거래소, 나머지는 원화 거래소). 보유 수량·금액은 모르고 비중(%)과 수익률(%)만 안다. "
     "미국 주식은 데이터의 '내 미국 주식 포트폴리오'대로 보유 중이다(성장·AI 인프라·크립토 관련주 위주).\n\n"
     "의견은 두 시계로 나눈다.\n"
-    "- short(단기, 1~4주): 매일 갱신하는 전술. 지금 할 행동, 코인별 매매와 실행 조건, 단기 매수·회피 주식.\n"
+    "- short(단기, 1~4주): 하루 두 번(오전 10시·밤 10시 KST) 갱신하는 전술. 지금 할 행동, 코인별 매매와 실행 조건, 단기 매수·회피 주식.\n"
     "- long(중장기, 3~12개월): 전략. 전체 자산 목표 배분, 코인별 역할과 코인 계좌 안의 목표 비중, 비중 확대·축소할 주식.\n\n"
     "일관성 원칙(가장 중요): 사용자는 의견이 매일 바뀌는 것을 원하지 않는다.\n"
     "- long: '직전 중장기 의견'이 있으면 그대로 유지하는 것이 기본이다(status '유지'). 매크로 체제 전환(금리·달러·신용·유동성의 "
@@ -377,7 +382,9 @@ SYSTEM = (
     "쓰고, change_note 에 무엇을 왜 바꿨는지 쓴다. 하루 이틀의 가격 변동이나 뉴스로는 바꾸지 않는다. '유지'면 change_note 에 "
     "오늘 점검한 유지 근거를 한 문장으로 쓰고, 나머지 long 항목은 직전 의견과 같게 쓴다. 직전 의견이 없으면 status 는 '변경', "
     "change_note 는 '첫 중장기 의견'.\n"
-    "- short: '직전 단기 행동'이 있으면 데이터가 실제로 바뀐 코인만 행동을 바꾸고, 바꾼 코인은 why 첫머리에 무엇이 바뀌었는지 쓴다.\n"
+    "- short: '직전 단기 행동'이 있으면 데이터가 실제로 바뀐 코인만 행동을 바꾸고, 바꾼 코인은 why 첫머리에 무엇이 바뀌었는지 쓴다. "
+    "하루 두 번 갱신되므로 같은 데이터로 결론을 뒤집지 않는다. 주식 매수 시점(지금 매수 ↔ 눌림 대기)도 가격·지표가 실제로 "
+    "바뀌었을 때만 바꾼다.\n"
     "- short 는 long 과 모순되지 않는다. 예를 들어 long 에서 '정리'인 코인을 short 에서 '분할 매수'하지 않는다. "
     "단, long 목표 비중으로 가는 경로로서의 단기 매매는 쓴다.\n\n"
     "앞을 내다보는 판단(중요): 지표는 대부분 후행한다. 현재 지표가 나쁘다는 사실만으로 결론 내리지 말고, '뉴스·전문가 전망'의 "
@@ -385,7 +392,7 @@ SYSTEM = (
     "- 나쁜 지표가 이미 가격에 얼마나 반영됐는지, 앞으로 좋아지는 방향인지 나빠지는 방향인지(변화의 방향)를 본다. 지표가 극단에 "
     "있으면(예: 10년물 1년 백분위 100%) 추가 악화보다 되돌림 가능성도 따진다.\n"
     "- forward 에는 기본·낙관·비관 시나리오와 각각의 대략적 가능성, 시장 컨센서스와 네 판단이 다른 점, 무엇을 보고 시나리오를 "
-    "갈아탈지를 5~7문장으로 쓴다.\n"
+    "갈아탈지를 개조식 5~7줄로 쓴다.\n"
     "- 위험 성향 7.5~8점에 맞춰 현금은 '기회 대기용'으로 필요한 만큼만 두고, 근거가 있으면 위험자산 비중을 높게 가져간다. "
     "하락 위험은 현금을 쌓기보다 분할 매수 계획과 조건으로 관리한다.\n"
     "- 가상자산은 변동성이 크고 상승장이 오면 폭발적으로 오른다. 상승 추세가 살아 있는 이익 코인은 일찍 다 팔지 않는다. "
@@ -424,10 +431,10 @@ SYSTEM = (
     "각각 별도 holdings 항목으로 판단하고(sym 은 목록 표기 그대로), 두 포지션을 합한 실제 노출이 그 종목에 과도하게 쏠리지 않는지 함께 본다.\n"
     "- watch 에는 '관심 종목' 목록의 모든 종목을 빠짐없이 쓴다. action 은 단기 행동(분할 매수/비중 확대/유지/일부 차익실현/"
     "비중 축소/관망, 미보유 종목의 '유지'는 '지금은 사지 않고 지켜봄'), role 은 중장기 역할(핵심 보유/보유/비중 확대/비중 축소/정리, "
-    "미보유면 '보유'=담을 만함, '정리'=피함), why 는 근거 한 문장. 보유 종목과 비교해 더 나은 대안이면 그렇다고 쓴다. "
+    "미보유면 '보유'=담을 만함, '정리'=피함), why 는 근거 한 줄. 보유 종목과 비교해 더 나은 대안이면 그렇다고 쓴다. "
     "role 은 목록에서 '역할 유지'로 표시된 종목은 직전 역할을 그대로 쓰고, '재판단' 표시 종목만 새로 판단한다. "
     "why 가 role 과 모순되면 안 된다(예: '더 나은 대안'이라 쓰면서 role '정리' 금지).\n"
-    "- sectors 에는 '섹터 로테이션' 목록의 모든 섹터 ETF 를 빠짐없이 쓴다. view 는 비중 확대/관심/중립/비중 축소, why 는 한 문장. "
+    "- sectors 에는 '섹터 로테이션' 목록의 모든 섹터 ETF 를 빠짐없이 쓴다. view 는 비중 확대/관심/중립/비중 축소, why 는 한 줄. "
     "'개선(돌아서는 중)' 섹터 가운데 지금 주도 섹터 다음으로 돌아서는 후보가 있으면 분명히 짚는다. "
     "새로 볼 종목(stocks)은 특정 섹터에 몰지 말고, 섹터 판단과 근거가 맞으면 다른 섹터 대장주도 고른다.\n"
     "- 코인 8종은 short.coins 와 long.coins 모두 빠짐없이 판단한다. short.coins 의 condition 에는 행동을 실행하거나 바꿀 "
@@ -438,10 +445,18 @@ SYSTEM = (
     "long.coins[].role: 핵심 보유/보유/비중 확대/비중 축소/정리. long.status: 유지/일부 수정/변경. "
     "short.stocks[].side: 매수/회피. long.stocks[].side: 비중 확대/비중 축소. "
     "coins 의 sym 은 BTC·ETH·SOL·HYPE·LINK·ONDO·SUI·VIRTUAL 8종을 이 순서로 모두.\n"
-    "- headline 은 단기 대응과 중장기 전략을 함께 담은 한 줄, summary 는 3~5문장.\n"
+    "- headline 은 단기 대응과 중장기 전략을 함께 담은 개조식 한 줄, summary 는 개조식 3~5줄.\n"
+    "- FOMC 금리 인상·인하 확률은 데이터의 'FOMC 금리 확률'(연방기금금리 선물 기반) 수치를 인용한다. 뉴스의 FedWatch 수치와 "
+    "다르면 데이터 수치를 쓰고, 1주 전 대비 변화가 크면 그 의미를 판단에 반영한다.\n"
     "- 오늘 날짜와 FOMC 일정은 사용자 메시지 첫 줄의 날짜 정보를 따른다.\n"
     + calendar_ctx.RULE +
-    "- 한국어로, 짧고 명확하게."
+    "\n문체(중요): 모든 문자열은 한국어 개조식으로 쓴다.\n"
+    "- 문장 대신 짧은 구절. 종결은 명사형이나 '~함/~임/~중/~필요/~예정'. '~습니다/~다' 체 금지. 조사·접속사 최소화.\n"
+    "- summary·forward·short.view·long.thesis·long.change_note 는 줄바꿈(\\n)으로 나눈 3~7줄, 각 줄은 '- '로 시작.\n"
+    "- why·condition·dip·risks·actions_now·wait_for·change_mind 등 나머지는 한 줄에 1~3개 구절, 구절 사이는 ' · '.\n"
+    "강조(중요): 사용자가 반드시 봐야 할 핵심만 ==강조할 말== 처럼 등호 두 개로 감싼다(지금 할 행동, 손절·매수 가격, "
+    "판단을 바꾼 결정적 수치). 강조 글자 수는 각 영역 글자 수의 15% 이내, 한 항목에 많아야 1곳, 한 곳은 20자 이내, "
+    "문장 전체를 감싸지 않는다. 강조가 필요 없는 항목은 강조하지 않는다."
 )
 
 
@@ -466,7 +481,8 @@ def prev_context(prev, port_changed):
     sh = op.get("short") or {}
     st = sh.get("stance") or {}
     note = ("\n※ 이 중장기 의견을 세운 뒤 포트폴리오나 투자 성향·판단 범위가 바뀌었다(보유 종목 매매, 위험 성향 7.5~8점, "
-            "뉴스·전문가 전망, 관심 섹터 17개로 확대·섹터 로테이션, 과대낙폭(역발상) 점검 반영). 이번에는 long 을 새 기준으로 다시 작성한다. "
+            "뉴스·전문가 전망, 관심 섹터 17개로 확대·섹터 로테이션, 과대낙폭(역발상) 점검, FOMC 금리 확률(선물 기반), "
+            "개조식 문체·핵심 강조 반영). 이번에는 long 을 새 기준과 새 문체로 다시 작성한다. "
             "방향이 같으면 status '일부 수정', "
             "change_note 에 무엇을 반영했는지 쓴다."
             if port_changed else "")
@@ -493,7 +509,8 @@ def outlook():
              "10년물 전망 ② 미국 주식(월가 주요 전략가·IB의 지수·섹터 전망, AI·반도체) ③ 가상자산(BTC·ETH·SOL·HYPE 등, ETF 자금, "
              "규제, 크립토 리서치 기관 전망). 각 항목마다 컨센서스, 낙관론과 비관론(누가 무엇을 근거로), 시장이 아직 반영하지 않았을 "
              "수 있는 변화를 쓴다. 세 영역을 모두 다루도록 검색을 고르게 나눠 쓴다(영역마다 최소 3번). 발언자·기관과 날짜를 밝히고, "
-             "확인되지 않은 수치는 쓰지 않는다. 인사말·검색 과정 설명 없이 결과만, 한국어로 3,000자 이내."}]
+             "확인되지 않은 수치는 쓰지 않는다. 인사말·검색 과정 설명 없이 결과만. 영역마다 '## 제목' 아래 '- '로 시작하는 "
+             "개조식 줄(명사형·'~함/~임' 종결, '~습니다/~다' 체 금지)로, 한국어 3,000자 이내."}]
     texts, src = [], []
     for _ in range(3):                                   # 서버 검색이 길어지면 pause_turn → 이어서 요청
         with client.messages.stream(model=MODEL, max_tokens=16000, messages=msgs, output_config={"effort": "medium"},
@@ -669,6 +686,49 @@ def clean(op, ssyms=(), wsyms=(), rsyms=()):
     parts = lg["coins"] + [{"cash": True, "target_pct": lg.get("crypto_cash_pct") or 0}]
     norm100(parts, "target_pct")
     lg["crypto_cash_pct"] = parts[-1]["target_pct"]
+
+
+HL = re.compile(r"==(.+?)==")
+
+
+def _texts(x):
+    """[(부모, 키)] — 화면에 글로 나오는 문자열 위치"""
+    out = []
+    items = x.items() if isinstance(x, dict) else enumerate(x) if isinstance(x, list) else []
+    for k, v in items:
+        if isinstance(v, str):
+            out.append((x, k))
+        elif isinstance(v, (dict, list)):
+            out += _texts(v)
+    return out
+
+
+def cap_highlight(op, limit=0.15):
+    """==강조== 정리: 짝 안 맞는 표시·글 전체를 감싼 강조를 풀고, 영역별 강조 글자가 limit 을 넘으면 긴 강조부터 푼다.
+    영역: 첫 화면(headline·summary·forward), short, long, watch, sectors"""
+    plain = lambda t: HL.sub(r"\1", t)
+    groups = [[op, ("headline", "summary", "forward")]] + [[op.get(k), None] for k in ("short", "long", "watch", "sectors")]
+    for g, keys in groups:
+        if g is None:
+            continue
+        refs = [(g, k) for k in keys if isinstance(g.get(k), str)] if keys else _texts(g)
+        for o, k in refs:
+            t = o[k]
+            if t.count("==") % 2:
+                t = t.replace("==", "")
+            n = len(plain(t))
+            o[k] = HL.sub(lambda m: m.group(0) if len(m.group(1)) <= max(20, n * 0.6) else m.group(1), t)
+        total = sum(len(plain(o[k])) for o, k in refs) or 1
+        marks = sorted(((k != "headline", len(m.group(1)), i) for i, (o, k) in enumerate(refs)
+                        for m in HL.finditer(o[k])), reverse=True)   # 헤드라인 강조는 마지막까지 남김
+        used = sum(n for _, n, _ in marks)
+        for _, n, i in marks:
+            if used <= total * limit:
+                break
+            o, k = refs[i]
+            m = next(m for m in HL.finditer(o[k]) if len(m.group(1)) == n)
+            o[k] = o[k][:m.start()] + m.group(1) + o[k][m.end():]
+            used -= n
 
 
 def short_snapshot(prev):
@@ -852,6 +912,16 @@ def track(hist, cp):
     return rows
 
 
+def slot_start(t):
+    """분석 시간대 시작 시각: 매일 10시·22시(KST)"""
+    h = t.replace(minute=0, second=0, microsecond=0)
+    if t.hour >= 22:
+        return h.replace(hour=22)
+    if t.hour >= 10:
+        return h.replace(hour=10)
+    return (h - datetime.timedelta(days=1)).replace(hour=22)
+
+
 def main():
     D, C, T = load("data.json"), load("crypto.json"), load("thirteenf.json")
     prev = load(OUT) or {}
@@ -862,7 +932,7 @@ def main():
     fresh = False
     try:
         last = datetime.datetime.fromisoformat(prev.get("generated") or "2000-01-01T00:00:00+09:00")
-        fresh = (now - last) < datetime.timedelta(hours=12)
+        fresh = last >= slot_start(now)
     except (ValueError, TypeError):
         pass
 
@@ -929,6 +999,7 @@ def main():
                             [x for x in long_log if x.get("date") != TODAY])[:12]
             if (prev.get("generated") or "")[:10] != TODAY:   # 같은 날 재실행이면 비교 기준(전일)은 그대로
                 prev_short = short_snapshot(prev)
+            cap_highlight(new)
             op, generated = new, now.isoformat(timespec="minutes")
             cp = coin_prices(C)
             hist = [h for h in hist if h.get("date") != TODAY] + [{
@@ -939,7 +1010,7 @@ def main():
         except Exception as e:
             print("[의견] 생성 실패 — 이전 의견 유지:", str(e)[:300])
     else:
-        print("[의견] 최근 생성분 유지 (12시간 이내)")
+        print("[의견] 이번 시간대(10시·22시)에 이미 생성 — 유지")
     if not op:
         return
 
@@ -948,7 +1019,7 @@ def main():
            "watch_state": wstate, "rotation": rotation, "oversold": oversold_map,
            "long_since": long_since, "long_check": long_check, "long_log": long_log, "long_port": long_port,
            "prev_short": prev_short, "outlook": view, "sources": sources,
-           "portfolio": pf, "track": past,
+           "portfolio": pf, "track": past, "fedwatch": (D or {}).get("fedwatch"),
            "asof": {"지표": (D or {}).get("updated"), "코인": (C or {}).get("updated"),
                     "기관": (T or {}).get("latest_period")}}
     with open(OUT, "w", encoding="utf-8") as f:

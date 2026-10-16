@@ -238,6 +238,23 @@ with open("data.json", encoding="utf-8") as f:
 
 payload["sections"].insert(0, {"title": "매크로 · 유동성",
                                "note": "야후 파이낸스 · 전일 종가 기준", "items": macro_items()})
+
+# FOMC 금리 확률: 연방기금금리 선물 기반 (CME FedWatch 방식)
+import fedwatch
+try:
+    with open("history/trend.json", encoding="utf-8") as f:
+        _trend = json.load(f)
+except Exception:
+    _trend = []
+try:
+    FW = fedwatch.fedwatch(now.date())
+except Exception as e:
+    print("[페드워치] 실패:", e)
+    FW = None
+payload["fedwatch"] = FW
+payload["sections"].insert(1, {"title": "FOMC 금리 확률",
+                               "note": "연방기금금리 선물 기반 · CME FedWatch 방식 추정",
+                               "items": fedwatch.items(FW, _trend)})
 payload["sections"].append({"title": "스테이블코인 발행량",
                             "note": "암호화폐 대기자금", "items": stables()})
 payload["sections"].append({"title": "코인베이스 프리미엄",
@@ -287,6 +304,8 @@ for nm, key in (("10년 국채금리", "tnx"), ("3개월 국채금리", "irx"),
         v = num(it["value"])
         if v is not None:
             rec[key] = v
+if fedwatch.trend_rec(FW):
+    rec["fomc"] = fedwatch.trend_rec(FW)
 for ko, key in (("BTC", "btc_prem"), ("ETH", "eth_prem")):
     it = find("코인베이스 프리미엄", "%s 코인베이스 프리미엄" % ko)
     if it and it["value"] != "수집 실패":
