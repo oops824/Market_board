@@ -1,5 +1,6 @@
-/* 종합 투자의견 (탭5) — scripts/opinion.py 가 하루 1회 만드는 opinion.json
-   단기(1~4주)는 매일 갱신, 중장기(3~12개월)는 분명한 근거가 있을 때만 바뀜 */
+/* 종합 투자의견 (탭5) — scripts/opinion.py 가 하루 두 번(10시·22시) 만드는 opinion.json
+   단기(1~4주)는 매번 갱신, 중장기(3~12개월)는 분명한 근거가 있을 때만 바뀜.
+   본문의 ==핵심== 표시는 형광 강조로 보여 줌(생성 단계에서 영역별 15% 이내로 제한) */
 var OP=null,OP_H='s';
 try{OP_H=localStorage.getItem('opH')==='l'?'l':'s'}catch(e){}
 var OP_PAL=['#3987e5','#d95926','#199e70','#c98500','#d55181','#008300','#9085e9','#e66767'];
@@ -7,7 +8,12 @@ var OP_STN=['적극 축소','축소','중립','확대','적극 확대'];
 var OP_ACT={'분할 매수':'up','비중 확대':'up','일부 차익실현':'dn','비중 축소':'dn','유지':'na','관망':'warn'};
 var OP_ROLE={'핵심 보유':'acc','보유':'na','비중 확대':'up','비중 축소':'dn','정리':'dn'};
 
-function opT(t){return esc(t==null?'':t)}
+function opT(t){return esc(t==null?'':t).replace(/==(.+?)==/g,'<mark class="hl">$1</mark>')}
+/* 개조식 여러 줄('- '로 시작)은 글머리표 목록으로, 한 줄이면 그대로 */
+function opB(t){
+  var ls=String(t==null?'':t).split(/\n+/).map(function(x){return x.trim()}).filter(Boolean);
+  if(ls.length<2&&!/^[-•]\s/.test(ls[0]||''))return opT(t);
+  return '<ul class="bl">'+ls.map(function(x){return '<li>'+opT(x.replace(/^[-•]\s*/,''))+'</li>'}).join('')+'</ul>'}
 function opNum(v){return typeof v==='number'&&isFinite(v)}
 function opPct(v){return opNum(v)?(v>=0?'+':'')+v.toFixed(1)+'%':'-'}
 function opWhen(s){var m=String(s||'').match(/^\d{4}-(\d\d)-(\d\d)[T ](\d\d:\d\d)/);
@@ -29,14 +35,14 @@ function opCell(v){var k=OP_STN.indexOf(v);
 function opLongStatus(o){
   var n=opDays(OP.long_since),ck=OP.long_check,lg=o.long;
   return '<div class="lst"><b>중장기</b>'+opMD(OP.long_since)+' 수립'+(n>1?' · '+n+'일째 유지':'')+
-    (ck&&ck.note?'<span>'+opMD(ck.date)+' 점검: '+opT(ck.note)+'</span>':
-      lg.change_note?'<span>'+opT(lg.change_note)+'</span>':'')+'</div>'}
+    (ck&&ck.note?'<span>'+opMD(ck.date)+' 점검: '+opB(ck.note)+'</span>':
+      lg.change_note?'<span>'+opB(lg.change_note)+'</span>':'')+'</div>'}
 function opHero(o){
   var row=function(lab,sub,st){st=st||{};
     return '<div class="rl">'+lab+'<small>'+sub+'</small></div>'+opCell(st.stocks)+opCell(st.crypto)+opCell(st.cash)};
   return '<div class="pick op-hero"><div class="pk-tag">오늘의 종합의견</div>'+
-    '<div class="op-hl">'+opT(o.headline)+'</div><div class="op-sm">'+opT(o.summary)+'</div>'+
-    (o.forward?'<div class="op-fw"><b>앞으로의 시나리오</b>'+opT(o.forward)+'</div>':'')+
+    '<div class="op-hl">'+opT(o.headline)+'</div><div class="op-sm">'+opB(o.summary)+'</div>'+
+    (o.forward?'<div class="op-fw"><b>앞으로의 시나리오</b>'+opB(o.forward)+'</div>':'')+
     '<div class="stg"><div></div><div class="h">주식</div><div class="h">코인</div><div class="h">현금</div>'+
     row('단기','1~4주',o.short.stance)+row('중장기','3~12개월',o.long.stance)+'</div>'+opLongStatus(o)+'</div>'}
 
@@ -188,14 +194,14 @@ function opWatch(o,filter){
 /* 종합 탭 본문 */
 function opMain(o,isShort){
   if(isShort){var sh=o.short;
-    return opCard('단기 시각','<div class="brief">'+opT(sh.view)+'</div>','확신 '+opT(sh.confidence))+
+    return opCard('단기 시각','<div class="brief">'+opB(sh.view)+'</div>','확신 '+opT(sh.confidence))+
       opCard('지금 할 일',opList('바로 실행',sh.actions_now,'')+opList('기다릴 신호',sh.wait_for,'op-q'))+
       opCard('단기 리스크',opList('',sh.risks,'op-w'))}
   var lg=o.long;
   var log=(OP.long_log||[]).map(function(x){
     return '<li><div class="opr"><b>'+opMD(x.date)+'</b><span class="tag '+(x.status==='변경'?'warn':'na')+'">'+
-      opT(x.status)+'</span></div><div class="opw">'+opT(x.note)+'</div></li>'}).join('');
-  return opCard('중장기 전략','<div class="brief">'+opT(lg.thesis)+'</div>','확신 '+opT(lg.confidence))+
+      opT(x.status)+'</span></div><div class="opw">'+opB(x.note)+'</div></li>'}).join('');
+  return opCard('중장기 전략','<div class="brief">'+opB(lg.thesis)+'</div>','확신 '+opT(lg.confidence))+
     opAlloc(lg.allocation)+
     opCard('리스크 점검',opList('주요 리스크',lg.risks,'op-w')+opList('이 의견을 바꿀 신호',lg.change_mind,'op-q'))+
     (log?opCard('중장기 의견 변경 이력','<ul class="opl">'+log+'</ul>'):'')}
@@ -263,6 +269,20 @@ function opOutlook(){
     ' 웹 검색 · 출처 '+(OP.sources||[]).length+'곳</span></div>'+body+
     (src?'<details class="ko"><summary>출처 보기</summary><ul class="news op-src">'+src+'</ul></details>':'')+'</div>'}
 
+/* FOMC 금리 확률: 회의별 인하·동결·인상 막대 (연방기금금리 선물 기반, CME FedWatch 방식) */
+function opFed(){
+  var fw=OP.fedwatch;if(!fw||!fw.meetings||!fw.meetings.length)return '';
+  var rows=fw.meetings.map(function(m){
+    var up=m.hike+(m.hike50||0),dn=m.cut+(m.cut50||0),d=opDays(m.date),seg=function(v,c,l){
+      return v>=1?'<i class="'+c+'" style="width:'+v.toFixed(1)+'%">'+(v>=14?l+' '+Math.round(v)+'%':'')+'</i>':''};
+    return '<div class="fw-r"><div class="fw-h"><b>'+opMD(m.date)+' FOMC</b><span class="dim">'+(d!=null&&d<=0?(1-d)+'일 후 · ':'')+
+      '선물 내재 금리 '+m.pre.toFixed(2)+'% → '+m.post.toFixed(2)+'%</span></div>'+
+      '<div class="fw-b">'+seg(dn,'dn','인하')+seg(m.hold,'na','동결')+seg(up,'up','인상')+'</div>'+
+      '<div class="fw-l"><span class="td">인하 '+dn.toFixed(1)+'%</span><span>동결 '+m.hold.toFixed(1)+'%</span>'+
+      '<span class="tu">인상 '+up.toFixed(1)+'%</span><span class="dim">지금부터 누적 '+(m.cum_bp>=0?'+':'')+Math.round(m.cum_bp)+'bp</span></div></div>'}).join('');
+  return '<div class="etf op-fed"><div class="eh"><b>FOMC 금리 확률</b><span class="dim">'+opMD(fw.asof)+
+    ' · 연방기금금리 선물 기반(FedWatch 방식) · '+opT(fw.src)+'</span></div>'+rows+'</div>'}
+
 function opSeg(){return '<div class="seg">'+[['s','단기','1~4주'],['l','중장기','3~12개월']].map(function(x){
   return '<button data-h="'+x[0]+'"'+(OP_H===x[0]?' class="on"':'')+'>'+x[1]+'<small>'+x[2]+'</small></button>'}).join('')+'</div>'}
 function opBodies(){
@@ -271,16 +291,16 @@ function opBodies(){
 function renderOP(){
   var o=OP.opinion||{},asof=OP.asof||{},age=(Date.now()-Date.parse(OP.generated||''))/36e5;
   if(!o.short||!o.long){$('#p5').innerHTML='<p class="err">단기·중장기 의견을 준비하고 있습니다.</p>';return}
-  var bar='<div class="cbar"><span>'+opT(opWhen(OP.generated))+' 작성 · 매일 아침</span>'+
+  var bar='<div class="cbar"><span>'+opT(opWhen(OP.generated))+' 작성 · 매일 10시·22시</span>'+
     (asof['지표']?'<span>지표 '+opT(opWhen(asof['지표']))+' 기준</span>':'')+'</div>';
-  var stale=age>36?'<p class="note" style="color:var(--warn)">최근 생성에 실패해 '+Math.floor(age/24)+
+  var stale=age>30?'<p class="note" style="color:var(--warn)">최근 생성에 실패해 '+Math.floor(age/24)+
     '일 전 의견을 표시하고 있습니다.</p>':'';
   var hd=function(t,sub){return '<div class="hd">'+t+(sub?'<small>'+sub+'</small>':'')+'</div>'};
-  $('#p5').innerHTML=bar+stale+opHero(o)+opOutlook()+opSeg()+'<div id="opb"></div>'+opTrack(OP.track)+
+  $('#p5').innerHTML=bar+stale+opHero(o)+opFed()+opOutlook()+opSeg()+'<div id="opb"></div>'+opTrack(OP.track)+
     '<p class="note">위험 성향 10점 중 7.5~8점(공격적) 기준. 대시보드 데이터에 웹 검색한 최근 뉴스·전문가 전망을 더해 판단하고, '+
     '추세 신호와 함께 과대낙폭(역발상) 점검으로 저가 매수 기회도 따로 봅니다. '+
-    '미국주식·가상자산·기관 탭에 영역별 의견이 있습니다. 단기 의견은 매일 아침 새로 쓰고, 중장기 의견은 매크로 체제 전환처럼 분명한 근거가 있을 때만 '+
-    '바꿉니다. 포트폴리오는 사진 기준 비중·평단·수익률(수량·금액은 저장하지 않음)에 이후 가격 변동을 반영한 추정치입니다. '+
+    '미국주식·가상자산·기관 탭에 영역별 의견이 있습니다. 단기 의견은 매일 10시·22시에 새로 쓰고, 중장기 의견은 매크로 체제 전환처럼 분명한 근거가 있을 때만 '+
+    '바꿉니다. 형광 표시는 꼭 봐야 할 핵심(글자 수 15% 이내)입니다. 포트폴리오는 사진 기준 비중·평단·수익률(수량·금액은 저장하지 않음)에 이후 가격 변동을 반영한 추정치입니다. '+
     '데이터 기준: 지표 '+opT(asof['지표']||'-')+', 코인 '+opT(asof['코인']||'-')+', 기관 13F '+opT(asof['기관']||'-')+' 공시.'+
     (OP.model?' 작성 모델 '+opT(OP.model)+'.':'')+'</p>';
   $('#st-op').innerHTML=hd('미국 주식 의견',opWhen(OP.generated)+' · 종합의견 기준')+opPortStock(o)+opRotation(o)+opSeg()+'<div id="opb-st"></div>';

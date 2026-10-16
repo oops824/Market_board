@@ -590,13 +590,13 @@ def ai_brief(coins):
     prompt = (
         "너는 가상자산 데이터 정리 담당이다. 아래 JSON은 관심 코인별로 방금 수집한 "
         "가격·선물(펀딩비, 미결제약정, 롱숏비율)·옵션(맥스페인, 풋콜비율)·뉴스 제목이다.\n"
-        "코인마다 한국어 2문장으로 요약하라: 1문장은 뉴스의 핵심 이슈, "
-        "1문장은 선물·옵션 포지셔닝이 말하는 것(과열/중립/위축, 맥스페인과 현재가 거리).\n"
-        "그리고 8개 코인 전체를 아우르는 요약 2~3문장을 overall로 작성하라.\n"
+        "코인마다 한국어 개조식 2개 구절로 요약하라: 1구절은 뉴스의 핵심 이슈, "
+        "1구절은 선물·옵션 포지셔닝이 말하는 것(과열/중립/위축, 맥스페인과 현재가 거리).\n"
+        "그리고 8개 코인 전체를 아우르는 개조식 요약 2~3개 구절을 overall로 작성하라.\n"
         + calendar_ctx.macro_context(now.date()) + "\n"
         "규칙: 매수/매도 추천 금지, 관찰된 사실과 함의만. 데이터가 없으면 없다고만. "
         "hl.funding은 시간당, okx.funding은 8시간 기준 소수값이다.\n"
-        + calendar_ctx.RULE +
+        + calendar_ctx.RULE + calendar_ctx.STYLE +
         "출력은 다른 말 없이 JSON 한 개만: "
         "{\"overall\": \"...\", \"coins\": {\"BTC\": \"...\", ...}}\n\n"
         + json.dumps(slim, ensure_ascii=False)[:50000])
@@ -811,9 +811,10 @@ def daily_pick(held_ids):
         "매수/매도 추천 금지.\n"
         "출력은 다른 말 없이 JSON 하나만: {\"id\": \"후보 id\", "
         "\"headline\": \"한 줄 소개(25자 내외)\", "
-        "\"intro\": \"무슨 프로젝트이고 왜 지금 떠오르는지 3문장\", "
-        "\"institutions\": \"기관·월가 관심의 구체적 근거 2~3문장\", "
-        "\"risks\": \"유의할 점 1~2문장\", \"evidence\": [근거로 쓴 헤드라인 번호]}\n\n"
+        "\"intro\": \"무슨 프로젝트이고 왜 지금 떠오르는지 개조식 3개 구절\", "
+        "\"institutions\": \"기관·월가 관심의 구체적 근거 개조식 2~3개 구절\", "
+        "\"risks\": \"유의할 점 개조식 1~2개 구절\", \"evidence\": [근거로 쓴 헤드라인 번호]}\n"
+        "문체: 개조식(명사형·'~함/~임' 종결, '~습니다/~다' 체 금지, 구절은 마침표로 구분).\n\n"
         + json.dumps(slim, ensure_ascii=False))
     ai = claude_json(prompt, 3000) or {}
     chosen = next((c for c in strong if c["id"] == ai.get("id")), None)

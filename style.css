@@ -328,3 +328,24 @@ details.ws>summary::after{margin-left:auto}
 .opc.dip em{color:var(--up)}
 .dsig{margin-top:6px;display:flex;flex-wrap:wrap;gap:5px 8px;align-items:center;font-size:11.5px;color:var(--dim);line-height:1.5}
 .dsig .tag{padding:3px 7px;font-size:11.5px}
+
+/* 꼭 봐야 할 핵심 (==강조==, 글자 수 15% 이내) */
+mark.hl{background:rgba(245,181,68,.26);color:#fff4dc;font-weight:700;border-radius:4px;padding:1px 4px;
+-webkit-box-decoration-break:clone;box-decoration-break:clone}
+/* 개조식 여러 줄 */
+ul.bl{margin:0;padding:0;list-style:none}
+ul.bl li{position:relative;padding-left:13px;margin:3px 0}
+ul.bl li::before{content:'';position:absolute;left:2px;top:.68em;width:5px;height:5px;border-radius:50%;background:var(--sub)}
+.lst span ul.bl li{margin:1px 0}
+
+/* FOMC 금리 확률 */
+.op-fed .fw-r{margin-top:10px}
+.op-fed .fw-h{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:baseline;font-size:13.5px}
+.op-fed .fw-h .dim{font-size:12px}
+.op-fed .fw-b{display:flex;height:22px;border-radius:7px;overflow:hidden;margin:6px 0 5px;background:var(--card2)}
+.op-fed .fw-b i{display:flex;align-items:center;justify-content:center;font-style:normal;font-size:11.5px;font-weight:700;
+white-space:nowrap;overflow:hidden;color:#0a0c10}
+.op-fed .fw-b i.dn{background:var(--dn)}
+.op-fed .fw-b i.na{background:#5b6472;color:var(--txt)}
+.op-fed .fw-b i.up{background:var(--up)}
+.op-fed .fw-l{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--sub)}

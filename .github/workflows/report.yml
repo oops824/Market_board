@@ -1,11 +1,12 @@
 name: market-board
 on:
   schedule:
-    # 매일 06:17 KST. GitHub 예약 실행은 가끔 누락되므로 08:47·11:17 KST 에 백업 실행
-    # (그날 06시 이후 이미 갱신됐으면 백업은 바로 끝남)
-    - cron: "17 21 * * *"
-    - cron: "47 23 * * *"
-    - cron: "17 2 * * *"
+    # 매일 10:00·22:00 KST 두 번 분석. GitHub 예약 실행은 가끔 늦거나 누락되므로 40분 뒤 백업 실행
+    # (같은 시간대에 이미 갱신됐으면 백업은 바로 끝남)
+    - cron: "0 1 * * *"
+    - cron: "0 13 * * *"
+    - cron: "40 1 * * *"
+    - cron: "40 13 * * *"
   workflow_dispatch:
 permissions:
   contents: write
@@ -18,16 +19,22 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - name: 오늘 이미 갱신됐는지 확인 (백업 예약 실행용)
+      - name: 이번 시간대(10시·22시)에 이미 갱신됐는지 확인 (백업 예약 실행용)
         id: chk
         run: |
           python3 - <<'EOF' >> "$GITHUB_OUTPUT"
           import json, datetime
           now = datetime.datetime.utcnow() + datetime.timedelta(hours=9)
+          slot = now.replace(minute=0, second=0, microsecond=0)
+          if now.hour >= 22:
+              slot = slot.replace(hour=22)
+          elif now.hour >= 10:
+              slot = slot.replace(hour=10)
+          else:
+              slot = (slot - datetime.timedelta(days=1)).replace(hour=22)
           try:
               u = json.load(open("data.json", encoding="utf-8")).get("updated", "")
-              t = datetime.datetime.strptime(u[:16], "%Y-%m-%d %H:%M")
-              done = t.date() == now.date() and t.hour >= 6
+              done = datetime.datetime.strptime(u[:16], "%Y-%m-%d %H:%M") >= slot
           except Exception:
               done = False
           print("skip=%d" % (1 if done and "${{ github.event_name }}" == "schedule" else 0))
