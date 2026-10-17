@@ -53,7 +53,7 @@ function opPortCoin(o){
   (pf.unknown||[]).forEach(function(x){rows.push({sym:x,w:null,pnl:null})});
   rows.push({sym:'현금',cash:true,w:pf.cash,t:o.long.crypto_cash_pct});
   return opPortCard('내 코인 포트폴리오',pf.asof,rows,(o.short.coins||[]).concat(o.short.holdings||[]),
-    (o.long.coins||[]).concat(o.long.holdings||[]),'USDT')}
+    (o.long.coins||[]).concat(o.long.holdings||[]),pf.cash_sym||'USDT')}
 /* 레버리지 배율: 거래소 설정(x)과 실효 배율(lev, 추가 증거금 반영)이 다르면 함께 */
 function opLev(r){var x=r.x||r.lev;return x+'배'+(r.x&&Math.abs(r.x-r.lev)>=0.3?'(실효 '+r.lev.toFixed(1)+'배)':'')}
 function opCLev(){var m={};((OP.portfolio||{}).rows||[]).forEach(function(r){if(r.lev)m[r.sym]=1});return m}
