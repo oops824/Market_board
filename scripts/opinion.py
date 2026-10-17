@@ -528,11 +528,12 @@ def prev_context(prev, port_changed):
 
 
 def parse_json(text):
+    """첫 JSON 객체만 읽는다 (코드 블록·앞뒤 설명·뒤에 붙은 다른 글이 섞인 경우 포함)"""
     t = text.strip()
     try:
         return json.loads(t)
     except ValueError:
-        return json.loads(t[t.index("{"):t.rindex("}") + 1])   # 코드 블록·앞뒤 설명이 섞인 경우
+        return json.JSONDecoder().raw_decode(t[t.index("{"):])[0]
 
 
 def outlook():
@@ -592,22 +593,26 @@ def ask(dig, ctx):
         try:
             with client.beta.messages.stream(**kw) as stream:
                 msg = stream.get_final_message()
-            break
         except anthropic.BadRequestError as e:
             last = e
             bad_schema = bad_schema or (strict and ("grammar" in str(e) or "schema" in str(e)))
             print("[의견] 요청 거부(스키마 %s, 대체 모델 %s) — 다른 방식으로 재시도: %s" % (
                 "O" if strict else "X", "O" if fb else "X", str(e)[:160]))
-    else:
-        raise last
-    if msg.stop_reason == "refusal":
-        raise RuntimeError("모델이 응답을 거절함: %s" % (getattr(msg, "stop_details", None),))
-    if msg.stop_reason == "max_tokens":
-        raise RuntimeError("출력 한도 초과")
-    op = parse_json(next(b.text for b in msg.content if b.type == "text"))
-    if not isinstance(op.get("short"), dict) or not isinstance(op.get("long"), dict):
-        raise RuntimeError("응답에 short/long 이 없음")
-    return op, msg.model
+            continue
+        try:                                     # 응답을 못 읽으면 다음 방식으로 다시 시도
+            if msg.stop_reason == "refusal":
+                raise RuntimeError("모델이 응답을 거절함: %s" % (getattr(msg, "stop_details", None),))
+            if msg.stop_reason == "max_tokens":
+                raise RuntimeError("출력 한도 초과")
+            op = parse_json("".join(b.text for b in msg.content if b.type == "text"))
+            if not isinstance(op.get("short"), dict) or not isinstance(op.get("long"), dict):
+                raise RuntimeError("응답에 short/long 이 없음")
+            return op, msg.model
+        except (ValueError, RuntimeError) as e:
+            last = e
+            print("[의견] 응답 처리 실패(스키마 %s, 대체 모델 %s) — 다른 방식으로 재시도: %s" % (
+                "O" if strict else "X", "O" if fb else "X", str(e)[:160]))
+    raise last
 
 
 def norm100(items, key):
