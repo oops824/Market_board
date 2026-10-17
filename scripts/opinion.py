@@ -190,6 +190,7 @@ def portfolio(C):
     sig = hashlib.sha1(json.dumps([P.get("holdings"), P.get("cash"), P.get("unknown"), P.get("stocks")],
                                   sort_keys=True).encode()).hexdigest()[:12]
     out = {"asof": P.get("asof"), "rows": rows, "cash": round(cash / tot * 100, 1),
+           "cash_sym": "/".join(c["sym"] for c in P.get("cash", [])) or "USDT",
            "unknown": [u["sym"] for u in P.get("unknown", [])], "sig": sig}
     st = P.get("stocks")
     if st and st.get("holdings"):                    # 미국 주식 계좌: 현재가(야후)로 같은 방식 추정
@@ -248,7 +249,7 @@ def port_digest(pf):
         r["sym"], r["w"], fmt_avg(r), r["pnl"],
         " (스테이킹 중: 팔려면 언스테이킹 대기가 필요)" if "스테이킹" in (r.get("note") or "") else
         (" (%s)" % r["note"] if r.get("note") else "")) for r in pf["rows"]]
-    L.append("- 현금(USDT): 비중 %.1f%%" % pf["cash"])
+    L.append("- 현금(%s): 비중 %.1f%%" % (pf.get("cash_sym") or "USDT", pf["cash"]))
     L += ["- %s: 보유 중이나 비중·평단 미입력(비중 계산에서 제외)" % s for s in pf["unknown"]]
     L.append("HYPE 는 USDT 로 거래하는 해외 거래소, 나머지는 원화 거래소에서 보유.")
     st = pf.get("stocks")
