@@ -151,14 +151,31 @@ def digest(D, C, T):
 
 
 # ---------------------------------------------------------------- 포트폴리오
+def lev_row(h, px, cur):
+    """레버리지 포지션 1건 → (키, 증거금 평가 비중, 명목 노출 비중, 표시 행)
+    lev = 실효 배율(진입 명목 ÷ 증거금), x = 거래소 설정 배율(표시용), liq = 거래소 청산가(없으면 증거금 0 가격)"""
+    lev, a = h["lev"], h["avg"]
+    px = px or h["ref"]
+    g0, g1 = 1 + lev * (h["ref"] / a - 1), 1 + lev * (px / a - 1)   # 증거금 평가액은 가격 변동의 lev 배로 움직인다
+    x = h.get("x") or round(lev)
+    k = "%s-%gX" % (h["sym"], x)                                     # 같은 종목 현물과 구분되는 별도 포지션 키
+    row = {"sym": k, "tk": h["sym"], "cur": cur, "avg": a, "px": px, "lev": round(lev, 2), "x": x,
+           "liq": h.get("liq") or round(a * (1 - 1 / lev), 2), "pnl": round(lev * (px / a - 1) * 100, 1)}
+    return k, max(h["w"] * g1 / g0, 0), h["w"] / g0 * lev * px / a, row
+
+
 def portfolio(C):
     """portfolio.json(사진 시점 비중·수익률)을 이후 달러 가격 변동만큼 굴려 현재 비중·수익률을 추정"""
     P = load(PORT)
     if not P:
         return None
     usd = {c["sym"]: (c.get("market") or {}).get("price") for c in (C or {}).get("coins", [])}
-    rows, vals = [], {}
+    rows, vals, cnot = [], {}, {}
     for h in P.get("holdings", []):
+        if h.get("lev"):                             # 코인 선물(예: HYPE 12배)
+            k, vals[k], cnot[k], row = lev_row(h, usd.get(h["sym"]), h.get("cur") or "USDT")
+            rows.append(row)
+            continue
         r = usd[h["sym"]] / h["ref"] if usd.get(h["sym"]) and h.get("ref") else 1.0
         vals[h["sym"]] = h["w"] * r
         rows.append({"sym": h["sym"], "cur": h["cur"], "avg": h["avg"], "note": h.get("note"),
@@ -167,6 +184,8 @@ def portfolio(C):
     tot = (sum(vals.values()) + cash) or 1
     for x in rows:
         x["w"] = round(vals[x["sym"]] / tot * 100, 1)
+        if x["sym"] in cnot:
+            x["exp"] = round(cnot[x["sym"]] / tot * 100, 1)
     rows.sort(key=lambda x: -x["w"])
     sig = hashlib.sha1(json.dumps([P.get("holdings"), P.get("cash"), P.get("unknown"), P.get("stocks")],
                                   sort_keys=True).encode()).hexdigest()[:12]
@@ -178,16 +197,9 @@ def portfolio(C):
         notional = {}
         for h in st["holdings"]:
             px = stock_price(h["sym"])
-            lev = h.get("lev") or 1
-            if lev > 1:                              # 레버리지: 증거금 평가액이 주가 변동의 lev 배로 움직인다
-                k = "%s-%dX" % (h["sym"], lev)       # 같은 종목 현물과 구분되는 별도 포지션 키
-                cur, a = px or h["ref"], h["avg"]
-                g0, g1 = 1 + lev * (h["ref"] / a - 1), 1 + lev * (cur / a - 1)
-                sv[k] = max(h["w"] * g1 / g0, 0)
-                notional[k] = h["w"] / g0 * lev * cur / a
-                srows.append({"sym": k, "tk": h["sym"], "cur": "USD", "avg": a, "px": cur, "lev": lev,
-                              "liq": round(a * (1 - 1 / lev), 2),        # 증거금이 0 이 되는 주가
-                              "pnl": round(lev * (cur / a - 1) * 100, 1)})
+            if (h.get("lev") or 1) > 1:              # 주식 선물·레버리지 롱
+                k, sv[k], notional[k], row = lev_row(h, px, "USD")
+                srows.append(row)
                 continue
             r = px / h["ref"] if px and h.get("ref") else 1.0
             sv[h["sym"]] = h["w"] * r
@@ -200,7 +212,8 @@ def portfolio(C):
             if x["sym"] in notional:                 # 실제 노출(명목) 비중: 증거금 비중의 약 lev 배
                 x["exp"] = round(notional[x["sym"]] / stot * 100, 1)
         srows.sort(key=lambda x: -x["w"])
-        out["stocks"] = {"asof": st.get("asof"), "rows": srows, "cash": round(scash / stot * 100, 1)}
+        out["stocks"] = {"asof": st.get("asof"), "rows": srows, "cash": round(scash / stot * 100, 1),
+                         "cash_note": "; ".join(c["note"] for c in st.get("cash", []) if c.get("note"))}
         out["split"] = P.get("split")
     return out
 
@@ -212,11 +225,26 @@ def fmt_avg(r):
     return ("{:,.1f}" if a < 1000 and a != int(a) else "{:,.0f}").format(a) + "원"
 
 
+def lev_line(r, spot):
+    """레버리지 포지션 한 줄 (spot: 같은 종목 현물 행)"""
+    m = (lambda v: "$%g" % v) if r["cur"] == "USD" else (lambda v: "%g %s" % (v, r["cur"]))
+    xs = "%g배" % r["x"] + (" (실효 %.1f배)" % r["lev"] if abs(r["x"] - r["lev"]) >= 0.3 else "")
+    s = ("- %s: %s %s 레버리지 롱 — 증거금 비중 %.1f%%, 실제 노출 %.1f%%, 진입가 %s, 현재가 %s, 증거금 수익률 %+.1f%% "
+         "(가격 1%% = 증거금 %.1f%%, 청산가 %s · 현재가에서 %.1f%% 남음)" % (
+             r["sym"], r["tk"], xs, r["w"], r.get("exp", 0), m(r["avg"]), m(r["px"]), r["pnl"], r["lev"],
+             m(r["liq"]), (1 - r["liq"] / r["px"]) * 100))
+    if spot:
+        s += " · %s 현물(%.1f%%)과 별도 포지션, %s 합산 실제 노출 %.1f%%" % (
+            r["tk"], spot["w"], r["tk"], spot["w"] + r.get("exp", 0))
+    return s
+
+
 def port_digest(pf):
     if not pf:
         return "## 내 코인 포트폴리오\n입력되지 않음"
     L = ["## 내 코인 포트폴리오 (%s 사진 기준, 이후 가격 변동 반영 추정 · 코인 계좌 안의 비중)" % pf["asof"]]
-    L += ["- %s: 비중 %.1f%%, 평단 %s, 수익률 %+.1f%%%s" % (
+    cspot = {r["sym"]: r for r in pf["rows"] if not r.get("lev")}
+    L += [lev_line(r, cspot.get(r["tk"])) if r.get("lev") else "- %s: 비중 %.1f%%, 평단 %s, 수익률 %+.1f%%%s" % (
         r["sym"], r["w"], fmt_avg(r), r["pnl"],
         " (스테이킹 중: 팔려면 언스테이킹 대기가 필요)" if "스테이킹" in (r.get("note") or "") else
         (" (%s)" % r["note"] if r.get("note") else "")) for r in pf["rows"]]
@@ -228,17 +256,11 @@ def port_digest(pf):
         sp = pf.get("split") or {}
         L.append("## 내 미국 주식 포트폴리오 (%s 기준, 이후 가격 반영 추정 · 주식 계좌 안의 비중)" % st["asof"])
         spot = {r["sym"]: r for r in st["rows"] if not r.get("lev")}
-        L += [("- %s: %s %d배 레버리지 롱 — 증거금 비중 %.1f%%, 실제 노출 %.1f%%, 진입가 $%g, 현재가 %s, 증거금 수익률 %+.1f%% "
-               "(주가 1%% = 증거금 %d%%, 진입가 대비 -%.0f%%인 $%g 에서 증거금 전액 손실 · 현재가에서 %.1f%% 남음)%s" % (
-                   r["sym"], r["tk"], r["lev"], r["w"], r.get("exp", 0), r["avg"], ("$%g" % r["px"]) if r.get("px") else "-",
-                   r["pnl"], r["lev"], 100 / r["lev"], r["liq"], (1 - r["liq"] / r["px"]) * 100 if r.get("px") else 0,
-                   (" · %s 현물(%.1f%%)과 별도 포지션, %s 합산 실제 노출 %.1f%%" % (
-                       r["tk"], spot[r["tk"]]["w"], r["tk"], spot[r["tk"]]["w"] + r.get("exp", 0))) if r["tk"] in spot else ""))
-              if r.get("lev") else
+        L += [lev_line(r, spot.get(r["tk"])) if r.get("lev") else
               "- %s: 비중 %.1f%%, 평단 $%g, 현재가 %s, 수익률 %+.1f%%" % (
                   r["sym"], r["w"], r["avg"], ("$%g" % r["px"]) if r.get("px") else "-", r["pnl"]) for r in st["rows"]]
         if st.get("cash"):
-            L.append("- 현금(USD): 비중 %.1f%% (매도 대금, 아직 재투자 안 함)" % st["cash"])
+            L.append("- 현금: 비중 %.1f%% (%s)" % (st["cash"], st.get("cash_note") or "매도 대금, 아직 재투자 안 함"))
         if any(r.get("lev") for r in st["rows"]):            # 레버리지 포함 계좌 전체 노출
             gross = sum(r.get("exp", 0) if r.get("lev") else r["w"] for r in st["rows"])
             L.append("- 주식 계좌 총 실제 노출: 계좌 평가액의 %.0f%% (현물 + 레버리지 명목, 100%% 초과분이 차입 노출)" % gross)
@@ -428,7 +450,9 @@ SYSTEM = (
     "(거래 플랫폼의 유지증거금 규칙에 따라 그 전에 강제 청산될 수 있다). short.holdings 의 condition 에 손절 가격이나 레버리지를 "
     "줄일 조건을 반드시 쓰고, dip 에서는 레버리지 추가를 권하지 않는다(늘리려면 현물로). long.holdings 의 target_pct 는 "
     "실제 노출(명목) 기준이다. 레버리지 포지션은 'CRDO-4X'처럼 별도 sym 으로 표시되며, 같은 종목 현물이 있으면 현물과 레버리지를 "
-    "각각 별도 holdings 항목으로 판단하고(sym 은 목록 표기 그대로), 두 포지션을 합한 실제 노출이 그 종목에 과도하게 쏠리지 않는지 함께 본다.\n"
+    "각각 별도 holdings 항목으로 판단하고(sym 은 목록 표기 그대로), 두 포지션을 합한 실제 노출이 그 종목에 과도하게 쏠리지 않는지 함께 본다. "
+    "'N배 (실효 M배)'로 표시되면 위험은 실효 배율과 표시된 청산가로 판단한다. 코인 선물(예: HYPE-12X)도 holdings 에 별도 항목으로 "
+    "판단하고, 그 long.holdings target_pct 는 코인 계좌 기준 실제 노출(정리면 0)이다.\n"
     "- watch 에는 '관심 종목' 목록의 모든 종목을 빠짐없이 쓴다. action 은 단기 행동(분할 매수/비중 확대/유지/일부 차익실현/"
     "비중 축소/관망, 미보유 종목의 '유지'는 '지금은 사지 않고 지켜봄'), role 은 중장기 역할(핵심 보유/보유/비중 확대/비중 축소/정리, "
     "미보유면 '보유'=담을 만함, '정리'=피함), why 는 근거 한 줄. 보유 종목과 비교해 더 나은 대안이면 그렇다고 쓴다. "
@@ -654,8 +678,8 @@ def clean(op, ssyms=(), wsyms=(), rsyms=()):
                                                       ("축소", "비중 축소"), ("확대", "비중 확대")], "보유"))
                 hs.append(c)
         op[k]["holdings"] = sorted(hs, key=lambda c: sorder[c["sym"]])
-    hs = op["long"]["holdings"]                      # 합이 100 미만이면 나머지는 신규 편입 몫으로 두고, 넘칠 때만 줄인다
-    if sum(max(0, h.get("target_pct") or 0) for h in hs) > 100:
+    hs = [h for h in op["long"]["holdings"] if ticker(h["sym"]) not in COIN_SYMS]   # 주식 계좌 몫만 (코인 선물 제외)
+    if sum(max(0, h.get("target_pct") or 0) for h in hs) > 100:     # 합이 100 미만이면 나머지는 신규 편입 몫, 넘칠 때만 줄인다
         norm100(hs, "target_pct")
     op["long"]["holdings_new_pct"] = max(0, 100 - sum(h.get("target_pct") or 0 for h in hs))
     order = {s: i for i, s in enumerate(COIN_SYMS)}
@@ -894,7 +918,9 @@ def calls_of(op, cp):
     sh = op.get("short") or {}
     out = [{"name": c["sym"], "kind": "coin", "action": c["action"], "px": cp.get(c["sym"])} for c in sh.get("coins", [])]
     for h in [w for w in op.get("watch") or [] if w["action"] in BUY] + sh.get("holdings", []):
-        out.append({"name": h["sym"], "kind": "stock", "action": h["action"], "px": stock_price(ticker(h["sym"]))})
+        tk = ticker(h["sym"])
+        out.append({"name": h["sym"], "kind": "coin" if tk in COIN_SYMS else "stock", "action": h["action"],
+                    "px": cp.get(tk) if tk in COIN_SYMS else stock_price(tk)})
     for side, act in (("stocks_buy", "매수"), ("stocks_avoid", "회피")):
         for s in sh.get(side, []):
             if s.get("ticker"):
@@ -963,7 +989,8 @@ def main():
                 print("[의견] 뉴스·전문가 전망 %d자, 출처 %d개" % (len(view), len(sources)))
             except Exception as e:
                 print("[의견] 전망 검색 실패 — 직전 전망 사용:", str(e)[:200])
-            held = [r["sym"] for r in ((pf or {}).get("stocks") or {}).get("rows", [])]
+            held = ([r["sym"] for r in ((pf or {}).get("stocks") or {}).get("rows", [])] +
+                    [r["sym"] for r in (pf or {}).get("rows", []) if r.get("lev")])   # 코인 선물도 보유 포지션으로 판단
             W = watch_universe(D, T, [ticker(s) for s in held])
             rotation = (D or {}).get("rotation") or rotation
             OV = oversold_all(C, D, pf)
