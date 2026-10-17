@@ -408,6 +408,9 @@ SYSTEM = (
     "- short: '직전 단기 행동'이 있으면 데이터가 실제로 바뀐 코인·보유 주식·매수 후보만 행동을 바꾸고, 바꾼 항목은 why 첫머리에 무엇이 바뀌었는지 쓴다. "
     "하루 두 번 갱신되므로 같은 데이터로 결론을 뒤집지 않는다. 주식 매수 시점(지금 매수 ↔ 눌림 대기)도 가격·지표가 실제로 "
     "바뀌었을 때만 바꾼다.\n"
+    "- 손절·매수 가격선(condition·dip)은 '직전 조건'을 기본으로 그대로 쓴다. 가격이 그 선에 닿았거나, 포지션 크기가 바뀌었거나, "
+    "기준으로 삼은 지표(20일선·맥스페인 등)가 실제로 움직였을 때만 바꾸고, 바꾸면 condition 첫머리에 '손절선 변경: 이전→새 · 이유'를 쓴다. "
+    "가격선은 '현재가 대비 -5%'처럼 매번 움직이는 표현 대신 절대 가격($537.5, 79,000)으로 쓴다(필요하면 괄호에 현재가 대비 %).\n"
     "- short 는 long 과 모순되지 않는다. 예를 들어 long 에서 '정리'인 코인을 short 에서 '분할 매수'하지 않는다. "
     "단, long 목표 비중으로 가는 경로로서의 단기 매매는 쓴다.\n\n"
     "앞을 내다보는 판단(중요): 지표는 대부분 후행한다. 현재 지표가 나쁘다는 사실만으로 결론 내리지 말고, '뉴스·전문가 전망'의 "
@@ -512,14 +515,16 @@ def prev_context(prev, port_changed):
             "방향이 같으면 status '일부 수정', "
             "change_note 에 무엇을 반영했는지 쓴다."
             if port_changed else "")
-    picks = lambda k: ", ".join("%s(%s)" % (x.get("ticker") or x.get("name"), cut(x.get("why"), 70)) for x in sh.get(k) or [])
+    pl = lambda t, n: cut(HL.sub(r"\1", t or ""), n)                  # 강조 표시는 떼고 넘김
+    picks = lambda k: ", ".join("%s(%s)" % (x.get("ticker") or x.get("name"), pl(x.get("why"), 70)) for x in sh.get(k) or [])
     return ("## 직전 중장기 의견 (%s 수립, 오늘 %s)\n%s%s\n\n## 직전 단기 행동 (%s 작성)\n주식 %s · 코인 %s · 현금 %s / %s\n"
-            "- 보유 주식: %s\n- 매수 후보(매수 시점 포함): %s\n- 회피: %s" % (
+            "- 보유 포지션(행동 · 직전 조건): %s\n- 매수 후보(매수 시점 포함): %s\n- 회피: %s\n- 코인 조건: %s" % (
         since, days, json.dumps(long_for_prompt(op["long"]), ensure_ascii=False), note,
         (prev.get("generated") or "")[:16], st.get("stocks"), st.get("crypto"), st.get("cash"),
         ", ".join("%s %s" % (c["sym"], c["action"]) for c in sh.get("coins", [])),
-        ", ".join("%s %s" % (h["sym"], h["action"]) for h in sh.get("holdings", [])) or "-",
-        picks("stocks_buy") or "-", picks("stocks_avoid") or "-"))
+        " / ".join("%s %s · %s" % (h["sym"], h["action"], pl(h.get("condition"), 110)) for h in sh.get("holdings", [])) or "-",
+        picks("stocks_buy") or "-", picks("stocks_avoid") or "-",
+        " / ".join("%s · %s" % (c["sym"], pl(c.get("condition"), 90)) for c in sh.get("coins", [])) or "-"))
 
 
 def parse_json(text):
