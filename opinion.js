@@ -52,12 +52,16 @@ function opPortCoin(o){
   var rows=pf.rows.slice();
   (pf.unknown||[]).forEach(function(x){rows.push({sym:x,w:null,pnl:null})});
   rows.push({sym:'현금',cash:true,w:pf.cash,t:o.long.crypto_cash_pct});
-  return opPortCard('내 코인 포트폴리오',pf.asof,rows,o.short.coins,o.long.coins,'USDT')}
+  return opPortCard('내 코인 포트폴리오',pf.asof,rows,(o.short.coins||[]).concat(o.short.holdings||[]),
+    (o.long.coins||[]).concat(o.long.holdings||[]),'USDT')}
+/* 레버리지 배율: 거래소 설정(x)과 실효 배율(lev, 추가 증거금 반영)이 다르면 함께 */
+function opLev(r){var x=r.x||r.lev;return x+'배'+(r.x&&Math.abs(r.x-r.lev)>=0.3?'(실효 '+r.lev.toFixed(1)+'배)':'')}
+function opCLev(){var m={};((OP.portfolio||{}).rows||[]).forEach(function(r){if(r.lev)m[r.sym]=1});return m}
 function opPortStock(o){
   var st=(OP.portfolio||{}).stocks;if(!st||!st.rows)return '';
   var rows=st.rows.slice();
   if(opNum(st.cash)&&st.cash>0)rows.push({sym:'현금',cash:true,w:st.cash});
-  return opPortCard('내 미국 주식 포트폴리오',st.asof,rows,o.short.holdings,o.long.holdings,'USD')}
+  return opPortCard('내 미국 주식 포트폴리오',st.asof,rows,o.short.holdings,o.long.holdings,st.cash_note?'USDT':'USD')}
 /* 계좌 카드: 현재 비중(막대)과 중장기 목표 비중(세로선), 단기 행동·중장기 역할 */
 function opPortCard(title,asof,rows,shortL,longL,cashSub){
   var sa={},lr={};
@@ -73,8 +77,9 @@ function opPortCard(title,asof,rows,shortL,longL,cashSub){
       (opNum(r.pnl)?'<span class="badge '+(r.pnl>=0?'up':'dn')+'">'+opPct(r.pnl)+'</span>':
         r.cash?'':'<span class="dim">비중 미입력</span>')+(r.note?'<span class="dim">'+opT(r.note)+'</span>':'')+
       '<span class="pf-w">'+(opNum(r.cw)?r.cw.toFixed(1)+'%':'-')+' → '+(opNum(r.t)?r.t+'%':'-')+arrow+'</span></div>'+
-      (r.lev?'<div class="tags"><span class="tag warn">'+r.lev+'배 레버리지 롱 · 증거금 '+r.w.toFixed(1)+'% · 실제 노출 '+
-        r.exp.toFixed(1)+'%'+(opNum(r.liq)?' · 증거금 0 가격 $'+r.liq.toFixed(1):'')+'</span></div>':'')+
+      (r.lev?'<div class="tags"><span class="tag warn">'+opLev(r)+' 레버리지 롱 · 증거금 '+r.w.toFixed(1)+'% · 실제 노출 '+
+        r.exp.toFixed(1)+'%'+(opNum(r.liq)?' · 청산가 '+(r.cur==='USD'?'$':'')+r.liq+(opNum(r.px)?' ('+((r.liq/r.px-1)*100).toFixed(1)+'%)':''):'')+
+        '</span></div>':'')+
       '<div class="pf-bar">'+(opNum(r.cw)?'<i style="width:'+(r.cw/mx*100).toFixed(1)+'%"></i>':'')+
       (opNum(r.t)?'<u style="left:calc('+(r.t/mx*100).toFixed(1)+'% - 1px)"></u>':'')+'</div>'+
       (s||l?'<div class="tags">'+(s?'<span class="tag '+(OP_ACT[s.action]||'na')+'">단기 '+opT(s.action)+'</span>':'')+
@@ -207,16 +212,19 @@ function opMain(o,isShort){
     (log?opCard('중장기 의견 변경 이력','<ul class="opl">'+log+'</ul>'):'')}
 /* 미국주식 탭 본문 */
 function opStock(o,isShort){
-  var sh=o.short,lg=o.long;
-  return (isShort?opCard('보유 주식 단기 대응',opHold(sh.holdings,true)):
-      opCard('보유 주식 중장기',opHold(lg.holdings,false),'주식 계좌 목표 비중'+(lg.holdings_new_pct?' · 신규 편입 '+lg.holdings_new_pct+'%':'')))+
+  var sh=o.short,lg=o.long,cl=opCLev(),nf=function(l){return (l||[]).filter(function(c){return !cl[c.sym]})};
+  return (isShort?opCard('보유 주식 단기 대응',opHold(nf(sh.holdings),true)):
+      opCard('보유 주식 중장기',opHold(nf(lg.holdings),false),'주식 계좌 목표 비중'+(lg.holdings_new_pct?' · 신규 편입 '+lg.holdings_new_pct+'%':'')))+
     opCard('관심 종목 의견',opWatch(o,function(g){return g.indexOf('13F')<0}),'하이퍼스케일러 · 17개 섹터 대장주 · 상대강도 순')+
     (isShort?opCard('새로 볼 종목 · 피할 종목',opPicks(sh.stocks_buy,'매수','up')+opPicks(sh.stocks_avoid,'회피','dn')):
       opCard('중장기 테마',opPicks(lg.stocks_overweight,'비중 확대','up')+opPicks(lg.stocks_underweight,'비중 축소','dn')))}
 /* 가상자산 탭 본문 */
 function opCoin(o,isShort){
-  return isShort?opCard('코인 단기 대응',opCoinList(o,true)):
-    opCard('코인 중장기',opCoinList(o,false),'코인 계좌 목표 · 현금 '+opT(o.long.crypto_cash_pct)+'%')}
+  var cl=opCLev(),fl=function(l){return (l||[]).filter(function(c){return cl[c.sym]})};
+  var fut=opHold(fl((isShort?o.short:o.long).holdings),isShort);
+  return (fut?opCard('코인 선물 포지션',fut,isShort?'손절·축소 조건':'코인 계좌 기준 실제 노출 목표'):'')+
+    (isShort?opCard('코인 단기 대응',opCoinList(o,true)):
+    opCard('코인 중장기',opCoinList(o,false),'코인 계좌 목표 · 현금 '+opT(o.long.crypto_cash_pct)+'%'))}
 
 /* 지난 단기 의견: 당시 가격 대비 지금, 매수·확대는 상승이면 적중, 축소·차익실현·회피는 하락이면 적중 */
 function opTrack(tr){
@@ -238,7 +246,8 @@ function opTrack(tr){
 /* 보유 종목별 판단 (단기: 행동·조건, 중장기: 역할·목표 비중) */
 function opHold(list,isShort){
   if(!list||!list.length)return '';
-  var pw={};(((OP.portfolio||{}).stocks||{}).rows||[]).forEach(function(r){pw[r.sym]=r.lev&&opNum(r.exp)?r.exp:r.w});
+  var pw={};(((OP.portfolio||{}).stocks||{}).rows||[]).concat((OP.portfolio||{}).rows||[]).forEach(function(r){
+    pw[r.sym]=r.lev&&opNum(r.exp)?r.exp:r.w});
   return '<ul class="opl">'+list.map(function(c){
     var k=isShort?c.action:c.role;
     return '<li><div class="opr"><b>'+opT(c.sym)+'</b><span class="tag '+((isShort?OP_ACT:OP_ROLE)[k]||'na')+'">'+opT(k)+'</span>'+
