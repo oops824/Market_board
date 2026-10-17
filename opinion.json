@@ -1746,7 +1746,7 @@
    "label": "과대낙폭 아님",
    "knife": false,
    "rsi": 37,
-   "dd": -11.9,
+   "dd": -11.7,
    "sig": [
     "RSI 37"
    ]
@@ -1755,67 +1755,74 @@
    "score": 13,
    "label": "과대낙폭 아님",
    "knife": false,
-   "rsi": 41,
-   "dd": -13.9,
+   "rsi": 40,
+   "dd": -14.4,
    "sig": [
-    "20일선 대비 -7%",
-    "펀딩 -0.0003%(숏 우위)",
+    "20일선 대비 -8%",
+    "펀딩 -0.0026%(숏 우위)",
     "ETF 10일 연속 유출"
    ]
   },
   "HYPE": {
-   "score": 5,
-   "label": "과대낙폭 아님",
-   "knife": false,
-   "rsi": 40,
-   "dd": -15.8,
-   "sig": [
-    "90일 고점 대비 -16%"
-   ]
-  },
-  "LINK": {
-   "score": 13,
-   "label": "과대낙폭 아님",
-   "knife": false,
-   "rsi": 43,
-   "dd": -16.6,
-   "sig": [
-    "90일 고점 대비 -17%",
-    "20일선 대비 -8%",
-    "펀딩 -0.0002%(숏 우위)"
-   ]
-  },
-  "ONDO": {
-   "score": 5,
-   "label": "과대낙폭 아님",
-   "knife": false,
-   "rsi": 48,
-   "dd": -16.6,
-   "sig": [
-    "90일 고점 대비 -17%"
-   ]
-  },
-  "SUI": {
-   "score": 8,
-   "label": "과대낙폭 아님",
-   "knife": false,
-   "rsi": 47,
-   "dd": -19.1,
-   "sig": [
-    "90일 고점 대비 -19%",
-    "20일선 대비 -9%"
-   ]
-  },
-  "VIRTUAL": {
    "score": 11,
    "label": "과대낙폭 아님",
    "knife": false,
+   "rsi": 38,
+   "dd": -16.9,
+   "sig": [
+    "90일 고점 대비 -17%",
+    "RSI 38",
+    "20일선 대비 -8%"
+   ]
+  },
+  "LINK": {
+   "score": 8,
+   "label": "과대낙폭 아님",
+   "knife": false,
    "rsi": 41,
-   "dd": -19.6,
+   "dd": -17.9,
+   "sig": [
+    "90일 고점 대비 -18%",
+    "20일선 대비 -9%"
+   ]
+  },
+  "ONDO": {
+   "score": 16,
+   "label": "과대낙폭 아님",
+   "knife": false,
+   "rsi": 47,
+   "dd": -17.7,
+   "sig": [
+    "90일 고점 대비 -18%",
+    "7일 -8%",
+    "펀딩 -0.0001%(숏 우위)",
+    "OI 24h -8%(청산)"
+   ]
+  },
+  "SUI": {
+   "score": 11,
+   "label": "과대낙폭 아님",
+   "knife": false,
+   "rsi": 46,
+   "dd": -20.3,
    "sig": [
     "90일 고점 대비 -20%",
-    "7일 -9%",
+    "7일 -11%",
     "20일선 대비 -10%"
+   ]
+  },
+  "VIRTUAL": {
+   "score": 17,
+   "label": "과대낙폭 아님",
+   "knife": false,
+   "rsi": 39,
+   "dd": -20.9,
+   "sig": [
+    "90일 고점 대비 -21%",
+    "7일 -10%",
+    "RSI 39",
+    "20일선 대비 -12%",
+    "OI 24h -6%(청산)"
    ]
   },
   "BMNR": {
@@ -2065,55 +2072,55 @@
    "VIRTUAL": "비중 축소"
   }
  },
- "outlook": "## ① 미국 금리·연준·물가·10년물\n- 현황: 9/16 FOMC에서 3년여 만에 처음으로 금리 인상, 기준금리 3.75~4.00%임\n- 물가: 9월 CPI 전년비 3.7%(8월 3.4%), 근원 2.6%로 예상치(2.5%) 상회함. 이란 전쟁 영향으로 휘발유가 급등해 CPI 상승분의 절반을 차지함(BLS·CNBC 10/14)\n- 고용: 9월 비농업 일자리 +2.9만명(예상 8만명 이상), 실업률 4.2%로 둔화 흐름임(CNBC 10/2)\n- 컨센서스: 10/28 동결이 우세함. CME는 동결 87.3%·인상 12.7%(10/16), Kalshi는 인상 34%(10/14)로 차이 있음. 연내 추가 인상 확률은 Kalshi 87.5%·Polymarket 86.5%, 12/9 인상 79%임\n- 10년물: 5.19%(FRED 10/14). 2년물 4.79%·30년물 5.56%(10/13)로 장기금리 5%대에 고착됨\n- 매파론: 인상 이후 연준 인사들이 추가 인상 여지를 강조함. 시장의 금리 인하 예상 시점도 뒤로 밀림(JP모건체이스 10/12). 소누 바게세(Carson Group)는 연료만의 문제가 아니라고 보고, 근원물가 월간 상승률을 연율로 환산하면 3.7%라고 지적함(10/14)\n- 완화론: 야데니는 국채금리가 장기간 높게 유지되기 어렵다고 전망함. 고용이 급랭하면 인상 사이클이 일찍 끝날 수 있음\n- 미반영 가능 변화(필자 분석): 고용 둔화와 에너지발 인플레가 겹쳐 '인상 직후 조기 인하'로 급반전할 위험 있음. 반대로 근원물가 전이가 확산되면 장기금리 추가 상승 가능함. 중동 휴전이나 호르무즈 해협 정상화는 유가·금리 동반 급락의 촉매임\n\n## ② 미국 주식\n- 지수 수준: S&P500 7,764(9/21), 연초 대비 +12%(9/30)\n- 컨센서스: FactSet 바텀업 12개월 목표 9,275(+21%, 9/30). 골드만은 12개월 목표 8,700, EPS 2027년 $415·2028년 $460, PER 19배 유지를 가정함(9월 말)\n- 낙관론: 야데니는 연말 목표를 8,400에서 7,900으로 낮춤(10년물 5% 부담). 다만 2027년 중반 8,400, 2029년 10,000 전망은 유지함(9월). 댄 아이브스는 AI 매도세를 매수 기회로 보고 NVDA 목표가 $300 제시함(10/16). 젠슨 황은 공급을 늘려도 주문 증가가 계속된다고 발언했고, TSMC·ASML 호실적이 이를 뒷받침함\n- 비관론: 요아힘 클레먼트(Panmure Liberum)는 2027년 말 5,000(약 -36%) 전망함. 근거는 하이퍼스케일러의 조달비용 상승과 잉여현금흐름 압박임(10/9경). 샬렛(모건스탠리WM)은 고금리·고유가·정책 불확실성·저소득층 소비 압박을 경고함(9/30). I/O Fund는 Rubin 지연 보도와 ASIC 확산이 NVDA 마진을 위협한다고 지적함\n- 최근 흐름: OpenAI 매출 런레이트가 기대치를 180억달러 밑돌았다는 소식에 NVDA 시총 2,000억달러가 증발했다는 보도 나옴(10/16). 같은 날 나스닥 -1.4%\n- 섹터: AI 인프라가 주도함(반도체, 커스텀칩의 브로드컴, 광섬유의 코닝 연초 대비 +82%). 골드만은 2026년 EPS 증가분의 약 절반을 AI 인프라가 기여한다고 추정함\n- 일정: MS·알파벳 실적(10월 말), NVDA 실적 11/17, Anthropic의 11월 중순 IPO 검토 보도\n- 미반영 가능 변화(필자 분석): 주요 목표치 대부분이 PER 유지를 가정함. 10년물 5%대가 이어지면 이익이 늘어도 멀티플이 압축될 위험 있음. AI 모델 기업의 매출 실망이 설비투자 축소 논의로 번질 가능성 있음\n\n## ③ 가상자산\n- 가격: BTC 약 8.23만달러(10/16), 사상 최고가 대비 -34%로 연간 마이너스(10/1 기준). 지지선은 50일 EMA 8.03만달러, 200일 EMA 7.57만달러(CoinDCX)\n- ETF 자금: 10/5~9 BTC -6.79억달러, ETH -5.42억달러(이 중 ETHA -4.77억달러) 순유출. BTC ETF는 10월 중순까지 약 -5.35억달러로, 9월 +26억달러 유입에서 반전됨. 10/16에도 BTC -0.82억달러, ETH -0.70억달러. SOL·HYPE 등 알트코인 ETF도 유출됨. CoinShares 집계 주간 -4.34억달러, 원인은 예상보다 높은 CPI\n- 컨센서스: 단기 박스권임. Polymarket은 10월 중 8.5만달러 터치와 7.75만달러 터치를 모두 59.5%로 반영함(10/8경)\n- 낙관론: 90일간 +44% 반등했고 주간 차트상 하락쐐기 상향 이탈이 유지됨. 알리 마르티네스는 10/15 SOL·HYPE에서 TD 매수신호가 나왔다고 봄(SOL $111·$120, HYPE $86·$93 목표). 아서 헤이즈는 HYPE 2026년 $150 목표를 제시했던 바 있음(기존 주장)\n- 비관론: 금리 인상과 국채금리 5%대가 무수익자산의 기회비용을 키움(Bitget 10/16). 글래스노드는 돌파 확인에 현물 거래량과 ETF 재유입이 필요하다고 봄. 윈터뮤트 연계 지갑이 하이퍼리퀴드에서 1.26억달러 숏 보유. 예측시장은 연내 HYPE $75 하회를 46%로 반영함\n- 규제: CLARITY법이 9/15 상원 절차표결에서 49대 50으로 부결됨. 쟁점은 트럼프 일가 크립토 이해충돌을 다룬 윤리조항이었고, 차기 의회로 지연된다는 관측임(American Banker). SEC는 Project Crypto 수탁 규칙을 10/1 제안했고, Regulation Crypto Assets 의견 마감은 10/20임\n- 리서치 기관: 최근 2주 내 SC·번스타인 등 대형 기관의 목표가 수정은 확인되지 않음\n- 미반영 가능 변화(필자 분석): 11월 중간선거 결과가 CLARITY 재추진 시점을 좌우함. SEC 규칙 제정이 입법 공백을 대신할 수 있음. 12월 인상 확률이 이미 높은 상태라 10/28 성명이 완화적이면 숏커버 반등 가능함. 인상 신호가 나오면 7.5만달러 지지선 시험 가능성 있음",
+ "outlook": "## ① 미국 금리·연준·물가·10년물\n- 현황: 9/16 FOMC에서 12-0으로 25bp 인상함(2023년 이후 첫 인상). 기준금리는 3.75~4.00%임. 9월 점도표에서 18명 중 16명이 연내 1회 추가 인상을 예상함\n- 물가: 9월 CPI는 전년비 3.7%로 8월 3.4%, 예상치 3.6%를 넘음. 근원 CPI도 2.6%로 예상을 웃돎. 휘발유가 9.1%, 항공료가 1년간 22% 오름. 무디스 잰디는 \"불편할 정도로 강함\"으로 평가함(10/14)\n- 컨센서스: 10/28 동결 전망임. CME FedWatch 기준 동결 확률 약 87%, 12월 25bp 인상 확률 약 77%(10/16). CPI 발표 직후 10월 인상 확률이 22%에서 41%로 뛰었음. 이후 워시 의장이 높은 물가가 경제 판단을 바꾸지 않았다고 하자 다시 내려감\n- 매파: RSM 브루수엘라스는 선거가 가까워 10월 대신 12월에 25bp 인상할 것으로 봄. 연준 안에서도 \"약간의 추가 긴축\"이 필요하다는 발언이 나옴\n- 신중론: UBS는 선거 직전 인상을 \"정치적으로 지속 불가\"로 평가함. 9월 의사록(10/7)에서 앞으로의 금리 경로를 두고 내부 분열이 확인됨\n- 10년물: 5.09%(10/16)로 1년 전보다 1.07%p 높음. 9월 중순 2023년 이후 처음 5%를 넘었음. 중동 분쟁에 따른 유가 상승(브렌트 109달러 돌파)이 주된 원인임. 트레이딩이코노믹스의 4분기 예측치는 약 5.18%임\n- 시장이 아직 반영하지 않았을 수 있는 변수: 중동 휴전 시 유가와 기대인플레이션이 떨어지며 인상 기대가 되돌려질 가능성. 월러 이사가 포워드가이던스에서 워시 의장과 다른 입장을 보인 것(10/8)처럼 소통 방식이 달라지며 금리 변동성이 커질 위험. 대차대조표 정책 변경 가능성\n\n## ② 미국 주식(지수·섹터·AI·반도체)\n- 현황: S&P500은 10/7 종가 7,801로 연초 대비 약 14% 오름. 10월 초 사상 최고치를 찍은 뒤 하락으로 돌아섬. 나스닥은 10/16 하루 2% 넘게 빠짐\n- 컨센서스: FactSet이 종목별 목표가를 합산한 12개월 목표는 9,275로, 2027년 9월까지 21% 상승을 뜻함. 연말 목표는 골드만 8,000, JP모건 8,000, 씨티 8,100, 야데니 8,400(최고 수준)임\n- 이익: LSEG 기준 EPS 증가율이 2026년 +35%에서 2027년 +15%로 둔화될 전망임. 선행 PER은 1월 22배에서 19배로 내려옴\n- 낙관론: 야데니는 이익 추정치가 빠르게 오르는 점을 근거로 목표를 올해 세 차례 올림. 다만 AI주 추격매수는 권하지 않음. D.A.데이비슨 루리아는 AI 수요가 실재하며 성장 중이라고 봄\n- 비관론: BofA 서브라마니안은 연말 목표 7,400(약 3% 하락)을 내놓고 계절적 약세와 미뤄진 조정을 경고함. 파이퍼샌들러 칸트로위츠는 금리와 유가 상승이 멈출 때까지 밸류에이션이 계속 낮아질 것으로 봄. 모건스탠리 섈릿은 고금리, 고유가, 저소득층 소비 압박을 위험으로 꼽음. 같은 회사 윌슨은 현 국면을 '중기 사이클 전환'으로 진단함\n- AI·반도체: 반도체 지수가 8거래일 연속 하락하며 주간 -11.4%를 기록함(2025년 4월 이후 최악). 부채 500억달러를 안은 코어위브는 주간 약 25%, 엔비디아는 약 6% 하락함. 하이퍼스케일러의 2027년 설비투자(capex)는 1.1조달러지만 증가율은 약 100%에서 37%로 둔화될 전망임\n- 시장이 아직 반영하지 않았을 수 있는 변수: 고금리로 네오클라우드(AI 연산 임대업체) 신용 부담이 커지고, 엔비디아의 투자·공급 약정으로 얽힌 순환형 자금 구조를 따라 칩 수요로 번질 위험. 설비투자 증가율 둔화로 칩·장비 매출 기대가 낮아질 가능성\n\n## ③ 가상자산\n- 현황: BTC 약 8.1만달러(10/15)로 사상 최고치 126,080달러보다 약 32% 낮음. ETH 약 2,515달러(10/13), SOL 약 103달러(10/16)임. HYPE는 약 79달러(10/15)로 9/23 최고치 98달러에서 내려옴\n- ETF: 미국 현물 BTC ETF는 10월 10거래일 동안 5.4억달러 순유출됨(TFTC). 9월에는 9거래일 동안 약 30억달러가 들어왔음. ETH ETF는 10월에 6.35억달러가 빠져 9일 연속 유출 중임(10/11 기준). SOL ETF도 순유출임\n- 컨센서스(연말 BTC): 스탠다드차타드 10만, 씨티 11.3만, 번스타인 12.5만달러임. 번스타인은 10/5 15만달러에서 낮췄고 2027년 중반 15만달러를 제시함. 주요 기관이 올해 들어 목표를 잇따라 낮춤\n- 낙관론: SC 켄드릭은 9월에 12.6만달러 재시험 가능성을 언급함. 비트와이즈 리서치 책임자는 ETF와 트레저리 기업이 HYPE를 떠받치는 효과가 과소평가됐다고 봄(10/14). 하이퍼리퀴드 지원기금은 HYPE를 13억달러 넘게 사들였고, 매출은 9월 중순까지 약 4.29억달러임\n- 비관론: 비트겟(10/16)은 금리 인상 기대와 달러 강세로 이자가 없는 자산을 보유하는 부담이 커져 BTC가 박스권에 머물거나 더 떨어질 수 있다고 봄. 모틀리풀(10/14)은 미국 내 경쟁 심화와 규제 불확실성을 들어 HYPE 저가매수를 권하지 않음\n- 규제: 시장구조법인 CLARITY법이 9/15 상원 절차표결에서 49-50으로 부결됨. 이후 SEC가 토큰화 주식 '혁신 면제'(9/17)와 수탁 규정안(10/1)을 내놓음. CFTC는 레버리지 리테일 거래 규정 사전공고(10/5)를 냄. 두 기관이 입법 공백을 메우는 중이나, 법률 전문가들은 불확실성이 이어질 것으로 경고함\n- 시장이 아직 반영하지 않았을 수 있는 변수: 법률이 아닌 행정 규칙에 기대고 있어 정권이 바뀌면 뒤집힐 수 있는 구조. EQX가 하이퍼리퀴드에 미국 주식·ETF 토큰 11종을 올릴 계획을 밝히는 등 온체인 실물자산(RWA) 확대. 12월 인상이 확정되면 알트코인 ETF 유출이 빨라질 가능성",
  "sources": [
   {
-   "url": "https://coinmarketcap.com/cmc-ai/hyperliquid/price-prediction/",
-   "title": "Hyperliquid (HYPE) Price Prediction For 2026 & Beyond"
+   "url": "https://www.scotsmanguide.com/news/waller-breaks-with-warsh-on-fed-forward-guidance-hints-at-october-rate-hold/",
+   "title": "Waller breaks with Warsh on Fed forward guidance, hints at October rate hold - Scotsman Gu"
   },
   {
-   "url": "https://coinmarketcap.com/cmc-ai/hyperliquid/latest-updates/",
-   "title": "Latest Hyperliquid News - (HYPE) Future Outlook, Trends & Market Insights"
+   "url": "https://finance.yahoo.com/economy/policy/articles/traders-warsh-42-chance-doing-082651946.html",
+   "title": "Traders Give Warsh A 42% Chance Of Doing Something This Month That Has Only Happened Once "
   },
   {
-   "url": "https://crypto.news/price-prediction/hyperliquid/",
-   "title": "Hyperliquid (HYPE) Price Prediction 2026, 2027-2030"
+   "url": "https://finance.yahoo.com/economy/policy/article/the-fed-faces-a-politically-fraught-rate-decision-on-the-eve-of-an-election-for-the-third-time-in-a-row-164456429.html",
+   "title": "The Fed faces a politically fraught rate decision on the eve of an election for the third "
   },
   {
-   "url": "https://en.coin-turk.com/td-sequential-buy-signals-flash-for-xrp-solana-dogecoin-hyperliquid/",
-   "title": "TD Sequential buy signals flash for XRP, Solana, Dogecoin, Hyperliquid"
+   "url": "https://www.cnbc.com/2026/09/25/kevin-warsh-fed-interest-rates-balance-sheet.html",
+   "title": "Warsh's regime change at the Fed pushes ahead"
   },
   {
-   "url": "https://stealthex.io/blog/hyperliquid-price-prediction-can-hype-reach-100/",
-   "title": "Hyperliquid Price Prediction 2026, 2027, 2030: Long Forecast"
+   "url": "https://tradingeconomics.com/united-states/interest-rate",
+   "title": "United States Fed Funds Interest Rate"
   },
   {
-   "url": "https://digitalcoinprice.com/forecast/hyperliquid",
-   "title": "Hyperliquid (HYPE) Price Prediction 2026-2030"
+   "url": "https://www.chase.com/personal/investments/learning-and-insights/article/federal-reserve-raises-rates-officials-signal-one-more-hike-in-2026",
+   "title": "Fed Raises Rates in September, Officials Signal One More Hike in 2026"
   },
   {
-   "url": "https://www.cryptopolitan.com/hyperliquid-price-prediction/",
-   "title": "Hyperliquid Price Prediction 2026, 2027, 2028-2032"
+   "url": "https://www.nbcnews.com/business/economy/will-fed-raise-interest-rates-kevin-warsh-offer-clues-rcna603661",
+   "title": "Warsh says Fed is focused on taming rising prices, but gives no hint about next rate hike"
   },
   {
-   "url": "https://coindcx.com/blog/price-predictions/hyperliquid-price-prediction",
-   "title": "Hyperliquid (HYPE) Price Prediction: Daily, Weekly 2026 - 2040"
+   "url": "https://www.forbes.com/sites/simonmoore/2026/09/29/what-to-expect-from-interest-rates-for-the-rest-of-2026/",
+   "title": "Markets Brace For Two More Fed Rate Hikes In 2026"
   },
   {
-   "url": "https://coinpedia.org/price-prediction/hyperliquid-hype-price-prediction/",
-   "title": "Hyperliquid (HYPE) Price Prediction 2026, 2027-2030"
+   "url": "https://www.axios.com/2026/03/18/fed-powell-interest-rate",
+   "title": "Fed keeps rates on hold, Powell says he will remain in place until successor confirmed"
   },
   {
-   "url": "https://finance.yahoo.com/markets/crypto/articles/bitcoin-price-prediction-october-2026-141555670.html",
-   "title": "Bitcoin Price Prediction for October 2026"
+   "url": "https://www.chase.com/personal/investments/learning-and-insights/article/federal-reserve-officials-hawkish-tone-ahead-of-october-2026-fomc-meeting",
+   "title": "Are Fed Officials Changing Their Tone Ahead of October’s FOMC Meeting? Here’s What They’re"
   },
   {
-   "url": "https://finance.yahoo.com/markets/crypto/articles/bitcoin-price-prediction-october-2026-170000571.html",
-   "title": "Bitcoin Price Prediction for October 2026: One $4.35 Billion Risk Stands in Uptober's Way"
+   "url": "https://coruzant.com/fintech/federal-reserve-decisions/",
+   "title": "Federal Reserve Interest Rate Predictions for 2026"
   },
   {
-   "url": "https://changelly.com/blog/bitcoin-price-prediction/",
-   "title": "Bitcoin (BTC) Price Prediction 2026 2027 2028 - 2040"
+   "url": "https://finance.yahoo.com/personal-finance/banking/article/fed-rate-predictions-2026-154647304.html",
+   "title": "Fed predictions for 2026: Will a rate hike happen by the end of the year?"
   }
  ],
  "portfolio": {
@@ -2124,23 +2131,23 @@
     "cur": "KRW",
     "avg": 3717636,
     "note": null,
-    "pnl": -11.0,
-    "w": 21.9
+    "pnl": -10.8,
+    "w": 22.2
    },
    {
     "sym": "HYPE",
     "cur": "USDT",
     "avg": 49.358,
     "note": null,
-    "pnl": 61.3,
-    "w": 19.9
+    "pnl": 59.3,
+    "w": 19.8
    },
    {
     "sym": "SOL",
     "cur": "KRW",
     "avg": 201322,
     "note": "스테이킹 중",
-    "pnl": -29.0,
+    "pnl": -29.2,
     "w": 17.7
    },
    {
@@ -2148,23 +2155,23 @@
     "cur": "KRW",
     "avg": 17579,
     "note": null,
-    "pnl": -4.4,
-    "w": 10.6
+    "pnl": -5.8,
+    "w": 10.5
    },
    {
     "sym": "VIRTUAL",
     "cur": "KRW",
     "avg": 2210,
     "note": null,
-    "pnl": -58.4,
-    "w": 8.3
+    "pnl": -59.0,
+    "w": 8.2
    },
    {
     "sym": "SUI",
     "cur": "KRW",
     "avg": 2765,
     "note": null,
-    "pnl": -50.0,
+    "pnl": -50.6,
     "w": 7.9
    },
    {
@@ -2173,14 +2180,14 @@
     "avg": 107199665,
     "note": null,
     "pnl": 3.7,
-    "w": 7.3
+    "w": 7.4
    },
    {
     "sym": "ONDO",
     "cur": "KRW",
     "avg": 590.3,
     "note": null,
-    "pnl": 5.2,
+    "pnl": 4.1,
     "w": 3.8
    },
    {
@@ -2188,13 +2195,13 @@
     "tk": "HYPE",
     "cur": "USDT",
     "avg": 81.322,
-    "px": 79.8,
+    "px": 78.82,
     "lev": 11.97,
     "x": 12,
     "liq": 75.363,
-    "pnl": -22.4,
-    "w": 0.4,
-    "exp": 6.0
+    "pnl": -36.8,
+    "w": 0.3,
+    "exp": 5.9
    }
   ],
   "cash": 2.2,
@@ -2380,8 +2387,8 @@
      "kind": "coin",
      "action": "분할 매수",
      "px": 81894.0,
-     "now": 81468.0,
-     "chg": -0.52,
+     "now": 81490.0,
+     "chg": -0.49,
      "hit": false
     },
     {
@@ -2389,8 +2396,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 2457.98,
-     "now": 2424.67,
-     "chg": -1.36,
+     "now": 2431.03,
+     "chg": -1.1,
      "hit": true
     },
     {
@@ -2398,8 +2405,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 105.32,
-     "now": 104.7,
-     "chg": -0.59,
+     "now": 104.4,
+     "chg": -0.87,
      "hit": null
     },
     {
@@ -2407,8 +2414,8 @@
      "kind": "coin",
      "action": "일부 차익실현",
      "px": 81.07,
-     "now": 79.8,
-     "chg": -1.57,
+     "now": 78.82,
+     "chg": -2.78,
      "hit": true
     },
     {
@@ -2416,8 +2423,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 12.53,
-     "now": 12.31,
-     "chg": -1.76,
+     "now": 12.14,
+     "chg": -3.11,
      "hit": null
     },
     {
@@ -2425,8 +2432,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 0.465328,
-     "now": 0.454957,
-     "chg": -2.23,
+     "now": 0.450494,
+     "chg": -3.19,
      "hit": null
     },
     {
@@ -2434,8 +2441,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 1.038,
-     "now": 1.012,
-     "chg": -2.5,
+     "now": 1.0,
+     "chg": -3.66,
      "hit": true
     },
     {
@@ -2443,8 +2450,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 0.684635,
-     "now": 0.673184,
-     "chg": -1.67,
+     "now": 0.663982,
+     "chg": -3.02,
      "hit": true
     },
     {
@@ -2652,8 +2659,8 @@
      "kind": "coin",
      "action": "분할 매수",
      "px": 81070.0,
-     "now": 81468.0,
-     "chg": 0.49,
+     "now": 81490.0,
+     "chg": 0.52,
      "hit": true
     },
     {
@@ -2661,8 +2668,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 2368.75,
-     "now": 2424.67,
-     "chg": 2.36,
+     "now": 2431.03,
+     "chg": 2.63,
      "hit": false
     },
     {
@@ -2670,8 +2677,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 102.99,
-     "now": 104.7,
-     "chg": 1.66,
+     "now": 104.4,
+     "chg": 1.37,
      "hit": null
     },
     {
@@ -2679,8 +2686,8 @@
      "kind": "coin",
      "action": "일부 차익실현",
      "px": 78.69,
-     "now": 79.8,
-     "chg": 1.41,
+     "now": 78.82,
+     "chg": 0.17,
      "hit": false
     },
     {
@@ -2688,8 +2695,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 12.13,
-     "now": 12.31,
-     "chg": 1.48,
+     "now": 12.14,
+     "chg": 0.08,
      "hit": null
     },
     {
@@ -2697,8 +2704,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 0.433121,
-     "now": 0.454957,
-     "chg": 5.04,
+     "now": 0.450494,
+     "chg": 4.01,
      "hit": null
     },
     {
@@ -2706,8 +2713,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 0.994577,
-     "now": 1.012,
-     "chg": 1.75,
+     "now": 1.0,
+     "chg": 0.55,
      "hit": false
     },
     {
@@ -2715,8 +2722,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 0.650803,
-     "now": 0.673184,
-     "chg": 3.44,
+     "now": 0.663982,
+     "chg": 2.03,
      "hit": false
     },
     {
@@ -2951,8 +2958,8 @@
      "kind": "coin",
      "action": "분할 매수",
      "px": 82790.0,
-     "now": 81468.0,
-     "chg": -1.6,
+     "now": 81490.0,
+     "chg": -1.57,
      "hit": false
     },
     {
@@ -2960,8 +2967,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 2478.26,
-     "now": 2424.67,
-     "chg": -2.16,
+     "now": 2431.03,
+     "chg": -1.91,
      "hit": null
     },
     {
@@ -2969,8 +2976,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 105.73,
-     "now": 104.7,
-     "chg": -0.97,
+     "now": 104.4,
+     "chg": -1.26,
      "hit": null
     },
     {
@@ -2978,8 +2985,8 @@
      "kind": "coin",
      "action": "일부 차익실현",
      "px": 80.71,
-     "now": 79.8,
-     "chg": -1.13,
+     "now": 78.82,
+     "chg": -2.34,
      "hit": true
     },
     {
@@ -2987,8 +2994,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 12.75,
-     "now": 12.31,
-     "chg": -3.45,
+     "now": 12.14,
+     "chg": -4.78,
      "hit": null
     },
     {
@@ -2996,8 +3003,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 0.45454,
-     "now": 0.454957,
-     "chg": 0.09,
+     "now": 0.450494,
+     "chg": -0.89,
      "hit": null
     },
     {
@@ -3005,8 +3012,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 1.031,
-     "now": 1.012,
-     "chg": -1.84,
+     "now": 1.0,
+     "chg": -3.01,
      "hit": true
     },
     {
@@ -3014,8 +3021,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 0.686736,
-     "now": 0.673184,
-     "chg": -1.97,
+     "now": 0.663982,
+     "chg": -3.31,
      "hit": true
     },
     {
@@ -3232,8 +3239,8 @@
      "kind": "coin",
      "action": "분할 매수",
      "px": 82350.0,
-     "now": 81468.0,
-     "chg": -1.07,
+     "now": 81490.0,
+     "chg": -1.04,
      "hit": false
     },
     {
@@ -3241,8 +3248,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 2460.59,
-     "now": 2424.67,
-     "chg": -1.46,
+     "now": 2431.03,
+     "chg": -1.2,
      "hit": null
     },
     {
@@ -3250,8 +3257,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 105.16,
-     "now": 104.7,
-     "chg": -0.44,
+     "now": 104.4,
+     "chg": -0.72,
      "hit": null
     },
     {
@@ -3259,8 +3266,8 @@
      "kind": "coin",
      "action": "일부 차익실현",
      "px": 81.66,
-     "now": 79.8,
-     "chg": -2.28,
+     "now": 78.82,
+     "chg": -3.48,
      "hit": true
     },
     {
@@ -3268,8 +3275,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 12.67,
-     "now": 12.31,
-     "chg": -2.84,
+     "now": 12.14,
+     "chg": -4.18,
      "hit": null
     },
     {
@@ -3277,8 +3284,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 0.472185,
-     "now": 0.454957,
-     "chg": -3.65,
+     "now": 0.450494,
+     "chg": -4.59,
      "hit": null
     },
     {
@@ -3286,8 +3293,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 1.033,
-     "now": 1.012,
-     "chg": -2.03,
+     "now": 1.0,
+     "chg": -3.19,
      "hit": true
     },
     {
@@ -3295,8 +3302,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 0.682016,
-     "now": 0.673184,
-     "chg": -1.29,
+     "now": 0.663982,
+     "chg": -2.64,
      "hit": true
     },
     {
@@ -3495,8 +3502,8 @@
      "kind": "coin",
      "action": "분할 매수",
      "px": 83855.0,
-     "now": 81468.0,
-     "chg": -2.85,
+     "now": 81490.0,
+     "chg": -2.82,
      "hit": false
     },
     {
@@ -3504,8 +3511,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 2555.13,
-     "now": 2424.67,
-     "chg": -5.11,
+     "now": 2431.03,
+     "chg": -4.86,
      "hit": null
     },
     {
@@ -3513,8 +3520,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 112.49,
-     "now": 104.7,
-     "chg": -6.93,
+     "now": 104.4,
+     "chg": -7.19,
      "hit": null
     },
     {
@@ -3522,8 +3529,8 @@
      "kind": "coin",
      "action": "일부 차익실현",
      "px": 87.56,
-     "now": 79.8,
-     "chg": -8.86,
+     "now": 78.82,
+     "chg": -9.98,
      "hit": true
     },
     {
@@ -3531,8 +3538,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 13.38,
-     "now": 12.31,
-     "chg": -8.0,
+     "now": 12.14,
+     "chg": -9.27,
      "hit": null
     },
     {
@@ -3540,8 +3547,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 0.523649,
-     "now": 0.454957,
-     "chg": -13.12,
+     "now": 0.450494,
+     "chg": -13.97,
      "hit": null
     },
     {
@@ -3549,8 +3556,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 1.12,
-     "now": 1.012,
-     "chg": -9.64,
+     "now": 1.0,
+     "chg": -10.71,
      "hit": true
     },
     {
@@ -3558,8 +3565,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 0.745191,
-     "now": 0.673184,
-     "chg": -9.66,
+     "now": 0.663982,
+     "chg": -10.9,
      "hit": true
     },
     {
@@ -3749,8 +3756,8 @@
      "kind": "coin",
      "action": "분할 매수",
      "px": 83007.0,
-     "now": 81468.0,
-     "chg": -1.85,
+     "now": 81490.0,
+     "chg": -1.83,
      "hit": false
     },
     {
@@ -3758,8 +3765,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 2506.62,
-     "now": 2424.67,
-     "chg": -3.27,
+     "now": 2431.03,
+     "chg": -3.02,
      "hit": null
     },
     {
@@ -3767,8 +3774,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 109.57,
-     "now": 104.7,
-     "chg": -4.44,
+     "now": 104.4,
+     "chg": -4.72,
      "hit": null
     },
     {
@@ -3776,8 +3783,8 @@
      "kind": "coin",
      "action": "일부 차익실현",
      "px": 84.93,
-     "now": 79.8,
-     "chg": -6.04,
+     "now": 78.82,
+     "chg": -7.19,
      "hit": true
     },
     {
@@ -3785,8 +3792,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 12.92,
-     "now": 12.31,
-     "chg": -4.72,
+     "now": 12.14,
+     "chg": -6.04,
      "hit": null
     },
     {
@@ -3794,8 +3801,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 0.486597,
-     "now": 0.454957,
-     "chg": -6.5,
+     "now": 0.450494,
+     "chg": -7.42,
      "hit": null
     },
     {
@@ -3803,8 +3810,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 1.1,
-     "now": 1.012,
-     "chg": -8.0,
+     "now": 1.0,
+     "chg": -9.09,
      "hit": true
     },
     {
@@ -3812,8 +3819,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 0.733192,
-     "now": 0.673184,
-     "chg": -8.18,
+     "now": 0.663982,
+     "chg": -9.44,
      "hit": true
     },
     {
@@ -4012,8 +4019,8 @@
      "kind": "coin",
      "action": "분할 매수",
      "px": 82709.0,
-     "now": 81468.0,
-     "chg": -1.5,
+     "now": 81490.0,
+     "chg": -1.47,
      "hit": false
     },
     {
@@ -4021,8 +4028,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 2496.05,
-     "now": 2424.67,
-     "chg": -2.86,
+     "now": 2431.03,
+     "chg": -2.6,
      "hit": null
     },
     {
@@ -4030,8 +4037,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 110.15,
-     "now": 104.7,
-     "chg": -4.95,
+     "now": 104.4,
+     "chg": -5.22,
      "hit": null
     },
     {
@@ -4039,8 +4046,8 @@
      "kind": "coin",
      "action": "일부 차익실현",
      "px": 84.38,
-     "now": 79.8,
-     "chg": -5.43,
+     "now": 78.82,
+     "chg": -6.59,
      "hit": true
     },
     {
@@ -4048,8 +4055,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 12.91,
-     "now": 12.31,
-     "chg": -4.65,
+     "now": 12.14,
+     "chg": -5.96,
      "hit": null
     },
     {
@@ -4057,8 +4064,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 0.496622,
-     "now": 0.454957,
-     "chg": -8.39,
+     "now": 0.450494,
+     "chg": -9.29,
      "hit": null
     },
     {
@@ -4066,8 +4073,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 1.11,
-     "now": 1.012,
-     "chg": -8.83,
+     "now": 1.0,
+     "chg": -9.91,
      "hit": true
     },
     {
@@ -4075,8 +4082,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 0.740649,
-     "now": 0.673184,
-     "chg": -9.11,
+     "now": 0.663982,
+     "chg": -10.35,
      "hit": true
     },
     {
@@ -4266,8 +4273,8 @@
      "kind": "coin",
      "action": "분할 매수",
      "px": 81650.0,
-     "now": 81468.0,
-     "chg": -0.22,
+     "now": 81490.0,
+     "chg": -0.2,
      "hit": false
     },
     {
@@ -4275,8 +4282,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 2471.59,
-     "now": 2424.67,
-     "chg": -1.9,
+     "now": 2431.03,
+     "chg": -1.64,
      "hit": null
     },
     {
@@ -4284,8 +4291,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 109.81,
-     "now": 104.7,
-     "chg": -4.65,
+     "now": 104.4,
+     "chg": -4.93,
      "hit": null
     },
     {
@@ -4293,8 +4300,8 @@
      "kind": "coin",
      "action": "일부 차익실현",
      "px": 84.58,
-     "now": 79.8,
-     "chg": -5.65,
+     "now": 78.82,
+     "chg": -6.81,
      "hit": true
     },
     {
@@ -4302,8 +4309,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 12.64,
-     "now": 12.31,
-     "chg": -2.61,
+     "now": 12.14,
+     "chg": -3.96,
      "hit": null
     },
     {
@@ -4311,8 +4318,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 0.485307,
-     "now": 0.454957,
-     "chg": -6.25,
+     "now": 0.450494,
+     "chg": -7.17,
      "hit": null
     },
     {
@@ -4320,8 +4327,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 1.049,
-     "now": 1.012,
-     "chg": -3.53,
+     "now": 1.0,
+     "chg": -4.67,
      "hit": true
     },
     {
@@ -4329,8 +4336,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 0.704659,
-     "now": 0.673184,
-     "chg": -4.47,
+     "now": 0.663982,
+     "chg": -5.77,
      "hit": true
     },
     {
@@ -4763,8 +4770,8 @@
      "kind": "coin",
      "action": "분할 매수",
      "px": 83329.0,
-     "now": 81468.0,
-     "chg": -2.23,
+     "now": 81490.0,
+     "chg": -2.21,
      "hit": false
     },
     {
@@ -4772,8 +4779,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 2571.41,
-     "now": 2424.67,
-     "chg": -5.71,
+     "now": 2431.03,
+     "chg": -5.46,
      "hit": null
     },
     {
@@ -4781,8 +4788,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 116.06,
-     "now": 104.7,
-     "chg": -9.79,
+     "now": 104.4,
+     "chg": -10.05,
      "hit": null
     },
     {
@@ -4790,8 +4797,8 @@
      "kind": "coin",
      "action": "일부 차익실현",
      "px": 88.03,
-     "now": 79.8,
-     "chg": -9.35,
+     "now": 78.82,
+     "chg": -10.46,
      "hit": true
     },
     {
@@ -4799,8 +4806,8 @@
      "kind": "coin",
      "action": "일부 차익실현",
      "px": 13.35,
-     "now": 12.31,
-     "chg": -7.79,
+     "now": 12.14,
+     "chg": -9.06,
      "hit": true
     },
     {
@@ -4808,8 +4815,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 0.470319,
-     "now": 0.454957,
-     "chg": -3.27,
+     "now": 0.450494,
+     "chg": -4.22,
      "hit": null
     },
     {
@@ -4817,8 +4824,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 1.12,
-     "now": 1.012,
-     "chg": -9.64,
+     "now": 1.0,
+     "chg": -10.71,
      "hit": true
     },
     {
@@ -4826,8 +4833,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 0.772266,
-     "now": 0.673184,
-     "chg": -12.83,
+     "now": 0.663982,
+     "chg": -14.02,
      "hit": true
     },
     {
@@ -5251,8 +5258,8 @@
      "kind": "coin",
      "action": "분할 매수",
      "px": 85540.0,
-     "now": 81468.0,
-     "chg": -4.76,
+     "now": 81490.0,
+     "chg": -4.73,
      "hit": false
     },
     {
@@ -5260,8 +5267,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 2698.52,
-     "now": 2424.67,
-     "chg": -10.15,
+     "now": 2431.03,
+     "chg": -9.91,
      "hit": null
     },
     {
@@ -5269,8 +5276,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 120.74,
-     "now": 104.7,
-     "chg": -13.28,
+     "now": 104.4,
+     "chg": -13.53,
      "hit": null
     },
     {
@@ -5278,8 +5285,8 @@
      "kind": "coin",
      "action": "일부 차익실현",
      "px": 91.91,
-     "now": 79.8,
-     "chg": -13.18,
+     "now": 78.82,
+     "chg": -14.24,
      "hit": true
     },
     {
@@ -5287,8 +5294,8 @@
      "kind": "coin",
      "action": "일부 차익실현",
      "px": 13.95,
-     "now": 12.31,
-     "chg": -11.76,
+     "now": 12.14,
+     "chg": -12.97,
      "hit": true
     },
     {
@@ -5296,8 +5303,8 @@
      "kind": "coin",
      "action": "유지",
      "px": 0.491134,
-     "now": 0.454957,
-     "chg": -7.37,
+     "now": 0.450494,
+     "chg": -8.27,
      "hit": null
     },
     {
@@ -5305,8 +5312,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 1.18,
-     "now": 1.012,
-     "chg": -14.24,
+     "now": 1.0,
+     "chg": -15.25,
      "hit": true
     },
     {
@@ -5314,8 +5321,8 @@
      "kind": "coin",
      "action": "비중 축소",
      "px": 0.805664,
-     "now": 0.673184,
-     "chg": -16.44,
+     "now": 0.663982,
+     "chg": -17.59,
      "hit": true
     },
     {
@@ -5776,8 +5783,8 @@
   ]
  },
  "asof": {
-  "지표": "2026-10-17 17:52 KST",
-  "코인": "2026-10-17 13:12 KST",
+  "지표": "2026-10-17 22:03 KST",
+  "코인": "2026-10-17 21:07 KST",
   "기관": "2026-06-30"
  }
 }
