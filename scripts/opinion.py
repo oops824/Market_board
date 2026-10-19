@@ -533,13 +533,16 @@ def prev_context(prev, port_changed):
     picks = lambda k: ", ".join("%s(%s%s)" % (x.get("ticker") or x.get("name"), pl(x.get("why"), 70),
                                              " · 진입 " + x["entry"] if x.get("entry") else "") for x in sh.get(k) or [])
     return ("## 직전 중장기 의견 (%s 수립, 오늘 %s)\n%s%s\n\n## 직전 단기 행동 (%s 작성)\n주식 %s · 코인 %s · 현금 %s / %s\n"
-            "- 보유 포지션(행동 · 직전 조건): %s\n- 매수 후보(매수 시점 포함): %s\n- 회피: %s\n- 코인 조건: %s" % (
+            "- 보유 포지션(행동 · 직전 조건 · 저가 매수 가격): %s\n- 매수 후보(매수 시점 포함): %s\n- 회피: %s\n- 코인 조건: %s" % (
         since, days, json.dumps(long_for_prompt(op["long"]), ensure_ascii=False), note,
         (prev.get("generated") or "")[:16], st.get("stocks"), st.get("crypto"), st.get("cash"),
         ", ".join("%s %s" % (c["sym"], c["action"]) for c in sh.get("coins", [])),
-        " / ".join("%s %s · %s" % (h["sym"], h["action"], pl(h.get("condition"), 110)) for h in sh.get("holdings", [])) or "-",
+        " / ".join("%s %s · %s%s" % (h["sym"], h["action"], pl(h.get("condition"), 110),
+                                    " · 저가: " + pl(h.get("dip"), 80) if h.get("dip") else "")
+                   for h in sh.get("holdings", [])) or "-",
         picks("stocks_buy") or "-", picks("stocks_avoid") or "-",
-        " / ".join("%s · %s" % (c["sym"], pl(c.get("condition"), 90)) for c in sh.get("coins", [])) or "-"))
+        " / ".join("%s · %s%s" % (c["sym"], pl(c.get("condition"), 90), " · 저가: " + pl(c.get("dip"), 70) if c.get("dip") else "")
+                   for c in sh.get("coins", [])) or "-"))
 
 
 def parse_json(text):
