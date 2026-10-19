@@ -23,7 +23,7 @@ UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.3
                     "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
 COIN_SYMS = ["BTC", "ETH", "SOL", "HYPE", "LINK", "ONDO", "SUI", "VIRTUAL"]
 SHORT_ACT = ["분할 매수", "비중 확대", "유지", "일부 차익실현", "비중 축소", "관망"]
-PROFILE = "|risk7.5-8|outlook|stock-targets|sectors17|contrarian|gaejo-hl|fedwatch"                       # 투자 성향·판단 방식 버전 (바뀌면 중장기 재작성)
+PROFILE = "|risk7.5-8|outlook|stock-targets|sectors17|contrarian|gaejo-hl|fedwatch|lev-order"                       # 투자 성향·판단 방식 버전 (바뀌면 중장기 재작성)
 LONG_ROLE = ["핵심 보유", "보유", "비중 확대", "비중 축소", "정리"]
 BUY = {"분할 매수", "비중 확대", "매수"}
 SELL = {"일부 차익실현", "비중 축소", "회피"}
@@ -265,6 +265,11 @@ def port_digest(pf):
         if any(r.get("lev") for r in st["rows"]):            # 레버리지 포함 계좌 전체 노출
             gross = sum(r.get("exp", 0) if r.get("lev") else r["w"] for r in st["rows"])
             L.append("- 주식 계좌 총 실제 노출: 계좌 평가액의 %.0f%% (현물 + 레버리지 명목, 100%% 초과분이 차입 노출)" % gross)
+            lv = sorted((r for r in st["rows"] if r.get("lev") and r.get("px")),
+                        key=lambda r: (1 - r["liq"] / r["px"], -r["lev"]))           # 청산가에 가까울수록 위험
+            L.append("- 레버리지 위험 순위(높은 순): " + " > ".join(
+                "%s(실효 %.1f배·청산가까지 %.0f%%·노출 %.1f%%)" % (r["sym"], r["lev"], (1 - r["liq"] / r["px"]) * 100, r.get("exp", 0))
+                for r in lv))
         if sp:
             L.append("계좌 규모 비율: 주식 계좌 %s%% : 코인 계좌 %s%% (금액 미공개)" % (sp.get("stocks"), sp.get("crypto")))
     else:
@@ -457,6 +462,11 @@ SYSTEM = (
     "각각 별도 holdings 항목으로 판단하고(sym 은 목록 표기 그대로), 두 포지션을 합한 실제 노출이 그 종목에 과도하게 쏠리지 않는지 함께 본다. "
     "'N배 (실효 M배)'로 표시되면 위험은 실효 배율과 표시된 청산가로 판단한다. 코인 선물(예: HYPE-12X)도 holdings 에 별도 항목으로 "
     "판단하고, 그 long.holdings target_pct 는 코인 계좌 기준 실제 노출(정리면 0)이다.\n"
+    "- 레버리지를 줄일 때는 '레버리지 위험 순위'대로 위험한 것부터 줄인다(청산가까지 거리가 짧고 실효 배율이 높고 노출이 큰 순). "
+    "계좌 총노출 목표를 맞추려고 위험이 낮은 포지션(실효 3배 이하·청산가까지 30% 이상)까지 같이 줄이지 않는다. 위험한 포지션 축소로 "
+    "목표에 못 미칠 때만 다음 순위로 넘어가고, 낮은 순위를 줄이면 그 이유(실적 갭·추세 이탈 등)를 쓴다.\n"
+    "- 같은 종목의 레버리지를 줄이면서 그 종목 현물을 사는 맞교환은 하지 않는다. 레버리지를 유지하는 종목은 현물 추가 매수도 하지 않고"
+    "(합산 노출이 늘어남), 맞교환은 펀딩비 부담처럼 데이터로 확인되는 근거가 있을 때만 그 근거를 밝히고 쓴다.\n"
     "- watch 에는 '관심 종목' 목록의 모든 종목을 빠짐없이 쓴다. action 은 단기 행동(분할 매수/비중 확대/유지/일부 차익실현/"
     "비중 축소/관망, 미보유 종목의 '유지'는 '지금은 사지 않고 지켜봄'), role 은 중장기 역할(핵심 보유/보유/비중 확대/비중 축소/정리, "
     "미보유면 '보유'=담을 만함, '정리'=피함), why 는 근거 한 줄. 보유 종목과 비교해 더 나은 대안이면 그렇다고 쓴다. "
@@ -511,7 +521,7 @@ def prev_context(prev, port_changed):
     st = sh.get("stance") or {}
     note = ("\n※ 이 중장기 의견을 세운 뒤 포트폴리오나 투자 성향·판단 범위가 바뀌었다(보유 종목 매매, 위험 성향 7.5~8점, "
             "뉴스·전문가 전망, 관심 섹터 17개로 확대·섹터 로테이션, 과대낙폭(역발상) 점검, FOMC 금리 확률(선물 기반), "
-            "개조식 문체·핵심 강조 반영). 이번에는 long 을 새 기준과 새 문체로 다시 작성한다. "
+            "개조식 문체·핵심 강조, 레버리지 축소 순서·맞교환 금지 규칙 반영). 이번에는 long 을 새 기준과 새 문체로 다시 작성한다. "
             "방향이 같으면 status '일부 수정', "
             "change_note 에 무엇을 반영했는지 쓴다."
             if port_changed else "")
