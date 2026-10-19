@@ -377,10 +377,10 @@ def obj(**props):
 
 
 STANCE3 = obj(stocks=S, crypto=S, cash=S)
-STOCKS = {"type": "array", "items": obj(side=S, name=S, ticker=S, why=S, confidence=S)}
+STOCKS = {"type": "array", "items": obj(side=S, name=S, ticker=S, why=S, entry=S, confidence=S)}
 SCHEMA = obj(
     headline=S, summary=S, forward=S,
-    watch={"type": "array", "items": obj(sym=S, action=S, role=S, why=S)},
+    watch={"type": "array", "items": obj(sym=S, action=S, role=S, why=S, entry=S)},
     sectors={"type": "array", "items": obj(etf=S, view=S, why=S)},
     short=obj(view=S, confidence=S, stance=STANCE3,
               coins={"type": "array", "items": obj(sym=S, action=S, why=S, condition=S, dip=S, confidence=S)},
@@ -478,6 +478,10 @@ SYSTEM = (
     "- 코인 8종은 short.coins 와 long.coins 모두 빠짐없이 판단한다. short.coins 의 condition 에는 행동을 실행하거나 바꿀 "
     "구체적 조건을 쓴다.\n"
     "- 주식 ticker 는 미국 티커(예: SMH, NVDA). 모르면 빈 문자열.\n"
+    "- 진입가(entry): short.stocks 의 매수, long.stocks 의 비중 확대, watch 의 분할 매수·비중 확대 항목에는 entry 를 쓴다. "
+    "관심 종목의 '가격대'(현재가·20일선·50일선·20일 범위·RSI)로 계산한 절대 가격 하나 또는 폭 3% 이내의 좁은 범위(예: '$380~388'), "
+    "분할이면 '1차 $386·2차 $372'처럼 단계별 가격. 과매수면 눌림 가격, 추세 돌파 매수면 돌파 가격을 쓴다. 직전 진입가가 있으면 "
+    "가격대가 실제로 움직였을 때만 바꾼다. 매수하지 않는 항목은 빈 문자열.\n"
     "- 값은 정확히 다음 표현 중 하나로 쓴다. stance(stocks·crypto·cash): 적극 확대/확대/중립/축소/적극 축소. "
     "confidence: 높음/중간/낮음. short.coins[].action: 분할 매수/비중 확대/유지/일부 차익실현/비중 축소/관망. "
     "long.coins[].role: 핵심 보유/보유/비중 확대/비중 축소/정리. long.status: 유지/일부 수정/변경. "
@@ -526,7 +530,8 @@ def prev_context(prev, port_changed):
             "change_note 에 무엇을 반영했는지 쓴다."
             if port_changed else "")
     pl = lambda t, n: cut(HL.sub(r"\1", t or ""), n)                  # 강조 표시는 떼고 넘김
-    picks = lambda k: ", ".join("%s(%s)" % (x.get("ticker") or x.get("name"), pl(x.get("why"), 70)) for x in sh.get(k) or [])
+    picks = lambda k: ", ".join("%s(%s%s)" % (x.get("ticker") or x.get("name"), pl(x.get("why"), 70),
+                                             " · 진입 " + x["entry"] if x.get("entry") else "") for x in sh.get(k) or [])
     return ("## 직전 중장기 의견 (%s 수립, 오늘 %s)\n%s%s\n\n## 직전 단기 행동 (%s 작성)\n주식 %s · 코인 %s · 현금 %s / %s\n"
             "- 보유 포지션(행동 · 직전 조건): %s\n- 매수 후보(매수 시점 포함): %s\n- 회피: %s\n- 코인 조건: %s" % (
         since, days, json.dumps(long_for_prompt(op["long"]), ensure_ascii=False), note,
@@ -730,7 +735,8 @@ def clean(op, ssyms=(), wsyms=(), rsyms=()):
         stocks = op[k].pop("stocks", None) or []
         for dst, kws in sides:
             op[k][dst] = [{"name": x.get("name"), "ticker": str(x.get("ticker") or "").strip().upper(),
-                           "why": x.get("why"), "confidence": conf(x.get("confidence"))}
+                           "why": x.get("why"), "entry": str(x.get("entry") or "").strip(),
+                           "confidence": conf(x.get("confidence"))}
                           for x in stocks if any(w in str(x.get("side") or "") for w in kws)]
     norm100(lg.get("allocation") or [], "pct")
     parts = lg["coins"] + [{"cash": True, "target_pct": lg.get("crypto_cash_pct") or 0}]
@@ -872,16 +878,29 @@ def rejudge(w, st, force):
     return force or not st or st.get("trend") == "?" or (w["trend"] != "flat" and w["trend"] != st.get("trend"))
 
 
+def levels(t):
+    """진입가 판단용 가격대: 현재가·20일선·50일선·20일 고저·RSI (6개월 일봉)"""
+    c = yahoo_closes(t)
+    if not c or len(c) < 25:
+        return ""
+    m20, lo, hi = sum(c[-20:]) / 20, min(c[-20:]), max(c[-20:])
+    m50 = sum(c[-50:]) / 50 if len(c) >= 50 else None
+    r = signals.rsi(c)
+    return "가격대: 현재 $%.2f · 20일선 $%.2f%s · 20일 범위 $%.2f~%.2f%s" % (
+        c[-1], m20, " · 50일선 $%.2f" % m50 if m50 else "", lo, hi, " · RSI %.0f" % r if r is not None else "")
+
+
 def watch_digest(W, wstate, force):
     if not W:
         return ""
-    L = ["## 관심 종목 (보유 외: 하이퍼스케일러·17개 섹터 대장주·기관 13F 언급. 수치는 위 섹터 표 참고)"]
+    L = ["## 관심 종목 (보유 외: 하이퍼스케일러·17개 섹터 대장주·기관 13F 언급. 수치는 위 섹터 표 참고, 가격대는 진입가 계산용)"]
     for w in W:
         st = wstate.get(w["sym"])
         prev = ("직전 역할 %s(%s~)" % (st["role"], opmd(st.get("since")))) if st else "새 종목"
-        L.append("- %s %s [%s] %s%s | %s%s" % (
-            w["sym"], w["name"], w["group"], TREND[w["trend"]], (" · " + w["info"]) if w["info"] else "", prev,
-            " → 재판단" if rejudge(w, st, force) else " → 역할 유지"))
+        lv = levels(w["sym"])
+        L.append("- %s %s [%s] %s%s%s | %s%s" % (
+            w["sym"], w["name"], w["group"], TREND[w["trend"]], (" · " + w["info"]) if w["info"] else "",
+            (" · " + lv) if lv else "", prev, " → 재판단" if rejudge(w, st, force) else " → 역할 유지"))
     return "\n".join(L)
 
 

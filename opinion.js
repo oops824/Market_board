@@ -107,7 +107,9 @@ function opPicks(list,lab,cl){
   if(!list||!list.length)return '';
   return '<div class="oph"><span class="tag '+cl+'">'+lab+'</span></div><ul class="opl">'+list.map(function(p){
     return '<li><div class="opr"><b>'+opT(p.name)+'</b>'+(p.ticker?'<span class="tk">'+opT(p.ticker)+'</span>':'')+
-      opCf(p.confidence)+'</div><div class="opw">'+opT(p.why)+'</div></li>'}).join('')+'</ul>'}
+      opCf(p.confidence)+'</div><div class="opw">'+opT(p.why)+'</div>'+opEntry(p.entry)+'</li>'}).join('')+'</ul>'}
+/* 진입가(정확한 값 또는 좁은 범위) */
+function opEntry(e){return e?'<div class="opc ent"><em>진입가</em>'+opT(e)+'</div>':''}
 function opList(t,list,cl){
   if(!list||!list.length)return '';
   return (t?'<div class="sec">'+t+'</div>':'')+'<ol class="opn '+cl+'">'+list.map(function(x){
@@ -194,7 +196,7 @@ function opWatch(o,filter){
         return '<li><div class="opr"><b>'+opT(w.sym)+'</b><span class="tk">'+opT(m.name||'')+'</span>'+opRoleChg(w)+
           '<span class="cf"><span class="tag '+(OP_ACT[w.action]||'na')+'">단기 '+opT(w.action)+'</span> '+
           '<span class="tag '+(OP_ROLE[w.role]||'na')+'">중장기 '+opT(w.role)+'</span></span></div>'+
-          '<div class="opw">'+opT(w.why)+'</div></li>'}).join('')+'</ul></details>'}).join('')}
+          '<div class="opw">'+opT(w.why)+'</div>'+opEntry(w.entry)+'</li>'}).join('')+'</ul></details>'}).join('')}
 
 /* 종합 탭 본문 */
 function opMain(o,isShort){
