@@ -49,6 +49,9 @@ YH_ITEMS = [
     ("하이일드 HYG", "HYG", "$", 2, 1, "신용 위험선호. 하락=경계"),
     ("장기채 TLT", "TLT", "$", 2, 1, "금리 방향 대리지표"),
     ("물가연동채 TIP", "TIP", "$", 2, 1, "실질금리 대리지표. 하락=실질금리 상승"),
+    ("WTI 원유", "CL=F", "$", 2, 1, "중동·러시아 공급 위험 반영 · 상승=물가·금리 부담"),
+    ("브렌트유", "BZ=F", "$", 2, 1, "국제 유가 기준 · 유럽·중동 공급 차질에 민감"),
+    ("금 가격", "GC=F", "$", 0, 1, "지정학·통화 불안 피난처"),
 ]
 def macro_items():
     out, cache = [], {}
@@ -60,6 +63,8 @@ def macro_items():
             d, v = s[-1][0], s[-1][1] * mul
             w = v - ago(s, 7) * mul
             cm = "%s · %s" % (d, note)
+            if unit == "$":                          # 가격 지표는 1개월 등락률도
+                cm += " · 1개월 %+.1f%%" % ((s[-1][1] / ago(s, 30) - 1) * 100)
             if p is not None:
                 cm += " · 1년 백분위 %.0f%%" % p
             out.append({"name": ko,
@@ -298,7 +303,7 @@ rec = {"date": now.strftime("%Y-%m-%d")}
 for nm, key in (("10년 국채금리", "tnx"), ("3개월 국채금리", "irx"),
                 ("달러지수 DXY", "dxy"), ("변동성 VIX", "vix"),
                 ("위험선호 HYG/TLT", "risk"), ("시장 폭 RSP/SPY", "breadth"),
-                ("반도체 주도력 SMH/SPY", "smh")):
+                ("반도체 주도력 SMH/SPY", "smh"), ("WTI 원유", "wti"), ("금 가격", "gold")):
     it = find("매크로", nm)
     if it and it["value"] != "수집 실패":
         v = num(it["value"])

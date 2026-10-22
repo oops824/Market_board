@@ -45,7 +45,8 @@ function spark(pts,color,unit){
 // 추이 그래프는 카테고리별 탭에 나눠 배치: 지표(금리·달러·변동성·위험선호), 미국주식(시장 폭·반도체 주도력), 가상자산(프리미엄·디파이)
 var TR_DEFS={
   macro:[['tnx','10년 국채금리','#ff9f43','%'],['irx','3개월 국채금리','#feca57','%'],['dxy','달러지수 DXY','#48dbfb',''],
-         ['vix','변동성 VIX','#ff6b6b',''],['risk','위험선호 HYG/TLT','#1dd1a1','']],
+         ['vix','변동성 VIX','#ff6b6b',''],['risk','위험선호 HYG/TLT','#1dd1a1',''],
+         ['wti','WTI 원유 ($)','#c8a165',''],['gold','금 ($)','#f6c344','']],
   stock:[['breadth','시장 폭 RSP/SPY','#a29bfe',''],['smh','반도체 주도력 SMH/SPY','#00d2d3','']],
   crypto:[['btc_prem','BTC 코인베이스 프리미엄','#f7931a','%'],['eth_prem','ETH 코인베이스 프리미엄','#7c9cff','%']]};
 function trCharts(h,defs){
