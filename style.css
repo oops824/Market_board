@@ -289,8 +289,8 @@ border-radius:9px;padding:9px 0;cursor:pointer}
 .seg small{font-size:11.5px;font-weight:500;margin-left:5px;opacity:.75}
 .chgd{font-size:11.5px;font-weight:700;color:var(--warn)}
 #p5 .tags .tag{max-width:100%;white-space:normal}
-.op-fw{margin-top:12px;background:var(--card2);border-radius:10px;padding:10px 12px;font-size:13.5px;line-height:1.7}
-.op-fw b{display:block;color:var(--acc);font-size:12.5px;margin-bottom:4px}
+/* 레버리지 설명 칩은 길어서 휴대폰 폭에서 줄바꿈 */
+.tag.lv{max-width:100%;white-space:normal;line-height:1.4}
 .op-src a{font-size:13px;font-weight:500;color:var(--sub)}
 /* 뉴스·전문가 전망: 강조선 + 영역별 접이식 */
 .op-news{border-left:3px solid var(--acc)}
