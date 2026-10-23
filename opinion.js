@@ -202,7 +202,7 @@ function opWatch(o,filter){
 function opMain(o,isShort){
   if(isShort){var sh=o.short;
     return opCard('단기 시각','<div class="brief">'+opB(sh.view)+'</div>','확신 '+opT(sh.confidence))+
-      opCard('지금 할 일',opList('바로 실행',sh.actions_now,'')+opList('기다릴 신호',sh.wait_for,'op-q'))+
+      opCard('지금 할 일',opList('바로 실행 · 우선순위 순',sh.actions_now,'')+opList('기다릴 신호',sh.wait_for,'op-q'))+
       opCard('단기 리스크',opList('',sh.risks,'op-w'))}
   var lg=o.long;
   var log=(OP.long_log||[]).map(function(x){
