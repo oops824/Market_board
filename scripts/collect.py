@@ -137,9 +137,15 @@ def etf():
 QUAD = {"lead": "주도", "improve": "개선(돌아서는 중)", "weaken": "약화", "lag": "소외"}
 
 
+HOT = 8.0      # 20일 초과수익이 이만큼(%p) 벌어졌는데 상대강도 증가가 멈추면 과열·추격 주의
+FLAG = {"early": "조기 신호", "hot": "과열·추격 주의"}
+
+
 def rotation():
-    """섹터 ETF의 SPY 대비 상대강도: 20일(최근)·3개월(63일) 초과수익(%p)으로 4분면 분류
-    주도: 둘 다 플러스 / 개선: 3개월은 뒤지지만 최근 20일은 앞섬(돌아서는 중) / 약화: 반대 / 소외: 둘 다 마이너스"""
+    """섹터 ETF의 SPY 대비 상대강도: 20일(확인)·3개월(63일, 추세) 초과수익(%p)으로 4분면 분류
+    주도: 둘 다 플러스 / 개선: 3개월은 뒤지지만 최근 20일은 앞섬(돌아서는 중) / 약화: 반대 / 소외: 둘 다 마이너스
+    보조 표시(flag): 조기 신호 = 20일은 아직 마이너스지만 10일 상대강도가 플러스이고 5일 전보다 20일 상대강도가 오름
+                    과열·추격 주의 = 20일 초과수익이 HOT 이상인데 5일 전보다 20일 상대강도가 늘지 않음"""
     try:
         spy = yahoo3("SPY")[0]
     except Exception as e:
@@ -159,16 +165,19 @@ def rotation():
         e, s = cl[-n:], spy[-n:]
         if None in (r(e, 63), r(s, 63)):
             continue
-        rs20, rs63 = r(e, 20) - r(s, 20), r(e, 63) - r(s, 63)
+        rs10, rs20, rs63 = r(e, 10) - r(s, 10), r(e, 20) - r(s, 20), r(e, 63) - r(s, 63)
         prev = r(e, 20, 5) - r(s, 20, 5) if r(e, 20, 5) is not None else rs20
         q = ("lead" if rs20 > 0 else "weaken") if rs63 > 0 else ("improve" if rs20 > 0 else "lag")
+        flag = ("early" if rs20 <= 0 and rs10 > 0 and rs20 > prev else
+                "hot" if rs20 >= HOT and rs20 <= prev else "")
         items.append({"etf": sym, "name": ko, "r5": round(r(e, 5), 2), "r20": round(r(e, 20), 2),
-                      "r63": round(r(e, 63), 2), "rs20": round(rs20, 2), "rs63": round(rs63, 2),
-                      "d5": round(rs20 - prev, 2), "q": q})
+                      "r63": round(r(e, 63), 2), "rs10": round(rs10, 2), "rs20": round(rs20, 2), "rs63": round(rs63, 2),
+                      "d5": round(rs20 - prev, 2), "q": q, "flag": flag})
         rows.append({"name": "%s (%s)" % (ko, sym), "value": "20일 {:+.1f}%p".format(rs20), "change": "",
                      "badges": [{"t": "3개월 {:+.1f}%p".format(rs63), "c": "up" if rs63 >= 0 else "dn"},
-                                {"t": QUAD[q], "c": {"lead": "up", "improve": "up", "weaken": "warn", "lag": "dn"}[q]}],
-                     "comment": "SPY 대비 초과수익 · 5일 전보다 20일 상대강도 {:+.1f}%p".format(rs20 - prev)})
+                                {"t": QUAD[q], "c": {"lead": "up", "improve": "up", "weaken": "warn", "lag": "dn"}[q]}] +
+                               ([{"t": FLAG[flag], "c": "acc" if flag == "early" else "warn"}] if flag else []),
+                     "comment": "SPY 대비 초과수익 · 10일 {:+.1f}%p · 5일 전보다 20일 상대강도 {:+.1f}%p".format(rs10, rs20 - prev)})
     items.sort(key=lambda x: -x["rs20"])
     rows.sort(key=lambda x: -float(x["value"].split()[1].rstrip("%p")))
     spy_r = {"r5": round(r(spy, 5), 2), "r20": round(r(spy, 20), 2), "r63": round(r(spy, 63), 2)}
@@ -196,7 +205,7 @@ payload = {
     "summary": "자동 수집 완료.",
     "sections": [
         {"title": "섹터 ETF 가격", "note": "최근 5거래일 변화", "items": sector_items},
-        {"title": "섹터 로테이션 (SPY 대비 상대강도)", "note": "20일·3개월 초과수익(%p), 4분면 분류",
+        {"title": "섹터 로테이션 (SPY 대비 상대강도)", "note": "20일·3개월 초과수익(%p) 4분면 분류 · 10일 상대강도로 조기 신호·과열 표시",
          "items": rot_rows},
         {"title": "DeFiLlama 프로토콜 수익 랭킹", "note": "24시간 기준 상위 8", "items": llama()},
     ],
