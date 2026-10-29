@@ -119,9 +119,11 @@ def digest(D, C, T):
     rot = (D or {}).get("rotation") or {}
     if rot.get("items"):
         sp = rot.get("spy") or {}
-        L.append("## 섹터 로테이션 (SPY 대비 초과수익 %%p · SPY 20일 %s, 3개월 %s)" % (pct(sp.get("r20")), pct(sp.get("r63"))))
-        L += ["- %s(%s): 20일 %+.1f%%p, 3개월 %+.1f%%p, 5일 전보다 20일 상대강도 %+.1f%%p → %s" % (
-            r["name"], r["etf"], r["rs20"], r["rs63"], r["d5"], QUAD[r["q"]]) for r in rot["items"]]
+        L.append("## 섹터 로테이션 (SPY 대비 초과수익 %%p · SPY 20일 %s, 3개월 %s · 조기 신호=20일은 아직 마이너스지만 10일 "
+                 "플러스·상대강도 상승 중, 과열·추격 주의=20일 +8%%p 이상인데 상대강도 증가 멈춤)" % (pct(sp.get("r20")), pct(sp.get("r63"))))
+        L += ["- %s(%s): 10일 %s, 20일 %+.1f%%p, 3개월 %+.1f%%p, 5일 전보다 20일 상대강도 %+.1f%%p → %s%s" % (
+            r["name"], r["etf"], "%+.1f%%p" % r["rs10"] if r.get("rs10") is not None else "-", r["rs20"], r["rs63"], r["d5"],
+            QUAD[r["q"]], " · " + FLAG[r["flag"]] if r.get("flag") in FLAG else "") for r in rot["items"]]
     if C:
         f = C.get("fng") or {}
         L.append("## 크립토 시장\n- 공포·탐욕 %s (%s, 1주전 %s)" % (f.get("value"), f.get("label"), f.get("week")))
@@ -505,6 +507,9 @@ SYSTEM = (
     "why 가 role 과 모순되면 안 된다(예: '더 나은 대안'이라 쓰면서 role '정리' 금지).\n"
     "- sectors 에는 '섹터 로테이션' 목록의 모든 섹터 ETF 를 빠짐없이 쓴다. view 는 비중 확대/관심/중립/비중 축소, why 는 한 줄. "
     "'개선(돌아서는 중)' 섹터 가운데 지금 주도 섹터 다음으로 돌아서는 후보가 있으면 분명히 짚는다. "
+    "'조기 신호' 섹터는 아직 확인 전이라 view 를 '관심'까지만 두고, 사더라도 소량 1차·조건부(20일 상대강도 플러스 전환이 "
+    "확인 조건)로만 쓴다. '과열·추격 주의' 섹터와 그 대장주는 주도여도 새로 따라 사지 않고, entry 를 눌림 가격(20일선, "
+    "최근 상승분 일부 되돌림)으로 쓴다. "
     "새로 볼 종목(stocks)은 특정 섹터에 몰지 말고, 섹터 판단과 근거가 맞으면 다른 섹터 대장주도 고른다.\n"
     "- 코인 8종은 short.coins 와 long.coins 모두 빠짐없이 판단한다. short.coins 의 condition 에는 행동을 실행하거나 바꿀 "
     "구체적 조건을 쓴다.\n"
@@ -858,6 +863,7 @@ ALIAS = {"GOOG": "GOOGL", "BRK.A": "BRK.B"}
 
 
 QUAD = {"lead": "주도", "improve": "개선(돌아서는 중)", "weaken": "약화", "lag": "소외"}
+FLAG = {"early": "조기 신호", "hot": "과열·추격 주의"}
 TREND = {"up": "추세 상승", "down": "추세 하락", "flat": "추세 뚜렷하지 않음"}
 
 

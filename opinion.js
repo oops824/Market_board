@@ -144,6 +144,8 @@ var OP_Q={lead:['주도','up'],improve:['돌아서는 중','acc'],weaken:['약�
 var OP_QD={lead:'3개월·20일 모두 시장 상회',improve:'3개월은 열세였지만 최근 20일 우위',
   weaken:'3개월 우위였지만 최근 20일 열세',lag:'3개월·20일 모두 시장 하회'};
 var OP_V={'비중 확대':'up','관심':'acc','중립':'na','비중 축소':'dn'};
+var OP_F={early:['조기 신호','acc'],hot:['과열·추격 주의','warn']};
+function opFlag(r){var f=r&&OP_F[r.flag];return f?'<span class="tag '+f[1]+'">'+f[0]+'</span>':''}
 function opRot(){var m={};((OP.rotation||{}).items||[]).forEach(function(r){m[r.etf]=r});return m}
 function opSgn(v){return (v>=0?'+':'')+v.toFixed(1)+'%p'}
 /* 역할이 최근 7일 안에 바뀐 관심 종목 표시 */
@@ -162,14 +164,17 @@ function opRotation(o){
     if(!items.length)return '';
     return '<div class="rq"><div class="rq-h"><span class="tag '+OP_Q[q][1]+'">'+OP_Q[q][0]+'</span><span class="dim">'+
       OP_QD[q]+'</span></div>'+items.map(function(r){var v=view[r.etf],w=Math.abs(r.rs20)/mx*50,pos=r.rs20>=0;
-        return '<div class="rr"><div class="rr-1"><b>'+opT(r.name)+'</b><span class="tk">'+opT(r.etf)+'</span>'+
+        return '<div class="rr"><div class="rr-1"><b>'+opT(r.name)+'</b><span class="tk">'+opT(r.etf)+'</span>'+opFlag(r)+
           (v?'<span class="tag '+(OP_V[v.view]||'na')+'">'+opT(v.view)+'</span>':'')+
-          '<span class="rr-v"><span class="'+(pos?'tu':'td')+'">20일 '+opSgn(r.rs20)+'</span> <span class="dim">3개월 '+opSgn(r.rs63)+
+          '<span class="rr-v">'+(opNum(r.rs10)?'<span class="dim">10일 '+opSgn(r.rs10)+'</span> ':'')+
+          '<span class="'+(pos?'tu':'td')+'">20일 '+opSgn(r.rs20)+'</span> <span class="dim">3개월 '+opSgn(r.rs63)+
           '</span></span></div><span class="ctr"><b class="'+(pos?'up':'dn')+'" style="'+(pos?'left:50%':'right:50%')+
           ';width:'+w.toFixed(1)+'%"></b></span>'+(v&&v.why?'<div class="opw">'+opT(v.why)+'</div>':'')+'</div>'}).join('')+'</div>'}).join('');
   return '<div class="etf"><div class="eh"><b>섹터 로테이션</b><span class="dim">SPY 대비 초과수익 · '+opMD(R.asof)+'</span></div>'+
-    '<p class="note" style="margin:0 0 4px">20일(최근)과 3개월 상대강도로 나눴습니다. \'돌아서는 중\'은 그동안 시장에 뒤졌지만 '+
-    '최근 20일은 시장을 이기는 섹터로, 다음 주도 섹터 후보입니다. 칩은 오늘의 섹터 판단입니다.</p>'+h+'</div>'}
+    '<p class="note" style="margin:0 0 4px">20일(확인)과 3개월(추세) 상대강도로 나눴습니다. \'돌아서는 중\'은 그동안 시장에 뒤졌지만 '+
+    '최근 20일은 시장을 이기는 섹터로, 다음 주도 섹터 후보입니다. \'조기 신호\'는 20일은 아직 뒤지지만 최근 10일 시장을 이기고 '+
+    '상대강도가 오르는 섹터(소량·조건부), \'과열·추격 주의\'는 20일에 시장보다 8%p 이상 올랐는데 힘이 멈춘 섹터(눌림에서만)입니다. '+
+    '칩은 오늘의 섹터 판단입니다.</p>'+h+'</div>'}
 
 /* 관심 종목(보유 외): 그룹별 접이식, 섹터 그룹은 상대강도 순. 매수 의견·최근 역할 변경이 있는 그룹은 펼침 */
 function opWatch(o,filter){
@@ -189,7 +194,7 @@ function opWatch(o,filter){
     var good=ws.filter(function(w){return w.role==='핵심 보유'||w.role==='비중 확대'||w.role==='보유'}).length;
     var chg=ws.some(function(w){return !!opRoleChg(w)});
     return '<details class="ws"'+(buys||chg?' open':'')+'><summary><span class="tag acc">'+opT(g)+'</span>'+
-      (r?'<span class="tag '+OP_Q[r.q][1]+'">'+OP_Q[r.q][0]+'</span>':'')+
+      (r?'<span class="tag '+OP_Q[r.q][1]+'">'+OP_Q[r.q][0]+'</span>'+opFlag(r):'')+
       '<span class="ws-n">'+(buys?'매수 '+buys+' · ':'')+'담을 만함 '+good+'/'+ws.length+'</span></summary><ul class="opl">'+
       ws.map(function(w){var m=meta[w.sym]||{};
         return '<li><div class="opr"><b>'+opT(w.sym)+'</b><span class="tk">'+opT(m.name||'')+'</span>'+opRoleChg(w)+

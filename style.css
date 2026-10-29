@@ -60,6 +60,7 @@ margin-top:4px;font-variant-numeric:tabular-nums}
 .up{background:var(--up-bg);color:var(--up)}
 .dn{background:var(--dn-bg);color:var(--dn)}
 .na{background:rgba(255,255,255,.06);color:var(--sub)}
+.badge.acc{background:var(--acc-bg);color:var(--acc)}
 .tu{color:var(--up)}.td{color:var(--dn)}
 
 /* 신호 키워드 칩 */
