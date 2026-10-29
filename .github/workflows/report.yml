@@ -49,6 +49,9 @@ jobs:
         if: steps.chk.outputs.skip != '1'
       - run: python scripts/macro.py
         if: steps.chk.outputs.skip != '1'
+      - run: python scripts/earnings.py
+        if: steps.chk.outputs.skip != '1'
+        continue-on-error: true
       - run: python scripts/releases.py
         if: steps.chk.outputs.skip != '1'
         env:

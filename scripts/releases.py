@@ -11,6 +11,7 @@ import csv, datetime, io, json, os, re, sys, time, urllib.request, urllib.error
 
 sys.path.insert(0, os.path.dirname(__file__))
 import calendar_ctx
+import ychart
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
 now = datetime.datetime.now(KST)
@@ -257,7 +258,7 @@ def yahoo_daily(sym):
     if sym not in _YH:
         j = json.loads(get("https://query1.finance.yahoo.com/v8/finance/chart/%s?range=6mo&interval=1d"
                            % urllib.request.quote(sym)))
-        r = j["chart"]["result"][0]
+        r = ychart.fix_last(j["chart"]["result"][0])
         _YH[sym] = [(datetime.datetime.utcfromtimestamp(t).strftime("%Y-%m-%d"), c)
                     for t, c in zip(r["timestamp"], r["indicators"]["quote"][0]["close"]) if c is not None]
     return _YH[sym]

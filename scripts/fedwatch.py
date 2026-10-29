@@ -93,7 +93,8 @@ def prices(months):
 
 
 def compute(today, P, meetings):
-    """meetings: 오늘 이후 결정일(date) 목록. 결정일 다음 날부터 새 금리 적용"""
+    """meetings: 오늘 이후 결정일(date) 목록. 결정일 다음 날부터 새 금리 적용.
+    hike·cut 은 인상·인하 전체 확률(합쳐서 100 이하), hike50·cut50 은 그중 50bp 이상일 확률"""
     mm = {(d.year, d.month) for d in meetings}
     rate = lambda ym: 100 - P[ym]
     res, start = [], None
@@ -127,7 +128,7 @@ def compute(today, P, meetings):
             return []
         up, dn = max(mv, 0.0), max(-mv, 0.0)
         r.update(hike=round(min(up, 1) * 100, 1), cut=round(min(dn, 1) * 100, 1),
-                 hike50=round(max(up - 1, 0) * 100, 1), cut50=round(max(dn - 1, 0) * 100, 1),
+                 hike50=round(min(max(up - 1, 0), 1) * 100, 1), cut50=round(min(max(dn - 1, 0), 1) * 100, 1),
                  move_bp=round(mv * 25, 1), cum_bp=round((r["post"] - base) / STEP * 25, 1),
                  pre=round(r["pre"], 3), post=round(r["post"], 3))
         r["hold"] = round(max(0.0, 100 - r["hike"] - r["cut"]), 1)
@@ -168,12 +169,13 @@ def items(fw, hist):
     out = []
     for i, m in enumerate(fw["meetings"]):
         d = datetime.date.fromisoformat(m["date"])
-        side = ("인상", m["hike"] + m["hike50"]) if m["move_bp"] >= 0 else ("인하", m["cut"] + m["cut50"])
+        side = ("인상", m["hike"]) if m["move_bp"] >= 0 else ("인하", m["cut"])
         prev = (old.get("m") or {}).get(m["date"])
         ch = ""
-        if prev is not None:
-            ch = "%+.1f%%p (1주)" % ((m["hike"] + m["hike50"] - m["cut"] - m["cut50"]) - prev)
-        mix = "인상 %.0f%% · 동결 %.0f%% · 인하 %.0f%%" % (m["hike"] + m["hike50"], m["hold"], m["cut"] + m["cut50"])
+        if prev is not None:                     # 예전 기록은 100을 넘을 수 있어(50bp 중복 합산) 잘라서 비교
+            ch = "%+.1f%%p (1주)" % ((m["hike"] - m["cut"]) - max(-100.0, min(100.0, prev)))
+        big = lambda v: " (50bp %.0f%%)" % v if v >= 1 else ""
+        mix = "인상 %.0f%%%s · 동결 %.0f%% · 인하 %.0f%%%s" % (m["hike"], big(m["hike50"]), m["hold"], m["cut"], big(m["cut50"]))
         out.append({"name": "%d/%d FOMC 금리 %s 확률 (%d일 후)" % (d.month, d.day, side[0], (d - today).days),
                     "value": "%.1f%%" % side[1], "change": ch,
                     "comment": "%s · 선물 내재 금리 %.2f%%→%.2f%% · 지금부터 누적 %+.0fbp" % (
@@ -182,7 +184,7 @@ def items(fw, hist):
 
 
 def trend_rec(fw):
-    """history/trend.json 에 남길 값: 회의별 (인상 - 인하) 확률"""
+    """history/trend.json 에 남길 값: 회의별 (인상 - 인하) 전체 확률"""
     if not fw:
         return None
-    return {"m": {m["date"]: round(m["hike"] + m["hike50"] - m["cut"] - m["cut50"], 1) for m in fw["meetings"]}}
+    return {"m": {m["date"]: round(m["hike"] - m["cut"], 1) for m in fw["meetings"]}}

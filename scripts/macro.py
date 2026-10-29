@@ -1,5 +1,7 @@
 import json, urllib.request, urllib.parse, csv, io, datetime
 
+import ychart
+
 KST = datetime.timezone(datetime.timedelta(hours=9))
 now = datetime.datetime.now(KST)
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -17,7 +19,7 @@ def fail(name, e):
 def yh(sym, rng="1y"):
     j = json.loads(get("https://query1.finance.yahoo.com/v8/finance/chart/"
                        "%s?range=%s&interval=1d" % (urllib.parse.quote(sym), rng), 30))
-    r = j["chart"]["result"][0]
+    r = ychart.fix_last(j["chart"]["result"][0])
     ts, cl = r["timestamp"], r["indicators"]["quote"][0]["close"]
     out = [(datetime.datetime.utcfromtimestamp(t).strftime("%Y-%m-%d"), float(c))
            for t, c in zip(ts, cl) if c is not None]
