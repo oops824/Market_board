@@ -286,15 +286,33 @@ function opOutlook(){
 function opFed(){
   var fw=OP.fedwatch;if(!fw||!fw.meetings||!fw.meetings.length)return '';
   var rows=fw.meetings.map(function(m){
-    var up=m.hike+(m.hike50||0),dn=m.cut+(m.cut50||0),d=opDays(m.date),seg=function(v,c,l){
+    var up=m.hike,dn=m.cut,d=opDays(m.date),big=function(v){return v>=1?' (50bp '+Math.round(v)+'%)':''},seg=function(v,c,l){
       return v>=1?'<i class="'+c+'" style="width:'+v.toFixed(1)+'%">'+(v>=14?l+' '+Math.round(v)+'%':'')+'</i>':''};
     return '<div class="fw-r"><div class="fw-h"><b>'+opMD(m.date)+' FOMC</b><span class="dim">'+(d!=null&&d<=0?(1-d)+'일 후 · ':'')+
       '선물 내재 금리 '+m.pre.toFixed(2)+'% → '+m.post.toFixed(2)+'%</span></div>'+
       '<div class="fw-b">'+seg(dn,'dn','인하')+seg(m.hold,'na','동결')+seg(up,'up','인상')+'</div>'+
-      '<div class="fw-l"><span class="td">인하 '+dn.toFixed(1)+'%</span><span>동결 '+m.hold.toFixed(1)+'%</span>'+
-      '<span class="tu">인상 '+up.toFixed(1)+'%</span><span class="dim">지금부터 누적 '+(m.cum_bp>=0?'+':'')+Math.round(m.cum_bp)+'bp</span></div></div>'}).join('');
+      '<div class="fw-l"><span class="td">인하 '+dn.toFixed(1)+'%'+big(m.cut50||0)+'</span><span>동결 '+m.hold.toFixed(1)+'%</span>'+
+      '<span class="tu">인상 '+up.toFixed(1)+'%'+big(m.hike50||0)+'</span><span class="dim">지금부터 누적 '+(m.cum_bp>=0?'+':'')+Math.round(m.cum_bp)+'bp</span></div></div>'}).join('');
   return '<div class="etf op-fed"><div class="eh"><b>FOMC 금리 확률</b><span class="dim">'+opMD(fw.asof)+
     ' · 연방기금금리 선물 기반(FedWatch 방식) · '+opT(fw.src)+'</span></div>'+rows+'</div>'}
+
+/* 실적 발표: 최근 결과(EPS·주가 반응)와 다음 일정, 보유 종목 표시 */
+function opEarn(){
+  var E=OP.earnings;if(!E||!((E.recent||[]).length||(E.upcoming||[]).length))return '';
+  var held={},lev={};(E.held||[]).forEach(function(s){held[s]=1});(E.lev||[]).forEach(function(s){lev[s]=1});
+  var fl=function(s){return lev[s]?'<span class="tag warn">레버리지 보유</span>':held[s]?'<span class="tag na">보유</span>':''};
+  var usd=function(v){return opNum(v)?(v<0?'-$'+(-v).toFixed(2):'$'+v.toFixed(2)):'-'};
+  var rx=function(r){r=r||{};
+    if(opNum(r.day1))return '<span class="'+(r.day1>=0?'tu':'td')+'">첫날 '+opPct(r.day1)+'</span>'+(r.days>1?' · 지금까지 '+opPct(r.since):'');
+    if(opNum(r.ext))return '<span class="'+(r.ext>=0?'tu':'td')+'">'+opT(r.ext_lab)+' '+opPct(r.ext)+'</span>';
+    return '주가 반응 수집 전'};
+  var li=function(e,body){return '<li><div class="opr"><b>'+opT(e.sym)+'</b>'+fl(e.sym)+
+    '<span class="cf">'+opMD(e.date)+' '+opT(e.when)+'</span></div><div class="opw">'+body+'</div></li>'};
+  var rec=(E.recent||[]).slice(0,8).map(function(e){
+    return li(e,(opNum(e.eps)?'EPS '+usd(e.eps)+' vs 예상 '+usd(e.est):'EPS 예상 '+usd(e.est))+' · '+rx(e.react))}).join('');
+  var up=(E.upcoming||[]).slice(0,8).map(function(e){return li(e,'EPS 예상 '+usd(e.est))}).join('');
+  return opCard('실적 발표',(rec?'<div class="sec">최근 결과 · 발표 전 종가 대비</div><ul class="opl">'+rec+'</ul>':'')+
+    (up?'<div class="sec">다음 2주 일정</div><ul class="opl">'+up+'</ul>':''),opMD(E.asof)+' · 미국 날짜')}
 
 function opSeg(){return '<div class="seg">'+[['s','단기','1~4주'],['l','중장기','3~12개월']].map(function(x){
   return '<button data-h="'+x[0]+'"'+(OP_H===x[0]?' class="on"':'')+'>'+x[1]+'<small>'+x[2]+'</small></button>'}).join('')+'</div>'}
@@ -310,7 +328,7 @@ function renderOP(){
     '일 전 의견을 표시하고 있습니다.</p>':'';
   var hd=function(t,sub){return '<div class="hd">'+t+(sub?'<small>'+sub+'</small>':'')+'</div>'};
   $('#p5').innerHTML=bar+stale+opHero(o)+opToday(o)+
-    hd('왜 이렇게 하나','단기 시각 · 시나리오 · 리스크 · 데이터')+opWhy(o)+opFed()+opOutlook()+
+    hd('왜 이렇게 하나','단기 시각 · 시나리오 · 리스크 · 데이터')+opWhy(o)+opFed()+opEarn()+opOutlook()+
     hd('큰 그림 · 중장기 전략','3~12개월')+opLong(o)+opTrack(OP.track)+
     '<p class="note">위험 성향 10점 중 7.5~8점(공격적) 기준. 대시보드 데이터에 웹 검색한 최근 뉴스·전문가 전망을 더해 판단하고, '+
     '추세 신호와 함께 과대낙폭(역발상) 점검으로 저가 매수 기회도 따로 봅니다. '+

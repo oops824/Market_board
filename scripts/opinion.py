@@ -13,6 +13,7 @@ import datetime, hashlib, json, os, re, sys, urllib.parse, urllib.request
 sys.path.insert(0, os.path.dirname(__file__))
 import calendar_ctx
 import signals
+import ychart
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
 now = datetime.datetime.now(KST)
@@ -23,7 +24,7 @@ UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.3
                     "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
 COIN_SYMS = ["BTC", "ETH", "SOL", "HYPE", "LINK", "ONDO", "SUI", "VIRTUAL"]
 SHORT_ACT = ["분할 매수", "비중 확대", "유지", "일부 차익실현", "비중 축소", "관망"]
-PROFILE = "|risk7.5-8|outlook|stock-targets|sectors17|contrarian|gaejo-hl|fedwatch|lev-order|geo"                       # 투자 성향·판단 방식 버전 (바뀌면 중장기 재작성)
+PROFILE = "|risk7.5-8|outlook|stock-targets|sectors17|contrarian|gaejo-hl|fedwatch|lev-order|geo|earn"                       # 투자 성향·판단 방식 버전 (바뀌면 중장기 재작성)
 LONG_ROLE = ["핵심 보유", "보유", "비중 확대", "비중 축소", "정리"]
 BUY = {"분할 매수", "비중 확대", "매수"}
 SELL = {"일부 차익실현", "비중 축소", "회피"}
@@ -100,6 +101,21 @@ def digest(D, C, T):
                 it["title"], per, it["release"] + " 발표" if it.get("release") else "발표일 미확인",
                 val, it.get("consensus") or "-",
                 con or "-", mk or "-", cut(it.get("ai"), 350)))
+    E = (D or {}).get("earnings") or {}
+    if E.get("recent") or E.get("upcoming"):
+        held, lev = set(E.get("held") or []), set(E.get("lev") or [])
+        fl = lambda s: " [레버리지 보유]" if s in lev else " [보유]" if s in held else ""
+        usd = lambda v: "-" if v is None else "$%.2f" % v
+        L.append("## 실적 발표 (%s · 최근 결과와 주가 반응, 다음 2주 일정 · 미국 날짜)" % (E.get("asof") or "-"))
+        for e in E.get("recent", [])[:15]:
+            r = e.get("react") or {}
+            rx = ("첫날 %+.1f%%, 지금까지 %+.1f%%(%d거래일)" % (r["day1"], r["since"], r["days"]) if "day1" in r
+                  else "%s %+.1f%%(정규장 반응 전)" % (r["ext_lab"], r["ext"]) if "ext" in r else "주가 반응 수집 전")
+            eps = ("EPS %s vs 예상 %s" % (usd(e["eps"]), usd(e.get("est"))) if e.get("eps") is not None
+                   else "EPS 예상 %s(결과는 뉴스·전문가 전망 참고)" % usd(e.get("est")))
+            L.append("- 결과 %s %s %s%s: %s · 발표 전 종가 대비 %s" % (e["date"][5:], e["when"], e["sym"], fl(e["sym"]), eps, rx))
+        for e in E.get("upcoming", [])[:15]:
+            L.append("- 예정 %s %s %s%s: EPS 예상 %s" % (e["date"][5:], e["when"], e["sym"], fl(e["sym"]), usd(e.get("est"))))
     rot = (D or {}).get("rotation") or {}
     if rot.get("items"):
         sp = rot.get("spy") or {}
@@ -423,11 +439,22 @@ SYSTEM = (
     "- 나쁜 지표가 이미 가격에 얼마나 반영됐는지, 앞으로 좋아지는 방향인지 나빠지는 방향인지(변화의 방향)를 본다. 지표가 극단에 "
     "있으면(예: 10년물 1년 백분위 100%) 추가 악화보다 되돌림 가능성도 따진다.\n"
     "- forward 에는 기본·낙관·비관 시나리오와 각각의 대략적 가능성, 시장 컨센서스와 네 판단이 다른 점, 무엇을 보고 시나리오를 "
-    "갈아탈지를 개조식 5~8줄로 쓴다.\n"
+    "갈아탈지를 개조식 5~9줄로 쓴다.\n"
     "- 국제정세: '뉴스·전문가 전망'의 국제정세·지정학 항목(전쟁·중동·유럽 위기·미중 등)이 유가·금리·달러·위험선호를 거쳐 "
     "포트폴리오에 주는 영향을 따진다. forward 에 '지정학:'으로 시작하는 줄을 1~2줄 쓴다(사건 → 경로(유가·물가·금리 등) → 영향 받는 "
     "보유·관심 자산 → 대응). 단기에 터질 수 있는 위험이면 short.risks·wait_for 에도 쓰고, 유가·금 수치는 데이터 '매크로·유동성'의 "
     "WTI·브렌트·금 값을 인용한다. 전망에 없는 사건은 지어내지 않고, 시장 영향이 작으면 작다고 쓴다.\n"
+    "- 실적 연계(중요): 데이터의 '실적 발표'(최근 결과·주가 반응·다음 일정)와 '뉴스·전문가 전망'의 실적 항목으로 판단한다.\n"
+    "  · 보유 종목(특히 레버리지)의 발표가 5거래일 안이면 condition 에 발표일과 대응을 쓴다(레버리지는 발표 전 축소 여부, "
+    "현물은 갭 ±5% 이상일 때 할 행동).\n"
+    "  · 발표 뒤 갭 하락은 원인을 나눈다. 매출·가이던스·핵심 사업 둔화면 '논리 훼손'(반등 때 축소), 일회성·비영업 손익이나 "
+    "설비투자 부담이 주원인이면 '논리 유지'(갭에 급하게 팔지 않음). 어느 쪽이든 발표 다음 날 바로 저점 매수하지 않고, "
+    "2~3거래일 동안 발표 후 첫날 저점을 지키는지 확인한 뒤 현물로만 분할 매수를 검토한다. 레버리지로 물타기하지 않고, "
+    "이미 걸린 레버리지 손절선은 실적과 상관없이 지킨다.\n"
+    "  · 갭 상승 종목은 추격 매수하지 않고 entry 를 눌림 가격(갭의 절반 되돌림 등)으로 쓴다.\n"
+    "  · 하이퍼스케일러(MSFT·GOOGL·AMZN·META·ORCL)의 설비투자·클라우드 성장과 반도체(NVDA·AVGO·TSM·MU) 가이던스가 "
+    "같은 공급망 보유 종목(CRDO·MRVL·CRWV·IREN·WULF·OKLO·CEG·CCJ 등)과 AI 섹터로 이어지는 영향을 why·forward 에 쓴다.\n"
+    "  · forward 에 '실적:'으로 시작하는 줄을 1~2줄 쓴다(최근 결과의 의미 → 다음 발표 일정·관전 포인트 → 대응).\n"
     "- 위험 성향 7.5~8점에 맞춰 현금은 '기회 대기용'으로 필요한 만큼만 두고, 근거가 있으면 위험자산 비중을 높게 가져간다. "
     "하락 위험은 현금을 쌓기보다 분할 매수 계획과 조건으로 관리한다.\n"
     "- 가상자산은 변동성이 크고 상승장이 오면 폭발적으로 오른다. 상승 추세가 살아 있는 이익 코인은 일찍 다 팔지 않는다. "
@@ -533,7 +560,7 @@ def prev_context(prev, port_changed):
     st = sh.get("stance") or {}
     note = ("\n※ 이 중장기 의견을 세운 뒤 포트폴리오나 투자 성향·판단 범위가 바뀌었다(보유 종목 매매, 위험 성향 7.5~8점, "
             "뉴스·전문가 전망, 관심 섹터 17개로 확대·섹터 로테이션, 과대낙폭(역발상) 점검, FOMC 금리 확률(선물 기반), "
-            "개조식 문체·핵심 강조, 레버리지 축소 순서·맞교환 금지 규칙, 국제정세·유가 반영). 이번에는 long 을 새 기준과 새 문체로 다시 작성한다. "
+            "개조식 문체·핵심 강조, 레버리지 축소 순서·맞교환 금지 규칙, 국제정세·유가 반영, 실적 연계). 이번에는 long 을 새 기준과 새 문체로 다시 작성한다. "
             "방향이 같으면 status '일부 수정', "
             "change_note 에 무엇을 반영했는지 쓴다."
             if port_changed else "")
@@ -562,7 +589,17 @@ def parse_json(text):
         return json.JSONDecoder().raw_decode(t[t.index("{"):])[0]
 
 
-def outlook():
+def earn_focus(D):
+    """전망 검색에 넘길 실적 발표 목록 (최근 결과·다음 2주 일정)"""
+    E = (D or {}).get("earnings") or {}
+    rec = ["%s(%s %s)" % (e["sym"], e["date"][5:], e["when"]) for e in (E.get("recent") or [])[:12]]
+    up = ["%s(%s %s)" % (e["sym"], e["date"][5:], e["when"]) for e in (E.get("upcoming") or [])[:12]]
+    if not rec and not up:
+        return "목록 수집 실패 · 보유 종목과 M7·엔비디아·브로드컴·TSMC 가운데 최근 2주 발표와 다음 2주 일정을 직접 찾을 것"
+    return "최근 발표: %s / 다음 2주 예정: %s" % (", ".join(rec) or "없음", ", ".join(up) or "없음")
+
+
+def outlook(focus=""):
     """웹 검색으로 최근 1~2주 뉴스·전문가 전망을 모아 시나리오 요약(본문, 출처). 실패하면 ("", [])"""
     import anthropic
     client = anthropic.Anthropic()
@@ -570,16 +607,20 @@ def outlook():
              "최근 1~2주 뉴스와 전문가 의견을 웹에서 검색해 앞으로 1~12개월 시장 전망을 정리하라. 대상: ① 미국 금리·연준·물가와 "
              "10년물 전망 ② 미국 주식(월가 주요 전략가·IB의 지수·섹터 전망, AI·반도체) ③ 가상자산(BTC·ETH·SOL·HYPE 등, ETF 자금, "
              "규제, 크립토 리서치 기관 전망) ④ 국제정세·지정학(러시아·우크라이나 전쟁, 미국·이란과 이스라엘 등 중동 정세, 유럽 재정·정치 "
-             "위기(프랑스 등), 미중 관계·관세, 그 밖에 최근 2주 시장을 움직인 지정학 사건). ①~③은 항목마다 컨센서스, 낙관론과 "
+             "위기(프랑스 등), 미중 관계·관세, 그 밖에 최근 2주 시장을 움직인 지정학 사건) ⑤ 실적 발표(목록: " + (focus or "-") + "). "
+             "①~③은 항목마다 컨센서스, 낙관론과 "
              "비관론(누가 무엇을 근거로), 시장이 아직 반영하지 않았을 수 있는 변화를 쓴다. ④는 사건마다 최신 상황과 최근 변화(진행 중이 "
              "아니거나 확인되지 않으면 그렇다고 짧게), 유가(WTI·브렌트)·금·달러·금리·물가로 이어지는 경로, 영향 받는 자산(에너지·방산·"
-             "유럽 자산·위험자산 전반), 확전·완화 시나리오와 전문가가 보는 가능성을 쓴다. 네 영역을 모두 다루도록 검색을 고르게 나눠 "
+             "유럽 자산·위험자산 전반), 확전·완화 시나리오와 전문가가 보는 가능성을 쓴다. ⑤는 최근 발표한 회사마다 매출·EPS·핵심 사업 "
+             "지표(클라우드·AI·광고 등)의 컨센서스 대비, 다음 분기 가이던스, 설비투자 계획, 일회성·비영업 손익 여부, 발표 뒤 주가 반응과 "
+             "애널리스트 목표가 변화, 같은 공급망·경쟁사로 번지는 영향을 쓰고, 다음 2주 발표 예정 회사는 컨센서스·옵션 내재 변동폭·관전 "
+             "포인트를 쓴다(목록에 없어도 시장을 움직인 대형 발표는 포함). 다섯 영역을 모두 다루도록 검색을 고르게 나눠 "
              "쓴다(영역마다 최소 3번). 발언자·기관과 날짜를 밝히고, 확인되지 않은 수치는 쓰지 않는다. 인사말·검색 과정 설명 없이 결과만. "
-             "영역마다 '## 제목' 아래 '- '로 시작하는 개조식 줄(명사형·'~함/~임' 종결, '~습니다/~다' 체 금지)로, 한국어 4,000자 이내."}]
+             "영역마다 '## 제목' 아래 '- '로 시작하는 개조식 줄(명사형·'~함/~임' 종결, '~습니다/~다' 체 금지)로, 한국어 5,000자 이내."}]
     texts, src = [], []
     for _ in range(3):                                   # 서버 검색이 길어지면 pause_turn → 이어서 요청
         with client.messages.stream(model=MODEL, max_tokens=16000, messages=msgs, output_config={"effort": "medium"},
-                                    tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 28}]) as st:
+                                    tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 36}]) as st:
             msg = st.get_final_message()
         for b in msg.content:
             for r in (getattr(b, "content", None) if b.type.endswith("tool_result") else None) or []:
@@ -595,7 +636,7 @@ def outlook():
         if msg.stop_reason != "pause_turn":
             break
         msgs = msgs + [{"role": "assistant", "content": msg.content}]
-    return re.sub(r"\n{3,}", "\n\n", "".join(texts)).strip(), src[:16]
+    return re.sub(r"\n{3,}", "\n\n", "".join(texts)).strip(), src[:20]
 
 
 def ask(dig, ctx):
@@ -878,7 +919,8 @@ def yahoo_brief(t):
         req = urllib.request.Request("https://query1.finance.yahoo.com/v8/finance/chart/%s?range=1mo&interval=1d"
                                      % urllib.parse.quote(t.replace(".", "-")), headers=UA)
         with urllib.request.urlopen(req, timeout=20) as r:
-            c = [x for x in json.loads(r.read().decode())["chart"]["result"][0]["indicators"]["quote"][0]["close"] if x]
+            c = [x for x in ychart.fix_last(json.loads(r.read().decode())["chart"]["result"][0])["indicators"]["quote"][0]["close"]
+                 if x]
         _YH[t] = c[-1]
         m1 = (c[-1] / c[0] - 1) * 100
         return ("%.2f$ 5일 %s 1개월 %s" % (c[-1], pct((c[-1] / c[-6] - 1) * 100) if len(c) > 5 else "-", pct(m1)),
@@ -937,7 +979,7 @@ def yahoo_closes(t):
             req = urllib.request.Request("https://query1.finance.yahoo.com/v8/finance/chart/%s?range=6mo&interval=1d"
                                          % urllib.parse.quote(t.replace(".", "-")), headers=UA)
             with urllib.request.urlopen(req, timeout=20) as r:
-                _YC[t] = [x for x in json.loads(r.read().decode())["chart"]["result"][0]["indicators"]["quote"][0]["close"]
+                _YC[t] = [x for x in ychart.fix_last(json.loads(r.read().decode())["chart"]["result"][0])["indicators"]["quote"][0]["close"]
                           if x]
         except Exception:
             _YC[t] = None
@@ -1039,7 +1081,7 @@ def main():
     elif not fresh or force or not v2:
         try:
             try:
-                view, sources = outlook()
+                view, sources = outlook(earn_focus(D))
                 print("[의견] 뉴스·전문가 전망 %d자, 출처 %d개" % (len(view), len(sources)))
             except Exception as e:
                 print("[의견] 전망 검색 실패 — 직전 전망 사용:", str(e)[:200])
@@ -1106,6 +1148,7 @@ def main():
            "long_since": long_since, "long_check": long_check, "long_log": long_log, "long_port": long_port,
            "prev_short": prev_short, "outlook": view, "sources": sources,
            "portfolio": pf, "track": past, "fedwatch": (D or {}).get("fedwatch"),
+           "earnings": (D or {}).get("earnings"),
            "asof": {"지표": (D or {}).get("updated"), "코인": (C or {}).get("updated"),
                     "기관": (T or {}).get("latest_period")}}
     with open(OUT, "w", encoding="utf-8") as f:

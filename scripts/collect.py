@@ -1,5 +1,5 @@
 import json, urllib.request, datetime, os, csv, io
-import signals
+import signals, ychart
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
 now = datetime.datetime.now(KST)
@@ -74,7 +74,7 @@ def yahoo3(sym):
 def _yahoo3(sym):
     j = json.loads(get("https://query1.finance.yahoo.com/v8/finance/chart/"
                        "%s?range=6mo&interval=1d" % sym))
-    r = j["chart"]["result"][0]
+    r = ychart.fix_last(j["chart"]["result"][0])
     q = r["indicators"]["quote"][0]
     rows = [(c, h, l, v) for c, h, l, v in zip(q["close"], q["high"], q["low"], q["volume"])
             if c is not None]
