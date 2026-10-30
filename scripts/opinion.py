@@ -113,7 +113,8 @@ def digest(D, C, T):
                   else "%s %+.1f%%(정규장 반응 전)" % (r["ext_lab"], r["ext"]) if "ext" in r else "주가 반응 수집 전")
             eps = ("EPS %s vs 예상 %s" % (usd(e["eps"]), usd(e.get("est"))) if e.get("eps") is not None
                    else "EPS 예상 %s(결과는 뉴스·전문가 전망 참고)" % usd(e.get("est")))
-            L.append("- 결과 %s %s %s%s: %s · 발표 전 종가 대비 %s" % (e["date"][5:], e["when"], e["sym"], fl(e["sym"]), eps, rx))
+            L.append("- 결과 %s %s%s %s%s: %s · 발표 전 종가 대비 %s" % (e["date"][5:], e["when"], "(추정)" if e.get("guess") else "",
+                                                               e["sym"], fl(e["sym"]), eps, rx))
         for e in E.get("upcoming", [])[:15]:
             L.append("- 예정 %s %s %s%s: EPS 예상 %s" % (e["date"][5:], e["when"], e["sym"], fl(e["sym"]), usd(e.get("est"))))
     rot = (D or {}).get("rotation") or {}

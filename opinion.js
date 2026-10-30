@@ -312,7 +312,7 @@ function opEarn(){
     if(opNum(r.ext))return '<span class="'+(r.ext>=0?'tu':'td')+'">'+opT(r.ext_lab)+' '+opPct(r.ext)+'</span>';
     return '주가 반응 수집 전'};
   var li=function(e,body){return '<li><div class="opr"><b>'+opT(e.sym)+'</b>'+fl(e.sym)+
-    '<span class="cf">'+opMD(e.date)+' '+opT(e.when)+'</span></div><div class="opw">'+body+'</div></li>'};
+    '<span class="cf">'+opMD(e.date)+' '+opT(e.when)+(e.guess?'(추정)':'')+'</span></div><div class="opw">'+body+'</div></li>'};
   var rec=(E.recent||[]).slice(0,8).map(function(e){
     return li(e,(opNum(e.eps)?'EPS '+usd(e.eps)+' vs 예상 '+usd(e.est):'EPS 예상 '+usd(e.est))+' · '+rx(e.react))}).join('');
   var up=(E.upcoming||[]).slice(0,8).map(function(e){return li(e,'EPS 예상 '+usd(e.est))}).join('');
