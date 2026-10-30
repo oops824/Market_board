@@ -3,6 +3,8 @@
 - 일정·EPS 예상·결과: 나스닥 실적 캘린더 API (미국 날짜별, 최근 10일~다음 14일 평일)
 - 주가 반응: 야후 파이낸스 일봉(마지막 날 종가 보정)으로 발표 전 종가 대비 첫 거래일·지금까지 누적,
   장후 발표 뒤 아직 정규장이 열리지 않았으면 시간외·프리마켓 가격
+- 발표 시각(장전·장후): 나스닥은 발표일이 지나면 비워 주므로 직전 실행이 opinion.json 에 남긴 값을 이어 쓰고,
+  그것도 없으면 발표일과 다음 날 중 주가가 더 크게 움직인 쪽으로 추정한다('추정' 표시)
 data.json 에 earnings(구조화)와 '실적 발표' 섹션을 넣는다. 실패해도 나머지 데이터는 그대로 둔다.
 """
 import datetime, json, re, urllib.parse, urllib.request
@@ -33,6 +35,17 @@ def get(url, headers=UA, timeout=20):
     req = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(req, timeout=timeout) as r:
         return r.read().decode("utf-8", "replace")
+
+
+def known_when():
+    """직전 실행이 저장한 발표 시각 {(티커, 날짜): '장전'·'장후'} (추정값은 빼고)"""
+    try:
+        with open("opinion.json", encoding="utf-8") as f:
+            E = json.load(f).get("earnings") or {}
+    except Exception:
+        return {}
+    return {(e["sym"], e["date"]): e["when"] for e in (E.get("recent") or []) + (E.get("upcoming") or [])
+            if e.get("when") in WHEN.values() and not e.get("guess")}
 
 
 def universe():
@@ -66,7 +79,7 @@ def money(s):
     return -v if neg else v
 
 
-def calendar(univ):
+def calendar(univ, known):
     """미국 날짜 기준 최근 BACK 일~다음 FWD 일 평일 → (발표 끝난 것, 예정), 실패 목록"""
     today = now_et.date()
     done, todo, err = {}, {}, []
@@ -85,7 +98,7 @@ def calendar(univ):
             s = ALIAS.get(s, s)
             if s not in univ:
                 continue
-            when = WHEN.get(r.get("time"), "")
+            when = WHEN.get(r.get("time")) or known.get((s, d.isoformat()), "")
             item = {"sym": s, "name": (r.get("name") or s)[:40], "date": d.isoformat(), "when": when,
                     "est": money(r.get("epsForecast")), "n": r.get("noOfEsts") or "",
                     "ly": money(r.get("lastYearEPS")), "eps": money(r.get("eps") or r.get("epsActual")),
@@ -121,10 +134,22 @@ def extended(sym):
     return (c, "시간외") if hm >= 16 else (c, "프리마켓") if hm < 9.5 else (None, "")
 
 
+def guess(s, d):
+    """발표 시각을 모를 때: 발표일 등락이 다음 날보다 크면 장전, 작으면 장후. 다음 날 봉이 없으면 ''"""
+    j = next((i for i, (x, _) in enumerate(s) if x == d), None)
+    if j is None or j == 0 or j + 1 >= len(s):
+        return ""
+    return "장전" if abs(s[j][1] / s[j - 1][1] - 1) > abs(s[j + 1][1] / s[j][1] - 1) else "장후"
+
+
 def reaction(e):
     """발표 전 마지막 종가 대비 첫 거래일·누적 등락(%), 첫 거래일 전이면 시간외 등락"""
     d = datetime.date.fromisoformat(e["date"])
     s = daily(e["sym"])
+    if not e["when"]:
+        e["when"] = guess(s, d)
+        if e["when"]:
+            e["guess"] = True
     if e["when"] == "장후":
         bi = max((i for i, (x, _) in enumerate(s) if x <= d), default=None)
     else:
@@ -152,6 +177,10 @@ def short(name):
     return name.strip()[:16]
 
 
+def when_s(e):
+    return (e.get("when") or "") + ("(추정)" if e.get("guess") else "")
+
+
 def section(E, held, lev):
     items = []
     for e in E["recent"]:
@@ -170,7 +199,7 @@ def section(E, held, lev):
                       "value": ("EPS %s%s" % (money_s(e["eps"]), sp)) if e.get("eps") is not None else "예상 EPS %s" % money_s(e["est"]),
                       "badges": b + ([{"t": flag, "c": "warn"}] if flag else []),
                       "comment": "%s %s 발표 · 예상 %s · 작년 같은 분기 %s%s" % (
-                          e["date"][5:].replace("-", "/"), e["when"] or "", money_s(e["est"]), money_s(e["ly"]),
+                          e["date"][5:].replace("-", "/"), when_s(e), money_s(e["est"]), money_s(e["ly"]),
                           "" if e.get("eps") is not None else " · 실제 EPS는 뉴스·전문가 전망 참고")})
     for e in E["upcoming"]:
         flag = "레버리지 보유" if e["sym"] in lev else "보유" if e["sym"] in held else ""
@@ -190,7 +219,7 @@ def section(E, held, lev):
 
 def main():
     univ, held, lev = universe()
-    done, todo, err = calendar(univ)
+    done, todo, err = calendar(univ, known_when())
     recent = sorted(done.values(), key=lambda e: e["date"], reverse=True)
     for e in recent:
         try:
