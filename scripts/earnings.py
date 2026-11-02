@@ -64,6 +64,11 @@ def universe():
             watch = set((json.load(f).get("watch_meta") or {}).keys())
     except Exception:
         pass
+    try:                                            # 직접 지정 관심 종목 (의견 생성 전에도 일정이 잡히게)
+        with open("watchlist.json", encoding="utf-8") as f:
+            watch |= {r["sym"] for r in (json.load(f).get("stocks") or []) if r.get("sym")}
+    except Exception:
+        pass
     ok = lambda t: re.fullmatch(r"[A-Z][A-Z.\-]{0,6}", t or "")
     return {t for t in set(BELL) | held | watch if ok(t)}, held, lev
 
