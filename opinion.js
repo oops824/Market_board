@@ -186,7 +186,8 @@ function opWatch(o,filter){
     groups[g].push(w)});
   if(!order.length)return '';
   var etfOf=function(g){var m=meta[groups[g][0].sym]||{};return m.etf||null};
-  var rank=function(g){if(g==='하이퍼스케일러')return 1e9;var r=rot[etfOf(g)];return r?r.rs20:-1e9};
+  var rank=function(g){if(g==='직접 지정')return 2e9;if(g==='하이퍼스케일러')return 1e9;
+    var r=rot[etfOf(g)];return r?r.rs20:-1e9};
   order.sort(function(a,b){return rank(b)-rank(a)});
   return order.map(function(g){
     var ws=groups[g],r=/대장주$/.test(g)?rot[etfOf(g)]:null;   // 섹터 그룹에만 상대강도 칩
@@ -224,7 +225,7 @@ function opStock(o,isShort){
   var sh=o.short,lg=o.long,cl=opCLev(),nf=function(l){return (l||[]).filter(function(c){return !cl[c.sym]})};
   return (isShort?opCard('보유 주식 단기 대응',opHold(nf(sh.holdings),true)):
       opCard('보유 주식 중장기',opHold(nf(lg.holdings),false),'주식 계좌 목표 비중'+(lg.holdings_new_pct?' · 신규 편입 '+lg.holdings_new_pct+'%':'')))+
-    opCard('관심 종목 의견',opWatch(o,function(g){return g.indexOf('13F')<0}),'하이퍼스케일러 · 17개 섹터 대장주 · 상대강도 순')+
+    opCard('관심 종목 의견',opWatch(o,function(g){return g.indexOf('13F')<0}),'직접 지정 · 하이퍼스케일러 · 17개 섹터 대장주 · 상대강도 순')+
     (isShort?opCard('새로 볼 종목 · 피할 종목',opPicks(sh.stocks_buy,'매수','up')+opPicks(sh.stocks_avoid,'회피','dn')):
       opCard('중장기 테마',opPicks(lg.stocks_overweight,'비중 확대','up')+opPicks(lg.stocks_underweight,'비중 축소','dn')))}
 /* 가상자산 탭 본문 */

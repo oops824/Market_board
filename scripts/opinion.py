@@ -345,8 +345,8 @@ def oversold(closes, kind, ch7=None, ch24=None, funding8h=None, ls=None, oi24=No
             "sig": [t for p, t in parts if p] + (["주의: 롱 쏠림 여전(떨어지는 칼)"] if knife else [])}
 
 
-def oversold_all(C, D, pf):
-    """코인 8종 + 보유 미국 주식의 과대낙폭 점검"""
+def oversold_all(C, D, pf, extra=()):
+    """코인 8종 + 보유 미국 주식 + 직접 지정 관심 종목의 과대낙폭 점검"""
     out = {}
     fng = ((C or {}).get("fng") or {}).get("value")
     etf = (C or {}).get("etf") or {}
@@ -374,6 +374,11 @@ def oversold_all(C, D, pf):
         o = oversold(yahoo_closes(r.get("tk") or r["sym"]), "stock", vix=vix)
         if o:
             out[r["sym"]] = o
+    for s in extra:
+        if s not in out:
+            o = oversold(yahoo_closes(s), "stock", vix=vix)
+            if o:
+                out[s] = o
     return out
 
 
@@ -506,6 +511,10 @@ SYSTEM = (
     "미보유면 '보유'=담을 만함, '정리'=피함), why 는 근거 한 줄. 보유 종목과 비교해 더 나은 대안이면 그렇다고 쓴다. "
     "role 은 목록에서 '역할 유지'로 표시된 종목은 직전 역할을 그대로 쓰고, '재판단' 표시 종목만 새로 판단한다. "
     "why 가 role 과 모순되면 안 된다(예: '더 나은 대안'이라 쓰면서 role '정리' 금지).\n"
+    "- '직접 지정' 그룹은 사용자가 직접 넣은 종목이다. 목록의 '지켜볼 조건'을 그대로 판단 기준으로 쓰고, why 에 그 조건의 "
+    "충족 여부를 수치로 밝힌다(예: '첫날 저점 $63.4 2거래일 지지 · SMH 20일 -15.3%p로 미충족'). 조건이 미충족이면 action 은 "
+    "'관망'으로 두고 wait_for 에 남은 조건을 한 줄 넣는다. 조건이 충족된 날에는 action 을 '분할 매수'로 바꾸고 entry 와 함께 "
+    "actions_now 에 넣어 바로 알 수 있게 한다. 조건과 무관하게 급락했다고 먼저 사지 않는다.\n"
     "- sectors 에는 '섹터 로테이션' 목록의 모든 섹터 ETF 를 빠짐없이 쓴다. view 는 비중 확대/관심/중립/비중 축소, why 는 한 줄. "
     "'개선(돌아서는 중)' 섹터 가운데 지금 주도 섹터 다음으로 돌아서는 후보가 있으면 분명히 짚는다. "
     "'조기 신호' 섹터는 아직 확인 전이라 view 를 '관심'까지만 두고, 사더라도 소량 1차·조건부(20일 상대강도 플러스 전환이 "
@@ -861,6 +870,20 @@ def short_snapshot(prev):
 # ---------------------------------------------------------------- 관심 종목 (보유 외)
 HYPERSCALERS = [("MSFT", "마이크로소프트"), ("AMZN", "아마존"), ("GOOGL", "알파벳"), ("META", "메타"), ("ORCL", "오라클")]
 ALIAS = {"GOOG": "GOOGL", "BRK.A": "BRK.B"}
+PINNED_GROUP = "직접 지정"
+
+
+def pinned():
+    """watchlist.json 의 직접 지정 관심 종목 [{sym, name, why, watch_for}]"""
+    try:
+        with open("watchlist.json", encoding="utf-8") as f:
+            rows = json.load(f).get("stocks") or []
+    except FileNotFoundError:
+        return []
+    except Exception as e:
+        print("[의견] watchlist.json 읽기 실패:", e)
+        return []
+    return [r for r in rows if re.fullmatch(r"[A-Z][A-Z0-9.]{0,6}", r.get("sym") or "")]
 
 
 QUAD = {"lead": "주도", "improve": "개선(돌아서는 중)", "weaken": "약화", "lag": "소외"}
@@ -901,6 +924,8 @@ def watch_universe(D, T, held):
             seen.add(t)
             out.append({"sym": t, "name": name, "group": group, "etf": etf, "info": info, "trend": tr})
     sector_of = {m[0]: m[3] for m in members}
+    for r in pinned():
+        add(r["sym"], r.get("name") or r["sym"], PINNED_GROUP, sector_of.get(r["sym"]))
     for t, n in HYPERSCALERS:
         add(t, n, "하이퍼스케일러", sector_of.get(t))
     for m in members:
@@ -956,7 +981,8 @@ def levels(t):
 def watch_digest(W, wstate, force):
     if not W:
         return ""
-    L = ["## 관심 종목 (보유 외: 하이퍼스케일러·17개 섹터 대장주·기관 13F 언급. 수치는 위 섹터 표 참고, 가격대는 진입가 계산용)"]
+    L = ["## 관심 종목 (보유 외: 직접 지정·하이퍼스케일러·17개 섹터 대장주·기관 13F 언급. 수치는 위 섹터 표 참고, 가격대는 진입가 계산용)"]
+    pin = {r["sym"]: r for r in pinned()}
     for w in W:
         st = wstate.get(w["sym"])
         prev = ("직전 역할 %s(%s~)" % (st["role"], opmd(st.get("since")))) if st else "새 종목"
@@ -964,6 +990,10 @@ def watch_digest(W, wstate, force):
         L.append("- %s %s [%s] %s%s%s | %s%s" % (
             w["sym"], w["name"], w["group"], TREND[w["trend"]], (" · " + w["info"]) if w["info"] else "",
             (" · " + lv) if lv else "", prev, " → 재판단" if rejudge(w, st, force) else " → 역할 유지"))
+        p = pin.get(w["sym"])
+        if p:
+            L.append("  · 지정 사유(%s): %s" % (opmd(p.get("since")), p.get("why") or "-"))
+            L.append("  · 지켜볼 조건: %s" % (p.get("watch_for") or "-"))
     return "\n".join(L)
 
 
@@ -1096,7 +1126,7 @@ def main():
                     [r["sym"] for r in (pf or {}).get("rows", []) if r.get("lev")])   # 코인 선물도 보유 포지션으로 판단
             W = watch_universe(D, T, [ticker(s) for s in held])
             rotation = (D or {}).get("rotation") or rotation
-            OV = oversold_all(C, D, pf)
+            OV = oversold_all(C, D, pf, [r["sym"] for r in pinned()])
             print("[의견] 과대낙폭 점검:", {k: v["score"] for k, v in OV.items()})
             oversold_map = OV
             new, model = ask(digest(D, C, T) + "\n" + port_digest(pf) + "\n" + oversold_digest(OV) + "\n" +
