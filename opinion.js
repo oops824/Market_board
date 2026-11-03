@@ -1,4 +1,4 @@
-/* 종합 투자의견 (탭5) — scripts/opinion.py 가 하루 두 번(10시·22시) 만드는 opinion.json
+/* 종합 투자의견 (탭5) — scripts/opinion.py 가 하루 한 번(07시) 만드는 opinion.json
    단기(1~4주)는 매번 갱신, 중장기(3~12개월)는 분명한 근거가 있을 때만 바뀜.
    본문의 ==핵심== 표시는 형광 강조로 보여 줌(생성 단계에서 영역별 15% 이내로 제한) */
 var OP=null,OP_H='s';
@@ -328,7 +328,7 @@ function opBodies(){
 function renderOP(){
   var o=OP.opinion||{},asof=OP.asof||{},age=(Date.now()-Date.parse(OP.generated||''))/36e5;
   if(!o.short||!o.long){$('#p5').innerHTML='<p class="err">단기·중장기 의견을 준비하고 있습니다.</p>';return}
-  var bar='<div class="cbar"><span>'+opT(opWhen(OP.generated))+' 작성 · 매일 10시·22시</span>'+
+  var bar='<div class="cbar"><span>'+opT(opWhen(OP.generated))+' 작성 · 매일 07시</span>'+
     (asof['지표']?'<span>지표 '+opT(opWhen(asof['지표']))+' 기준</span>':'')+'</div>';
   var stale=age>30?'<p class="note" style="color:var(--warn)">최근 생성에 실패해 '+Math.floor(age/24)+
     '일 전 의견을 표시하고 있습니다.</p>':'';
@@ -338,7 +338,7 @@ function renderOP(){
     hd('큰 그림 · 중장기 전략','3~12개월')+opLong(o)+opTrack(OP.track)+
     '<p class="note">위험 성향 10점 중 7.5~8점(공격적) 기준. 대시보드 데이터에 웹 검색한 최근 뉴스·전문가 전망을 더해 판단하고, '+
     '추세 신호와 함께 과대낙폭(역발상) 점검으로 저가 매수 기회도 따로 봅니다. '+
-    '미국주식·가상자산·기관 탭에 영역별 의견이 있습니다. 단기 의견은 매일 10시·22시에 새로 쓰고, 중장기 의견은 매크로 체제 전환처럼 분명한 근거가 있을 때만 '+
+    '미국주식·가상자산·기관 탭에 영역별 의견이 있습니다. 단기 의견은 매일 07시에 새로 쓰고, 중장기 의견은 매크로 체제 전환처럼 분명한 근거가 있을 때만 '+
     '바꿉니다. 형광 표시는 꼭 봐야 할 핵심(글자 수 15% 이내)입니다. 포트폴리오는 사진 기준 비중·평단·수익률(수량·금액은 저장하지 않음)에 이후 가격 변동을 반영한 추정치입니다. '+
     '데이터 기준: 지표 '+opT(asof['지표']||'-')+', 코인 '+opT(asof['코인']||'-')+', 기관 13F '+opT(asof['기관']||'-')+' 공시.'+
     (OP.model?' 작성 모델 '+opT(OP.model)+'.':'')+'</p>';
