@@ -199,14 +199,12 @@ def llama():
         return [fail("DeFiLlama", e)]
 
 sector_items = etf()
-rot, rot_rows = rotation()
+rot, _ = rotation()                                  # 표 행은 쓰지 않음(미국주식 탭의 로테이션 카드가 rotation 객체로 그린다)
 payload = {
     "updated": now.strftime("%Y-%m-%d %H:%M KST"),
     "summary": "자동 수집 완료.",
     "sections": [
         {"title": "섹터 ETF 가격", "note": "최근 5거래일 변화", "items": sector_items},
-        {"title": "섹터 로테이션 (SPY 대비 상대강도)", "note": "20일·3개월 초과수익(%p) 4분면 분류 · 10일 상대강도로 조기 신호·과열 표시",
-         "items": rot_rows},
         {"title": "DeFiLlama 프로토콜 수익 랭킹", "note": "24시간 기준 상위 8", "items": llama()},
     ],
     "rotation": rot,

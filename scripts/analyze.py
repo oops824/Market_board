@@ -1,5 +1,30 @@
-import json, os, urllib.request, urllib.error, datetime
+import copy, json, os, urllib.request, urllib.error, datetime
 import calendar_ctx
+
+# 요약에 쓰지 않는 블록은 보내지 않는다(실적은 미국주식 탭과 종합의견이 전담, summary 는 이 파일의 직전 출력)
+DROP_KEYS = ("earnings", "summary")
+DROP_SECS = ("실적 발표",)
+
+
+def brief(p):
+    """요약 7개 항목에 필요한 만큼만 남긴 데이터"""
+    d = {k: v for k, v in p.items() if k not in DROP_KEYS}
+    secs = []
+    for s in d.get("sections", []):
+        if s["title"].startswith(DROP_SECS):
+            continue
+        s = copy.deepcopy(s)
+        if s["title"].startswith("섹터 ETF"):              # '…종가 · 반도체 대장주' 같은 상투구 제거
+            for i in s["items"]:
+                i.pop("comment", None)
+        secs.append(s)
+    d["sections"] = secs
+    if d.get("econ", {}).get("items"):                     # 'ai' 해석은 수치를 다시 풀어쓴 것이라 앞부분만
+        d["econ"] = copy.deepcopy(d["econ"])
+        for i in d["econ"]["items"]:
+            if i.get("ai"):
+                i["ai"] = i["ai"][:200]
+    return d
 
 key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
 with open("data.json", encoding="utf-8") as f:
@@ -40,8 +65,10 @@ prompt = (
     "TLT(장기 국채), TIP(물가연동채), RSP(S&P500 동일가중), SPY(S&P500 시총가중), "
     "SMH(반도체), XLK(기술), IGV(소프트웨어), ITA(방산), ARKX(우주), LIT(배터리), GRID(전력망·인프라), XLU(유틸리티), NVDA(엔비디아), TSM(TSMC), ETN(이튼), PWR(콰나서비스), CEG(콘스텔레이션에너지), XLF(금융), XLV(헬스케어), XLE(에너지), XLI(산업재), XLY(경기소비재), "
     "XLP(필수소비재), XLC(커뮤니케이션), IWM(소형주), BLOK(크립토 관련주)\n"
+    "- 핵심만 ==강조할 말== 처럼 등호 두 개로 감싼다. 각 항목에서 꼭 봐야 할 수치나 결론 1~2곳만. "
+    "항목별 강조 글자 비율 12%를 넘기지 않는다\n"
     "- 머리말이나 마무리 인사 없이 위 형식만 출력\n\n"
-    + json.dumps(payload, ensure_ascii=False)[:60000]
+    + json.dumps(brief(payload), ensure_ascii=False)[:45000]
 )
 
 def call(model):

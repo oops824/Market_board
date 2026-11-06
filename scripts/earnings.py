@@ -5,7 +5,8 @@
   장후 발표 뒤 아직 정규장이 열리지 않았으면 시간외·프리마켓 가격
 - 발표 시각(장전·장후): 나스닥은 발표일이 지나면 비워 주므로 직전 실행이 opinion.json 에 남긴 값을 이어 쓰고,
   그것도 없으면 발표일과 다음 날 중 주가가 더 크게 움직인 쪽으로 추정한다('추정' 표시)
-data.json 에 earnings(구조화)와 '실적 발표' 섹션을 넣는다. 실패해도 나머지 데이터는 그대로 둔다.
+data.json 에 earnings 를 넣는다(표시는 미국주식 탭의 '실적 발표' 카드가 이 값으로 그린다).
+실패해도 나머지 데이터는 그대로 둔다.
 """
 import datetime, json, re, urllib.parse, urllib.request
 
@@ -172,56 +173,6 @@ def reaction(e):
     return out
 
 
-def money_s(v):
-    return "-" if v is None else ("-$%.2f" % -v if v < 0 else "$%.2f" % v)
-
-
-def short(name):
-    for w in (", Inc.", " Inc.", " Corporation", " Corp.", " Holdings", " Platforms", ".com", " Technologies"):
-        name = name.replace(w, "")
-    return name.strip()[:16]
-
-
-def when_s(e):
-    return (e.get("when") or "") + ("(추정)" if e.get("guess") else "")
-
-
-def section(E, held, lev):
-    items = []
-    for e in E["recent"]:
-        flag = "레버리지 보유" if e["sym"] in lev else "보유" if e["sym"] in held else ""
-        r, b = e.get("react") or {}, []
-        if "day1" in r:
-            b.append({"t": "첫날 %+.1f%%" % r["day1"], "c": "up" if r["day1"] >= 0 else "dn"})
-            if r.get("days", 0) > 1:
-                b.append({"t": "누적 %+.1f%%" % r["since"], "c": "up" if r["since"] >= 0 else "dn"})
-        elif "ext" in r:
-            b.append({"t": "%s %+.1f%%" % (r["ext_lab"], r["ext"]), "c": "up" if r["ext"] >= 0 else "dn"})
-        sp = ""
-        if e.get("eps") is not None and e.get("est"):
-            sp = " (%+.0f%%)" % ((e["eps"] / e["est"] - 1) * 100) if e["est"] > 0 else ""
-        items.append({"name": "%s %s" % (e["sym"], short(e["name"])),
-                      "value": ("EPS %s%s" % (money_s(e["eps"]), sp)) if e.get("eps") is not None else "예상 EPS %s" % money_s(e["est"]),
-                      "badges": b + ([{"t": flag, "c": "warn"}] if flag else []),
-                      "comment": "%s %s 발표 · 예상 %s · 작년 같은 분기 %s%s" % (
-                          e["date"][5:].replace("-", "/"), when_s(e), money_s(e["est"]), money_s(e["ly"]),
-                          "" if e.get("eps") is not None else " · 실제 EPS는 뉴스·전문가 전망 참고")})
-    for e in E["upcoming"]:
-        flag = "레버리지 보유" if e["sym"] in lev else "보유" if e["sym"] in held else ""
-        dd = (datetime.date.fromisoformat(e["date"]) - now_et.date()).days
-        items.append({"name": "%s %s" % (e["sym"], short(e["name"])),
-                      "value": "예상 EPS %s" % money_s(e["est"]),
-                      "badges": [{"t": "D-%d" % dd if dd > 0 else "오늘", "c": "na"}] + ([{"t": flag, "c": "warn"}] if flag else []),
-                      "comment": "%s %s 발표 예정 · 작년 같은 분기 %s · 애널리스트 %s명" % (
-                          e["date"][5:].replace("-", "/"), e["when"] or "", money_s(e["ly"]), e["n"] or "-")})
-    if not items:
-        items = [{"name": "실적 발표", "value": "수집 실패" if E["err"] else "해당 없음", "change": "",
-                  "comment": "; ".join(E["err"][:3]) or "보유·관심 종목의 발표가 이 기간에 없음"}]
-    return {"title": "실적 발표",
-            "note": "나스닥 실적 캘린더 · 야후 파이낸스 · 최근 %d일 결과와 다음 %d일 일정 (미국 날짜)" % (BACK, FWD),
-            "items": items}
-
-
 def main():
     univ, held, lev = universe()
     done, todo, err = calendar(univ, known_when())
@@ -239,7 +190,7 @@ def main():
     with open("data.json", encoding="utf-8") as f:
         payload = json.load(f)
     payload["earnings"] = E
-    payload["sections"] = [s for s in payload["sections"] if s.get("title") != "실적 발표"] + [section(E, held, lev)]
+    payload["sections"] = [s for s in payload["sections"] if s.get("title") != "실적 발표"]
     with open("data.json", "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
 

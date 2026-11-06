@@ -53,8 +53,10 @@ def digest(D, C, T):
     L.append("## 기준 시각\n지표 %s · 코인 %s · 기관 13F %s 공시 기준" % (
         (D or {}).get("updated"), (C or {}).get("updated"), (T or {}).get("latest_period")))
     if D:
-        if D.get("summary"):
-            L.append("## 일일 시장 요약(AI)\n" + cut(D["summary"], 2500))
+        if D.get("summary"):                            # 나머지 블록은 아래 원자료와 겹쳐 종합·체크포인트만
+            keep = [b for b in re.split(r"\n(?=\[)", D["summary"]) if b.startswith(("[종합]", "[체크포인트]"))]
+            if keep:
+                L.append("## 일일 시장 요약(AI) — 종합·체크포인트\n" + cut("\n".join(keep), 900))
         for s in D.get("sections", []):
             t = s["title"]
             if t.startswith("매크로"):
@@ -100,7 +102,7 @@ def digest(D, C, T):
             L.append("## 경제지표: %s (%s 기준, %s)\n%s | 예상: %s | 기여: %s | 발표일 반응: %s | 해석: %s" % (
                 it["title"], per, it["release"] + " 발표" if it.get("release") else "발표일 미확인",
                 val, it.get("consensus") or "-",
-                con or "-", mk or "-", cut(it.get("ai"), 350)))
+                con or "-", mk or "-", cut(it.get("ai"), 150)))
     E = (D or {}).get("earnings") or {}
     if E.get("recent") or E.get("upcoming"):
         held, lev = set(E.get("held") or []), set(E.get("lev") or [])
