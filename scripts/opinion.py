@@ -676,19 +676,20 @@ def ask(dig, ctx):
     client = anthropic.Anthropic()
     user = (calendar_ctx.macro_context(now.date()) + "\n\n아래는 오늘 대시보드 데이터와 내 포트폴리오 요약, 뉴스·전문가 전망, 그리고 직전 의견이다. "
             "이 데이터를 근거로 네가 이 사용자라면 어떻게 투자할지 단기·중장기로 나눠 작성하라.\n\n" + dig + "\n\n" + ctx)
-    last, bad_schema = None, False
+    last, bad_schema, hit_limit = None, False, False
     # (스키마 강제, 서버 대체 모델): 스키마가 거부되면 JSON 지시로, 대체 모델 옵션이 거부되면 옵션 없이
     for strict, fb in ((True, True), (True, False), (False, True), (False, False)):
         if strict and bad_schema:
             continue
-        oc = {"effort": "high"}
+        # 출력 한도에 걸렸으면 같은 설정으로 다시 해봐야 또 걸린다 → 생각 분량을 줄여 재시도
+        oc = {"effort": "medium" if hit_limit else "high"}
         content = user
         if strict:
             oc["format"] = {"type": "json_schema", "schema": SCHEMA}
         else:
             content = user + ("\n\n출력은 아래 JSON 스키마를 따르는 JSON 객체 하나만 쓴다. 코드 블록이나 다른 글은 쓰지 않는다.\n"
                               + json.dumps(SCHEMA, ensure_ascii=False))
-        kw = dict(model=MODEL, max_tokens=48000, system=SYSTEM, output_config=oc,
+        kw = dict(model=MODEL, max_tokens=64000, system=SYSTEM, output_config=oc,
                   messages=[{"role": "user", "content": content}])
         if fb:                                   # 안전 분류기 거절 시 서버가 대체 모델로 다시 실행
             kw.update(betas=["server-side-fallback-2026-07-01"], fallbacks="default")
@@ -705,6 +706,7 @@ def ask(dig, ctx):
             if msg.stop_reason == "refusal":
                 raise RuntimeError("모델이 응답을 거절함: %s" % (getattr(msg, "stop_details", None),))
             if msg.stop_reason == "max_tokens":
+                hit_limit = True
                 raise RuntimeError("출력 한도 초과")
             op = parse_json("".join(b.text for b in msg.content if b.type == "text"))
             if not isinstance(op.get("short"), dict) or not isinstance(op.get("long"), dict):
