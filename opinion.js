@@ -314,11 +314,12 @@ function opEarn(){
     return '주가 반응 수집 전'};
   var li=function(e,body){return '<li><div class="opr"><b>'+opT(e.sym)+'</b>'+fl(e.sym)+
     '<span class="cf">'+opMD(e.date)+' '+opT(e.when)+(e.guess?'(추정)':'')+'</span></div><div class="opw">'+body+'</div></li>'};
-  var rec=(E.recent||[]).slice(0,8).map(function(e){
+  var rec=(E.recent||[]).slice(0,12).map(function(e){
     return li(e,(opNum(e.eps)?'EPS '+usd(e.eps)+' vs 예상 '+usd(e.est):'EPS 예상 '+usd(e.est))+' · '+rx(e.react))}).join('');
-  var up=(E.upcoming||[]).slice(0,8).map(function(e){return li(e,'EPS 예상 '+usd(e.est))}).join('');
+  var up=(E.upcoming||[]).slice(0,12).map(function(e){return li(e,'EPS 예상 '+usd(e.est))}).join('');
   return opCard('실적 발표',(rec?'<div class="sec">최근 결과 · 발표 전 종가 대비</div><ul class="opl">'+rec+'</ul>':'')+
-    (up?'<div class="sec">다음 2주 일정</div><ul class="opl">'+up+'</ul>':''),opMD(E.asof)+' · 미국 날짜')}
+    (up?'<div class="sec">다음 2주 일정</div><ul class="opl">'+up+'</ul>':''),
+    '보유·관심·주요 대형주 · '+opMD(E.asof)+' 미국 날짜')}
 
 function opSeg(){return '<div class="seg">'+[['s','단기','1~4주'],['l','중장기','3~12개월']].map(function(x){
   return '<button data-h="'+x[0]+'"'+(OP_H===x[0]?' class="on"':'')+'>'+x[1]+'<small>'+x[2]+'</small></button>'}).join('')+'</div>'}
@@ -334,7 +335,7 @@ function renderOP(){
     '일 전 의견을 표시하고 있습니다.</p>':'';
   var hd=function(t,sub){return '<div class="hd">'+t+(sub?'<small>'+sub+'</small>':'')+'</div>'};
   $('#p5').innerHTML=bar+stale+opHero(o)+opToday(o)+
-    hd('왜 이렇게 하나','단기 시각 · 시나리오 · 리스크 · 데이터')+opWhy(o)+opFed()+opEarn()+opOutlook()+
+    hd('왜 이렇게 하나','단기 시각 · 시나리오 · 리스크 · 데이터')+opWhy(o)+opFed()+opOutlook()+
     hd('큰 그림 · 중장기 전략','3~12개월')+opLong(o)+opTrack(OP.track)+
     '<p class="note">위험 성향 10점 중 7.5~8점(공격적) 기준. 대시보드 데이터에 웹 검색한 최근 뉴스·전문가 전망을 더해 판단하고, '+
     '추세 신호와 함께 과대낙폭(역발상) 점검으로 저가 매수 기회도 따로 봅니다. '+
@@ -342,7 +343,7 @@ function renderOP(){
     '바꿉니다. 형광 표시는 꼭 봐야 할 핵심(글자 수 15% 이내)입니다. 포트폴리오는 사진 기준 비중·평단·수익률(수량·금액은 저장하지 않음)에 이후 가격 변동을 반영한 추정치입니다. '+
     '데이터 기준: 지표 '+opT(asof['지표']||'-')+', 코인 '+opT(asof['코인']||'-')+', 기관 13F '+opT(asof['기관']||'-')+' 공시.'+
     (OP.model?' 작성 모델 '+opT(OP.model)+'.':'')+'</p>';
-  $('#st-op').innerHTML=hd('미국 주식 의견',opWhen(OP.generated)+' · 종합의견 기준')+opPortStock(o)+opRotation(o)+opSeg()+'<div id="opb-st"></div>';
+  $('#st-op').innerHTML=hd('미국 주식 의견',opWhen(OP.generated)+' · 종합의견 기준')+opPortStock(o)+opEarn()+opRotation(o)+opSeg()+'<div id="opb-st"></div>';
   $('#cr-op').innerHTML=hd('가상자산 의견',opWhen(OP.generated)+' · 종합의견 기준')+opPortCoin(o)+opSeg()+'<div id="opb-cr"></div>';
   var tw=opWatch(o,function(g){return g.indexOf('13F')>=0});
   $('#tf-op').innerHTML=tw?'<div class="etf"><div class="eh"><b>기관이 함께 사고판 종목, 내 의견</b><span class="dim">13F 공동 매수·정리</span></div>'+

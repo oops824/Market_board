@@ -2,9 +2,10 @@ var $=function(s){return document.querySelector(s)};
 var CUR=null;
 function esc(t){return String(t==null?'':t).replace(/[<>&]/g,function(c){
   return {'<':'&lt;','>':'&gt;','&':'&amp;'}[c]})}
-// 코인 탭으로 옮긴 섹션(COIN_SECS)과 삭제한 섹션: 지표 탭에서는 표시하지 않음
-var COIN_SECS=['DeFiLlama','스테이블코인','코인베이스 프리미엄'],DROP_SECS=['하이퍼리퀴드'];
-function hiddenSec(t){var l=COIN_SECS.concat(DROP_SECS);
+// 다른 탭이 전담하는 섹션은 지표 탭에서 표시하지 않는다
+// COIN_SECS → 가상자산 탭 · OTHER_SECS → 종합 탭(FOMC 금리 확률 카드) · DROP_SECS → 삭제
+var COIN_SECS=['DeFiLlama','스테이블코인','코인베이스 프리미엄'],OTHER_SECS=['FOMC'],DROP_SECS=['하이퍼리퀴드'];
+function hiddenSec(t){var l=COIN_SECS.concat(OTHER_SECS,DROP_SECS);
   for(var i=0;i<l.length;i++)if(String(t).indexOf(l[i])>=0)return true;return false}
 function tagsHtml(tags,n){
   if(!tags||!tags.length)return '';
@@ -37,15 +38,17 @@ function kpi(){
        (esc(it.change)||'-')+'</span></div></div>'}
   $('#kpi').innerHTML=h}
 
+function hl(t){return esc(t==null?'':t).replace(/==(.+?)==/g,'<mark class="hl">$1</mark>')}
 function summary(){
   if(!CUR.summary){$('#sum').innerHTML='';return}
   var parts=CUR.summary.split(/\n(?=\[)/),h='';
   for(var i=0;i<parts.length;i++){
     var m=parts[i].match(/^\[(.+?)\]\s*([\s\S]*)$/);
     if(m){h+='<div class="sum"><b>'+esc(m[1])+'</b>'+
-      esc(m[2].trim()).replace(/^- /gm,'· ')+'</div>'}
-    else if(parts[i].trim()){h+='<div class="sum">'+esc(parts[i].trim())+'</div>'}}
-  $('#sum').innerHTML=h}
+      hl(m[2].trim()).replace(/^- /gm,'· ')+'</div>'}
+    else if(parts[i].trim()){h+='<div class="sum">'+hl(parts[i].trim())+'</div>'}}
+  $('#sum').innerHTML=h+'<p class="note">형광 표시는 꼭 봐야 할 핵심입니다. '+
+    'FOMC 금리 확률은 종합 탭, 실적·섹터는 미국주식 탭, 스테이블코인·프리미엄은 가상자산 탭에 있습니다.</p>'}
 function badges(it){
   if(it.badges&&it.badges.length){
     var s='';
@@ -60,10 +63,9 @@ function tables(){
   var sec=function(k){return CUR.sections.filter(function(s){return s.title.indexOf(k)===0})};
   $('#app').innerHTML=secTables(CUR.sections.filter(function(s){
     return !hiddenSec(s.title)&&s.title.indexOf('섹터')!==0&&s.title.indexOf('CFTC')!==0&&s.title.indexOf('실적')!==0}),2);
-  var st=sec('섹터 ETF'),ct=sec('CFTC'),ea=sec('실적');   // 섹터 로테이션은 미국주식 탭의 로테이션 카드로 표시
-  $('#st-sec').innerHTML=(ea.length?'<div class="hd">실적 발표<small>보유·관심·주요 대형주 · 최근 결과와 다음 일정</small></div>'+
-    secTables(ea,1):'')+(st.length?'<div class="hd">섹터 ETF · 대장주<small>17개 섹터 · 눌러서 펼치기</small></div>'+
-    LEGEND+secTables(st,0):'');
+  var st=sec('섹터 ETF'),ct=sec('CFTC');   // 섹터 로테이션·실적은 미국주식 탭의 의견 카드로 표시
+  $('#st-sec').innerHTML=st.length?'<div class="hd">섹터 ETF · 대장주<small>17개 섹터 · 눌러서 펼치기</small></div>'+
+    LEGEND+secTables(st,0):'';
   $('#cot').innerHTML=ct.length?'<div class="hd">CFTC 선물 포지셔닝<small>레버리지펀드 vs 자산운용사</small></div>'+
     secTables(ct,ct.length):''}
 function secTables(secs,nOpen){
