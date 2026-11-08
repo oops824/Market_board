@@ -284,8 +284,10 @@ function opOutlook(){
       '<span class="ol-n">'+(i+1)+'</span></summary><ul class="ol-l">'+lis+'</ul></details>'}).join('');
   var src=(OP.sources||[]).map(function(x){
     return '<li><a href="'+escA(x.url)+'" target="_blank" rel="noopener">'+opT(x.title)+'</a></li>'}).join('');
-  return '<div class="etf op-news"><div class="eh"><b>뉴스·전문가 전망</b><span class="dim">'+opMD(OP.generated)+
-    ' 웹 검색 · 출처 '+(OP.sources||[]).length+'곳</span></div>'+body+
+  var at=OP.outlook_at||OP.generated,
+      ago=Math.floor((Date.parse(OP.generated||'')-Date.parse(at||''))/864e5);
+  return '<div class="etf op-news"><div class="eh"><b>뉴스·전문가 전망</b><span class="dim">'+opMD(at)+
+    ' 웹 검색'+(ago>0?'('+ago+'일 전)':'')+' · 출처 '+(OP.sources||[]).length+'곳</span></div>'+body+
     (src?'<details class="ko"><summary>출처 보기</summary><ul class="news op-src">'+src+'</ul></details>':'')+'</div>'}
 
 /* FOMC 금리 확률: 회의별 인하·동결·인상 막대 (연방기금금리 선물 기반, CME FedWatch 방식) */

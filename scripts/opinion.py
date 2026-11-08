@@ -20,6 +20,8 @@ now = datetime.datetime.now(KST)
 TODAY = now.strftime("%Y-%m-%d")
 OUT, HIST, PORT = "opinion.json", "history/opinions.json", "portfolio.json"
 MODEL = "claude-opus-5-5"
+OUTLOOK_DAYS = 3                                     # 전망(1~12개월)은 매일 바뀌지 않는다 → 이 간격으로만 다시 검색
+OUTLOOK_USES = 18                                    # 한 번 검색할 때 쓰는 웹 검색 횟수
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
                     "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
 COIN_SYMS = ["BTC", "ETH", "SOL", "HYPE", "LINK", "ONDO", "SUI", "VIRTUAL"]
@@ -652,7 +654,7 @@ def outlook(focus=""):
     texts, src = [], []
     for _ in range(3):                                   # 서버 검색이 길어지면 pause_turn → 이어서 요청
         with client.messages.stream(model=MODEL, max_tokens=16000, messages=msgs, output_config={"effort": "medium"},
-                                    tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": 36}]) as st:
+                                    tools=[{"type": "web_search_20260209", "name": "web_search", "max_uses": OUTLOOK_USES}]) as st:
             msg = st.get_final_message()
         for b in msg.content:
             for r in (getattr(b, "content", None) if b.type.endswith("tool_result") else None) or []:
@@ -1095,6 +1097,23 @@ def track(hist, cp):
     return rows
 
 
+def outlook_age(at):
+    """직전 전망을 쓴 지 며칠 됐는지. 기록이 없으면 None"""
+    try:
+        return (now - datetime.datetime.fromisoformat(at)).days
+    except (ValueError, TypeError):
+        return None
+
+
+def outlook_note(at):
+    """전망이 오늘 것이 아니면 모델에 그 사실을 알린다"""
+    age = outlook_age(at)
+    if not age:
+        return ""
+    return (" · %s 작성이라 %d일 지났다. 이 안의 '최근·오늘'은 그 시점 기준이고, 그 뒤 수치는 "
+            "위 대시보드 데이터를 따른다. 전망에 없는 그 뒤의 사건은 지어내지 않는다" % (at[:10], age))
+
+
 def slot_start(t):
     """분석 시간대 시작 시각: 매일 7시(KST)"""
     h = t.replace(hour=7, minute=0, second=0, microsecond=0)
@@ -1120,6 +1139,7 @@ def main():
     sig = (pf or {}).get("sig", "") + PROFILE                 # 포트폴리오나 투자 성향이 바뀌면 중장기를 다시 쓴다
     port_changed = long_port != sig
     view, sources = prev.get("outlook") or "", prev.get("sources") or []
+    outlook_at = prev.get("outlook_at") or ""
     long_log, prev_short = prev.get("long_log") or [], prev.get("prev_short")
     watch_meta = prev.get("watch_meta") or {}
     rotation = prev.get("rotation")
@@ -1132,11 +1152,18 @@ def main():
         print("[의견] ANTHROPIC_API_KEY 없음 — 이전 의견 유지")
     elif not fresh or force or not v2:
         try:
-            try:
-                view, sources = outlook(earn_focus(D))
-                print("[의견] 뉴스·전문가 전망 %d자, 출처 %d개" % (len(view), len(sources)))
-            except Exception as e:
-                print("[의견] 전망 검색 실패 — 직전 전망 사용:", str(e)[:200])
+            age = outlook_age(outlook_at)
+            # 포트폴리오·판단 기준이 바뀐 날과 주기가 된 날만 다시 검색한다(비용의 대부분이 이 웹 검색)
+            if view and age is not None and age < OUTLOOK_DAYS and not port_changed \
+                    and os.environ.get("OUTLOOK_FORCE") != "1":
+                print("[의견] 전망 재사용 — %s 작성(%d일 전), %d일마다 갱신" % (outlook_at[:10], age, OUTLOOK_DAYS))
+            else:
+                try:
+                    view, sources = outlook(earn_focus(D))
+                    outlook_at = now.isoformat(timespec="minutes")
+                    print("[의견] 뉴스·전문가 전망 %d자, 출처 %d개" % (len(view), len(sources)))
+                except Exception as e:
+                    print("[의견] 전망 검색 실패 — 직전 전망 사용:", str(e)[:200])
             held = ([r["sym"] for r in ((pf or {}).get("stocks") or {}).get("rows", [])] +
                     [r["sym"] for r in (pf or {}).get("rows", []) if r.get("lev")])   # 코인 선물도 보유 포지션으로 판단
             W = watch_universe(D, T, [ticker(s) for s in held])
@@ -1146,7 +1173,8 @@ def main():
             oversold_map = OV
             new, model = ask(digest(D, C, T) + "\n" + port_digest(pf) + "\n" + oversold_digest(OV) + "\n" +
                              watch_digest(W, wstate, port_changed) +
-                             "\n\n## 뉴스·전문가 전망 (웹 검색 요약)\n" + (view or "없음"), prev_context(prev, port_changed))
+                             "\n\n## 뉴스·전문가 전망 (웹 검색 요약%s)\n" % outlook_note(outlook_at) + (view or "없음"),
+                             prev_context(prev, port_changed))
             clean(new, held, [w["sym"] for w in W], [r["etf"] for r in (rotation or {}).get("items", [])])
             watch_meta = {w["sym"]: {"name": w["name"], "group": w["group"], "etf": w["etf"], "trend": w["trend"]}
                           for w in W}
@@ -1198,7 +1226,7 @@ def main():
     out = {"version": 2, "generated": generated, "model": model, "opinion": op, "watch_meta": watch_meta,
            "watch_state": wstate, "rotation": rotation, "oversold": oversold_map,
            "long_since": long_since, "long_check": long_check, "long_log": long_log, "long_port": long_port,
-           "prev_short": prev_short, "outlook": view, "sources": sources,
+           "prev_short": prev_short, "outlook": view, "outlook_at": outlook_at, "sources": sources,
            "portfolio": pf, "track": past, "fedwatch": (D or {}).get("fedwatch"),
            "earnings": (D or {}).get("earnings"),
            "asof": {"지표": (D or {}).get("updated"), "코인": (C or {}).get("updated"),
