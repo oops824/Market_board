@@ -1,6 +1,8 @@
 import copy, json, os, urllib.request, urllib.error, datetime
 import calendar_ctx
 
+SUMMARY_DAYS = 2                                    # 지표 탭 요약은 이 간격으로만 다시 쓴다(그 사이에는 직전 요약 유지)
+
 # 요약에 쓰지 않는 블록은 보내지 않는다(실적은 미국주식 탭과 종합의견이 전담, summary 는 이 파일의 직전 출력)
 DROP_KEYS = ("earnings", "summary")
 DROP_SECS = ("실적 발표",)
@@ -32,6 +34,16 @@ with open("data.json", encoding="utf-8") as f:
 
 if not key:
     print("키 없음 - 분석 건너뜀")
+    raise SystemExit(0)
+
+now_kst = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9)))
+try:
+    _age = (now_kst - datetime.datetime.fromisoformat(payload.get("summary_at") or "")).days
+except (ValueError, TypeError):
+    _age = None
+if payload.get("summary") and _age is not None and _age < SUMMARY_DAYS \
+        and os.environ.get("SUMMARY_FORCE") != "1":
+    print("요약 재사용 - %s 작성(%d일 전), %d일마다 갱신" % (payload["summary_at"][:10], _age, SUMMARY_DAYS))
     raise SystemExit(0)
 
 prompt = (
@@ -109,6 +121,8 @@ for model in ("claude-sonnet-5", "claude-haiku-4-5-20251001"):
         [b.get("type") for b in res.get("content", []) if isinstance(b, dict)])
 
 payload["summary"] = summary or "분석 결과 없음"
+if summary and not summary.startswith(("분석 실패", "응답이 비었음")):   # 실패는 기록하지 않아 다음 실행에서 다시 쓴다
+    payload["summary_at"] = now_kst.isoformat(timespec="minutes")
 
 KST = datetime.timezone(datetime.timedelta(hours=9))
 day = datetime.datetime.now(KST).strftime("%Y-%m-%d")

@@ -200,9 +200,17 @@ def llama():
 
 sector_items = etf()
 rot, _ = rotation()                                  # 표 행은 쓰지 않음(미국주식 탭의 로테이션 카드가 rotation 객체로 그린다)
+try:                                                 # 요약은 analyze.py 가 격일로 다시 쓴다 → 그 사이에는 직전 것을 이어 쓴다
+    with open("data.json", encoding="utf-8") as f:
+        _old = json.load(f)
+    prev_summary, prev_summary_at = _old.get("summary") or "", _old.get("summary_at") or ""
+except Exception:
+    prev_summary, prev_summary_at = "", ""
+
 payload = {
     "updated": now.strftime("%Y-%m-%d %H:%M KST"),
-    "summary": "자동 수집 완료.",
+    "summary": prev_summary or "자동 수집 완료.",
+    "summary_at": prev_summary_at,
     "sections": [
         {"title": "섹터 ETF 가격", "note": "최근 5거래일 변화", "items": sector_items},
         {"title": "DeFiLlama 프로토콜 수익 랭킹", "note": "24시간 기준 상위 8", "items": llama()},

@@ -20,7 +20,8 @@ now = datetime.datetime.now(KST)
 TODAY = now.strftime("%Y-%m-%d")
 OUT, HIST, PORT = "opinion.json", "history/opinions.json", "portfolio.json"
 MODEL = "claude-opus-5-5"
-OUTLOOK_DAYS = 3                                     # 전망(1~12개월)은 매일 바뀌지 않는다 → 이 간격으로만 다시 검색
+OUTLOOK_DAYS = 5                                     # 전망(1~12개월)은 매일 바뀌지 않는다 → 이 간격으로만 다시 검색
+                                                     # (평일만 돌리므로 사실상 주 1회. 아래 shock() 조건이면 주기와 무관하게 갱신)
 OUTLOOK_USES = 18                                    # 한 번 검색할 때 쓰는 웹 검색 횟수
 UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
                     "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
@@ -1097,6 +1098,24 @@ def track(hist, cp):
     return rows
 
 
+def shock(D):
+    """전망을 다시 검색해야 할 시장 충격: VIX 30 이상이거나 1주 +5 이상 급등"""
+    for s in (D or {}).get("sections", []):
+        for i in s["items"] if s["title"].startswith("매크로") else []:
+            if "VIX" not in i["name"]:
+                continue
+            try:
+                lv = float(re.sub(r"[^0-9.]", "", i["value"]))
+                ch = float(re.sub(r"[^0-9.+-]", "", (i.get("change") or "0").split("(")[0]))
+            except ValueError:
+                return ""
+            if lv >= 30:
+                return "VIX %.1f" % lv
+            if ch >= 5:
+                return "VIX 1주 +%.1f" % ch
+    return ""
+
+
 def outlook_age(at):
     """직전 전망을 쓴 지 며칠 됐는지. 기록이 없으면 None"""
     try:
@@ -1152,11 +1171,14 @@ def main():
         print("[의견] ANTHROPIC_API_KEY 없음 — 이전 의견 유지")
     elif not fresh or force or not v2:
         try:
-            age = outlook_age(outlook_at)
-            # 포트폴리오·판단 기준이 바뀐 날과 주기가 된 날만 다시 검색한다(비용의 대부분이 이 웹 검색)
-            if view and age is not None and age < OUTLOOK_DAYS and not port_changed \
+            age, sk = outlook_age(outlook_at), shock(D)
+            # 주기가 됐거나, 포트폴리오·판단 기준이 바뀌었거나, 시장 충격이 있을 때만 다시 검색한다
+            # (비용의 대부분이 이 웹 검색)
+            if view and age is not None and age < OUTLOOK_DAYS and not port_changed and not sk \
                     and os.environ.get("OUTLOOK_FORCE") != "1":
                 print("[의견] 전망 재사용 — %s 작성(%d일 전), %d일마다 갱신" % (outlook_at[:10], age, OUTLOOK_DAYS))
+            elif sk and view and age is not None and age < OUTLOOK_DAYS:
+                print("[의견] 시장 충격(%s) — 주기 전이지만 전망 다시 검색" % sk)
             else:
                 try:
                     view, sources = outlook(earn_focus(D))
