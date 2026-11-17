@@ -1177,9 +1177,9 @@ def main():
             if view and age is not None and age < OUTLOOK_DAYS and not port_changed and not sk \
                     and os.environ.get("OUTLOOK_FORCE") != "1":
                 print("[의견] 전망 재사용 — %s 작성(%d일 전), %d일마다 갱신" % (outlook_at[:10], age, OUTLOOK_DAYS))
-            elif sk and view and age is not None and age < OUTLOOK_DAYS:
-                print("[의견] 시장 충격(%s) — 주기 전이지만 전망 다시 검색" % sk)
             else:
+                if sk and age is not None and age < OUTLOOK_DAYS:
+                    print("[의견] 시장 충격(%s) — 주기 전이지만 전망 다시 검색" % sk)
                 try:
                     view, sources = outlook(earn_focus(D))
                     outlook_at = now.isoformat(timespec="minutes")
