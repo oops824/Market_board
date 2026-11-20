@@ -1098,22 +1098,37 @@ def track(hist, cp):
     return rows
 
 
-def shock(D):
-    """전망을 다시 검색해야 할 시장 충격: VIX 30 이상이거나 1주 +5 이상 급등"""
+SHOCK_STEP = 5.0                                     # 직전 검색 뒤 VIX 가 이만큼 더 올라야 '새 충격'
+
+
+def vix_of(D):
+    """매크로 표의 VIX (지수, 1주 변화). 없으면 (None, None)"""
     for s in (D or {}).get("sections", []):
         for i in s["items"] if s["title"].startswith("매크로") else []:
             if "VIX" not in i["name"]:
                 continue
             try:
-                lv = float(re.sub(r"[^0-9.]", "", i["value"]))
-                ch = float(re.sub(r"[^0-9.+-]", "", (i.get("change") or "0").split("(")[0]))
+                return (float(re.sub(r"[^0-9.]", "", i["value"])),
+                        float(re.sub(r"[^0-9.+-]", "", (i.get("change") or "0").split("(")[0])))
             except ValueError:
-                return ""
-            if lv >= 30:
-                return "VIX %.1f" % lv
-            if ch >= 5:
-                return "VIX 1주 +%.1f" % ch
-    return ""
+                return None, None
+    return None, None
+
+
+def shock(D, last_vix=None):
+    """주기를 무시하고 다시 검색할 시장 충격.
+
+    VIX 30 이상이거나 1주 +5 이상 급등이면 충격이다. 다만 1주 변화는 한 번 급등하면 닷새 내내 높게 남아
+    같은 급등으로 매일 재검색되므로, 직전 검색 때보다 VIX 가 SHOCK_STEP 이상 더 올랐을 때만 '새 충격'으로 본다.
+    """
+    lv, ch = vix_of(D)
+    if lv is None:
+        return ""
+    if not (lv >= 30 or ch >= 5):
+        return ""
+    if last_vix is not None and lv < last_vix + SHOCK_STEP:
+        return ""                                    # 이미 반영한 급등 — 다시 검색하지 않는다
+    return "VIX %.1f%s" % (lv, "" if last_vix is None else " (직전 검색 때 %.1f)" % last_vix)
 
 
 def outlook_age(at):
@@ -1158,7 +1173,7 @@ def main():
     sig = (pf or {}).get("sig", "") + PROFILE                 # 포트폴리오나 투자 성향이 바뀌면 중장기를 다시 쓴다
     port_changed = long_port != sig
     view, sources = prev.get("outlook") or "", prev.get("sources") or []
-    outlook_at = prev.get("outlook_at") or ""
+    outlook_at, outlook_vix = prev.get("outlook_at") or "", prev.get("outlook_vix")
     long_log, prev_short = prev.get("long_log") or [], prev.get("prev_short")
     watch_meta = prev.get("watch_meta") or {}
     rotation = prev.get("rotation")
@@ -1171,7 +1186,7 @@ def main():
         print("[의견] ANTHROPIC_API_KEY 없음 — 이전 의견 유지")
     elif not fresh or force or not v2:
         try:
-            age, sk = outlook_age(outlook_at), shock(D)
+            age, sk = outlook_age(outlook_at), shock(D, outlook_vix)
             # 주기가 됐거나, 포트폴리오·판단 기준이 바뀌었거나, 시장 충격이 있을 때만 다시 검색한다
             # (비용의 대부분이 이 웹 검색)
             if view and age is not None and age < OUTLOOK_DAYS and not port_changed and not sk \
@@ -1182,7 +1197,7 @@ def main():
                     print("[의견] 시장 충격(%s) — 주기 전이지만 전망 다시 검색" % sk)
                 try:
                     view, sources = outlook(earn_focus(D))
-                    outlook_at = now.isoformat(timespec="minutes")
+                    outlook_at, outlook_vix = now.isoformat(timespec="minutes"), vix_of(D)[0]
                     print("[의견] 뉴스·전문가 전망 %d자, 출처 %d개" % (len(view), len(sources)))
                 except Exception as e:
                     print("[의견] 전망 검색 실패 — 직전 전망 사용:", str(e)[:200])
@@ -1248,7 +1263,8 @@ def main():
     out = {"version": 2, "generated": generated, "model": model, "opinion": op, "watch_meta": watch_meta,
            "watch_state": wstate, "rotation": rotation, "oversold": oversold_map,
            "long_since": long_since, "long_check": long_check, "long_log": long_log, "long_port": long_port,
-           "prev_short": prev_short, "outlook": view, "outlook_at": outlook_at, "sources": sources,
+           "prev_short": prev_short, "outlook": view, "outlook_at": outlook_at,
+           "outlook_vix": outlook_vix, "sources": sources,
            "portfolio": pf, "track": past, "fedwatch": (D or {}).get("fedwatch"),
            "earnings": (D or {}).get("earnings"),
            "asof": {"지표": (D or {}).get("updated"), "코인": (C or {}).get("updated"),
