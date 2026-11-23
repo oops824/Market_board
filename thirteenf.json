@@ -5876,22 +5876,7 @@
           "putcall": null,
           "shares_prev": 155000,
           "shares_chg_pct": 252.2,
-          "ticker": "ACA",
-          "px_now": 149.15,
-          "px_period": 146.15,
-          "chg_since": 2.1,
-          "tags": [
-            {
-              "t": "RSI 과매수 82",
-              "c": "warn",
-              "p": 7
-            },
-            {
-              "t": "추세 상승",
-              "c": "up",
-              "p": 5
-            }
-          ]
+          "ticker": "ACA"
         },
         {
           "name": "DATADOG INC",
@@ -19596,72 +19581,82 @@
   ],
   "news": [
     {
-      "title": "주식시장 붕괴가 오면 워런 버핏이 말하는 투자자들이 반드시 해야 할 첫 번째 조치",
-      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxOcDZEcElOUEQwWnhDamh2ZWdRd0VqWUI3U0dROEtaUDNkM0c3dktBbkxhSXNvVVBSWnJtZEdEel9YRnd1RVVrN3BtRGsxOE50eHRKQWl5VmFJMmdvcEtSMm96MUlrQlpWSzJfMC1WeW1IZWhhS1NPVkRzS0VEczd0b3J4c1R4RUc3NW9MY0owT3dmQmZJYk5kcHhSM3Bldw?oc=5",
+      "title": "워런 버핏이 비트코인에 대해 말한 것과 그의 주장이 맞았는지 여부",
+      "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxObllseEZIOGUyZ2tIWndBYnNGZ2d0Uk5kWXJMc0FYTXh1emNvSmMyME01NmxrSFNtX0NFSHozREozQm5jNDBCUUdJS21xdGUyZTZselgzMkNXdHRQT0M3eXJNYVRlbEpOdTZIYTZHMVhqMFVDcDg4OFJJTmtTQUtBUVlZRWJGam9lTy0xY0R6d0FzbnlxZENab2JjSzctMnQxdHc?oc=5",
       "source": "Yahoo Finance",
-      "published": "2026-11-22T09:50:00+09:00",
+      "published": "2026-11-23T03:08:00+09:00",
+      "lang": "en",
+      "person": "버크셔 해서웨이 (버핏)",
+      "category": "value",
+      "category_label": "가치·행동주의",
+      "orig": "What Warren Buffett Has Said About Bitcoin and Whether He Was Right",
+      "real": "https://finance.yahoo.com/markets/crypto/articles/warren-buffett-said-bitcoin-whether-180807646.html",
+      "ko": {
+        "sum": "워렌 버핏이 2018년 비트코인을 '쥐약 제곱'이라 비판했으나 이후 가격은 크게 상승함. 2018년 5월 발언 당일 종가 $9,769에서 현재 $60,801로 522.4% 상승, 같은 기간 버크셔 B주는 189.3% 상승에 그쳐 비트코인에 뒤처짐. 다만 버핏이 '전 세계 비트코인을 다 줘도 $25를 안 내겠다'고 한 시점 이후로는 버크셔가 79%, 비트코인이 61% 상승해 버크셔가 앞섬. 비트코인은 2018년 발언 후 67% 폭락하는 등 버핏이 지적한 변동성도 현실화됨. 현재 비트코인은 사상 최고치 $126,080 대비 51.8% 낮은 $60,801에 거래, 올해 들어 31.5% 하락, 최근 한 달간 26.1% 하락함.",
+        "quotes": [
+          "아마도 쥐약 제곱일 것이다 — 워렌 버핏",
+          "역겹고 문명의 이익에 반하는 것 — 찰리 멍거"
+        ]
+      }
+    },
+    {
+      "title": "워런 버핏이 선호하는 주식 유형은 인내심 있는 투자자에게 완벽하다",
+      "url": "https://news.google.com/rss/articles/CBMitgFBVV95cUxNanF0b1N1Tnc2SVk0cy1qT09qN1M2QnZxSGVpMHY1NmdxZHVQXzk5c2hyRXVGMXp4ZXh0Z0x4RXlhUXVvZ0NNTmpzSEd0V29PUUJjSVNoNnNFNlJEcG8yNFR5bFAxRmJzejhOdWhVTjllclJwMmtGNnlGMVU1Z0RVTVlEMDJOcjRTUGE1VndHdWRqa0hkOHZKRTJ1X2JfMVJUS0Y3UzUwRXZIbU9lRnF6bGhma0NOZw?oc=5",
+      "source": "24/7 Wall St.",
+      "published": "2026-11-22T22:33:00+09:00",
+      "lang": "en",
+      "person": "버크셔 해서웨이 (버핏)",
+      "category": "value",
+      "category_label": "가치·행동주의",
+      "orig": "Warren Buffett’s Favorite Type of Stock Is Perfect for Patient Investors",
+      "real": "https://247wallst.com/investing/2026/11/22/warren-buffetts-favorite-type-of-stock-is-perfect-for-patient-investors/",
+      "ko": {
+        "sum": "버크셔 해서웨이의 11월 16일 공시된 3분기 13F에서 코카콜라, 아메리칸 익스프레스, 무디스 보유 사실이 확인되며 버핏의 장기 보유 철학이 재조명됨. 코카콜라는 3분기 매출 $13.38B(전년比 7.4%↑), 영업이익률 32.9%로 개선되며 1988년부터 보유 중. 아메리칸 익스프레스는 3분기 조정 EPS $4.68로 예상치 $4.51 상회, 1991년부터 보유. 무디스는 3분기 조정 EPS $4.14로 예상치 $4.25에 못 미쳤으나 투자등급 매출은 18% 증가. 버핏은 멍거의 영향으로 저가 매수에서 우량 기업 장기 보유 전략으로 전환했음을 강조.",
+        "quotes": [
+          "훌륭한 사업을 적당한 가격에 사고 싶은 것이다 — 찰리 멍거(투자자 팟캐스트 진행자 요약)",
+          "오늘날 그는 10년 이상 보유한 종목이 10개뿐이다 — 이안 카셀"
+        ]
+      }
+    },
+    {
+      "title": "워런 버핏이 1986년 농장을 사들인 후 2번만 방문했다. 66세이고 IRA에 $700,000, 월 사회보장 $2,900이 있는 투자자를 위한 그의 조언",
+      "url": "https://news.google.com/rss/articles/CBMiogJBVV95cUxObG5YY0pwa0pYQUJHNmdzbzlRcnJ5UDVISEZKM3VHV2lPZzNGTGJrU1dBMDd2VXhSUmwtdkVfaWl5WEh0cWttR3gwejRyQ0J1STdYYXBMclVvUGw4blZudG50ejFqcnlmUzVodmhFTmdRaFZERHBISTlDVkFiUEtRc1VfbWNLbFJXSGU5NGw0ZkozYXZEWWVhTUJMeW1XSVp2UWxySFdpanBLQzNxSUV5WDkxSUJJSmVHdml6NFp0MHluTzhURDlJa21fRHFxbVhIZEE1a3NkeF94VWs5T09rRHhGeGUxYzJkRl9jR09ReWc1LVpBcUxUemFELTBGN1YwOVNteVdFZjJNYzBJcDd3T2xRTmdmS19tc2lDektTb0JNQQ?oc=5",
+      "source": "24/7 Wall St.",
+      "published": "2026-11-22T11:47:00+09:00",
+      "lang": "en",
+      "person": "버크셔 해서웨이 (버핏)",
+      "category": "value",
+      "category_label": "가치·행동주의",
+      "orig": "Warren Buffett Bought a Farm in 1986 and Has Visited It Twice. Here's His Rule for a 66-Year-Old With $700,000 in an IRA and $2,900 a Month in Social Security",
+      "real": "https://247wallst.com/investing/2026/11/21/warren-buffett-bought-a-farm-in-1986-and-has-visited-it-twice-heres-his-rule-for-a-66-year-old-with-700000-in-an-ira-and-2900-a-month-in-social-security/",
+      "ko": {
+        "sum": "워렌 버핏이 1986년 $280,000에 매입한 400에이커 농장을 28년간 두 차례만 방문한 일화를 소개, '주식도 농장처럼 투자하라'는 원칙을 강조함. 버핏은 아내 신탁에 자산의 10%는 단기 국채, 90%는 저비용 S&P 500 인덱스펀드에 투자하라고 지시함. 이를 은퇴자금 $700,000 IRA와 월 $2,900 사회보장연금을 받는 66세 은퇴자에게 적용, 배당과 이자만으로 연 $9,770(월 $814)의 수익 발생함. 인출률에 따라 국채 완충자금이 버틸 수 있는 기간이 달라지며, 2008년 금융위기 당시 S&P 500이 고점 대비 56.5% 하락했던 사례를 검증 기준으로 제시함. 2026년 기준 세금 계산도 함께 다룸.",
+        "quotes": [
+          "28년이 지난 지금, 그 농장은 수익이 세 배로 늘었고 내가 지불한 금액의 다섯 배 이상의 가치를 지니게 되었다 — 워렌 버핏",
+          "주식도 농장처럼 투자하라 — 워렌 버핏"
+        ]
+      }
+    },
+    {
+      "title": "주식시장 붕괴가 올 경우 워런 버핏이 말하는 모든 투자자가 해야 할 최우선 조치",
+      "url": "https://news.google.com/rss/articles/CBMilAJBVV95cUxQcHNZeVR4bjJfd3hObXFYb1ZrYmF0elZ0dk1WMFRJMDNSd0tjcTRQUWdWWERPMVdCYVFRTjNXRUo1dXlmbW5QbjlKem5BSGFFdHZpZkU1T1FZcFBIcFdKdWRKSkJGTldnc1NVODQzVmx1TW0tSk5TRTdvOGZBSl9sc01ZWUx0VDl4MjlIZ2ZvTlZqZ2I3aFN1TVR6VHk5NjRhNHdtLTlFeGtUcFBnM2VjNGNQVl9tSmNLWWVReEE1RS1jamd1UU1aaEZHT0hqRXRSYTh0b3BoV1lmdVplMHFEWC1kQXpoMXhfRHk3ejhMQW1SSFNiME4zcnV0Sl9aY3FjVTB6OUhYcGFtTUlTWHhOb0ZKOV8?oc=5",
+      "source": "The Globe and Mail",
+      "published": "2026-11-22T10:55:00+09:00",
       "lang": "en",
       "person": "버크셔 해서웨이 (버핏)",
       "category": "value",
       "category_label": "가치·행동주의",
       "orig": "If a Stock Market Crash Is Coming, Warren Buffett Says This Is the No. 1 Move All Investors Should Make",
-      "real": "https://finance.yahoo.com/markets/stocks/articles/stock-market-crash-coming-warren-005002440.html",
+      "real": "https://www.theglobeandmail.com/investing/markets/stocks/NVDA/pressreleases/8953820/if-a-stock-market-crash-is-coming-warren-buffett-says-this-is-the-no-1-move-all-investors-should-make/",
       "ko": {
-        "sum": "S&P 500이 2026년 20여 차례 사상 최고치를 기록했으나 최근 변동성 확대로 나스닥은 고점 대비 약 12% 하락해 조정장에 진입함. 워런 버핏이 1999년 포춘 기고에서 기술 발전이 사회를 바꿔도 반드시 좋은 투자처가 되는 것은 아니라고 경고함. 과거 20년간 항공사 129곳이 파산한 사례를 들어 혁신 산업도 투자자에게 보상을 주지 못할 수 있음을 설명함. 버핏은 산업이 사회에 미칠 영향력보다 개별 기업의 경쟁우위와 그 지속성을 판단하는 것이 투자의 핵심이라고 강조함. AI도 혁신 기술이지만 모든 AI 관련주가 좋은 투자처는 아니며, 다음 하락장에서 일부 종목은 부진할 것으로 전망됨. 투자자들은 탄탄한 펀더멘털과 경쟁우위를 갖춘 다양한 우량주에 분산 투자하는 것이 최선의 전략이라는 조언이 제시됨.",
+        "sum": "2026년 S&P 500이 수십 차례 사상 최고치를 경신했으나 최근 나스닥 종합지수는 고점 대비 약 12% 하락하며 조정장에 진입함. 워렌 버핏이 1999년 닷컴버블 붕괴 직전 포춘지 기고문에서 신기술이 사회를 변화시킨다고 해서 반드시 좋은 투자처는 아니라고 경고했던 내용을 재조명함. 당시 항공업계 사례로 과거 20년간 129개 항공사가 파산했음을 지적함. AI 기술도 혁신적이지만 모든 AI 관련주가 좋은 투자처는 아니며, 향후 하락장에서 일부 종목은 회복하지 못할 것으로 전망함. 닷컴버블 붕괴 후 S&P 500은 2000~2002년 거의 반토막 났으나 이후 20년간 200% 이상 상승한 사례를 근거로 우량주 중심 분산투자를 조언함.",
         "quotes": [
-          "\"투자의 핵심은 어떤 산업이 사회에 얼마나 영향을 미칠지, 혹은 얼마나 성장할지를 평가하는 것이 아니라, 개별 기업의 경쟁우위와 무엇보다 그 우위의 지속성을 판단하는 것이다.\" — 워런 버핏"
+          "투자의 핵심은 어떤 산업이 사회에 얼마나 영향을 미칠지, 얼마나 성장할지를 평가하는 것이 아니라, 특정 기업의 경쟁우위와 그 우위의 지속성을 판단하는 것이다 — 워렌 버핏"
         ]
       }
     },
     {
-      "title": "찰리 뮤저가 파트너 워런 버핏이 1,500억 달러 더 부자인 3가지 이유를 말했다가 알베르트 아인슈타인을 가난하다고 불렀다",
-      "url": "https://news.google.com/rss/articles/CBMi2wFBVV95cUxPN2tlb3g1cTRQdjBCMDBQRV8zUTRBZXR2MHdqTE1zcmxiM0x0WDdRSWlzMmo3dmpKWDFJRGlTeUg5bTgtYklkNE5EekxnMGlsTnY5OFpVbnJFQUppZXJ3QjFsTVZUdHZpNjB5UEVFQ3FnVUZkVEZsMkxGOUxZdWdrSW9zaHhUSUo1UWk3VHRzY0gyZFVWSEZQM0pXTzFNb3hqVFBlM1ZBN0EtNlI2a21iamlrbG5IQ1cxblkzdFhFeXkxMzJORjJnRTQ4WlBHMFZ2aDktMkNoaEI4TkU?oc=5",
-      "source": "TheStreet",
-      "published": "2026-11-22T08:17:00+09:00",
-      "lang": "en",
-      "person": "버크셔 해서웨이 (버핏)",
-      "category": "value",
-      "category_label": "가치·행동주의",
-      "orig": "Charlie Munger had 3 reasons partner Warren Buffett was $150 billion richer — then called Albert Einstein poor",
-      "real": "https://www.thestreet.com/investing/charlie-munger-had-3-reasons-partner-warren-buffett-was-150-billion-richer-then-called-albert-einstein-poor"
-    },
-    {
-      "title": "워런 버핏 법칙을 만나보세요. 지금 1,000달러로 이 소비자주를 사야 하는 이유",
-      "url": "https://news.google.com/rss/articles/CBMiggJBVV95cUxQS2Q0VXpLT3NDMEtDU2VTdkI1c2VEMnk5ZGNIT2lQOHdZMjBmRFZJQ3UxTG16OUpyUndtLUdFZzZpenk1M19ZQ1ZsVDdFS21POTB2MEpad0ZGS0FuclFCb19sblV4UmZQMVNXNF9wSENFMW5xMjhjaE11Vm9RMnpwUjMzdW42VXRFS3VtRTJ3bjlkcU1XVXNnNFFQSDY5eVdNcnY2TUM3ZzVzeG5LckxBclZNZ3Y3QXF3a0JKUzZtMU5aWUozRk9SZlBxWjJLckc3WktrREZSTWlkTDJFd25TQURnaVA3aGROdkg4YnM5ZnBYQWlGeTc4TndlRG9BZHNydUE?oc=5",
-      "source": "The Globe and Mail",
-      "published": "2026-11-22T04:48:00+09:00",
-      "lang": "en",
-      "person": "버크셔 해서웨이 (버핏)",
-      "category": "value",
-      "category_label": "가치·행동주의",
-      "orig": "Meet the Warren Buffett Rule That Makes This Consumer Stock a Buy With $1,000 Right Now",
-      "real": "https://www.theglobeandmail.com/investing/markets/markets-news/Motley%20Fool/8952759/meet-the-warren-buffett-rule-that-makes-this-consumer-stock-a-buy-with-1-000-right-now/",
-      "ko": {
-        "sum": "워런 버핏의 '훌륭한 기업을 적정 가격에 사는 것이 더 낫다'는 원칙을 트랙터 서플라이(Tractor Supply) 투자에 적용함. 2026년 실적 부진으로 7월 가이던스를 하향했으나, 생활필수품 매출은 견조해 9월 들어 동일점포 매출이 플러스로 전환됨. 로열티 회원(Neighbor's Club)이 전체 매출의 약 82%를 차지하며 강력한 고객 충성도를 보임. 관세 환급금으로 약 50개 생필품 가격 인하, Freshpet 냉장고 약 1,000개 매장 확대, Uber와의 배송 제휴 등 신규 성장 전략을 추진함. 손실을 내던 Petsense 매장 74곳 폐점 등 구조조정도 병행함. 현재 주가는 52주 최고가 대비 약 30% 하락했고 주가수익비율은 약 21배이며, $1,000로 약 25주 매수 가능함.",
-        "quotes": [
-          "\"고금리와 주택 이동성 감소가 주택 개선 및 대형 프로젝트 수요를 짓누르고 있다.\" — Hal Lawton (CEO)",
-          "\"트랙터 서플라이는 상당한 경쟁우위를 갖춘 차별화된 사업으로 남아 있다.\" — Kurt Barton (CFO)"
-        ]
-      }
-    },
-    {
-      "title": "워런 버핏은 장기 투자자에게 주식이 채권보다 낫다고 말했다. 역사는 그가 옳았다는 것을 보여준다",
-      "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxPMkk5aFVkNzZpUFlqcVFMeGhKWUhoMVZfTC00SEVTU3g5LXpOWUp6U1ZzR3lZa1d6UFlQaDJ2QVU2dFA5NklmYTJQUFlLOVV1U2JxSTVjc3RsRy1LbDVkVWJ4eXJ3Sk9iQ2sxRFNMVG4zT3p6bjFTMnRSQkhzUGZRRTVMM3hqRzNhbF94RW5UeWVmZ0UtZ2RCckpUa0pxNHc?oc=5",
-      "source": "Yahoo Finance",
-      "published": "2026-11-22T03:05:00+09:00",
-      "lang": "en",
-      "person": "버크셔 해서웨이 (버핏)",
-      "category": "value",
-      "category_label": "가치·행동주의",
-      "orig": "Warren Buffett Said Stocks Are Better Than Bonds for Long-Term Investors. History Shows He Was Right.",
-      "real": "https://finance.yahoo.com/markets/stocks/articles/warren-buffett-said-stocks-better-180502193.html",
-      "ko": {
-        "sum": "워런 버핏이 장기 투자자에게는 채권보다 주식이 낫다는 견해를 밝힘. 2017년 버크셔 해서웨이 주주서한에서 채권 투자 경험담을 소개함. 2008년 시작된 프로테제 파트너스와의 10년 내기에서 헤지펀드 운용사 5곳 모두 S&P 500 수익률을 넘지 못함. 내기 자금 $1 million을 마련하기 위해 양측이 액면가의 약 64%인 $318,250짜리 제로쿠폰 미국 국채를 매입했고, 10년 후 각각 $500,000(총 $1 million)이 될 예정이었음. 2012년 채권 수익률이 매입 당시 연 4.56%에서 연 0.88%로 급락하자, 버핏과 프로테제는 국채를 매도하고 버크셔 해서웨이 B주로 자금을 전환함. 버핏은 버크셔 주식이 0.88%보다 훨씬 높은 평균 연수익률을 낼 것이라 확신함.",
-        "quotes": []
-      }
-    },
-    {
-      "title": "칼 아이칸의 13F 보고서 추적 - Q3 2026 업데이트 (NASDAQ:IEP)",
+      "title": "칼 아이칸의 13F 리포트 추적 – Q3 2026 업데이트 (NASDAQ:IEP)",
       "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxOMzF5VS12a0l4bnhST04yRDdLN1JZZWJsOU5zT01UNXlqcVU3cHVETm9tTmdoU2plODFlanFnTW8tSmdqT2hOcU9sSF9Sdm1hRDNDb2JRQklXdWh1cVJwZUI5ZmpoVHRLcWRFUTNQdTFDc3ZDLTlNeUNGVUg3eE1NRzRHTDkyX3pvS2VEX0d4cjc?oc=5",
       "source": "Seeking Alpha",
       "published": "2026-11-21T12:26:00+09:00",
@@ -19673,7 +19668,7 @@
       "real": "https://seekingalpha.com/article/4970756-tracking-carl-icahns-13f-report-q3-2026-update"
     },
     {
-      "title": "아이칸이 텍사스에 7,900만 달러 배상책임 분쟁에서 벗어날 것을 요청",
+      "title": "아이칸, 텍사스에 $79백만 손해배상 소송 철회 요청",
       "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxPcTJCUC1oZ3RRRXNEdjJ5RENKOEpVWDc2VEdhaWNNN3hoTVltaFFaMVVoakt3LXcwYkhXTTZSZ0FYQzdQOGRYajZEVmN0YXd1d3VZb01Vdlg4eXM3LTFlQkx3Zks4QnA3SXNYX001bjlqOTE2Y1l0eVp5ajFPNVRJR25HOHdwTVhxTERXV1Izbjc0YTZrQ2pydWRiNlpLbWNDZWFyQTZqWQ?oc=5",
       "source": "Bloomberg Law News",
       "published": "2026-11-18T07:31:00+09:00",
@@ -19689,7 +19684,7 @@
       }
     },
     {
-      "title": "주간 요약: 아이칸이 지분을 줄이다, AI 도구가 향수 제조업체에 더 많은 시간을 주다",
+      "title": "주간 요약: 아이칸 지분 축소 및 AI 도구로 향수 조향사 시간 확보",
       "url": "https://news.google.com/rss/articles/CBMiyAFBVV95cUxQTXJyUmxRZk55dGNXOFNOQW9WM2gwX1BNVEYxa2VLRkQyNU5tQlY1ek9kS3RnTVFNWGY3d1VfMkRIOUViTGpmcnZSV3E2VzJZTzVGdjlldndPM2NDMkFtMnBBLU83RXJ6VllaYW1vcWxfT1Q0WjV4Zm02UGdhVGRiTnJHOTJpczV2Nm1BUXBHUVYxMzVOX0xYQU4wQmR2d0sxRWUwdFJFZmZZQmRMNVRGNTNCQklYUS11ZXAtcVlxRVk5TDFUSS1MZw?oc=5",
       "source": "TradingView",
       "published": "2026-11-16T20:00:00+09:00",
@@ -19705,82 +19700,92 @@
       }
     },
     {
-      "title": "칼 아이칸이 국제향료향수사의 주식 지분을 300만 주로 감소",
-      "url": "https://news.google.com/rss/articles/CBMi6AFBVV95cUxPOU1QMXd4b1ZtVmRUNzdvZzh1NnZsbk51d0tzbHZnSUpWc0NnU2Q5YlFUbE9URzFPTkRMNk1uN0kzNW95YVpIbjNFSXpLbFEyb0tpVnJLdC1neGRNR3hDYXpORGY5dEZPSHZRV2haSlFtNXozc2UtYVJMcm9sOVNiaFc0NWVHel80UmVTQkp3OFlmLUF1UnV6SW9hdVZhRTJfNVlPbDN1TmxhUlFMTFRRSWY4MTlIZ1I3WFVYWjJRUzBYd3dXS2tlbTNEUnI1QUtBN0d5eHBacWFvZlpMN1N5OXVjTF9rRzdx?oc=5",
-      "source": "TradingView",
-      "published": "2026-11-14T06:46:00+09:00",
+      "title": "억만장자 칼 아이칸, 센투리 주식 $30.1백만 매각",
+      "url": "https://news.google.com/rss/articles/CBMiwwFBVV95cUxORWdISnlOc1hIbnFMRlRkNEhnSUsxUlVnOFRXd0RCNmM0MmJldFF1YmM0eTM5SWZfUTlfSHU5ajJ2c3VOSGNGaHV5NXhRQ05hRXkxUjc3SFgzcldrSExaYm1WWWphQXk4RVdaOUZXdExkNDhMbHpJLVF2LUFKQVpGTXFEendTUUZLUGg5Vk1TZTFJWFI5c2hpQ2Z2REQ3ekFuc1BRNFJEMUhHQlh1RFhOQ1dxTlRkU2VtY2FzeG9qM3RqUU0?oc=5",
+      "source": "Billionaires.Africa",
+      "published": "2026-11-14T02:55:00+09:00",
       "lang": "en",
       "person": "아이칸 (칼 아이칸)",
       "category": "value",
       "category_label": "가치·행동주의",
-      "orig": "Carl Icahn Cuts Share Stake In International Flavors And Fragrances To 3 Mln Shares",
-      "real": "https://www.tradingview.com/news/reuters.com,2026:newsml_FWN46U2E7:0-carl-icahn-cuts-share-stake-in-international-flavors-and-fragrances-to-3-mln-shares/"
-    },
-    {
-      "title": "빌 애크먼이 대부분의 미국인이 들어본 적 없는 회사에 10억 달러를 베팅했다고 공개. 그 이유는 다음과 같다",
-      "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxQbFMzSkhhdmgwWVdOTzFCTGdKWEV5RmRVOUU1RGVWal85Q3NVZmxCT3lvM1dUVTFzSmVzb1dBMDNCLTBnMjhFdS1kYWpxRnBkZmlrVlRkQWU3SVFFM281TXRwdmstQ2ROaWxZOW1IUUZsTUo2MFRMWV90NWZBQmlkT1RjcG5MOUg4TGdKeXUybkQ5N3NyUk5n?oc=5",
-      "source": "Yahoo Finance",
-      "published": "2026-11-22T04:00:00+09:00",
-      "lang": "en",
-      "person": "퍼싱스퀘어 (애크먼)",
-      "category": "value",
-      "category_label": "가치·행동주의",
-      "orig": "Bill Ackman Just Revealed A $1 Billion Bet On A Company Most Americans Have Never Heard Of. Here's Why It Matters",
-      "real": "https://finance.yahoo.com/markets/stocks/articles/bill-ackman-just-revealed-1-190007836.html",
+      "orig": "Billionaire Carl Icahn sells $30.1m of Centuri stock",
+      "real": "https://www.billionaires.africa/2026/11/13/american-billionaire-carl-icahn-sells-30-1-million-of-centuri-shares-in-four-days/",
       "ko": {
-        "sum": "빌 애크먼의 퍼싱스퀘어캐피털매니지먼트가 인터컨티넨탈익스체인지(ICE)에 $1 billion 규모 투자를 공시함. 11월 16일 규제 공시에 따르면 9월 30일 기준 6,635,899주를 보유, 미국 주식 포트폴리오의 약 3.3%를 차지함. ICE는 뉴욕증권거래소를 보유하며 거래 수수료 외에도 금융데이터 판매, 선물·옵션 시장 운영, 모기지 대출기관 대상 기술 서비스 등 다양한 수익원을 보유함. 3분기 실적 기준 ICE는 순매출 $2.8 billion을 기록했고 이 중 $1.4 billion이 데이터 구독·기술 서비스 등 경상 수익임. 퍼싱스퀘어는 소수 기업에 집중 투자하는 전략을 쓰며 전체 약 $30.8 billion 증권 중 ICE가 $1 billion 이상을 차지함. 해당 투자는 이미 8월 주주서한에서 신규 보유 종목으로 언급된 바 있음.",
+        "sum": "억만장자 칼 아이칸이 나흘간 센츄리 홀딩스(Centuri Holdings) 주식 약 $30.1 million어치를 매도함. 11월 9일부터 12일까지 총 1,500,433주를 매도했으며 가격은 주당 $21에서 $17.50 사이였음. 매도 후 아이칸의 보유 지분은 12,835,611주로 줄어 회사 지분의 약 13%를 차지함, 11월 12일 종가 기준 잔여 지분 가치는 약 $285.7 million임. 아이칸은 작년 11월 이 지분을 추가 매입했으나 이번에 매도자로 전환함. 센츄리는 미국과 캐나다에서 가스·전력 인프라를 건설·유지보수하는 회사로 사우스웨스트 가스 홀딩스에서 분사해 2024년 4월 뉴욕증권거래소에 상장됨.",
         "quotes": []
       }
     },
     {
-      "title": "빌 애크먼이 알콘과 인터컨티넨털 익스체인지에서 20억 달러 규모의 신규 포지션을 개설",
-      "url": "https://news.google.com/rss/articles/CBMizwFBVV95cUxNbURZY1ctRjgxNVl6NTdXWUdSNWVCaTJRaXBoQjRQLTR5OVF2OW5mbHdkaDhBQnJqV2pDTC1ueEhBX3pQVzJydFVHQW5XbVJtcjdJaEZjN2E0ZHZFbmo5TU9aMnVhbEZ3UzdaWWpDUVZ1SEk3T1NLNC0wYko5UTM2WjJuVkVWV0xuNGdBZVQ4WVliRlI0SnpSclNjVEFQcEtmbEpIRWJDeFdlTXFwemhaMTdpa0Vyd2JBMEpHdDE2eUNPeW92bkxIS1M5aGFBbEk?oc=5",
-      "source": "24/7 Wall St.",
-      "published": "2026-11-22T00:59:00+09:00",
+      "title": "또 다른 연준 금리 인상이 정책 실수일 수 있을까? 빌 애크만은 3% 인플레이션 목표가 더 현실적이라고 말한다",
+      "url": "https://news.google.com/rss/articles/CBMi9AFBVV95cUxPWjN3STdsdWhOUUVmVFhtNC1tWWdfSWRlZHBFNzlMS3gwTDN5RS1WdlZhS2U3M25yY1NlNlhzRXdjdUVsVzRIT0dWZ3hkS0JHZEppVjVjNUZ1WWE5UWl2WHZjaE9hM1o3X3ZZSkRQdjJnZnpMczduaW40ejVjZU5fNFZNdk5VNm9EbGctQzhVZk1FX3A2RWk5d0JRZG9rODF5bXY4U19GRHY1RGZ4eFQyNkxFSV9KdmpPOUloRlFWR0FUb2hYY2ZfVURSUnE1NVBRV3lXeU1kX1F2MTNydk05ODgzQzRCNTZQR0xJaTYySkM2dWs0?oc=5",
+      "source": "TradingView",
+      "published": "2026-11-23T10:41:00+09:00",
       "lang": "en",
       "person": "퍼싱스퀘어 (애크먼)",
       "category": "value",
       "category_label": "가치·행동주의",
-      "orig": "Bill Ackman Opened About $2 Billion in New Positions in Alcon and Intercontinental Exchange",
-      "real": "https://247wallst.com/investing/2026/11/21/bill-ackman-opened-about-2-billion-in-new-positions-in-alcon-and-intercontinental-exchange/",
+      "orig": "Could Another Fed Rate Hike Be A Policy Mistake? Bill Ackman Says 3% Inflation Target Is More Realistic",
+      "real": "https://www.tradingview.com/news/stocktwits:0625239a5094b:0-could-another-fed-rate-hike-be-a-policy-mistake-bill-ackman-says-3-inflation-target-is-more-realistic/",
       "ko": {
-        "sum": "빌 애크먼의 퍼싱스퀘어가 2026년 3분기에 인터컨티넨탈익스체인지(ICE)와 알콘(Alcon)에 각각 약 $1.01 billion, $954 million 규모의 신규 포지션을 개설함(9월 30일 기준, 11월 중순 공시). 동시에 마이크로소프트 보유 주식 수는 6,206,730주에서 4,064,779주로 줄었으나, 애크먼은 7월에 행사가 약 $310, 만기 2.5년짜리 심내가격(in-the-money) 장외 마이크로소프트 옵션 200만 계약을 매입해 여전히 강세 입장이라고 밝힘. ICE는 3분기 조정 EPS $2.02(예상 $1.97 상회), 순매출 20.7% 증가한 $2.765 billion을 기록했고 연초 이후 조정 잉여현금흐름이 사상 최대인 $3.7 billion에 달함. 알콘은 3분기 조정 EPS $0.91로 예상치 $0.89를 상회했으나 매출 $2.717 billion은 예상을 밑돌았고, 총마진은 56.3%에서 59.7%로 개선됨(일회성 관세 환급 $58 million 포함). 두 종목 모두 변동성이 낮은(베타 ICE 0.844, 알콘 0.716) 현금창출형 종목으로, ICE는 안정적 현금흐름, 알콘은 마진 회복 스토리로 평가됨.",
+        "sum": "연준이 12월 올해 마지막 통화정책 회의를 앞둔 가운데 CME FedWatch 기준 25bp 금리 인상 가능성이 93.2%로 시장이 압도적으로 인상을 예상함. 빌 애크먼은 현재 상황에서 금리 인상이 정책 실수가 될 것이라며, 스페이스X가 IPO 당시 6% 미만이던 무담보채 금리 대비 최근 담보부 채권을 8.259% 금리로 조달한 사례를 들어 자본비용 상승을 지적함. 애크먼은 연준의 2% 물가목표가 지정학적 리스크, 탈세계화, 관세, AI 인프라 투자 등 변화된 환경을 반영하지 못한 '잘못된' 목표이며 3%가 더 현실적이라고 주장함. 경제학자 제임스 쏜과 피터 쉬프도 애크먼의 입장을 지지하며 연준의 정책 실수 가능성을 경고함. SPY는 지난주 8.5% 넘게 급락한 뒤 일요일 밤 1% 이상 반등했고, 소매 투자심리는 '약세'로 나타남.",
         "quotes": [
-          "\"핵심 사업의 꾸준한 복리 성장과 시장이 활발할 때의 영업 레버리지 상승\" — ICE CFO",
-          "\"연초 대비 매출 성장률 6%와 두 자릿수 핵심 EPS 성장으로 2026년 목표 달성 궤도에 있다.\" — David Endicott (Alcon CEO)"
+          "12월 9일에 또 한 번 실수를 저지르려 하고 있다 — 빌 애크먼",
+          "연준이 2%로 물가를 끌어내리려는 실패한 시도를 계속 이어간다면 미국과 세계를 경기침체에 빠뜨릴 것이다 — 빌 애크먼"
         ]
       }
     },
     {
-      "title": "억만장자 빌 애크먼의 톱 5 주식들. 새로운 포지션 개설을 위해 지분을 매도한 후",
-      "url": "https://news.google.com/rss/articles/CBMimgFBVV95cUxNdDViSS1XdHNXTHJiWDZOTUFJMWJlVUNPUGJHcDJibzZNWVRwRWJDclZMcXp4bWN5TVdjeDl1bWF1MmZ6MHhtT0dtZ0tlWklYcXRkMUdaSDVWTk9kSkd4bVlqT1MwTURTZ1RYWkhqTmJpQ0VBcDk4S2RJTnlGWVM0bm1OOGFxSW42M2RDLUtLSnExN3l1YjBzMldR?oc=5",
-      "source": "Yahoo Finance",
-      "published": "2026-11-21T10:38:00+09:00",
+      "title": "애크만, 연준에 2% 인플레이션 목표를 3%로 변경 촉구, 12월 인상 시 경기침체 위험 경고",
+      "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxNYWgzUTdHNVRkRDVwVTdfVU9qRm10ZTNqMHJIcHNrUFVRMjhDcmxEOWU5MWNGX0pHLUNjekZVM3NkWVV5OGJPS1VSSm5Ha0VwdndwUjVrVWNVa0FCS25nRWZYeXA0TkpGTENVX0JxTk1PUUpIMEJSOGcxaHBJX2stZDlEV0dnTXNqQTZaT0FodzFPZTZKVy1DQmpRSl96YXdnMFBkakRfaE9yUTdYZm9Mb3VnRHBaTi1vN3VCSHNZRVcyNWpm?oc=5",
+      "source": "investingLive",
+      "published": "2026-11-23T10:38:00+09:00",
       "lang": "en",
       "person": "퍼싱스퀘어 (애크먼)",
       "category": "value",
       "category_label": "가치·행동주의",
-      "orig": "Billionaire Bill Ackman’s Top 5 Stocks After Selling Stakes to Open a Brand-New Position",
-      "real": "https://finance.yahoo.com/markets/stocks/articles/billionaire-bill-ackman-top-5-013837421.html",
+      "orig": "Ackman urges Fed to drop 2% inflation goal for 3%, warns 9 December hike risks recession",
+      "real": "https://investinglive.com/central-banks/ackman-urges-fed-to-drop-2-inflation-goal-for-3-warns-9-december-hike-risks-recession/",
       "ko": {
-        "sum": "Bill Ackman의 Pershing Square가 9월 30일 기준 약 $30.8B의 자산을 보유하고 있으며, 소프트웨어 대기업 지분 35% 및 페이스북 모기업 지분 11% 등을 매각함. 매각 수익금으로 Intercontinental Exchange 약 $1B 규모와 안경 회사 Alcon $954M 규모의 신규 포지션을 개설함. 기존 보유 중인 스트리밍 선두업체에만 약 18% 추가 매수함. 10개 주식이 보유 포트폴리오의 약 56%를 차지함.",
-        "quotes": []
+        "sum": "빌 애크먼, 연준에 물가목표를 2%에서 3%로 변경 촉구함. 12월 9일 금리 인상 시 경기침체 위험 경고함. SpaceX가 신규 담보부채에 약 8.3% 금리를 지불하는 반면 상장 당시에는 6% 미만이었다며 금융여건이 급격히 긴축됐다고 지적함. 지정학적 리스크, 국방비 증가, 탈세계화, 관세, AI 인프라 투자 등으로 세계가 변했다며 3%가 더 현실적 목표라 주장함. 베센트 재무장관도 과잉긴축 위험을 경고하는 등 추가 인상 반대 목소리가 커지는 추세이나 선물시장은 12월 인상을 거의 기정사실로 반영함. 필라델피아 연은 총재 폴슨 등 일부 정책입안자는 물가가 너무 높아 추가 인상이 필요하다는 입장임.",
+        "quotes": [
+          "\"새로운 세계에서는 3% 물가상승률이 더 현실적인 목표다\" — 빌 애크먼",
+          "\"연준이 2% 물가 달성을 위해 계속 금리를 올린다면 미국과 세계를 경기침체에 빠뜨릴 것이다\" — 빌 애크먼"
+        ]
       }
     },
     {
-      "title": "빌 애크먼이 엔비디아 투자자들이 무시할 수 없는 문제를 지적하다",
-      "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOZkxiTjFGaG85M04wWGtaT2ZIWGtURTdodUl6UVRfQjE4blROeHNaZ09nczNuX3hJUUc0SHoyczFUYUttdzEzUDdEbmhBSmRVTzhYTWJmdjBwXzk0ekJtX1hIRjk0RF92eGlub1kyRVFuZkpyR3pKaFFUc1NaS2JFZURlaTM3MWVpMVpNLWNReXBaaXNYSE1TSV9Ia25YY1h0cWczQ3UyWQ?oc=5",
-      "source": "TheStreet",
-      "published": "2026-11-21T07:05:00+09:00",
+      "title": "'또 다른 실수': 빌 애크만, 스콧 베센트와 함께 미 연준의 12월 금리 인하 경고 | Hindustan Times",
+      "url": "https://news.google.com/rss/articles/CBMi-wFBVV95cUxPQndGVGJrd2E5d1liMy1odEo2cUZFTDVoQUc0MkV0aXNWdEE4dFhHWXRWeXM2d2k1ZGwtM1NkVjNfcUJqUHNWc2lRRnJadE8yQ25PeWU5cEhMNWExQzNvSHF4RW1hT0xiRjJPbzREejI4UjFVaFFNY2JLcHNGM0NIMzRPVTVTeHd2d0tRaElReGdEX1RmMXlqdFR6ZWhEazNsU3RPanczby1NSEc4Z2JUelhTWGdzaktfODdFRWVCWlpFMjJOREg0aHlpX3dkRkdNUFgxY3ptaVV0cmZreGlXX2F5RHk5TlNKMWlPX012a00zVUhYMnpHaXoza9IBgAJBVV95cUxQRU9YNktMZjZZNE0wejNYX2puNnlyTXJJNzR3ME9wbTNfZ1AwNnZScEMybjJ2R0c1WTdHcXdXQ3BIMkt6akZJU0RWZ3dScjNoNlU2SFEwdy1rTWFIUW5fei1OUkxQRGxSS2VHVWZOSm11ejl2RnVjbm51RkJIS2UtRmw1d1VRZ2l3cUF0aGpXS3N6dEp6eXgxUWx6S1p0ZERVdUxMMXlMUWZGZUpUZFZpeDUyQnU1Y19pX1JWV29ka1FFUDRtTTZzdE1rcm1IX0R1d0gzS0xic1FTMUVpNDJLYmJMRXpRbWV5RkptcEtINzU2aWs5Qkh5N1BieFZIMHRG?oc=5",
+      "source": "Hindustan Times",
+      "published": "2026-11-23T08:19:00+09:00",
       "lang": "en",
       "person": "퍼싱스퀘어 (애크먼)",
       "category": "value",
       "category_label": "가치·행동주의",
-      "orig": "Bill Ackman points out a problem Nvidia investors can’t ignore",
-      "real": "https://www.thestreet.com/investing/stocks/bill-ackman-points-out-a-problem-nvidia-investors-cant-ignore"
+      "orig": "'Another mistake’: Bill Ackman joins Scott Bessent in warning US Fed against a rate cut in December | Hindustan Times",
+      "real": "https://www.hindustantimes.com/world-news/us-news/another-mistake-bill-ackman-joins-scott-bessent-in-warning-us-fed-against-a-rate-cut-in-december-101795388752997.html",
+      "ko": {
+        "sum": "스콧 베센트 미 재무장관과 빌 애크먼, 연준의 12월 금리 인상에 반대 입장 표명함. 베센트는 CBS 인터뷰에서 과잉긴축 시 정책 실수가 될 수 있다고 경고함. 애크먼은 X(트위터)에 금융여건이 이미 크게 긴축됐다며 물가목표를 2%에서 3%로 낮출 것을 주장함. 연준 이사 리사 쿡 등 일부 위원들은 물가 대응을 위해 금리 인상이 불가피하다고 밝힘. 10월 소비자물가지수(CPI)는 전월 대비 0.4% 상승해 예상치 0.3%를 상회했으며, 비공식 추정 연간 물가상승률은 약 3.9~4%로 보도됨. 다음 FOMC 회의는 12월 8~9일로 예정됨.",
+        "quotes": [
+          "\"많은 사람들이 연준이 과잉긴축으로 정책 실수를 할 수 있다고 믿는다\" — 스콧 베센트",
+          "\"연준은 12월 9일에 또 다른 실수를 저지르려 하고 있다. 금융여건은 대대적으로 긴축됐다\" — 빌 애크먼"
+        ]
+      }
     },
     {
-      "title": "세스 클라르먼과 다른 대형 펀드 17곳이 지난분기 허니웰 에어로스페이스를 매수했다. 조지 소로스와 다른 12곳은 매도했다. 누가 맞을까?",
+      "title": "빌 애크만: 금융 여건 긴축으로 연준 실수 위험, 스페이스X 채권금리 지적",
+      "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOOWdPQUlnaE51OHpKVGdFWHExRm9VSE1COVd6MS1xa2VmaEpzTnlhS1FSXzlpMG9TT0tjcHR6TTNlYnNFWFMzdjJvRjQ4MlU1cG14dHE1NFFidEEzMkdZZmU0b3Znc1ItNXJZVzNkU3NRdFVCN1h1NV80YzBENzJ2WlZyaERYVnc?oc=5",
+      "source": "Traders Union",
+      "published": "2026-11-23T07:25:00+09:00",
+      "lang": "en",
+      "person": "퍼싱스퀘어 (애크먼)",
+      "category": "value",
+      "category_label": "가치·행동주의",
+      "orig": "Bill Ackman: Fed risks mistake as financial conditions tighten, points to SpaceX debt rates",
+      "real": "https://tradersunion.com/news/market-voices/show/4365487-ackman-fed-spacex-debt/"
+    },
+    {
+      "title": "세스 클라르먼 외 17개 대형 펀드, 지난 분기 허니웰 에어로스페이스 매입. 조지 소로스 외 12곳은 매각. 누가 맞을까?",
       "url": "https://news.google.com/rss/articles/CBMi3AFBVV95cUxQODNCd3Z1eTJEQU9pTHJwWnRXWmJLbVFmX1F2SDdvTUJ5cm1BZERmS1VFY2ZFbnN2YTdwWUhuRzRRbkYxdC0wLVZNZHRoTEdJTW5MV0pNbUduQXIxYUpFZ3V0YTFiUG5nNVZrWDB2WGRsQTdpSGZhcnRwb1lRanZaODdVY3VTRXVmNkNSQ3dHNzdqNGtidndvazVkSzNhT0paRUxaMHNwVHZ0bUI4YXRPbUw4cFpqb2pLSlJaV2NNNlZXS0lTb05fVV82UDdEVUpjSGtIdzNXQTBRWEND?oc=5",
       "source": "TIKR.com",
       "published": "2026-11-20T17:37:00+09:00",
@@ -19798,7 +19803,26 @@
       }
     },
     {
-      "title": "세스 클라르먼의 바우포스트 그룹이 Q3에 허니웰 에어로스페이스 신규 포지션 개설",
+      "title": "세스 클라르먼, 허니웰 에어로스페이스 매입 중",
+      "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE10MkVvSmk5NG93Z0dzSXN3NGZUVmk1dFZkZ0dHX3RzdEpoallMVHhXTnpubFFPNGJHaXYzTVRmM0NBU1NkYzgxTm83dVVfVzZIa0E3VUZmYWJ0V0tnMFdtdTdiTWdVejFiSGVfNEp3UDlLbVVwV1Bn?oc=5",
+      "source": "TIKR.com",
+      "published": "2026-11-18T04:41:00+09:00",
+      "lang": "en",
+      "person": "바우포스트 (클라만)",
+      "category": "value",
+      "category_label": "가치·행동주의",
+      "orig": "Seth Klarman Is Buying Honeywell Aerospace",
+      "real": "https://www.tikr.com/blog/seth-klarman-is-buying-honeywell-aerospace",
+      "ko": {
+        "sum": "세스 클라만의 Baupost Group이 3분기(9월30일 종료) 13F에서 Honeywell Aerospace(HONA) 신규 포지션 113만주(당시 가치 $175M)를 공개함. 해당 종목은 공급 부족으로 인해 52주 최고가 대비 45% 하락한 상태임. Honeywell Aerospace는 올해 6월 Honeywell에서 분사했으며 2분기 실적 발표 시 공급망 문제로 연간 매출 및 조정 EBIT 가이던스를 하향 조정함. 3분기 매출은 유기적으로 2% 증가한 $4.6B를 기록했고 연간 조정 EPS 가이던스는 상향했으며 분기 배당 $0.40를 첫 선언했으나 공급 제약 지속으로 주가는 실적 발표 후 11% 하락함. 애널리스트들은 2028년까지 매년 이익 성장을 전망하며(EPS $7.91→$8.74→$9.99) 현재 주가는 선행 PER 20배로 분사 이후 평균(21배)보다 낮은 수준임. 컨센서스 목표주가는 상장 당시 $300에서 $193으로 낮아졌으나 이는 마지막 종가 $163.36보다 18% 높은 수준임.",
+        "quotes": [
+          "2분기 말 공급망의 입증된 생산능력에 맞춰 가이던스를 조정하는 것이 신중하다고 판단했다 — Jim Currier, CEO",
+          "국내 방위 수요 강세가 이 최종시장의 공급 제약을 심화시키고, 분기 중 감소한 부가가치 높은 해외 매출을 지연시키고 있다 — Josh Jepsen, CFO"
+        ]
+      }
+    },
+    {
+      "title": "세스 클라르먼의 바우포스트 그룹, Q3에 허니웰 에어로스페이스 신규 진출",
       "url": "https://news.google.com/rss/articles/CBMi1wFBVV95cUxQR1dDTV9jWjQwX0ZVLS1XZWZHWUs0NGlWc1oycGNxNE1CMFFOZjlfRWdXNEpJR1RwTEp0d3RZOGR2RUxsTDNzR0stcVZQQ29mMnBKOHprR3VJa2Z0eTNBNDlJNEh5Q0dLY3pBSlFwdHpKb1VHVnQ2QUt5aHJvcFM0ZG1fWjhhZG9HR280WFZfbFk2QVA3d1dCYnpyRkR4SGdVWHNuLXlPVzZoS2JaYWl4XzROdWVPNzlpSzJZZ2dFVVhCaGw1cDVhRlcxemRLLXFuVHFxX2NPOA?oc=5",
       "source": "Benzinga",
       "published": "2026-11-17T08:42:00+09:00",
@@ -19810,7 +19834,7 @@
       "real": "https://www.benzinga.com/trading-ideas/long-ideas/26/11/63328373/seth-klarmans-baupost-group-takes-new-position-in-honeywell-aerospace-in-q3"
     },
     {
-      "title": "크리스 혼의 TCI vs. 세스 클라르먼의 바우포스트: 두 가치투자 거인의 차이점",
+      "title": "크리스 혼의 TCI vs. 세스 클라르먼의 바우포스트: 두 가치 투자 거물의 차이점",
       "url": "https://news.google.com/rss/articles/CBMi3AFBVV95cUxPRnhMYWM2b1NWdjU1TURlckVSQW41SlRzd191ckNDUXg4OTNwM1l2OWdMZVZlcDRjWFNuZUg4cFVUNlFsT2ZqcW1fbUxiSHpYN0RLeVFiT1pqM0J0V2lhbDBpN3drT2tKQTFpMnpOUDRJWnhwcXU0MzN6MGxVUDZYWGZ1QW9ldFhfZHZBbDNoaFBVN1NrQTk4UmM2Y0xRZzJ2RVRSN0szODlLQjJLVGgxM0dvU3BfWlRQY1B5Y0JnUDBSQUVxdENPSzlPeHpCOE1XWmw1UmN2dnhSNXJH?oc=5",
       "source": "24/7 Wall St.",
       "published": "2026-11-17T01:22:00+09:00",
@@ -19826,19 +19850,7 @@
       }
     },
     {
-      "title": "세스 클라르먼의 바우포스트가 알파벳, 유니온 퍼시픽의 지분을 감소; Q3 중 CME에 추가",
-      "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNQnd2WHdjX3ZJRFQxRHdmVmFKZ3pkOWRHQ3dFWURoSEJuMGhOdlJ1d1ZoMlY2M2NDcW1vX1E1RXF1Zkl5Mi1idUNpVjVOalZNbzJKUWR4VzgtbEx3TTQ2aldMcDdpN3ZZcHdtLThpdkppbmdUcUtrMGpoNVlCeXJTUy1uS04yQk9MMmFuaUlaSGh2clpyMFZ5RVZITE9DM1ZTaGpWR281VkJhZ3N5QkJfYjQwYlNQS0RUdlJLMUhSRWY?oc=5",
-      "source": "Seeking Alpha",
-      "published": "2026-11-16T23:19:00+09:00",
-      "lang": "en",
-      "person": "바우포스트 (클라만)",
-      "category": "value",
-      "category_label": "가치·행동주의",
-      "orig": "Seth Klarman's Baupost cuts stake in Alphabet, Union Pacific; adds to CME among Q3 moves",
-      "real": "https://seekingalpha.com/news/4672970-seth-klarmans-baupost-cuts-stake-in-alphabet-union-pacific-adds-to-cme-among-q3-moves"
-    },
-    {
-      "title": "데이비드 아인혼의 포트폴리오 분석: 3분기에 그가 한 모든 움직임",
+      "title": "데이비드 아인혼의 포트폴리오 들여다보기: 3분기 모든 움직임",
       "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQLU8wMWVpU2lkb1JHY0w2WnBKNHNTbkJhZlJuak41X1dqRkg4cEE5WGFrZDhsdm5KYXlLa1NiQjJNWVNRYnVEbkcxMFJxUFl2QkVkdDB5ZWx3eGtGdWRzVnZOdDBzR1FFam8yTWdRMWdOU21HNHdTZWdhSElkTkxGNW9NQmQ5dGFzczIyek00cVdfWkVTbjZ0ZllXaGp4Zw?oc=5",
       "source": "TIKR.com",
       "published": "2026-11-20T10:34:00+09:00",
@@ -19857,7 +19869,7 @@
       }
     },
     {
-      "title": "데이비드 아인혼이 PG&E에 베팅하다",
+      "title": "데이비드 아인혼, PG&E 매입 중",
       "url": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE1PcXZmcXVDVFVMT0R5YmVNaXlWN0pkZ18wczY3WWIwMWhnSTZrRXBqc1NoRXdKSnhmQ3o0YXJpbExJSkxFcURrTW84ZFA4UGNmWDNJYXVQNEk5cUUzbGNGS0ZzYTE?oc=5",
       "source": "TIKR.com",
       "published": "2026-11-20T01:16:00+09:00",
@@ -19875,7 +19887,7 @@
       }
     },
     {
-      "title": "데이비드 아인혼이 Q3에 알루미늄에 베팅하다: 그의 신규 주식 선택, 펀드 변화",
+      "title": "데이비드 아인혼, Q3에 알루미늄에 베팅: 그의 신규 주식 선택 및 펀드 변화",
       "url": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxPR3kwREllcEFsUm1qR1ZDenFMX0wwb1JWdmVEVW1DNFloYVVMNUF3NkFQZTVfNEdyd0s2aUxja09JbnllLXItcGZJaTYyYThkbC1SWUhEM1paNDc2Q0hnUUFyd3pJWG5VMWRCanEtRGtQQWlZQlRiMEJrRHRqVnZUSVR0aEhpMlBiRFlsUHVINVVlazJGeTU2NVZYclJjaDdveGdrenNoMXN4cXlDRkFKdzBrVHJlMWxGM0VVU2tiZU1QZFRqQTlkeVh1LXJVOVBhSEtN?oc=5",
       "source": "TradingView",
       "published": "2026-11-18T01:36:00+09:00",
@@ -19891,7 +19903,7 @@
       }
     },
     {
-      "title": "데이비드 아인혼의 DME 캐피탈이 Q3에 MGM 리조츠 지분 추가",
+      "title": "데이비드 아인혼의 DME 캐피탈, Q3에 MGM 리조츠 지분 추가",
       "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE9sWUk4eThPZ1NBUk9TVzdVZjZjMlhvUDFKSVZYWXRSMmViU2lNcGlqYW1SZGg3SWJVVnlaNkRrQkFvWXc4MEhfMFdRWE52LVZJSk8tUXRnSVA2c0tHdjJZZUZxOWxLeU52SjhSc2xub3lxN1NPOFNLTTJB?oc=5",
       "source": "Casino.org",
       "published": "2026-11-17T21:20:00+09:00",
@@ -19907,7 +19919,26 @@
       }
     },
     {
-      "title": "브릿지워터가 1년 내 '경제적으로 불안정하게 하는' AI 사이버 공격 확률을 3분의 1로 평가하다. 기술 중단이 미국을 흔들다",
+      "title": "달리오, 주식의 채권 대비 쿠션이 축소되고 있다고 경고",
+      "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxOUkc1NUtRV2FYTEhrdGNKRXlIb1g0dnFNV3htaGJLYUZvRi1UY0lXWHE0R0ZRSW9COGpSZDRfcUtVcFZ4bzJHeF9sQlhqTmZ5WDFSdUtTX3dsRWd5ejV5TkxXYVB1NFVtYk9UQld5Sk90b0VHc2lOc3dPbC1DUnk2WkwtV1hoY2RkcDg4ME94eU0?oc=5",
+      "source": "Money.ca",
+      "published": "2026-11-22T21:30:00+09:00",
+      "lang": "en",
+      "person": "브리지워터 (달리오)",
+      "category": "macro",
+      "category_label": "매크로",
+      "orig": "Dalio warns stocks' cushion over bonds is shrinking",
+      "real": "https://money.ca/investing/ray-dalio-bond-yields-equity-risk-premium-canadian-investors",
+      "ko": {
+        "sum": "레이 달리오, 주식과 채권 간 기대수익률 격차(쿠션)가 줄어들고 있다고 경고함. 미국 국채 금리 상승이 주식 투자 매력을 떨어뜨린다고 지적함. 미국 정부가 연간 약 $7 trillion을 지출하면서 세입은 약 $5 trillion에 그쳐 부채가 수입보다 약 40% 더 빠르게 증가한다고 설명함. 2026년 8월 기준 미국 국가부채는 $40 trillion을 넘어섰고, 10월 5일 기준 30년 만기 국채 금리는 5.66%에 달함. 이에 달리오는 향후 3년 내 미국 부채위기 가능성을 경고함. S&P500 상위 10개 기업이 전체의 약 37%를 차지하는 집중도도 우려 요인으로 지목함.",
+        "quotes": [
+          "\"두 기대수익률 사이의 쿠션이 좁아졌다\" — 레이 달리오",
+          "\"부채가 상환 속도보다 빠르게 쌓이면 부채 상환 비용이 커진다\" — 레이 달리오"
+        ]
+      }
+    },
+    {
+      "title": "브릿지워터, 1년 내 '경제를 불안정하게 하는' AI 사이버 공격 확률을 3분의 1로 평가",
       "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxORmE1Y3dacU9CeGJsckRrUlFEUGdPc0FFNXh5YkxwenN4SFpUR2h5RTdiVDBjeldkWnQzVGdkTDVoZFJ5MjdNXzJxQ2Y3TUZPQndFRDlvZEl6amJvRjZBRWN5VG0zbUZQNE1CUk9vdTByc2VyMkZaTTJFS3NNT2J3N1Fmc2NiTFJZNlloT1JMQUdnYTA?oc=5",
       "source": "MoneyWise.com",
       "published": "2026-11-21T00:48:00+09:00",
@@ -19916,10 +19947,17 @@
       "category": "macro",
       "category_label": "매크로",
       "orig": "Bridgewater gives 1-in-3 chance of 'economically destabilizing' AI cyberattack within a year as tech outages rattle U.S.",
-      "real": "https://moneywise.com/news/top-stories/bridgewater-ray-dalio-ai-cyber-attack-economy-risk"
+      "real": "https://moneywise.com/news/top-stories/bridgewater-ray-dalio-ai-cyber-attack-economy-risk",
+      "ko": {
+        "sum": "브리지워터 어소시에이츠, 향후 1년 내 경제를 불안정화시킬 수 있는 AI 사이버공격 발생 가능성을 3분의 1로 추정함. 최근 마이크로소프트(36시간 아웃룩 장애), FAA의 전국 항공편 운항중단, JP모건체이스 거래처리 오류 등 연이은 기술 장애를 배경으로 지적함. 오픈소스 모델을 활용한 AI 사이버해킹 능력이 위험 수준에 도달했다고 경고함. 일본, 한국 등 일부 국가는 사이버 방어 강화 입법에 나섰으나 미국은 대응이 미흡하다고 지적함. 트럼프 대통령은 최근 기술 장애들을 대수롭지 않은 문제로 치부함.",
+        "quotes": [
+          "\"AI 사이버 리스크, 오픈소스 모델을 활용한 사이버 해킹 능력이 위험한 수준에 도달했으며, 우리는 향후 1년 내 경제를 불안정화시킬 공격 가능성을 3분의 1로 보고 자금을 운용하고 있다\" — 브리지워터 애널리스트 Hudson Attar, Arham Habib",
+          "\"그게 인생이다. 크고 강력하고 돈이 많으면 그런 일이 생긴다. 괜찮다\" — 도널드 트럼프"
+        ]
+      }
     },
     {
-      "title": "레이 달리오가 '잔인한' 워싱턴 자금 싸움이 미국 채무 보트를 흔들 수 있다고 경고하다. 당신의 자산을 떠내려가지 않게 하세요",
+      "title": "레이 달리오, '가혹한' 워싱턴 금전 싸움이 미국 채무의 배를 흔들 수 있다고 경고. 당신의 자산을 지키세요",
       "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQUmNuQzQ3cmVXVzVUT2ozbmNXdjJONng3N291MU9oYmpiSTBMY1RVYkpIclpUamFtTGktNUxvUjVGYl92azMyN1lCUm9sSzNacFlrSEZBYXRRRzJkUlpKRGt6QXlfWjlKY29IblVfdFZVbEY2ZkFneTBjWVJWNzRUeXoxYzhnbkRmaWpaNXVMb3hXRG44N1NTUWd6Yl8xMzA?oc=5",
       "source": "Yahoo Finance",
       "published": "2026-11-18T22:15:00+09:00",
@@ -19937,7 +19975,7 @@
       }
     },
     {
-      "title": "엘론 머스크가 레이 달리오의 '잔인한' 채무 싸움 예측이 나오면서 '글로벌 파산' 경고에 '맞다'고 말하다. 당신의 저축은 준비됐나요?",
+      "title": "엘론 머스크가 '글로벌 파산' 경고에 '맞다'고 답하다. 레이 달리오가 '가혹한' 채무 싸움을 예측. 당신의 저축은 준비되었나?",
       "url": "https://news.google.com/rss/articles/CBMilgFBVV95cUxNSUJPQUxGU05xRDE3dTQ0bzdSdjk3UUlpNndHSEhuMEdYTVR0T3hHOEVzNzBNejJ0N0VEaUk0VnhYa3N4eTA0OXFod2psSmR6Vnlnd2FTb2N2XzVHR1ZBREJHbWQzak1OcDZEbDNOWXZuS0lzeWtuSlRUdnhoSE5wNmVDY255VjNaTzNkR2gyNDNJOWw2emc?oc=5",
       "source": "Yahoo Finance",
       "published": "2026-11-18T19:30:00+09:00",
@@ -19956,19 +19994,42 @@
       }
     },
     {
-      "title": "레이 달리오가 비트코인을 소유하고 있나? 그의 견해, 경고, 포트폴리오 조언 설명",
-      "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxOejRZanJlalF3UUZHSHcybUpTRUtWN0oxVzA4Q2V3TUF6ZnlJd3EwdklrNlNfZC1INmRxUWxCRWdNd0pMSThsM3hKLUg0eTVmaWhMZ19IWVdDb0FoTU02cTlwYWcxRWJadUF4Wk1EMjJQYlVmLThJeExtdDJvRzhHQXBkNHlmUG9SWmEtTWU3YzdhWkVWWERBOVVpQkFpbHdYaWtHXzk2bXdLMENSb1JwalM1WQ?oc=5",
-      "source": "MEXC",
-      "published": "2026-11-17T17:00:00+09:00",
+      "title": "스탠리 드럭켄밀러와 42개 대형 펀드, 지난 분기 스페이스X 매입. 브래드 거스너 외 23곳은 매각. 누가 맞을까?",
+      "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxNQWo5WjFmb0doVWlqUlN1OTVRall4ZzdHdmQ3b1FsVFZ6dmpTcE5sSDBTb2lqelU5LV8xWURpM082R0ZvSUNULVRfUURZOERKX1hRUV8xT3dWeE1adm9LUlFkanZ0TFhXdHpob2J3b3A0Y1NyY3VlLVlCY3RuV21USkZjN3d1aVQ4VTl4bEdvM3ZDMDZ0a3pxeE4tdTRzYlJk?oc=5",
+      "source": "Yahoo Finance",
+      "published": "2026-11-23T07:35:00+09:00",
       "lang": "en",
-      "person": "브리지워터 (달리오)",
+      "person": "듀케인 (드러켄밀러)",
       "category": "macro",
       "category_label": "매크로",
-      "orig": "Does Ray Dalio Own Bitcoin? His Views, Warnings, and Portfolio Advice Explained",
-      "real": "https://www.mexc.com/learn/article/does-ray-dalio-own-bitcoin-his-views-warnings-and-portfolio-advice-explained/1"
+      "orig": "Stanley Druckenmiller and 42 Other Big Funds Bought SpaceX Last Quarter. Brad Gerstner and 23 Others Sold. Who’s Right?",
+      "real": "https://finance.yahoo.com/markets/stocks/articles/stanley-druckenmiller-42-other-big-223512193.html",
+      "ko": {
+        "sum": "스탠리 드러켄밀러의 듀케인 패밀리오피스, 데이비드 테퍼의 아팔루사, 캐시 우드의 ARK Invest 등 43개 대형펀드가 3분기 SpaceX 주식을 매수함. 브래드 거스너의 알티미터 캐피털 등 24개 펀드는 매도함. a16z가 약 $7.08 billion 규모로 최대 매수자였고, Alpha Wave Global은 약 $1.93 billion 규모로 최대 매도자였음. 애널리스트들은 SpaceX의 정상화 주당순이익(EPS)이 2026년 $0.28에서 2028년 $5.98로 상승할 것으로 전망하며, 선행 PER은 9월 30일 약 97배에서 약 42배로 낮아짐. 현재 주가 기준으로는 매수 측 논리가 더 설득력 있으나, SpaceX는 2028년까지 데이터센터 구축 비용으로 현금을 소진할 것으로 예상됨.",
+        "quotes": []
+      }
     },
     {
-      "title": "스탠리 드럭켄밀러와 다른 대형 펀드 11곳이 지난분기 웨스턴 디지털을 매수했다. 켄 피셔와 다른 13곳은 매도했다. 누가 맞을까?",
+      "title": "스탠리 드럭켄밀러, 레오폴드 아셴브레너 외 25개 대형 펀드, 지난 분기 대만반도체 매각. 38곳은 매입. 누가 맞을까?",
+      "url": "https://news.google.com/rss/articles/CBMi8AFBVV95cUxPR1I4Y1JMaXlFRHBNdXBnVHlxSzNkLTgyQnFZQ0xvYVlsaURYVDVuZmNTWTUtV1FrZWNNc2dzbUY0aThfR0xrSEMyZkF6b2VVNGZoVDBvem5KdzY1RUd5T0Q3YVdoQjVkYUl0U1Nyc2J0U3cxMUVqSlpHSEp1Vlg0M3AtOXV6ZVNYa0pnUFpJTmZZaXVEMHgyb2ZmQlRvMGF6UFF5UEYxOWtTXzZBRnQ5ek1FUlh5ZS1kSFdwNkpia2FjdTk3ck5URjZvbk1wYVdmZFNVeXpMWHRzQlNxelBiUFEyNjY0QjQtLWJERjk1T2I?oc=5",
+      "source": "TIKR.com",
+      "published": "2026-11-23T03:30:00+09:00",
+      "lang": "en",
+      "person": "듀케인 (드러켄밀러)",
+      "category": "macro",
+      "category_label": "매크로",
+      "orig": "Stanley Druckenmiller, Leopold Aschenbrenner and 25 Other Big Funds Sold Taiwan Semiconductor Last Quarter, While 38 Bought. Who’s Right?",
+      "real": "https://www.tikr.com/blog/stanley-druckenmiller-leopold-aschenbrenner-and-25-other-big-funds-sold-taiwan-semiconductor-last-quarter-while-38-bought-whos-right?",
+      "ko": {
+        "sum": "스탠리 드러켄밀러·레오폴드 아셴브레너 등 27개 대형 펀드가 3분기(9월30일 마감) TSMC 주식을 매도하고 38개 펀드는 매수함. GQG파트너스가 약 $2.22B 규모로 최대 매수, 아셴브레너의 Situational Awareness는 보유 지분 전량인 약 $1.27B어치를 매도함. 엔비디아의 최근 실적 호조와 ASML의 수주 상황은 매수 쪽 논리를 뒷받침하는 반면, TSMC의 2027년 신중한 계획과 사상 최대 설비투자는 매도 논리로 거론됨. TSMC 주가는 9월30일 이후 30% 하락했으며 현재 선행 PER 14배로 5년 평균 18배보다 낮고 이익 전망치는 계속 상향 조정되고 있음. 기사는 실적 전망과 밸류에이션을 근거로 매수 측 논리가 더 설득력 있다고 평가함.",
+        "quotes": [
+          "우리는 2027년 사업 계획에 있어 신중을 기하고 있다 — TSMC 경영진",
+          "(2027~2028년) 공급 계획이 고객 수요를 완전히 충족시키지 못할 것이며, 일부 고객은 2029년, 심지어 2030년 주문을 원하고 있다 — ASML CEO 크리스토프 푸케"
+        ]
+      }
+    },
+    {
+      "title": "스탠리 드럭켄밀러와 11개 대형 펀드, 지난 분기 웨스턴 디지털 매입. 켄 피셔 외 13곳은 매각. 누가 맞을까?",
       "url": "https://news.google.com/rss/articles/CBMi4AFBVV95cUxNREhqdDdKQkhocmdnbkVoRU1LYjg5TDN5UzV5U19PcUJqcWdqR1p6ZEFDSi1zMmV4VzF1WHM4SWZ6Wmw2dFR6VEVmaWh5TVF1OGQyT0Naa0NqNG82QkF5S2JaaGRlMkpZMF9iTUhkb3d6TW9aTF9lc2I4RU5pMUQ1MVRubzR3OFlqWFQxTzRVWmlNMmtxRHFRYVNtVWtSTHhCZ3lNTk8zTUE3VlRoaEMxNkVGRjBzcmlXLV85TWxQZ1c4bElrTjlHZmNBSHlhTlJNTjB3OFJLRTVkdjlET2htcA?oc=5",
       "source": "TIKR.com",
       "published": "2026-11-22T05:37:00+09:00",
@@ -19984,7 +20045,7 @@
       }
     },
     {
-      "title": "투자자 스탠리 드럭켄밀러가 '자본 보전' 모드에 있다. 그가 뭘 팔았나?",
+      "title": "투자자 스탠리 드럭켄밀러, '자산 보전' 모드 진입. 그가 뭘 팔았을까?",
       "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE5kNlE5aDV2RGdDLWlCVEp6VElDNXdmNS0xZ1lMdjlXaVpodXdlVEFwQXNGemxkQzdMWkJtUjlsNVBUMlpoYXZRTkU1Z3pISVB3d0llWW1UNHFDVnR2LVl5U0NXNk5lVTNFTmdSN1hqbW1MazA?oc=5",
       "source": "BeInCrypto",
       "published": "2026-11-21T15:00:00+09:00",
@@ -19996,38 +20057,23 @@
       "real": "https://beincrypto.com/druckenmiller-13f-tsmc-seagate-ai-storage/"
     },
     {
-      "title": "스탠리 드럭켄밀러가 '돈을 잃지 않기 위해' 구글 주식을 처분하다. 그가 사고 있는 것은",
-      "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxQWl8yVmdkbWtPQ0VwT19NbWhtUW9WUzJkUF9IM2ZkSFQ1cEkyZU5nck5RMUgtLVVlMld5dDUxV0FMMnFmdnUxVDVCM05RamJLOUhzREpINVZfTVlFaldORzBjNnVLMkFqSUE5X2pWaG84anVzS1JUZVBqclhtUzNBdDFiMmZUQW9BQ2tnQW9hejFJWER4YWFxZ21nVlNrelJxWGl3Ti1nN3c?oc=5",
-      "source": "Yahoo Finance",
-      "published": "2026-11-20T21:15:00+09:00",
+      "title": "소로스 펀드 매니지먼트의 메타 플랫폼스(NASDAQ: META) 596% 베팅이 이미 수익성 악화",
+      "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxNR2lsR0lReldJVzlfLU41VTNXZG81RmljVHZ4UjZKdmViTmFXVkZYaE9yY3BLQV9tS05DTDFGQzRMMktVWkdxZFplNjZwM3dTaUpqNWhCSVhnaXdDeFkzakdGNU0xUFdDQ1c3M0Q3MG51VVNyMWVPampQazdDWGRmQmx6b251M3BPSG80Zk81Z2NjQjVKbkl0QkV6R1VkbjB0d09JRFBrb2szenBfM2V1QUVIcXg3aGNLdk9TdU1pNjU3Wk5GUnE5ZUVEUQ?oc=5",
+      "source": "Foreign Policy Journal",
+      "published": "2026-11-22T22:11:00+09:00",
       "lang": "en",
-      "person": "듀케인 (드러켄밀러)",
+      "person": "소로스 펀드 매니지먼트",
       "category": "macro",
       "category_label": "매크로",
-      "orig": "Stanley Druckenmiller dumps Google stock in a bid to ‘not lose money’ as the outlook darkens. Here’s what he’s buying",
-      "real": "https://finance.yahoo.com/markets/stocks/articles/stanley-druckenmiller-dumps-google-stock-121500032.html",
+      "orig": "Soros Fund Management's 596% Bet On Meta Platforms (NASDAQ: META) Is Already Underwater",
+      "real": "https://www.foreignpolicyjournal.com/2026/11/22/soros-fund-managements-596-bet-on-meta-platforms-nasdaq-meta-is-already-underwater/",
       "ko": {
-        "sum": "스탠리 드러켄밀러가 3분기 알파벳(구글) 지분을 전량 매도하고 금광업체 3곳에 총 $129.1 million 규모 신규 투자함. 듀케인 패밀리오피스는 손실 회피를 투자 목표로 전환, 1월 보유 포트폴리오의 거의 대부분을 교체함. 연초 경기침체 가능성을 낮게 봤으나 연준의 금리인하 중단과 신용스프레드 확대, 경기방어주 강세 전환 등 경제신호가 역전되며 시장 전망이 어두워짐을 지적함.",
-        "quotes": [
-          "우리는 돈을 벌려는 것이 아니라 잃지 않으려는 것이다 — 스탠리 드러켄밀러",
-          "(1월 보유 포트폴리오 중 현재 보유분에 대해) 기본적으로 거의 없다 — 스탠리 드러켄밀러"
-        ]
+        "sum": "조지 소로스가 이끄는 소로스펀드매니지먼트가 3분기(9월30일 마감) 동안 메타플랫폼스(META) 지분을 596% 늘렸으나, 이후 메타 주가가 약 15% 하락하면서 해당 포지션이 평가손 상태에 놓임. 분기 말 기준 메타 보유액은 $109,868,396로 전체 포트폴리오의 1.29%, 보통주 기준 7번째로 큰 비중을 차지함. 11월 중순 제출된 13F에 따르면 전체 포트폴리오는 263개 종목, 약 $8.51B 규모이며 에너지 지수펀드 풋옵션과 $1.17B 규모 전환사채 등 비전통적 구성이 많음. 보통주 내에서는 AI 관련 기술주와 규제형 전력회사주가 큰 비중을 차지하며, 이는 AI 인프라 전력 수요라는 공통 논리로 연결됨. 2026년 3분기 기준 메타를 보유한 헤지펀드는 301개로 3개월 전 254개에서 증가함. 메타는 매출 26.10% 성장, 영업이익률 37.78%, 선행 PER 17.94배로 시장 평균 대비 저평가 상태이나, 막대한 데이터센터·AI 모델 투자 비용과 각국의 규제 리스크가 우려 요인으로 지적됨.",
+        "quotes": []
       }
     },
     {
-      "title": "억만장자 드럭켄밀러가 TSMC 지분을 94% 감소, 저장소, 금, 우주 주식으로 재배치",
-      "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxPTXBjdlJjQWs5QnU3OGFXMFNiYWxTNkI0T2EwWFZOUlF1WXlyTmgxN0FvRURXWHM2WllsSFRZR1I0LVZ0a3NBZTktcFl4TjRQeVNXM051Zk5uUm80Tk05Mkt6MnNXWEVvWDM1SzhQSVJOMG94WWVDZm43THYxODdjZDA4dVFyejJmM0gzRjRMdFI0QWxjUlBnaXhySUxXeDktTVBiWGs4N01hQWNyY011dw?oc=5",
-      "source": "Pluang",
-      "published": "2026-11-20T12:09:00+09:00",
-      "lang": "en",
-      "person": "듀케인 (드러켄밀러)",
-      "category": "macro",
-      "category_label": "매크로",
-      "orig": "Billionaire Druckenmiller cuts TSMC stake by 94%, reallocates to storage, gold, and space stocks.",
-      "real": "https://pluang.com/en/news-feed/stanley-druckenmiller-pangkas-saham-taiwan-semiconductor-94-persen-di-kuartal-3"
-    },
-    {
-      "title": "헤지펀드들이 CoreWeave에서 혼합된 포지셔닝을 보이다; 소로스와 테퍼는 추가, D1 캐피탈은 퇴출",
+      "title": "헤지펀드, CoreWeave 포지셔닝 엇갈려; 소로스와 테퍼는 추가, D1 캐피탈은 철수",
       "url": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPTVotUjlxRkxTc3BBU0lUYjIxbUdoelJYVVZFa3BSZF8yeXUwV3l6cFVWaW9aYXlPVXViVDdkZTUtcFRIVzVJV1JaS2dmZVlHcjE1ZDh3bHZzVngxR25HXzdXcF8xNFVMOTVuWjN6cWd2ZlBZTjJGT2RIdGRielA2V0J0R2hyZG5TVXFkLXQ3QUdmeEdHalBIdWJXclVOTU9BV3hRa0djdzk4MUpKcmhLdERPNjgzNFdsWndxY0drT01uRlB6ckhHTXFEYWdKYk41WWRVWDBzRHpOYjRINWU5LU5n?oc=5",
       "source": "TradingView",
       "published": "2026-11-20T23:40:00+09:00",
@@ -20043,7 +20089,25 @@
       }
     },
     {
-      "title": "소로스 펀드 매니지먼트의 주요 보유 종목에 대한 정량 평가: INTC, AMZN, TSM, GOOGL",
+      "title": "조지 소로스 펀드, Q3에 마이크론 주식 비중 2배 증가. 강세론이 무시하기 어렵다",
+      "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxOYjNVRWtuUGZJaXc5VkI3SXpES3JfTW9uMWp2bHZQaFg5NWZDMVV4RVRpeGtOcTFfYjVfblFiVUhSSFFucVAzU1RjdVJCTkR0bW5oMHJYS05CcVpvSUN4S3VZdmp2SWpHSGZvUWhaR3BIS2N4d2JVaXdLbU1ra2gyMWdqRVhHQUlkNGhQWU5sQ3IwckFRXzZvTzZXNA?oc=5",
+      "source": "Yahoo Finance",
+      "published": "2026-11-20T02:04:00+09:00",
+      "lang": "en",
+      "person": "소로스 펀드 매니지먼트",
+      "category": "macro",
+      "category_label": "매크로",
+      "orig": "George Soros’s Fund Doubled Down on Micron Stock in Q3. The Bull Case Is Hard to Ignore.",
+      "real": "https://finance.yahoo.com/markets/stocks/articles/george-soros-fund-doubled-down-170436605.html",
+      "ko": {
+        "sum": "조지 소로스가 1970년 설립한 소로스펀드매니지먼트(운용자산 약 $6B)가 3분기 13F 공시를 통해 마이크론(MU) 보유 주식을 58.85% 늘린 것으로 나타남. 보유 주식 수는 2분기 약 22,400주에서 35,618주로 증가했으며, 평가액은 $37.9M으로 전체 포트폴리오의 0.63%를 차지함. 같은 분기 소로스펀드는 인텔(INTC) 지분을 최대 보유 종목(5.65%, $340.3M)으로 키우고 SK하이닉스에 약 $60M 규모의 신규 포지션을 열었으며, 애플·엔비디아·마이크로소프트 비중은 축소함. 마이크론은 2026회계연도 4분기 매출 $54.2B(전년 대비 379% 증가), 매출총이익률 87%, 조정 EPS $33.42를 기록했으며 연간 매출은 256% 증가한 $133.2B, D램 매출은 $100B를 돌파함. CEO 산제이 메흐로트라는 2027회계연도가 더 좋을 것으로 전망함.",
+        "quotes": [
+          "2027회계연도는 더욱 좋을 것으로 예상한다 — 산제이 메흐로트라 CEO"
+        ]
+      }
+    },
+    {
+      "title": "소로스 펀드 매니지먼트 상위 보유 종목에 대한 퀀트 평가: INTC, AMZN, TSM, GOOGL",
       "url": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxNU3JRYW9qeWZkcXRTUlltbEJmMzJNV2o4UXM1azR6cTM1cTdCaDVyMExNQ20tdHl2RUs3LWtLenYza1lRWlRqUENXS3paUS1VVEFLQVlWTW8zRWZsOTZTWHEwd0piQnlFZ1Y0VGxKSlhDei1jNFkyZXJlWFI0QUU3LTF2Tk1iR3hsdmI1Y1g5UHpvNkNTQkF6YVlvb19qdjZhcFRGN1BrZTNnSEp6M0E0NC15QUZBRHNhS3FvUXp5LUNNRzl1SC1ULW5rZDF0REJH?oc=5",
       "source": "TradingView",
       "published": "2026-11-19T03:54:00+09:00",
@@ -20059,99 +20123,69 @@
       }
     },
     {
-      "title": "조지 소로스의 포트폴리오에서 최고의 5개 주식",
-      "url": "https://news.google.com/rss/articles/CBMiekFVX3lxTE9jZmtESU9hMlpFeGdTYXV0NUQ3aC1JTUcxUnZEX0pyWWRzQm9CZ0hHVHpiWkVuaWNUTHlZc2YycEM1VXJLWEZzUE04a2tFTW9EdnR0SG5nc1NTbEZQUEI4cUVsTmxZS0VNSHBLZXJIT2JBUnJoYXNnb1N3?oc=5",
-      "source": "TIKR.com",
-      "published": "2026-11-18T16:41:00+09:00",
-      "lang": "en",
-      "person": "소로스 펀드 매니지먼트",
-      "category": "macro",
-      "category_label": "매크로",
-      "orig": "The 5 Best Stocks in George Soros’s Portfolio",
-      "real": "https://www.tikr.com/blog/the-5-best-stocks-in-george-soross-portfolio",
-      "ko": {
-        "sum": "Soros Fund Management의 Q3 13F 보고서에 따르면 상위 5대 종목은 모두 AI 관련 베팅으로 Intel, Amazon, Taiwan Semiconductor, Alphabet, Nvidia임. 2% 이상 비중의 종목 중 이 5개 종목이 월스트리트 애널리스트들이 가장 높은 상승 여력을 제시하는 곳으로 평균 목표가가 현재 주가 대비 27%~71% 높음. 9월 30일 이후 반도체 및 AI 주식 하락세로 대부분의 종목이 큰 낙폭을 기록했음. Taiwan Semiconductor는 판매 성장이 여전히 빠르고 하락세에서도 애널리스트들이 목표가를 계속 상향 조정하면서 5개 종목 중 최고의 매수 기회로 평가됨.",
-        "quotes": []
-      }
-    },
-    {
-      "title": "소로스 펀드가 엔비디아 지분을 19.3% 감소, 황의 퇴출 전에 이익 확정",
-      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTFB1MVlPQXJzcVp4VkNFUTd6VDVSU01paW5kWjBnajVRTUQtMGJQS0JfZUZEWjFoVjc5M3dTYkhwcmJrSUJPRmQyQ0IxTUVUV2NPQnJhbmMwMDdMZlR1aG1rRXcxTXV3YUs5SnNxd0UxenBvUUxqS2c?oc=5",
-      "source": "BigGo Finance",
-      "published": "2026-11-17T09:05:00+09:00",
-      "lang": "en",
-      "person": "소로스 펀드 매니지먼트",
-      "category": "macro",
-      "category_label": "매크로",
-      "orig": "Soros Fund Cuts Nvidia Stake by 19.3%, Locking In Gains Before Huang's Exit",
-      "real": "https://finance.biggo.com/news/07d87708-9b6c-4e77-adf8-23dc027afff6",
-      "ko": {
-        "sum": "George Soros가 이끄는 Soros Fund Management가 3분기에 Nvidia 지분을 19.3% 감소시킴. BlueCrest Capital Management 등 최소 12개의 대형 패밀리오피스가 같은 기간 Nvidia 보유지분을 축소함. 매각된 주식은 당시 약 $47.4 million 가치였으며, 감소된 지분 가치는 약 $196 million이었음. 분석가들은 주가 급등 이후의 차익실현으로 해석하고 있으며, Huang의 경영진 변화와는 무관한 것으로 봄.",
-        "quotes": []
-      }
-    },
-    {
-      "title": "미국 억만장자 데이비드 테퍼가 포트폴리오를 재정렬한 후 마이크론을 최대 주식 보유로 삼다",
-      "url": "https://news.google.com/rss/articles/CBMi3AFBVV95cUxQZjBYTjk3UFZFWXo3cy1JcU5RQWx2czVWclNIUjlvbFh3a1RKWTVzWjZkVm0wRUt2ZWNZSmhZa0t0dFVjNms5OC1KWlZ5b21RcVFVcTZsczJMaDdSWWlwSHlzTHNsTmNHWXdzWWM0VTZnVUREb1ZjaGFyU0N3RjcxTGtmbW9UYVBiVWNxcnhqZ21wcVdZRDhEc1hLYkdVdWUxc0wzQWlsTXJGTERJdXA0dHFneFBTNTIzRWR5QjZ1d1BRdDJhOFBJZkxTNnNKRlFfYUJCTlpuS1ZfeENB?oc=5",
+      "title": "미국 억만장자 데이비드 테퍼의 애팰로우사, 오라클에 $172백만 지분 취득",
+      "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxNWkJPQlRiUmljdDhBWllUNTdHOVVIOGlEZWtrX2xuQlo3NmV1MmxQMmNjdE5Sc3M3ajdRMlBfR1liWkxPUG00M01Xa1oyQnBWRmxNWjZBQWdnUVJHT0VhZGZhV0MzTDhKTXVPVm5nay1udU5TelM0Z1hFNFhoMnJPZUxEdl9wczlXbi1zZ0ZySjk5Q1h2ZmwwQXV2OG1fYzNXbGdFY25aLU12c1E5ektMazFCZDc3NUJabDRBdGNR?oc=5",
       "source": "Billionaires.Africa",
-      "published": "2026-11-21T07:27:00+09:00",
+      "published": "2026-11-23T09:00:00+09:00",
       "lang": "en",
       "person": "아팔루사 (테퍼)",
       "category": "macro",
       "category_label": "매크로",
-      "orig": "American billionaire David Tepper makes Micron his biggest stock holding after reshuffling portfolio",
-      "real": "https://www.billionaires.africa/2026/11/20/american-billionaire-david-tepper-makes-micron-his-biggest-stock-holding-after-reshuffling-portfolio/",
+      "orig": "American billionaire David Tepper's Appaloosa buys $172 million stake in Oracle",
+      "real": "https://www.billionaires.africa/2026/11/22/american-billionaire-david-teppers-appaloosa-buys-172-million-stake-in-oracle/",
       "ko": {
-        "sum": "데이비드 테퍼의 아팔루사매니지먼트가 3분기 마이크론 테크놀로지 지분을 28% 늘려 포트폴리오 내 최대 공시 종목으로 만듦. 9월 말 기준 마이크론 보유량은 125만주, 약 $1.33 billion 규모로 전분기 97만5천주에서 증가함. 동시에 아마존 지분은 52만5천주 줄여 447만5천주, 약 $1.11 billion로 축소하며 기존 최대 보유 종목 자리를 내줌. 마이크론은 고대역폭메모리(HBM) 제품을 통해 AI 산업의 핵심 공급업체로 부상함. 아팔루사는 같은 분기 스페이스X 지분도 확대해 388만주, $556.5 million 규모로 늘렸고, 엔비디아 지분도 31% 늘려 200만주, 약 $456.8 million 규모로 확대함.",
+        "sum": "억만장자 데이비드 테퍼가 이끄는 애팔루사매니지먼트가 3분기 중 오라클(ORCL)에 약 $172M 규모의 신규 지분을 매수함. 같은 기간 AMD와 브로드컴 지분은 전량 매도하고 알파벳 보유량은 거의 절반으로 줄임. 11월16일 SEC에 제출된 13F에 따르면 애팔루사는 9월30일 기준 오라클 주식 1,253,932주(약 $172.2M)를 보유해 전체 포트폴리오의 약 2.3%, 13번째로 큰 비중을 차지함. 오라클 주가는 9월말 이후 약 17% 하락했고 11월19일 기준 52주 최고가 대비 54% 낮은 수준이며, 선행 PER은 13배로 5년 평균 21배를 크게 밑돎. 애팔루사는 반도체 비중을 유지해 마이크론을 최대 보유종목(포트폴리오의 17.6%, 약 $1.33B)으로 키웠고 엔비디아·램리서치·ASML 지분도 각각 확대함.",
         "quotes": []
       }
     },
     {
-      "title": "데이비드 테퍼가 아마존 지분을 조정하지만 마이크론을 증대시키다",
-      "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxQLVlyaEprWUFibXVrSWVFZ3hLY3R3S1hMQ2x0U0pZbjFoeUwwZlJYZmZVdDVELWFUbGF2c3dSaUNIaDNKT2ZMUURacUhRaGM5YWJEcXFLdDh0T2VxWk1NVHZ3bTRhcnE3RGNpam1kem81MHZqQkoyUE9DMTRxSzdCVElSYW5DSVhRYnJnbEJZY0FPTjVxY04zdHZJTnJWNExJY0E?oc=5",
-      "source": "Pluang",
-      "published": "2026-11-20T22:06:00+09:00",
+      "title": "데이비드 테퍼의 마이크론 베팅이 $32조 질문을 던지다",
+      "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxPdXN6d1N4TThpcGpTNFl6RkMtTlJCcGdGeV9lLUJtenVjRlZ3Z3MxZXF1TXlhSmo4V0VmLUkwaGFFWElzTHhoaEFlQldmeDliLThNektndFlVQkpqbnF5SFdOUmtjengzS20xN29Qc3FlaWZNdF9sY0FWYjlmUU00TFJicWhPQ29zS2wtWkpfS2RpQ1E?oc=5",
+      "source": "TheStreet",
+      "published": "2026-11-23T08:03:00+09:00",
       "lang": "en",
       "person": "아팔루사 (테퍼)",
       "category": "macro",
       "category_label": "매크로",
-      "orig": "David Tepper trims Amazon stake but boosts Micr...",
-      "real": "https://pluang.com/en/news-feed/david-tepper-appaloosa-pindah-saham-dari-amazon-ke-micron-technology"
+      "orig": "David Tepper’s Micron bet raises a $32 billion question",
+      "real": "https://www.thestreet.com/investing/david-teppers-micron-bet-raises-a-32-billion-question"
     },
     {
-      "title": "데이비드 테퍼가 아마존을 조정하고 마이크론을 최대 베팅으로 삼다",
-      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE9GdjRCa2JYNFk4NElEWm9KX0x4VFg5YmdMZGQ0bEFJSGJhYzBNR1BoTGFaMnhVeHd3ZWswTVh2RTltN3kxSVhZSGJJbG1GY1ZFeHZuNHQ3NTJGbDU4MDRXaEtIZGgxMlFZRF8ya3duWkFDS21HZ1E?oc=5",
-      "source": "Crypto Briefing",
-      "published": "2026-11-20T21:12:00+09:00",
+      "title": "억만장자 데이비드 테퍼의 애팰로우사, 오라클에 $172백만 지분 신규 취득",
+      "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxObDUxXzZZRVkyekVkY3NXcUpxV3p1bjNJdk5TLWQ2STJrUm12OXdUY1VxNlNUXy1jNmpYeEIxbHdoYm5XcFlLdi13cERwM1I5Vi1FdF9PM2gtekd6YUZhQkt2VW1wcFFRcklTa29EeFNNY3NFeEgzaUtHd0NuODBwc3ZSYlVrdHVaVFF2YTI4RnJzdEU3U0dySEtMSk5CR0FNSklMMjRrZldwMzNlSDVoUG1MZDRkNFU?oc=5",
+      "source": "24/7 Wall St.",
+      "published": "2026-11-23T02:59:00+09:00",
       "lang": "en",
       "person": "아팔루사 (테퍼)",
       "category": "macro",
       "category_label": "매크로",
-      "orig": "David Tepper trims Amazon, makes Micron his biggest bet",
-      "real": "https://cryptobriefing.com/david-tepper-trims-amazon-boosts-micron/",
+      "orig": "Billionaire David Tepper’s Appaloosa Opened a $172 Million Stake in Oracle",
+      "real": "https://247wallst.com/investing/2026/11/22/billionaire-david-teppers-appaloosa-opened-a-172-million-stake-in-oracle/",
       "ko": {
-        "sum": "Appaloosa Management(David Tepper)의 2026년 3분기 13F 공시에서 Micron Technology가 Amazon을 제치고 최대 보유 종목으로 올라섬.;Tepper는 Amazon 지분을 10.5% 줄이고 Micron 지분은 28% 늘림.;Micron은 2030년까지 고객사와 $100 billion 이상의 공급 계약을 확보한 상태.;Appaloosa의 미국 주식 보유 총액은 $7.6 billion, 24개 종목으로 전 분기 대비 약 2.1% 감소.;Micron 보유 가치는 약 $1.33 billion(포트폴리오의 17.6%), Amazon은 약 $1.11 billion(14.7%)로 2위.;Nvidia·SpaceX·Oracle·Applied Materials는 신규 매수 또는 비중 확대, AMD와 Broadcom은 전량 매도.",
+        "sum": "데이비드 테퍼의 애팔루사가 2026년11월16일 제출한 13F에서 오라클(ORCL)에 신규로 1,253,932주, 약 $172M 규모 지분을 편입했음이 드러남. 같은 분기 알파벳 클래스C 지분은 45.9% 줄여 1,850,000주에서 1,000,000주로 축소함. 오라클은 회계1분기 매출 $19.34B(전년 대비 29.6% 증가)로 컨센서스를 상회했고 클라우드 인프라 매출은 121% 급증한 $7.39B, 미인식 계약잔고(RPO)는 전년 대비 $209B 늘어난 $664B를 기록함. 다만 분기 설비투자(capex)가 $28.5B에 달해 잉여현금흐름은 -$5.4B(2026회계연도 전체 -$23.7B)를 기록했고, 비유동부채는 $117.7B로 확대되어 $20B 규모 증자를 단행함. 오라클 주가는 11월20일 $101.17로 마감해 연초 대비 47.39% 하락했으며, 포브스는 래리 엘리슨이 세계 부호 10위권 밖으로 밀려났다고 보도함.",
+        "quotes": [
+          "고객 수요가 이 투자를 계속 뒷받침하고 있다 — 클레이 매고이억(오라클 클라우드 인프라 담당 임원)"
+        ]
+      }
+    },
+    {
+      "title": "억만장자 데이비드 테퍼, 대규모 AI 칩 로테이션 단행 – 성공할까?",
+      "url": "https://news.google.com/rss/articles/CBMinwFBVV95cUxPQ0NzaGhsN3lQSE1HMWRPRXo5UWh3eTBuQzZDVXVZN3RxSXJOU2hKNFh4V0FlOFBhZ25teWhIUnhiQXFrMVJvY2laRm9jazBRR2lWYzZvZTUyMmZ3WUhaLVhTejRrd0poWE9SWkxzckZyRVZnZ1BWd3JxSXZRTlVVaWVDeTFSd2NqNXg1eWJjNk9VMThDSlFNN2tRM0MyR3M?oc=5",
+      "source": "Yahoo Finance",
+      "published": "2026-11-22T12:20:00+09:00",
+      "lang": "en",
+      "person": "아팔루사 (테퍼)",
+      "category": "macro",
+      "category_label": "매크로",
+      "orig": "Billionaire David Tepper Just Made a Massive AI Chip Rotation — Will It Pay Off?",
+      "real": "https://finance.yahoo.com/technology/ai/articles/billionaire-david-tepper-just-made-032002032.html",
+      "ko": {
+        "sum": "David Tepper의 Appaloosa Management, 3분기 AI 반도체 포지션 대규모 재편함. AMD와 Broadcom 지분 전량 매도하고 Nvidia와 Micron 신규 매수함. Alphabet 지분은 거의 절반으로 축소함. Nvidia는 CEO 교체 이슈 외에도 Alphabet·Broadcom의 TPU 등 경쟁 심화로 위협받고 있음. Counterpoint Research는 맞춤형 AI 칩(ASIC) 출하량이 2028년 데이터센터 GPU 출하량을 추월할 것으로 전망함. Anthropic의 Claude Mythos 모델이 AMD GPU에서 2~3일 만에 구동 가능해지며 Nvidia의 CUDA 경쟁우위가 약화되고 있음.",
         "quotes": []
       }
     },
     {
-      "title": "아마존을 제치고! 억만장자 데이비드 테퍼의 애팔루사는 새로운 1순위 보유 종목을 갖다",
-      "url": "https://news.google.com/rss/articles/CBMivAFBVV95cUxOR3FTZzNSUGdrQ0g5Q1RUTWNTcDFmUDF3X1F3RlZHcXAxWE43dm1pLXhEdlJ5cmFQQ0NwbHhoMl9GYTctaTBYSVp3NlZha0RGLWdhdm9EWWpadFB6LUVISjJPVTBfd2Z5anRHdlptdkhtc0hzZjNvbGpwMG5EOGJUZFNMbUpXMmkyMmxWcG9YT09mUnc0NWs5WENqTlZ6c1FpTk5yTHY4MWlUQjRrR3A4cDRPZUREWTRSMTNhXw?oc=5",
-      "source": "The Motley Fool",
-      "published": "2026-11-20T21:06:00+09:00",
-      "lang": "en",
-      "person": "아팔루사 (테퍼)",
-      "category": "macro",
-      "category_label": "매크로",
-      "orig": "Move Over, Amazon! Billionaire David Tepper of Appaloosa Has a New No. 1 Holding.",
-      "real": "https://www.fool.com/investing/2026/11/20/move-over-amazon-billionaire-david-tepper-of-appaloosa-has-a-new-no-1-holding/",
-      "ko": {
-        "sum": "Appaloosa 운용자산 약 $7.6 billion을 관리하는 David Tepper가 3분기 중 Amazon 보유를 축소하고 Micron Technology 비중을 확대함.;Amazon 보유주식을 525,000주 매도해 4,475,000주로 축소, 포트폴리오 비중은 약 15%.;Amazon의 대규모 설비투자(capex)로 3분기 자유현금흐름이 $33.4 billion 유출을 기록한 점이 매도 배경으로 추정됨.;Amazon Web Services(AWS) 매출은 생성형 AI 도입으로 전년 대비 39% 성장.;Tepper는 Micron 주식 275,000주를 추가 매입해 1,250,000주(28% 증가)로 늘리며 신규 1위 보유 종목으로 부상.;Micron은 고대역폭메모리(HBM) 공급 부족에 힘입어 2030년까지 $100 billion 이상의 전략적 고객계약(SCA)을 확보, 역대 최고 매출총이익률 기록.",
-        "quotes": []
-      }
-    },
-    {
-      "title": "폴 튜더 존스가 이 수익성 있는 중견 기술 주식에 신규 포지션을 개시하다",
+      "title": "폴 튜더 존스, 수익성 있는 중형주 테크 기업에 신규 진출",
       "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPVi1KbDJMZXAzSFZjRE1tblJBZkNIN0Y3YXdLRWhwSzRNU3RieF9HYmZEaWJia2lETVo5WEk2cnlSV01GbmpXVEtwblJlaS05SWl5QngwdUJ0Vy14VGdjMm1DcS0wTnZ6QThoOGwzT0RzVlZVZ3pzZkRSZW55azg3amJpTENlOUdHcVhLRzR3R1JwUHVKZUpTbjAxY0ZacFRHa3paRm1vWWV6QUhBQXdsQjh1c1BvdTFDNEtycUwzRQ?oc=5",
       "source": "Barchart.com",
       "published": "2026-11-20T07:29:00+09:00",
@@ -20163,7 +20197,7 @@
       "real": "https://www.barchart.com/story/news/8926544/paul-tudor-jones-initiates-a-new-position-in-this-profitable-midcap-tech-stock"
     },
     {
-      "title": "억만장자 폴 튜더 존스가 블랙록의 비트코인 ETF 지분을 2배로 증가시키다",
+      "title": "억만장자 폴 튜더 존스, 블랙록의 비트코인 ETF 지분 2배 증가",
       "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxPbTFmMldoRlp6WmhELUxFU2lWTVVMSWxweDdiS0YwTFQ4OFBNelJ5NkJVdUp2LTBCeDRuQk9TcHVLSThDTGxOaHg3NE83aVdwZFR4eE1LTEt3NDRDTHhrZ2hnQkRma0xYSnBfNmpsRmN4Y2ZHZVFCS3RtNXFveTZjMjdNOXRQalFhenRhWUJiNFIxQ1dZeFdHOXNoOA?oc=5",
       "source": "roundtable.io",
       "published": "2026-11-18T23:04:00+09:00",
@@ -20175,7 +20209,7 @@
       "real": "https://roundtable.io/tech/billionaire-paul-tudor-jones-doubles-stake-in-blackrocks-bitcoin-etf"
     },
     {
-      "title": "폴 튜더 존스의 튜더 인베스트먼트가 이리듐 커뮤 지분을 증가시키다",
+      "title": "폴 튜더 존스의 튜더 인베스트먼트, 이리듐 커뮤 지분 증대",
       "url": "https://news.google.com/rss/articles/CBMitwFBVV95cUxPQmZUOV95WmFQZXpVdGUzMkFTRGZYVzBHUGZDbWR6T0tXZjJ1RWxJXzVKM3N0bjVwRl9zOXNwVDIzTkw5WWhIeDVoRkw2Ql85Ml9Zb0VFZVFZQVN4Zm1lVWROeTFEWUdQM2NuMVktd1c1bm80NWcyTVhqd1BMU2VveE9UOTV2b1BkMXhDUFl3eTBTN0Fqdnl5aHNSRW5RczJmSERqeW5hX3BUUWZnWlFGcXpWdnkzZVE?oc=5",
       "source": "GuruFocus",
       "published": "2026-11-17T09:03:00+09:00",
@@ -20187,7 +20221,7 @@
       "real": "https://www.gurufocus.com/news/9202988/paul-tudor-jones-tudor-investment-boosts-stake-in-iridium-communications-irdm"
     },
     {
-      "title": "억만장자 폴 튜더 존스가 2027년 AI와 IPO가 주식을 강타할 수 있다고 경고하다. 지금 당신의 자산을 보호하세요",
+      "title": "억만장자 폴 튜더 존스, 2027년 AI와 IPO가 주식을 강타할 수 있다고 경고. 지금 당신의 자산을 지키세요",
       "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxNQ1lnVkpEYXFwYkxES09GcnJ3eFVubzlmN0stZzdNYkhZdWx2QXhFcWdkc05CS1pjM1VQczlrSGxtOVA0TUpnTE1HUzdXZmxvT3ZQTmFzM0YyZFZOV3ZJSlctMnpVRi1KcGJ2SWM1OURsRmsyaVB2aGI5WndGS3VXQVB6UWwzMHFoTzhPX0ZfMlZCU3paVWxDNURLSkdGcll3?oc=5",
       "source": "Yahoo Finance",
       "published": "2026-10-24T16:00:00+09:00",
@@ -20206,7 +20240,7 @@
       }
     },
     {
-      "title": "켄 그리핀이 공룡 화석을 대출해주고 박물관에 500만 달러 기부",
+      "title": "켄 그리핀, 공룡 화석 대출, 박물관에 $5백만 기증",
       "url": "https://news.google.com/rss/articles/CBMi4AFBVV95cUxQNE9NZktNLXlOMlBlcUxTa25LWVJteGRDRXh3SlBnRzY2eTAwZHRwZjZUUkhzNVZlNllSWkZyUlFfQ3ZBeDRMVHRqUmFJRG5TeGd5Y2JVXy10UU1QYzd5aWp5cnFKQWJZV01HbUZFWFMwZHlKTVFHLWVleVhGUFBPaHYxNVJRcjhpMV9BSWRxNXMxMWViOFp0N1NOOEFOSTRxUFhNTWMwRnl3RXUyUWFjM0YtdVUzY2xCMTU2bEpFRWxxZDJmOHowY29vOC1JTlYyaTFfS0l6Q3JfTzdkZXlNRA?oc=5",
       "source": "Billionaires.Africa",
       "published": "2026-11-21T21:00:00+09:00",
@@ -20224,7 +20258,7 @@
       }
     },
     {
-      "title": "제츠 구단주 우디 존슨이 켄 그리핀의 파크 애비뉴 듀플렉스를 매수",
+      "title": "제츠 구단주 우디 존슨, 켄 그리핀의 파크 애비뉴 듀플렉스 매입",
       "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPdjFFOF9LOG1IS3ZfMjBtTVE5TlZWV2Q2T3A3U2kzY05RMUNBUnBZUGJodWlndHNObUd4Sldpc0ZfMTlCQmZ1TlpWSFprZTVnc1BzaWk2cHRIMjFqa1ZvamlQaHZBOTZvdnE3MHNDSlRkZkVOeWlMenZkbU4wenFmRzdMdFNTQVFhSjQ4akhveGlMcHFWMHZWZDh4TmVXZmEw?oc=5",
       "source": "East Side Feed",
       "published": "2026-11-21T11:39:00+09:00",
@@ -20242,7 +20276,19 @@
       }
     },
     {
-      "title": "CMU에 대한 사상 최대 30억 달러 기부 직후 켄 그리핀이 피츠버그에 공룡 3마리와 500만 달러를 기부",
+      "title": "켄 그리핀",
+      "url": "https://news.google.com/rss/articles/CBMidEFVX3lxTFBfNlRNakpTTlpGN19VU3B1QW9jdTN6TVBMMXI2V0otTmZoblk3WlFKXzlGRnVIUHVEV0ZXWUJDdjd6MlVyOHI0Tk5FWlA0d2JlNHRaR0pRTkRJTVVFanZhODBRWE1OQkVyMEZHRWE1R05FNk1S?oc=5",
+      "source": "Bloomberg.com",
+      "published": "2026-11-21T07:03:00+09:00",
+      "lang": "en",
+      "person": "시타델 (켄 그리핀)",
+      "category": "multi",
+      "category_label": "멀티전략·퀀트",
+      "orig": "Ken Griffin",
+      "real": "https://www.bloomberg.com/billionaires/profiles/kenneth-c-griffin/"
+    },
+    {
+      "title": "CMU에 $30억 기부금 직후, 켄 그리핀 피츠버그에 공룡 3마리와 $5백만 기증",
       "url": "https://news.google.com/rss/articles/CBMikAFBVV95cUxQUGlWX1ZGdGI1X3hBaXRyNnBiVEIxTXNHaXFuVnhUaS00eVJOeHFmQzN5WmVHeHpjWXBCekpaQTVrWkpoT0Z6NE9fRllacFYxalh3S2dLM2EyZ0pCS1UtaWNhNWdaa2tqRGM1WEpoOWoxb3pfRmZKam5hTFRyVENnVjZ4VnU4a2IzbGxOaS1VQ2o?oc=5",
       "source": "Fortune",
       "published": "2026-11-20T21:16:00+09:00",
@@ -20260,19 +20306,7 @@
       }
     },
     {
-      "title": "켄 그리핀이 맘다니의 비디오 외부에 대해 말한 후 제츠 구단주에게 5,800만 달러 파크 애비뉴 듀플렉스를 매도",
-      "url": "https://news.google.com/rss/articles/CBMijgJBVV95cUxPOVp2SVI3bkFHbnlXeFlmRVFQRkFRRVF2cVhfYnd6eDRuVllVSk1LeHMtTHFMVUNVMW1sUTcxT1g3dE5QM19OQ2FIczRuNC1kV0RRcTlBSnBUY3QyZlBMVElaS2lOWTlBRzhjd3pzcGFjVG9fMWZmZ1pmb2wtdnQ4czBwYjRBMFRRRGtibGlSRmZTeGd4RUFYNHc4ZEh0SzNOVWI0N055dlBYa3ZPR19JOGxZc3RuOVE0Vmg1SDZQM1BkX2x1el9iWU91eVJrYnhtVE94c2VJS0QxbWFNclkteFpPeWkxNm5COUwtTGNtNDVlVnlwS3RJMnZWR0lCTUVwVUxSZjBtQkMwN3prY2c?oc=5",
-      "source": "Benzinga",
-      "published": "2026-11-20T00:00:00+09:00",
-      "lang": "en",
-      "person": "시타델 (켄 그리핀)",
-      "category": "multi",
-      "category_label": "멀티전략·퀀트",
-      "orig": "Ken Griffin Sells $58 Million Park Avenue Duplex to Jets Owner After Calling Mamdani's Video Outside His",
-      "real": "https://www.benzinga.com/real-estate/26/11/63430472/ken-griffin-sells-58-million-park-avenue-duplex-to-jets-owner-after-calling-mamdanis-video-outside-his-penthouse-creepy-and-weird"
-    },
-    {
-      "title": "밀레니엄 매니지먼트의 포트폴리오: 이지 잉글렌더의 전설적인 회사가 보유한 톱 5 주식",
+      "title": "밀레니엄 매니지먼트의 포트폴리오: 이지 잉글랜더의 전설적인 펀드가 보유한 상위 5개 주식",
       "url": "https://news.google.com/rss/articles/CBMirwFBVV95cUxOMklZVGk1YWZzLVZVS25wWFVRR3cwUmktN0pxSlJlZ0dHVXdweFZNRkszSGctREtLNlNjQTFiVU9OMWlXZlRQNFUwaUpPNnlfLUdnYnBYa0hJRC0tWTFJV3hDaU5TcnJqcjNDYS1UOVFXV0pDdzlIdFpvVkUtN2NXSmZ5OXhDWmtTR0t5MmlfOUpnaXlBazBMMndILUhjdGNESDhKOFRSWmpDc2E4MFJr?oc=5",
       "source": "TIKR.com",
       "published": "2026-11-18T17:00:00+09:00",
@@ -20288,7 +20322,7 @@
       }
     },
     {
-      "title": "공동 의결권이 밀레니엄이 보고한 230만 주의 샤론AI(SHAZ) 주식을 커버하다",
+      "title": "공동의결권 행사 범위가 밀레니엄이 보고한 샤론AI(SHAZ) 주식 230만 주를 포함",
       "url": "https://news.google.com/rss/articles/CBMiywFBVV95cUxQWnZMNjhJMzFWTTBCM0RpZHRVS2J6M2FReEtTS0lwR01mLV9yaGtYdDIwM25NeVpObDkyR3Brcnh4c05NMnBHNm1Obkh3NnZsM2dfYVA1MzNwVjB3ZTBPSmJuMUpnUVlrTnBwWEgwZEp4cXlqdy1vYW12UTVhbDF2Tkx0d2Z5VmRZeGpyNDVETzZ5R0VnMTlxaVBpbFN2OXJEbGczMUxmOG9Wb1FYUjRLZ29QSGtNVmZOVTRrZmFRaTBKcFVJZmNPczl2cw?oc=5",
       "source": "Stock Titan",
       "published": "2026-11-17T07:52:00+09:00",
@@ -20304,7 +20338,7 @@
       }
     },
     {
-      "title": "바비 자인이 밀레니엄 거래를 대규모 시대의 청사진으로 추천하다",
+      "title": "바비 제인, 밀레니엄 거래를 대규모 시대의 청사진으로 추천",
       "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxPSERhejF6NnExV1RuY0t5ejU5NUFweUZrdWdLeld5b2lwSEtMSEdycldxSTlxY0lVVHJiU2F3cmhsNmtRV0NURVhweElESVJEdXI4Y2UzMVdDVmVUdkU1LWJ3c2pYaVVyV3hfRGtBR1JvRjFNT2IwT1VzamlJMHRMdEJrX2M0OVQtR0ktandMZHNpTV91aUczOFFPbkVlTzN6UnFmSWFkTFBfa1JrejVGU1JoNA?oc=5",
       "source": "Bloomberg.com",
       "published": "2026-11-13T17:00:00+09:00",
@@ -20316,9 +20350,9 @@
       "real": "https://www.bloomberg.com/news/articles/2026-11-13/bobby-jain-touts-millennium-deal-as-blueprint-for-era-of-scale"
     },
     {
-      "title": "밀레니엄이 2개의 신용 거래 팀과 헤어지다",
+      "title": "밀레니엄, 2개 신용 거래 포드와 결별",
       "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxNOUF2OVlpTWJYTnI0VmFSQUlSWTJUcDNpNXZoLThUaG5McDZzeUxGeWhoaEt3MWFHRWQ2TnJpbGFzRldkNFlzUmdwVDZ4b1R5RkFPeFJ6WnNvTlA0RTBQS0lVVm5yX1JuZXd6TzVMM3Z4ZGJoYmEtR2JJelpDaEFMbmFyNWluMk5lcFhrc1Bva2VVN0h5a2N2Q2dDTjgwN095SVNBcVQyajBCZDV1?oc=5",
-      "source": "Bloomberg.com",
+      "source": "Bloomberg",
       "published": "2026-11-06T17:00:00+09:00",
       "lang": "en",
       "person": "밀레니엄 (잉글랜더)",
@@ -20328,7 +20362,7 @@
       "real": "https://www.bloomberg.com/news/articles/2026-11-06/millennium-parting-ways-with-two-more-credit-trading-pods"
     },
     {
-      "title": "메츠 구단주 스티브 코헨의 펀드가 AMD의 거의 모든 것을 처분하고 마이크로소프트가 더 안전한 AI 주식이라는 10억 달러 베팅을 했다. AMD는 이후 31% 하락했다",
+      "title": "메츠 구단주 스티브 코헨의 펀드, AMD 거의 전부 매각 및 마이크로소프트가 더 안전한 AI 주식이라며 $10억 베팅. AMD는 이후 31% 하락",
       "url": "https://news.google.com/rss/articles/CBMijAJBVV95cUxQWmQ1U290NUcwdVRzcWRXTVd4c3ZLNDJ6ZndmeDQwSXA5X3RVOVJpcXVFQXA1YzZsUV94ZWpBUl9GRERWQUd0TjdiNDVienEtYlhnX1pJMUQ4NmlJZ1dscDZ0R3E4aGo4Vnl2OExnOFNqbXVlMjhPUmNPaGttY3dSNUJZUVhfUEtwakdZSHJtQ2FyNTNDNndhNnZWS0xYaXVoM3NvSXFMbVJJeExSM1E5Y0ZaeUh6NWRYVTJoWFZVUElfcUdISW5vUGk2ekhtZGc4Ym9PbVhGNVlXOW5PNVVXTnExM2RPZjF2VF9QNjVTREVseVhQMDVzdVRsZFUwalNFd05fN29IZ3pWOEJX?oc=5",
       "source": "24/7 Wall St.",
       "published": "2026-11-21T08:47:00+09:00",
@@ -20344,7 +20378,7 @@
       }
     },
     {
-      "title": "엘리엇이 나스닥 100 풋을 증가시키고 포인트72가 10억 달러 마이크로소프트 지분을 구축하다, 13F들이 보여주다",
+      "title": "엘리엇 나스닥 100 풋옵션 증대 및 포인트72, $10억 마이크로소프트 지분 구축, 13F 공시로 드러나",
       "url": "https://news.google.com/rss/articles/CBMisAFBVV95cUxNcnVld3prWmI5dlRod0lKZTAzQ0Y1aVp3Uy0zWDVjajcxNVUyN2YyYkVmTGlnUzk3OTVZV1JEZlZkOTlfTTV2YmVNY1R2aGlrMU1WS0lpblpiUHhaalJpY3ZxNlFIb0xldG5US0VrNTEyTFVDRTF2SlVaV2RlUnpqQ3B5cHFRSWEtemN0bWVwX0pyVzdNNDYtc0xrSFY0M29SR24yNDdCUEQwa2VHSkZUNg?oc=5",
       "source": "MLQ.ai",
       "published": "2026-11-17T06:52:00+09:00",
@@ -20360,23 +20394,23 @@
       }
     },
     {
-      "title": "르네상스 테크놀로지가 샌디스크 지분을 55배 이상으로 증가, 4억 8,100만 달러로",
-      "url": "https://news.google.com/rss/articles/CBMiwgFBVV95cUxQZHZHdHIyRHZlcGdsT19TaXkyYzVfTm1ZaE1lUDNqSHE5RDVfSnd3S1I5NU92WUtXazZLWU95ZEhhbmtKQzRLTVZ5UEJydjVKVVNTVW12MnY4NTZyVVFTc3haYzNpM0lFTzNiRFA1amdKbVk4YzVNQWNyM2dqR2FOVUcwQmx3SEl6UWVnamtYNW05SHY2X1hLWm1PNjFVby14aGVlR1pFVmJBbDhScy1JcXUxTk9PdGMtWW5YTlpFbHhSUQ?oc=5",
-      "source": "24/7 Wall St.",
+      "title": "르네상스 테크놀로지스, 샌디스크 지분을 55배 이상 증대해 $481백만으로",
+      "url": "https://news.google.com/rss/articles/CBMirAFBVV95cUxPWHgzUjBXWjk2RnkwdWlWaFpsN0QweDRCcFhUbGNnM3RMeDNmZzdwUGJIU3BHMElMcFExeGIybWlTd2dxUjlTd2tHOGJwZjZIbkxhRURYd3J0OTBIVk9IWW5hLVF6elpEeThnNzhXdlpPVWxIazZPenNZSGZ6Rl8tX1NtTC14aGdCT2JaRzBUTUoyQ0dhbU1wOWRwRmR2OFZOS2hadE1UQ1M0Qkx1?oc=5",
+      "source": "Yahoo Finance",
       "published": "2026-11-22T06:43:00+09:00",
       "lang": "en",
       "person": "르네상스 테크놀로지",
       "category": "multi",
       "category_label": "멀티전략·퀀트",
       "orig": "Renaissance Technologies Grew Its SanDisk Stake More Than 55-Fold to $481 Million",
-      "real": "https://247wallst.com/investing/2026/11/21/renaissance-technologies-grew-its-sandisk-stake-more-than-55-fold-to-481-million/",
+      "real": "https://finance.yahoo.com/markets/stocks/articles/renaissance-technologies-grew-sandisk-stake-214303143.html",
       "ko": {
-        "sum": "르네상스 테크놀로지가 샌디스크 지분을 6월 말 4,980주에서 9월 30일 276,460주로 55.5배 이상 증대함. 9월 30일 현재 샌디스크 포지션 규모가 $481 million에 달함. AI 확대에 필요한 메모리·저장 장치를 판매하는 기업들로의 회전을 보여줌. 샌디스크는 NAND 플래시 메모리를 설계·제조하며 AI 시스템의 대규모 학습 데이터 저장에 사용됨. 회계연도 1분기 2027년 매출이 $11.03 billion으로 전년도 대비 377.9% 증가함.",
+        "sum": "Renaissance Technologies, SanDisk(SNDK) 지분을 2분기 4,980주에서 3분기 276,460주로 55배 이상 확대해 가치 $481 million에 달함. 13F는 9월30일 기준 보유 현황만 보여주며 현재 포지션은 알 수 없음. 같은 분기 Micron, Western Digital, Seagate 등 메모리·스토리지 종목도 매수하면서 NVIDIA 등 대형 기술주는 대폭 매도함. SanDisk는 전체 포트폴리오의 약 0.66% 비중이며, Micron이 $1.62 billion으로 최대 보유 종목임. SanDisk 매출은 거의 5배 증가해 $11 billion을 기록했고 매출총이익률은 85%에 달하나, 낮은 밸류에이션은 메모리 사이클 정점 가능성을 시사함.",
         "quotes": []
       }
     },
     {
-      "title": "르네상스 테크놀로지가 3개의 대형 은행에서 7억 3,900만 달러의 신규 포지션을 개설",
+      "title": "르네상스 테크놀로지스, 3대 은행에 $739백만 신규 진출",
       "url": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxPdlVxNUxxaGRoZTh3bWNuUndIY0NvR0RZWGxLcnVSQWZpWW8wekhRTnRhOHQwSnllMmNTTE5qYnY3UW1zYmJzR3BzQnNuelZkME9UeXlESHUxYXJTN09OTmpIbXh5X3IxTnBGRmwwdEJRbmd4T1BUZ0RXSm5xYUlVaVEydDRVbS0xamxFa2xsdFRKUXJwVTZkVUVIZk9aVzFqdGgxenJCY3UtYmo3S19ySGJnT2tNUGVqdTgzeUc1VXc?oc=5",
       "source": "24/7 Wall St.",
       "published": "2026-11-22T00:11:00+09:00",
@@ -20394,7 +20428,7 @@
       }
     },
     {
-      "title": "르네상스 테크놀로지가 5억 달러 주가 하락 직전에 엔비디아 지분을 감소시키다",
+      "title": "르네상스 테크놀로지스, 엔비디아 $5억 주가 급락 앞서 지분 축소",
       "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxPd3VqU3ppUm1NX182YU90TWxWTXVnNDBicEwyOHBBTHdOdVR2eWpqNDk2aWhkSG9CcTEzU010cXR0bldoLWFWZkdfNWFSbjFQWFl2TmlmNmJLNEdRaFlLU1lnRXpQMXdNZTFFREFXSnNnTUk1eGtCclg5djUwZ01nbVNFaW5oaUZNeXI0VXlaYmdMMjZzVWROZWlXTl9VblZoZmc?oc=5",
       "source": "Hedgeweek",
       "published": "2026-11-18T18:54:00+09:00",
@@ -20410,7 +20444,7 @@
       }
     },
     {
-      "title": "르네상스 테크놀로지가 Q3 734억 달러 포트폴리오에서 마이크론 테크놀로지(MU) 지분을 증가시키다",
+      "title": "르네상스 테크놀로지스, Q3 $73.4조 포트폴리오에서 마이크론 테크놀로지(MU) 지분 확대",
       "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxPSDdicmI3bUx3a3BrWUdQZlpMRmRHclF2c01LNFJ0ZVk0Um9RamM3QTA0dmt1TFZxdmpqbkVYVllsYWRzREozSTZLRTlMa0ZPMGNxcGx1WnpNM0tqajV3TlhLWHB6cm9WS21EUXdaa3NYRzRKeW5IZGdXQXBueTM2eHdweklETVMxd0FoT3NCcW9XNzJ2NEJHT0lRMXdyZ0ZCWVMzQ0dIdUJPdTFseUxUWWl3V3ZGdExsQ1FDR0VB?oc=5",
       "source": "GuruFocus",
       "published": "2026-11-18T03:09:00+09:00",
@@ -20422,7 +20456,7 @@
       "real": "https://www.gurufocus.com/news/9205664/renaissance-technologies-boosts-stake-in-micron-technology-mu-in-734b-q3-portfolio"
     },
     {
-      "title": "엘리엇이 펜스키를 매수하고 Q3에 씨드릴을 감소시키다",
+      "title": "엘리엇, Q3에 펜스키 매입, 시드릴 축소",
       "url": "https://news.google.com/rss/articles/CBMikwFBVV95cUxOcmxmaFVtaGptOEI4WlJvR25ZNXN5cDZlRC1iU1FUcW9ySVhIZVg2NlZVcXV1UGRNOW9MUnQza1JpcmxobDllOHRxWFBzZXk2b3A1Wlh3aERKOExkeFk1WTZvTFRuWTN2djRUM0s1OE1CX3JUZ2p6SUNxaWpxNFFXYy1pdlh3V2wwOEg5aGgxVXB3WGM?oc=5",
       "source": "TipRanks",
       "published": "2026-11-17T06:40:00+09:00",
@@ -20434,22 +20468,10 @@
       "real": "https://www.tipranks.com/news/the-fly/elliott-buys-penske-cuts-seadrill-in-q3-thefly-news"
     },
     {
-      "title": "엘리엇이 KKR 지원 플로라 푸드 그룹에 관심을 가지고 확산하다",
-      "url": "https://news.google.com/rss/articles/CBMiogFBVV95cUxNbUVjYXlGeklvbG5MWkQ2VmFVSFM3blJQY2hRcGlEQnR5N1RKN1J4WS1pQjBFa1AwdTJDM2QyNGhqSU92S1FIWEU4MGVYeWMzaWxhWWF3QlY4SDFNdldtb2JOUHp5WE5SYklsUGw0UjNxUzBoaktmYjZsODZtLUdKMXhjaGt1XzFHUkNVcjJrUHVrWmFTV1ZaOV9ycUlscXBFalE?oc=5",
-      "source": "Sky News",
-      "published": "2026-11-13T20:21:00+09:00",
-      "lang": "en",
-      "person": "엘리엇 (폴 싱어)",
-      "category": "hedge",
-      "category_label": "대형 헤지펀드",
-      "orig": "Elliott spreads out with interest in KKR-backed Flora Food Group",
-      "real": "https://news.sky.com/story/elliott-spreads-out-with-interest-in-kkr-backed-flora-food-group-13611837"
-    },
-    {
-      "title": "추적: 밀라노 조사관들이 엘리엇-레드버드 거래 관련 AC 밀란 압류를 고려했고 검사들은 아니라고 말했다",
+      "title": "추적: 밀라노 조사관들 엘리엇-레드버드 매각을 놓고 AC 밀란 압수 검토, 검사는 거부 의사 표명",
       "url": "https://news.google.com/rss/articles/CBMihwFBVV95cUxQWThSVWRlZUphckc4eW9RVTFWT3NSOHdwbV9KSTZveFJ2OGhYUVBrQy1MMG01UW1JU19OeklkNElSdUJITXhiSGZRZ1VtdFp5RzJ6QnRZdV9MdVc5dE1peXcxMnBGZHlhZkszbE5BZDlUZW1aZi1LMkdhZ2dITkRxa1FnbEpYbGvSAYwBQVVfeXFMUFFOY1M3UzV4cTFFQnFLa3RiMzlya1RFbDFfQVN4VzBHejBmcmFiX1A1Q1pGSUxvWnc2dXkxdVlHNkhfV09Hb21ZZ2hoRmJtQjc5aF84T0JVSzRWSmZ5azBzeHpJRGl2MW5XaFJMQmVaUGdGNEpBRzRVcHY5b1pyQ3ZwWVF4MG96TWxfcFI?oc=5",
       "source": "The Esk",
-      "published": "2026-11-09T17:52:00+09:00",
+      "published": "2026-11-09T17:00:00+09:00",
       "lang": "en",
       "person": "엘리엇 (폴 싱어)",
       "category": "hedge",
@@ -20462,7 +20484,7 @@
       }
     },
     {
-      "title": "억만장자 폴 싱어가 월스트리트가 '철저히 붕괴'에 직면하고 있다고 말하다",
+      "title": "억만장자 폴 싱어, 월스트리트가 '전멸'에 직면한다고 주장",
       "url": "https://news.google.com/rss/articles/CBMipgFBVV95cUxNOWNYcHhCM1p6VzFVR1E4QlZlV2FjRzVPS3FtYUdPZnBEaUhZYjFfS0ZQbmhWT0FsZWtnSWJ0QXJ6elN6cVNMSVR4dHBEa0RLay1qUS1neHZiY3BDTjUyTEoybENINHpyUlJHeGgzclpzN1RZZjkwbmt1clZuQXpodUlTSmJTZHVVZUtIS05SY3dIUjJNNnZYNGFZLWlWWnRkbWw1MF9R?oc=5",
       "source": "24/7 Wall St.",
       "published": "2026-11-03T17:00:00+09:00",
@@ -20480,7 +20502,37 @@
       }
     },
     {
-      "title": "캐시 우드, 댄 로엡과 다른 대형 펀드 7곳이 지난분기 블록을 매수했고, 7곳은 매도했다. 누가 맞을까?",
+      "title": "엘리엇 매니지먼트의 27개 인수 목록 (2026년 11월)",
+      "url": "https://news.google.com/rss/articles/CBMitAFBVV95cUxQeWNqQkhhcjF2RDJ6Y3JXUElBU016UTVZV1NIUlctbHJUOW9QbTd4ejJHMHNoZ3FhWndTN2JPLWNmRXJldXdHYm9KVDN2VGhaYzcwSDllYnhNeTlZUXVpci1MUHZFYVNVMXQxZVlxREJJM3dWeFBha3phUlFOc1hNM3Z3b1hQVUZUZ2VSS29DeFRZOF9tM0tRR09IemJKMXJqeHRpcEdBV1ltdzdNZkZDdHlpdkU?oc=5",
+      "source": "Tracxn",
+      "published": "2026-11-02T01:03:00+09:00",
+      "lang": "en",
+      "person": "엘리엇 (폴 싱어)",
+      "category": "hedge",
+      "category_label": "대형 헤지펀드",
+      "orig": "List of 27 Acquisitions by Elliott Management (Nov 2026)",
+      "real": "https://tracxn.com/d/acquisitions/acquisitions-by-elliott-management/__z8di2ceqcjVkFOb_1c0ejhAYt0KxE9JuoZtNBmjYxSg"
+    },
+    {
+      "title": "댄 뢰브와 8개 대형 펀드, 지난 분기 캐피탈원 파이낸셜 매입. 버크셔 해서웨이 외 14곳은 매각. 누가 맞을까?",
+      "url": "https://news.google.com/rss/articles/CBMihgJBVV95cUxPcTFjU2RRZEN4Wk96bUh5VGxoUHJnckktQ3oxcklWemQzV2tiQ2V4cEdvX19jZ0ZWQmlHaTJRcW1mbzJtTXRkbVVVRk1GYlE1ckpJdWhqVDREQ1EzM01xZ1ZlLTlzaDExLWdXR1dtY3Y2aS1VTGMzVUd3WFBDSVVFUlhGY2dhVmtSSnA2cy1vbFMtYlVPLXdIQUpicXRZaGMybkEtM1d5M2lYMWZrbk85N2RsVGtmMkttOERhYTZCYVByQzBuSE9EbVluNVlBdDdmdkY5SlhkMTJPd25pazNTRWtiODFQZG5vWWNZRk9qYXhMQmtFTEtseWhBeXFDYnVkZU9XbGNR?oc=5",
+      "source": "TIKR.com",
+      "published": "2026-11-22T21:04:00+09:00",
+      "lang": "en",
+      "person": "서드포인트 (댄 로브)",
+      "category": "hedge",
+      "category_label": "대형 헤지펀드",
+      "orig": "Dan Loeb and 8 Other Big Funds Bought Capital One Financial. Berkshire Hathaway and 14 Others Sold. Who’s Right?",
+      "real": "https://www.tikr.com/blog/dan-loeb-and-8-other-big-funds-bought-capital-one-financial-berkshire-hathaway-and-14-others-sold-whos-right?ref=yahoofinance&tlnk=yf-261122-7jjqjrjj",
+      "ko": {
+        "sum": "Capital One Financial(COF) 주가가 올해 1월 고점 대비 31% 하락한 가운데, 3분기 13F에서 460개 대형 펀드 중 9곳은 매수, 15곳은 매도로 엇갈림. Berkshire Hathaway는 지분을 62% 줄여 약 $357 million어치를 매도하며 최대 매도자가 됐고, Dan Loeb의 Third Point는 지분을 35% 늘려 매수세를 보임. Capital One의 3분기 카드 연체율은 3.98%로 전년 4.63%에서 하락했고, Synchrony·American Express도 손실률 개선을 보고함. 주가는 forward PER 7.8배로 5년 평균 9.1배보다 낮은 수준이며 애널리스트 이익 추정치는 꾸준히 상향됨. 다만 트럼프 대통령이 11월21일 신용카드 금리 10% 상한을 민주당과 함께 추진하겠다고 밝히면서 규제 리스크가 부각됨.",
+        "quotes": [
+          "\"그렇게 하겠다. 이 신용카드 회사들은 돈을 너무 많이 벌었다.\" — 트럼프 대통령"
+        ]
+      }
+    },
+    {
+      "title": "캐시 우드, 댄 뢰브 외 7개 대형 펀드, 지난 분기 블록 매입. 7곳은 매각. 누가 맞을까?",
       "url": "https://news.google.com/rss/articles/CBMiugFBVV95cUxOYnZwclRqbVpSaUNTMHZ0c2R4WHlzVWpSbGJXWGhNeVU1TDVuX3MxaDQtN3pGVlFoZENrQjJFRjVVdUQ2Sy1DZDB6NWNlMGMzeEJZMWdNaV8zQ1dsUk1SZUNUcGJlM1M4YnhIWUg5OTZsY2x3THBLQXhNTWpjazNoSmhrUmNGMDBldDlJYXVSbHNlVXlsZzQ4SnNwU19yN001VHFleU5NVXJzbV85UFBOZUN1QWJYWVpubkE?oc=5",
       "source": "TIKR.com",
       "published": "2026-11-22T05:37:00+09:00",
@@ -20498,7 +20550,7 @@
       }
     },
     {
-      "title": "억만장자 댄 로엡의 '베어 수학': AI는 연간 2-3조 달러의 신규 수익이 필요하다. 그는 아마존을 매도했다",
+      "title": "억만장자 댄 뢰브의 '베어 수학': AI는 연 $2~3조 신규 수익 필요. 그는 아마존을 팔았다",
       "url": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxNak91WG5CanJTX19tMEE3ejNLdE80bXhiZWdibkdfem9EUWJ6THRiSENMQ3FUTkZxWkJIMThrUTNNZHhCNXhvT3piNGNzTW52YnVRRndpREdsYjhhNXAxWGpLRXlZSHlndGVxVjJKcFg1dnNwVkFjeW5pdDloeE9rZXQzemppVmtRUGJHNTc5TkpXS2w0MmVPT0ItVjRDY2ltQjdqc09zck11dDZ1Yko4bTFPTmJCQmRf?oc=5",
       "source": "TIKR.com",
       "published": "2026-11-21T07:09:00+09:00",
@@ -20516,7 +20568,7 @@
       }
     },
     {
-      "title": "스탠리 드럭켄밀러, 댄 로엡과 다른 대형 펀드 12곳이 지난분기 다나허를 매도했고, 26곳은 매수했다. 누가 맞을까?",
+      "title": "스탠리 드럭켄밀러, 댄 뢰브 외 12개 대형 펀드, 지난 분기 다나허 매각. 26곳은 매입. 누가 맞을까?",
       "url": "https://news.google.com/rss/articles/CBMigwJBVV95cUxQd0JxazJDbzdBbnhPQXFGbUstU3pWdTBMVHJsN3R4LW5GdDNoUU9BdFhoUXREM0xTUC03Zk92OFExZVVHbnh5a29Ua3FSNWJweGNpUVdCb1ptejRVRF9ILW8ydERRWGFiYkhIUFJTN3FMX093SThGanRDY1YyRjFiUUFzRXgyT2UzbDEyamlCRWtvUjFYRkVFNmVIUUlmVDRLTVNJazdzY003ODFXNEJ6RThPQkpVVjk4TFBsdHJzR0k2NTNRYkt2ZXdBUzJyRGpTNXMtYndtSDgwZmxVYlRSYklHUFluck00QVhpQ09zc0VLWEZWMVlEUUNGVlNLVW9PLWlN?oc=5",
       "source": "TIKR.com",
       "published": "2026-11-21T01:39:00+09:00",
@@ -20532,23 +20584,23 @@
       }
     },
     {
-      "title": "억만장자 댄 로엡이 아마존을 매각하고 메타, 엔비디아, 마이크로소프트에서 10억 달러 지분을 개설했다",
-      "url": "https://news.google.com/rss/articles/CBMioAFBVV95cUxQTDl4azFlNTJDd1c2THh4RzZxaWdKb0VSSjJzdWt3QTc1bHdMLVZwLXZ6Tzd3SDBaejhuWEhLMFg1TDFOZ19PSFp6bFExMmpzejRUaUs0blRtQnU5WnpFZThIb1RfSktTaVd2ZWlvTzdVZ29PaS1meFQ1bkVEVkVOa2NTbkVHWjBwcEpJY3pSdGJ2U280U29rZGdBRFpTQlFr?oc=5",
-      "source": "Yahoo Finance",
-      "published": "2026-11-21T00:28:00+09:00",
+      "title": "억만장자 체이스 콜먼의 타이거 글로벌, 알파벳 지분 42% 축소",
+      "url": "https://news.google.com/rss/articles/CBMisgFBVV95cUxNM1FCUkF0Vmt5QmNyYjd6aFRmWFZwSzdDcWlNUk1UTXRvdVg1U1Bybld5WjdDTDU4dUllMC1QUDV3YnZISW5EWml0Z2tFUWNhZnNYZkVISTNfZ0g2OXNyYm1PUkxMMWZtaUZEZExJMUxvLVBaMDEyQl9kYjdxU0tLdEpMZHVPWEU2TENxVDNhWndRVlZhUFdrbkZlMmNjT2FBWThGY00tRGl6R2I5U2FlaS1n?oc=5",
+      "source": "24/7 Wall St.",
+      "published": "2026-11-22T22:49:00+09:00",
       "lang": "en",
-      "person": "서드포인트 (댄 로브)",
+      "person": "타이거 글로벌 (체이스 콜먼)",
       "category": "hedge",
       "category_label": "대형 헤지펀드",
-      "orig": "Billionaire Dan Loeb Exited Amazon and Opened $1 Billion in Meta, Nvidia and Microsoft Stakes",
-      "real": "https://finance.yahoo.com/markets/stocks/articles/billionaire-dan-loeb-exited-amazon-152838571.html",
+      "orig": "Billionaire Chase Coleman’s Tiger Global Cut Its Alphabet Stake by 42%",
+      "real": "https://247wallst.com/investing/2026/11/22/billionaire-chase-colemans-tiger-global-cut-its-alphabet-stake-by-42/",
       "ko": {
-        "sum": "억만장자 Dan Loeb의 Third Point가 Amazon 주식 175만주 전량 매도하고 Meta Platforms, Nvidia, Microsoft에 신규 포지션 개설, 합산 분기말 가치 약 $1.05B 규모임. Meta 지분은 $475M로 펀드 내 최대 보유 종목이 되었으며, Nvidia는 $342.6M, Microsoft는 $230.8M 규모임. Meta, Microsoft, Nvidia는 AI 투자를 수익으로 전환하고 있는 반면, Amazon은 $220B 규모 설비투자 계획으로 $42B 규모의 잉여현금 유출이 예상됨. 한편 Third Point의 SpaceX 지분은 전분기 180,415주에서 9월 30일 기준 980,415주로 증가함. 분기말 보유가치는 이미 시세와 괴리가 있어 Nvidia는 한 달 새 34%, Meta는 16% 하락한 상태로, 보고서가 현재 보유 현황을 반영하지 못한다는 지적도 있음.",
+        "sum": "Chase Coleman의 Tiger Global Management가 3분기 Alphabet Class A 지분을 5,805,687주에서 3,349,218주로 42.3% 축소함. 축소 후에도 Alphabet은 Tiger 포트폴리오에서 6위, 가치 $1.15 billion, 비중 약 5.7%를 유지함. Alphabet의 3분기 매출은 $127.577 billion으로 전년 대비 24.65% 증가했으며, Google Cloud 매출은 103% 급증한 $30.709 billion을 기록함. 분기 자본지출이 $51.355 billion에 달하며 잉여현금흐름은 -$9.065 billion을 기록했고, GAAP EPS $2.12는 $8.7 billion 지분증권 손실 영향으로 컨센서스 $2.97에 미달함. 추적 대상 24개 기관 중 9곳이 지분을 축소하고 13곳이 확대했으며, Alphabet 주가는 11월20일 $265.29로 한 달 새 20.75% 하락함.",
         "quotes": []
       }
     },
     {
-      "title": "샬리마르 페인츠: 타이거 글로벌과 액셀이 36% 지분을 획득하다",
+      "title": "샬리마르 페인츠: 타이거 글로벌과 액셀, 36% 지분 목표",
       "url": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxQeFRwcHB2US02cEZfNy1zVDgyN0swU01LY1E0WnlMQU5EczVubE1xQko3LUJPVmVXRHlDUjhXTVF6a0NJaGVfcGdyUm9udmNacS0wdFllX2xNbE15ZmxSa1M0TXl4ZWMtN015bE5uU0hhVkhyZXV0VHF6LV9OODltcDRfVGNYTG1jYmJYQ1Y4Yk9UNXJqbmFCc1h4TXN2RU9CUzByNTZDTzNvNDZ3dUYxa0NIM1VOcHQ1Snow?oc=5",
       "source": "Multibagg AI",
       "published": "2026-11-21T05:01:00+09:00",
@@ -20564,56 +20616,51 @@
       }
     },
     {
-      "title": "댄 로엡의 메타 주식 베팅이 타이거 글로벌이 조정할 때 두드러지다",
-      "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxNeXFXazFEX3JKcGdMbTNRX3BlYlJWaWhkQk43dzlvLUEtR0N3RDZmYVNDM0JTQjlCd1ZCWDhuODlsaEMxUW9CWjV2bzY0WjRGVTkzRVpab2QxM19HMGtJQkl2Y2tQNlJpQU1mb082MDlsbm1LR1BNdnB6SXUzbnJLcXVNcEhBOXUtM0t6aTU5REdtRzFscGlr?oc=5",
-      "source": "Yahoo Finance",
+      "title": "체이스 콜먼의 타이거 글로벌, 엔비디아 지분 증대, 현재 최대 보유 종목으로 $27.4억",
+      "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPTW51MENQeEZVcEdnQU50alloRm5XV2psVTVuTHlLRzJfb3c2bXl5Qm4tc2k4S2lNV1JxNUh2OGlCNVBQOThSeTNVeU5qSFROLXpvU3VSTTduUzJpb2M0NllxS2RXUXNmM1haNHdxRG9HLUtfRkhXc0ZBaHExUmR6czFPVWFLSUlKVmpxc1lZOWVJczAxeW1PemlPU3I5UVFscUg3LWduU1k?oc=5",
+      "source": "Crypto Briefing",
+      "published": "2026-11-20T17:00:00+09:00",
+      "lang": "en",
+      "person": "타이거 글로벌 (체이스 콜먼)",
+      "category": "hedge",
+      "category_label": "대형 헤지펀드",
+      "orig": "Chase Coleman’s Tiger Global increases Nvidia stake, now largest holding at $2.74 billion",
+      "real": "https://cryptobriefing.com/chase-colemans-tiger-global-increases-nvidia-stake-now-largest-holding-at-274/",
+      "ko": {
+        "sum": "Chase Coleman가 이끄는 Tiger Global Management가 Nvidia 보유 지분을 7% 늘린 것으로 소셜미디어를 통해 보도됨. 이로써 Nvidia는 Tiger Global의 3대 보유 종목에서 최대 보유 종목으로 올라섰으며 그 가치는 $2.74B로 평가됨. 이번 조정은 Nvidia의 성장 전망에 대한 투자자 신뢰 강화를 시사하는 것으로 해석됨. 향후 Nvidia의 3분기 매출 보고서와 Jensen Huang CEO의 가이던스 업데이트, 연준 결정 등이 추가 변수로 주목됨.",
+        "quotes": []
+      }
+    },
+    {
+      "title": "댄 뢰브의 메타 주식 베팅, 타이거 글로벌 조정 중 돋보여",
+      "url": "https://news.google.com/rss/articles/CBMivgFBVV95cUxORzZjX2RYNEpzNzFCclZwdnBsd3pVelpsLV90ZzFJcFhVYVlDOG04WVhwZVgySUVnVzR2ZFN6dlppajRZM2FoN2tKUmYxbFNvN0dFVzYwQ0plODljcWVmUzNQbFppY2I4cDIxYkJVUXpST1h1c1F4VWRzMXp0WHlWeUhoRWtlN2tYdXZYUW1zcnJzbWRjeEtmc2lzanI1TlZpWU9yR21BTlB6Z0dUcUV6NXZnRVFMTUZOSHpFekZ3?oc=5",
+      "source": "TradingView",
       "published": "2026-11-20T03:42:00+09:00",
       "lang": "en",
       "person": "타이거 글로벌 (체이스 콜먼)",
       "category": "hedge",
       "category_label": "대형 헤지펀드",
       "orig": "Daniel Loeb's Meta Stock Bet Stands Out as Tiger Global Trims",
-      "real": "https://finance.yahoo.com/markets/stocks/articles/daniel-loebs-meta-stock-bet-184245777.html",
+      "real": "https://www.tradingview.com/news/gurufocus:92f4a272b094b:0-daniel-loeb-s-meta-stock-bet-stands-out-as-tiger-global-trims/",
       "ko": {
-        "sum": "다니엘 로엡의 써드 포인트가 3분기에 메타 플랫폼 655,000주 지분을 공개하여 약 $475 million 규모의 최대 공개 보유 종목으로 만듦. 체이스 콜만의 타이거 글로벌이 메타 지분을 약 20% 감축했으나 여전히 써드 포인트보다 3배 이상 많은 2.25 million주를 보유함. 메타가 3분기에 연간 26% 성장한 $64.6 billion 매출을 기록했으나 자본지출이 운영현금흐름을 초과하여 분기 자유현금흐름이 음수 $2.12 billion임. 메타가 2026년 자본지출로 $135 billion~$145 billion을 계획 중임.",
-        "quotes": [
-          "\"AI는 이미 추천, 참여도, 수익화를 개선하여 광고 사업을 돕고 있음\" — 메타 경영진",
-          "\"새로운 AI 이니셔티브는 더 오래 걸려 수익을 창출할 것임\" — 메타 경영진"
-        ]
+        "sum": "Daniel Loeb의 Third Point가 3분기 Meta Platforms 주식 655,000주를 보유해 공개 보고 포트폴리오 중 최대 비중 종목(가치 약 $475 million, 비중 10% 이상)으로 삼음. 반면 Chase Coleman의 Tiger Global은 Meta 지분을 약 20%(57만5천주) 줄였으나 여전히 약 2.25 million주(약 $1.63 billion)를 보유해 3위 종목 지위를 유지함. Loeb는 11월 투자자들에게 대형 클라우드 및 반도체·데이터센터 관련 종목 비중을 줄였다고 밝혔으나 구체적 종목은 공개하지 않음. Meta의 3분기 매출은 전년 대비 26% 증가한 $64.6 billion, 영업현금흐름은 $32.79 billion, 자본지출은 $34.91 billion으로 분기 잉여현금흐름은 -$2.12 billion을 기록함. Meta는 2026년 자본지출을 $135 billion~$145 billion으로 예상하며 2027년에도 공격적 투자를 지속할 계획임.",
+        "quotes": []
       }
     },
     {
-      "title": "체이스 콜먼의 타이거 글로벌이 1,200만 주로 엔비디아를 최대 베팅으로 삼다. 대만 반도체를 제치고. 그 후 주식이 32% 하락했다",
-      "url": "https://news.google.com/rss/articles/CBMiiAJBVV95cUxOQ3A5OUxXTWtQUkRFYlQ4T1dRaV80YjRkMThpbFkydW40Y0VPcTh1SlNlZHdmZlpfR1NSVG9GZXdRQkMxRXlSaHV3U2lGdDdNY1A3aE9ZV0tDbzhnY0piU3JKWlRIZzNxc3BEMjNQSVN4NWFjamxMXzhSZ1NOcG5uLURacHFzZUdoTkpDTzNPaGphX1VkLUpiRXdQSEhmMjhQNGdIb1RkbXlfSEIydzFGYWRlX0Yzcmg3cU5QNzNJRU5aNnpaVWRLeWR2ZlhNdUQ1el9YZ2VfVkJJSGpYUTdKeW5GWEVjSUp6SVJEVzlVYjc3YzJRZ2lLd216NkhSNXlDcDdVWlp6NnA?oc=5",
-      "source": "24/7 Wall St.",
-      "published": "2026-11-18T22:41:00+09:00",
+      "title": "비스타 에너지 주식: 씰 펀드, 지분 58.6% 증대",
+      "url": "https://news.google.com/rss/articles/CBMiswFBVV95cUxPWklKaVZHdE1NRkloZjlJUnpMZEtTNno4R1A2eWtPcU82dTNBSzRHMWtaTGgzUUVhSFY1OTNLVUVkdmFXdS0zeHptRGR0XzlWcDNZcGlFN0hGa25DLVBKblN4aHR3Yjh1ajF4ZXlKSWhTZUh1Ui1aT0o5T2lRQ2Q5eXhMOGoyWEJ3Si1PZWk4TGFqTkJlV1ZsUkNYT0xWWVQwT0tPaGd2OGpvQW9RY29uZm5lUQ?oc=5",
+      "source": "ad-hoc-news.de",
+      "published": "2026-11-22T21:36:00+09:00",
       "lang": "en",
-      "person": "타이거 글로벌 (체이스 콜먼)",
-      "category": "hedge",
-      "category_label": "대형 헤지펀드",
-      "orig": "Chase Coleman's Tiger Global Made Nvidia Its Biggest Bet With 12 Million Shares, Dethroning Taiwan Semiconductor. Then the Stock Fell 32%",
-      "real": "https://247wallst.com/investing/2026/11/18/chase-colemans-tiger-global-made-nvidia-its-biggest-bet-with-12-million-shares-dethroning-taiwan-semiconductor-then-the-stock-fell-32/",
-      "ko": {
-        "sum": "Chase Coleman의 Tiger Global이 3분기 중 Nvidia 보유량을 1,200만 주로 늘려 포트폴리오 내 최대 비중(13.6%, $2.74B) 종목으로 만들며 기존 1위 대만 TSMC를 밀어냄. TSMC 보유는 36% 줄이고 Alphabet(-42%), Lam Research(-31%), Applied Materials(-26%), Sea(-43%), Meta(-20%) 등도 축소함. 3분기 마감(9/30) 이후 Nvidia 주가는 32% 급락했으며 이 기간 Jensen Huang CEO 사임 등 이사회발 이슈가 발생함. 11/18 Nvidia는 3분기 매출 $115.84B(전년比 103%↑, 예상치 상회)를 발표하고 4분기 매출 가이던스를 $130B로 제시하며 연간 전망을 상향함. 임시 CEO Colette Kress가 실적 발표를 주도했고 이사회는 Huang 복귀 계획이 없다고 밝힘.",
-        "quotes": [
-          "2028 회계연도 전망을 상향합니다. 매출이 전년 대비 약 75% 성장할 것으로 예상하며, 이는 기존 70%에서 상향된 수치입니다 — Colette Kress"
-        ]
-      }
+      "person": "틸 매크로 (피터 틸)",
+      "category": "paypal",
+      "category_label": "페이팔 마피아·테크",
+      "orig": "Vista Energy stock: Thiel fund raises stake by 58.6%",
+      "real": "https://www.ad-hoc-news.de/boerse/news/corporate-news/vista-energy-stock-thiel-fund-raises-stake-by-58-6/70544374"
     },
     {
-      "title": "타이거 글로벌이 Q3 2026에서 2억 3,700만 달러 매입으로 페라리(RACE) 지분을 증가시키다",
-      "url": "https://news.google.com/rss/articles/CBMiqwFBVV95cUxQV2pPaU5iQmZxYlFLbFZhOUNkUW1kQkZ1VVRIbDZNb0NmbkI5Y2thMzdGbzIxODB2WmFOdnFyZnNxX3NkdGt5ODczREpJZWc1bDZjcGdkV3c4ZG1pVDJIMkdobC1HVklRSDdtTXFLWkx4RFRIM29mcVY1RFFUX0Vxd2N2bHhiRGM0N2FUcGxtdzB1WkZxSlNWMTNSSzZhNGtObTRWUGEweE5UUEk?oc=5",
-      "source": "GuruFocus",
-      "published": "2026-11-17T06:08:00+09:00",
-      "lang": "en",
-      "person": "타이거 글로벌 (체이스 콜먼)",
-      "category": "hedge",
-      "category_label": "대형 헤지펀드",
-      "orig": "Tiger Global Boosts Ferrari (RACE) Stake with $237M Purchase in Q3 2026",
-      "real": "https://www.gurufocus.com/news/9202516/tiger-global-boosts-ferrari-race-stake-with-237m-purchase-in-q3-2026"
-    },
-    {
-      "title": "2000년에 엘론 머스크는 피터 티엘에게 그것이 할 수 있는 일을 보여주려고 보험 미가입 100만 달러 맥라렌을 충돌시켰다. 2025년에 티엘의 펀드는 조용히 그것이 소유한 모든 테슬라 주식을 매도했다",
+      "title": "2000년, 엘론 머스크는 피터 씰에게 성능을 보여주려다 보험 미가입 $1백만 맥라렌을 충돌 낸다. 2025년, 씰의 펀드는 조용히 테슬라 주식 모두 매각",
       "url": "https://news.google.com/rss/articles/CBMirgJBVV95cUxPQ3hLSGYxQV9YYjBLa2VsY3ZHZFg5SDBkSkdhVDRGY3FjbkdsYTZlSHAyMlZjYklYUU8tZ0xveDRiYm9MNFVma3dXRmpjU1o1Q2tkT2FBcVMza2RUa1dSWHVfa24xRjh4ZExXTlRtcURJTWhLWjZLWXJYYmpLa0c3QlI1QmdUNlYwMlJFd2FySVJNOEhIdnpCU0wzV2dTUkhVSG83bkZ4eENLNDhLcHItdEJYU3hhWG5taXVyNFo3UnZOTUNUY3lOdDBQTHJ6bjlLYzl3ZlMxbzBEa3c5ZHk1UnRvRUY5aEFGek9kQ1FNWEFaY1F4NTVxSUhLTTRNQnY3UTBBSi1GMnl3YngtVkp2Qzlrel9RWktYYno3T0FHQnNrM1NhdkNiQ1hHNkxWUQ?oc=5",
       "source": "24/7 Wall St.",
       "published": "2026-11-21T10:52:00+09:00",
@@ -20632,19 +20679,7 @@
       }
     },
     {
-      "title": "피터 티엘의 회사가 비스타 에너지 지분을 58.5% 증가시키다, 엘 파이스 보도",
-      "url": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE5rUEVfUnc4RjFGQ0RLNDdhMTctcDB5UFdxX04yVlEyX3BHUDJWYnJvZWh0SU4xcEhGV24xRlBNZlozNloyUV8tVG13TndXYlEtdWc?oc=5",
-      "source": "Digg",
-      "published": "2026-11-20T11:42:00+09:00",
-      "lang": "en",
-      "person": "틸 매크로 (피터 틸)",
-      "category": "paypal",
-      "category_label": "페이팔 마피아·테크",
-      "orig": "Peter Thiel’s firm boosts Vista Energy stake by 58.5%, El País reports",
-      "real": "https://digg.com/world-business/et170s6q"
-    },
-    {
-      "title": "피터 티엘이 이제 아르헨티나 석유 주식에 아마존만큼의 많은 돈을 가지고 있다. 9월 30일 이후 23% 하락했다",
+      "title": "피터 씰, 현재 아르헨티나 석유주에 아마존만큼 돈 투자. 9월 30일 이후 23% 하락",
       "url": "https://news.google.com/rss/articles/CBMi4AFBVV95cUxQZGVMSVFyb2VTakhrT0VqVFJqU2JvajdhYXFoS2hPdjBOZy1vVDRGMGNGb3EyazZqWGJwTERjb2dRSEpQalNkenZHVjEwdVU5ZWlBT1RlMzkzcXFYb0pyRTJBV08xZ1dwTXpwaUdYWERuWmJBTjJJUE1JMEt2cDhDbXJoblBKSlVMQ2VtZmVXQjFweE55N3FHSXAyOVh1NUtxZU1PN29FekRSNnBKZUpLSHBqaHZMSGZsaDRpcmYxaWlzRFNDa1lUR0lkajlDN2tFLXVCZWxlejlrcTQ0VFFYdg?oc=5",
       "source": "24/7 Wall St.",
       "published": "2026-11-20T10:17:00+09:00",
@@ -20660,7 +20695,7 @@
       }
     },
     {
-      "title": "피터 티엘이 비스타 에너지에 큰 베팅을 하다",
+      "title": "피터 씰, 비스타 에너지에 큰 베팅",
       "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTFBxekNqWUdrVVR6d0I4U0Z2cUQyQXdpcmZtQlNjbVhrTHFybEdua3pSd2M1Tnl2YVZ1UnVHWFc3OGRIRDBIN25kUHVIVHRGdzBUVDVBLWIzN1F5NUtwSlA2Ql9MQVJzd2Vlc3FtUjM4cG9NX2RlSXpv?oc=5",
       "source": "TIKR.com",
       "published": "2026-11-20T05:33:00+09:00",
@@ -20676,23 +20711,43 @@
       }
     },
     {
-      "title": "브래드 거스트너 순자산",
-      "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxNd2ZhS0F1c3RpdGVLZGVUOXlTc0ZyV0ZYX3dUY24zYWRXOGJQYXZzaXVZQ0ZyVmJhOVNmVjN3bjFGTmo1UF8wVHdaczJ5eUhQbjRIdV9rWkJXeEdNYWgzWWRMRXFZMDVuVzFXVWpkYjluTllEXzJPaHl2Wks4d1B3YlIyYk84Ym1sQW1VWk0yMmo2bENU?oc=5",
-      "source": "Celebrity Net Worth",
-      "published": "2026-11-21T02:58:00+09:00",
+      "title": "스탠리 드럭켄밀러와 42개 대형 펀드, 지난 분기 스페이스X 매입. 브래드 거스너 외 23곳은 매각. 누가 맞을까?",
+      "url": "https://news.google.com/rss/articles/CBMi2gFBVV95cUxON09ad3ZlUTZQSWVrMXZzLVh6bXFvNG1HTHhVak9FcWVPQXQxel9McFNWX3F6NDFzTDRRM0tOdngzYW1MUW5GYjJfZGlqamk0VlVkODZIek50RE9hY29aU1VsdnlCbV9aM0lTbmowdUxoWFVTa1UzRHctNFZFanZYelE2aHVXNjFDa05GS3MyU3BPYzJaNmRXQ2toM3VqTk5SQWdnSERKUUlzdXJNdHB0c1ZqVnVLWDNXbTVBdGZfNnZJYjZTWG1nb1V3T2hvc2VqS2pnT0QwS3JrQQ?oc=5",
+      "source": "TIKR.com",
+      "published": "2026-11-23T08:10:00+09:00",
       "lang": "en",
       "person": "알티미터 (거스트너)",
       "category": "paypal",
       "category_label": "페이팔 마피아·테크",
-      "orig": "Brad Gerstner Net Worth",
-      "real": "https://www.celebritynetworth.com/richest-businessmen/wall-street/brad-gerstner-net-worth/",
-      "ko": {
-        "sum": "브래드 거스트너는 미국 투자자이자 헤지펀드 매니저로 순자산이 $600 million임. Altimeter Capital의 창립자이자 최고경영자로 공개 및 비공개 시장의 기술 기업에 대한 대규모 베팅으로 알려짐. 2008년 금융 위기 중 친구와 가족으로부터 $3 million 미만의 초기 자금으로 Altimeter Capital을 설립함. Snowflake에 대한 투자가 가장 성공적인 초기 투자였으며, Snowflake는 2020년 9월에 상장되어 수십억 달러의 이득을 창출함. 현재 Altimeter는 약 $20 billion의 자산을 관리 중임.",
-        "quotes": []
-      }
+      "orig": "Stanley Druckenmiller and 42 Other Big Funds Bought SpaceX Last Quarter. Brad Gerstner and 23 Others Sold. Who’s Right?",
+      "real": "https://www.tikr.com/blog/stanley-druckenmiller-and-42-other-big-funds-bought-spacex-last-quarter-brad-gerstner-and-23-others-sold-whos-right?"
     },
     {
-      "title": "스쾍 팟: 브래드 거스트너의 앤스로픽 IPO: 2026년 11월 19일 축하하세요 | 오디오만",
+      "title": "브래드 거스너, 2027년 말까지 앤스로픽을 '$3조 총 기업 가치'로 평가. 필요한 것은 이것들",
+      "url": "https://news.google.com/rss/articles/CBMixwFBVV95cUxOb0RUQ3hFQU1tNl96YlY1QWRjVVBFYXVsb0k4Y3lmNHZadXhHbnllV0xfcHlSb3BUSUhNS05xa3NLYVFKM2hxOEJmN1Yyek9PNVdkb2syTlh3Y0ZmOFg4aEg2V2U5Mjhna090MHpCWS1CR1FOVWNYc0Mxckt0aHNLelpHX2thSlJGcHYyNTRIcno2THRycXFCUTAtYUxxN0pHUVRFT1JnSG9LOVBYSlRmTmU5SjM3UHZZTjRmN0c5ZDVySi1tcDJ3?oc=5",
+      "source": "TIKR.com",
+      "published": "2026-11-22T21:04:00+09:00",
+      "lang": "en",
+      "person": "알티미터 (거스트너)",
+      "category": "paypal",
+      "category_label": "페이팔 마피아·테크",
+      "orig": "Brad Gerstner Sees Anthropic at “$3 Trillion in Total Enterprise Value” by Late 2027. Here’s What It Takes",
+      "real": "https://www.tikr.com/blog/brad-gerstner-sees-anthropic-at-3-trillion-in-total-enterprise-value-by-late-2027-heres-what-it-takes?"
+    },
+    {
+      "title": "캐시 우드, 브래드 거스너 외 16개 대형 펀드, 지난 분기 테슬라 매입. 15곳은 매각. 누가 맞을까?",
+      "url": "https://news.google.com/rss/articles/CBMixAFBVV95cUxOVzItV3FnZS02aExpWDcwSlptMlgyTFZSSk4tUWpjU1d4bTNqOG41dFZTNnpqNUR4N2w1SWx6WjhILWVnTWR6b0gxMHZkSVN6N0QzbGpPM3ltQktLVjRtWFhtd2tHNzkwT0xMSzV5N0tDWDh3Ri1iLVpURlJ4VUZyMGtEQllSTDNQbzRtRmplNW16R0Zic1FKcXlMTlZ5Q2xma1JnWXRyek5fRHNvTDMxdVhLY0o2WkFXYmZZd1ZlSFNQODht?oc=5",
+      "source": "TIKR.com",
+      "published": "2026-11-22T09:41:00+09:00",
+      "lang": "en",
+      "person": "알티미터 (거스트너)",
+      "category": "paypal",
+      "category_label": "페이팔 마피아·테크",
+      "orig": "Cathie Wood, Brad Gerstner and 16 Other Big Funds Bought Tesla Last Quarter, While 15 Sold. Who’s Right?",
+      "real": "https://www.tikr.com/blog/cathie-wood-brad-gerstner-and-16-other-big-funds-bought-tesla-last-quarter-while-15-sold-whos-right?"
+    },
+    {
+      "title": "스쿼크 팟: 앤스로픽 IPO & 브래드 거스너: 오늘 축하 11/19/26 | 오디오만",
       "url": "https://news.google.com/rss/articles/CBMiX0FVX3lxTE9yNWFMZVQ5QmplZXdFSjJxR0tIWno0VFB5N05mYTlkUDQ4YVM4RFFiZUZRblh5UTB3TmVlb3B1c3RwcWhIcVg2Um11YTQ3Zm1fakZGRHVRMXY4RlRzdF84?oc=5",
       "source": "finance.biggo.com",
       "published": "2026-11-20T19:42:00+09:00",
@@ -20710,32 +20765,14 @@
       }
     },
     {
-      "title": "브래드 거스트너의 포트폴리오 분석: 3분기에 그가 한 모든 움직임",
-      "url": "https://news.google.com/rss/articles/CBMingFBVV95cUxQM2puOEpyWTlpZTZBalFmT25rbmtLUlFpanVJand6RGZtUTRReVMxVmRPb3BhMHZmbmdvdzRxY1ZWQ2ZOSDNSZTBKRF9ubEM3NzBjemhncXZ4YktFai1JOW9GY0stZzRiN1RSUzlSTnZtc0NqQ2tyOGM0eGMtNlJqX0lNWW85OHlSYUlOTl9SSkc2YVAyTDdqaWozdTZJQQ?oc=5",
-      "source": "TIKR.com",
-      "published": "2026-11-20T08:06:00+09:00",
-      "lang": "en",
-      "person": "알티미터 (거스트너)",
-      "category": "paypal",
-      "category_label": "페이팔 마피아·테크",
-      "orig": "Inside Brad Gerstner’s Portfolio: Every Move He Made in the Third Quarter",
-      "real": "https://www.tikr.com/blog/inside-brad-gerstners-portfolio-every-move-he-made-in-the-third-quarter",
-      "ko": {
-        "sum": "Brad Gerstner의 Altimeter Capital이 3분기 중 Tesla(TSLA)에 신규로 $680 million(1.92 million주) 규모 지분을 매입, Meta Platforms와 Micron 비중을 늘리고 Qualcomm·Applied Materials 등 반도체주 4종목을 매도함. Tesla는 선행 PER 약 180배로 5년 평균 112배를 크게 웃돌며, 애널리스트 평균 목표가는 현재가보다 단 7% 높아 로보택시 수익화에 대한 베팅으로 평가됨. Meta는 25% 비중 확대로 $1.23 billion 규모가 되었고 선행 PER 약 19배로 5년 평균(21배)보다 낮아 가장 수치상 타당한 결정으로 평가됨. Micron은 24% 늘려 $277 million 규모가 되었으나 9월30일 이후 주가가 34% 하락함. Qualcomm은 매도 후 주가가 14% 하락했고 애널리스트들의 2027회계연도 EPS 전망치도 하향 조정됨.",
-        "quotes": []
-      }
-    },
-    {
-      "title": "앤스로픽에 대한 알티미터의 50억 달러 투자에 대한 브래드 거스트너의 말",
-      "url": "https://news.google.com/rss/articles/CBMipwFBVV95cUxOR0ZqclU1cncxMjR0bmk2VHlGWHF0UTZOemw2UjFnb2NHTEJ0ZUE5bUtyX1VUTk1kTkZWWnhOdWtKZVdKUEwtUW9mdUdfa1RIMUdNeWo5YkVabW1oWDFqU3dSZFMtNjl3aTlTQmNITGVWcWtOVHgyN3JTRG9FZ1dNU0VHMzlETXBJUW04a3hzdnp5ejljR3k0bFVJYkZpU2x2R2RHWlE3UQ?oc=5",
-      "source": "CNBC",
-      "published": "2026-11-20T00:00:00+09:00",
-      "lang": "en",
-      "person": "알티미터 (거스트너)",
-      "category": "paypal",
-      "category_label": "페이팔 마피아·테크",
-      "orig": "Brad Gerstner on Altimeter's $5 billion investment in Anthropic",
-      "real": "https://www.cnbc.com/video/2026/11/19/brad-gerstner-on-altimeters-5-billion-investment-in-anthropic.html"
+      "title": "조직 재정비에 투자 멈춘 두 거인 ‘국민연금과 KIC’의 다음 행보는",
+      "url": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE5PQXlEc1daNkt5VFc3SjhuUGJsd1BOdlZEWUZTekFlMnZhZ3JCeW5LWFRLX2VNOTZPaWYxckh6R1JVTXpHb1U0NnFOa0NfM2U1YU1VMnpaZXUtU0k?oc=5",
+      "source": "SPI - 상업용 부동산 콘텐츠 & 데이터 애널리틱스",
+      "published": "2026-11-23T07:09:00+09:00",
+      "lang": "ko",
+      "person": "국민연금공단",
+      "category": "korea",
+      "category_label": "국내 (국민연금)"
     },
     {
       "title": "국민연금 \"AI전력 다각투자\" … KIC \"해외자본 韓으로 유치\"",
@@ -20768,17 +20805,7 @@
       "category_label": "국내 (국민연금)"
     },
     {
-      "title": "유진투자증권, 전주에 첫 거점…국민연금 협력 강화",
-      "url": "https://news.google.com/rss/articles/CBMiXEFVX3lxTE9PNWFJTVdJY1NabDdNckFaVjJUellRb3pmcFZQR2RhVmlwRTB0OW1qOTFPdHM3T05zVk10S0NaM24yV3JNeWYxT285aUJQUDFleHJ1bVI3QzNOM0sw?oc=5",
-      "source": "뉴스핌",
-      "published": "2026-11-18T15:58:00+09:00",
-      "lang": "ko",
-      "person": "국민연금공단",
-      "category": "korea",
-      "category_label": "국내 (국민연금)"
-    },
-    {
-      "title": "재닛 옐런이 AI 중심 경제에서 대학이 여전히 중요하다고 말하다",
+      "title": "재닛 옐런, AI 주도 경제에서도 대학 교육이 중요하다고 말해",
       "url": "https://news.google.com/rss/articles/CBMimwFBVV95cUxPWDBJamFGY2U1eVhKYldheEx4by10LV9IdUpCREF5WVRwT1BwaVJCMkRRMjlRMG5jazNhTGZLSkNIaUV3dHRUYUdlTEpWdEFxSmxYTHhNRlpGal9Cd1MxYjNxUGZQc3FJT2Q0LVZSLU1iak56c0VjTzJudHdfdVVIM09HaVpPMTVqREkydDhVLVBWMC04R2JMcGdyTQ?oc=5",
       "source": "MSU Denver RED",
       "published": "2026-11-03T17:00:00+09:00",
@@ -20797,19 +20824,7 @@
       }
     },
     {
-      "title": "옐런: 인플레이션을 억제하기 위해 한 번의 추가 금리 인상이 필요하다. 사라지는 공급 충격이 나머지를 한다",
-      "url": "https://news.google.com/rss/articles/CBMid0FVX3lxTE0tcXNRMlhiTnJrUWgyRGg5SDZaOVdLNzlOeXJQV3hNeEJ5em1RS3NFZUpBWW1SZWFUR3dSX0dvb2tjaXhSRy02U2xpRXRzcWQ5YkNxM2F4aHF6M1kxLUFxeGY4TjM5WjB6V0lEVkdfWFRRQlNiNlQw?oc=5",
-      "source": "Kathleen Hays Presents: Central Bank Central",
-      "published": "2026-10-23T16:00:00+09:00",
-      "lang": "en",
-      "person": "재닛 옐런",
-      "category": "policy",
-      "category_label": "정책·연준 출신",
-      "orig": "Yellen: One More Rate Hike Needed to Curb Inflation, Fading Supply Shocks to Do the Rest",
-      "real": "https://kathleenhays.substack.com/p/yellen-one-more-rate-hike-needed"
-    },
-    {
-      "title": "제롬 파월 | 약력, 연방준비제도이사회, 정치적 압력",
+      "title": "제롬 파월 | 약력, 연방준비제도, 정치적 압박",
       "url": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBobDEwNjdiX2RGSDdnR05fdEpYRTJhRTdERUxyT1JpZnFObFNOb3RUaVI5Q2VPU1prbHFOSTVCQ0Z0WmVfQ3dHLXY3Vk93R3JISmpBTFRQZGpwUQ?oc=5",
       "source": "Britannica",
       "published": "2026-11-14T17:00:00+09:00",
@@ -20821,7 +20836,7 @@
       "real": "https://www.britannica.com/money/Jerome-Powell"
     },
     {
-      "title": "연방준비제도 의장 제롬 파월: 내년부터 연방준비제도는 금리 정책 회의 횟수를 감소시킬 것이다; 12월 결정을 미리 신호하지 않는다; AI 투자도 마찬가지로 금리의 영향을 받는다 (전체 텍스트 첨부)",
+      "title": "연방준비제도 의장 제롬 파월: 내년부터 연준은 금융정책 회의 횟수를 줄일 것이며, 12월 결정을 미리 신호하지 않을 것이고, AI 투자도 금리의 영향을 받는다 (전문 첨부).",
       "url": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxNak9McEZ6dG9qUUZkaGFOcGR5d1NWVFpTZzdjRXdyUVpBY3FIMG0zVXJEemloRnNXaENIUWZyNmU2Z3hMa3h2SUJpbjJ2LVNQOUF2MDJwUU5nWnBySFphT21FWHRrd0pvQnFlX3BoVDBEZWI5b2t3UEJmZm5jdDd4Yy14ZHVzY1V5MVJocEZjVENqdm1CcVV3bXA2Sy0wcktJZFBEakNCNzI?oc=5",
       "source": "富途牛牛",
       "published": "2026-10-28T16:00:00+09:00",
@@ -20833,25 +20848,35 @@
       "real": "https://news.futunn.com/en/post/1002626844/federal-reserve-chair-jerome-powell-starting-next-year-the-fed"
     },
     {
-      "title": "연방준비제도 의장 케빈 워시가 경제에 대한 AI의 중요성을 강조하지만 '실망시킬 수 있다'고 말하다",
-      "url": "https://news.google.com/rss/articles/CBMilwFBVV95cUxPdmljLUh6Nkl6UHVYMUFzS3VFOXlfNnN6dWxOZkRzMHM1eV92OUhPbzZkLVA4LVBsaGlHSlRzWFY1MlpVeHJKMlFrR1hxNWNVVWhndWVNSlZ0TVZqSTd0Rmd2Mzh4U1NMOGZjbTVxWTlZWEh3TXZBN2kyN09nOEdPRDNnb2JhUnBNdEJqNUc1cWEwc0pqdEhZ0gGcAUFVX3lxTE1TTWxXYjdJTlNDc1JEd0RwdFRfdzFKT3pXSnZwbmY1X2YzVk14ZFU4NXctbGFqVmdMTVF4TWE5bXNiNmY4LTUteFFIQ21RbzM3THBvVFNmbkFPejE5NDJvcVg2UnBnT1dQT25MdnpYWW94YmlPQUhtb3hhZzJJT1FFZUZCQU1wcmpFLXpqQWJfS0lzbkdPMW5iSFRweQ?oc=5",
-      "source": "Forex Factory",
-      "published": "2026-11-22T00:43:00+09:00",
+      "title": "워시, AI의 잠재적 경제 영향 고민하며 인플레이션 위험 회피",
+      "url": "https://news.google.com/rss/articles/CBMicEFVX3lxTE5FRElBX2JxczZUSC1iOGZadnZsZDNxU0JWeWlvMnRQSGpxaEYyZEttdmVKa1NJRXdiaDA5RVRzenZMQ2Z0RGFrMnFOcmJ4eE9RcXI1b2lUS2hORjFmM0lyU0Y4SW5RWnRvX2hfTGJHU3Y?oc=5",
+      "source": "The North State Journal",
+      "published": "2026-11-22T21:55:00+09:00",
       "lang": "en",
       "person": "케빈 워시",
       "category": "policy",
       "category_label": "정책·연준 출신",
-      "orig": "Fed Chairman Kevin Warsh stresses importance of AI to economy, but says it could ‘disappoint’",
-      "real": "https://www.forexfactory.com/news/1437008-fed-chairman-kevin-warsh-stresses-importance-of-ai",
+      "orig": "Warsh grapples with AI’s potential economic impact, steers clear of inflation risk",
+      "real": "https://nsjonline.com/article/2026/11/warsh-ai-economic-impact/"
+    },
+    {
+      "title": "트럼프, 고금리 비판 계속하며 연준의장 케빈 워시가 딜레마 직면",
+      "url": "https://news.google.com/rss/articles/CBMi3wFBVV95cUxQUEZaZXFia3RZM3NfVTUxdW9CTkxjV1c4V0VlcWgtS05RRnNvdkZ2VzRPV2NUenBxanBCaTY4cmxCaDZOdl8yT2lBR3R6ZG1GckE2c1pHWm1GRFlDZnBLbmpINU9NSWk1TUZoZDdwZGZIbXNYbFZ5V0NHd2V3eU1mMVBDSjVOR3E0cTl5dmt4MHhaOVJCa0owR3JFdnZnZ1pTX0FsTmZoUHFkQVkzb2pSLWV0UllaMUIzbjFSX185WmVtTXQ3bzMxc012eDlqcklMNGpCdFRJSm5pRUJUczdv?oc=5",
+      "source": "TradingView",
+      "published": "2026-11-21T19:54:00+09:00",
+      "lang": "en",
+      "person": "케빈 워시",
+      "category": "policy",
+      "category_label": "정책·연준 출신",
+      "orig": "Trump Again Criticizes High Interest Rates as Fed Chair Kevin Warsh Faces a Dilemma",
+      "real": "https://www.tradingview.com/news/binance_news:c453c5c87094b:0-trump-again-criticizes-high-interest-rates-as-fed-chair-kevin-warsh-faces-a-dilemma/",
       "ko": {
-        "sum": "연방준비제도 의장 Kevin Warsh가 월요일 샌프란시스코에서 AI의 경제적 잠재력을 강조하면서 광범위한 일자리 손실이나 기대에 미치지 못할 가능성을 경고함. Warsh는 AI가 \"경제에 중대한 영향을 미칠 것이며 향후 통화정책에 중요한 함축이 있을 것\"이라고 강조함. 연준 의장이 생산성과 고용을 검토하기 위해 소집한 태스크포스 앞에서 발언함.",
-        "quotes": [
-          "\"AI는 경제에 중대한 영향을 미칠 것이며 향후 통화정책에 중요한 함축이 있을 것이다\" — Kevin Warsh, 연방준비제도 의장"
-        ]
+        "sum": "트럼프 대통령, 연준의 고금리 정책과 정치적 성격의 결정을 재차 비판함. 트럼프 본인이 지명한 연준 의장 케빈 워시를 직접 비난하는 것은 아니라고 언급함. 애널리스트들은 워시 의장이 금리 인하를 통해 증시 부양과 부채 상환 비용 완화를 원하는 백악관과, 높은 인플레이션으로 신속한 금리 인하를 꺼리는 연준 사이에서 상반된 압력에 직면해 있다고 분석함. 워시 의장은 백악관의 정치적 요구와 중앙은행의 통화정책 독립성 사이에서 균형을 모색해야 하는 상황임.",
+        "quotes": []
       }
     },
     {
-      "title": "워시가 연방준비제도 관계자들이 덜 말하기를 원하다. 대신 더 많이 말하고 있다",
+      "title": "워시, 연준 관계자들 발언 자제 원해. 오히려 발언은 늘어",
       "url": "https://news.google.com/rss/articles/CBMif0FVX3lxTE5CZGVYYlZTODBOZUpYNkFCQWloR3JjOGhRTWwxR3N5R3diQ3Y0Ql9lcm5HYS1jUl9ld2lKbF9PaC04bXZDN3EyWV9pOTdka0pZNVJJRWxsMDV3SVZBcWlOTEotc3Q1QmhkWXA4dHNjNTAzOXE2RUp1ODlSa0x1bGfSAYQBQVVfeXFMT0ptTzRIZzNaUW9ZSkY1akd4VWx6QjBXaE5jN3BTckZ6WElXWE1iQW9ieURtMmptenhNbm1BeFBDTE5FdVM4UkpDSVQ1NEJwRkE1Ym5fUnRiRHNmWUNPcUdzdC1XRlRVREg1N05jZ09GaDI5clM5UVlweGtabWFKYWNRNERH?oc=5",
       "source": "CNBC",
       "published": "2026-11-20T23:58:00+09:00",
@@ -20870,7 +20895,7 @@
       }
     },
     {
-      "title": "연방준비제도 의장 케빈 워시가 10월 금리 동결 후에도 연방준비제도의 2% 인플레이션 목표 달성을 약속했다. JPMorgan이 상원 민주당 통제가 그를 한 임기 의장으로 만들 수 있다고 경고하면서 말이다. 이 정치적 위험이 시장에 중요한 이유는",
+      "title": "연준의장 케빈 워시, 10월 금리 동결 후 연준의 2% 인플레이션 목표 달성 약속. JP모건은 상원 민주당 다수가 그를 1기 의장으로 만들 수 있다고 경고. 이 정치적 위험이 시장에 중요한 이유",
       "url": "https://news.google.com/rss/articles/CBMinwNBVV95cUxQdGRMc0x2SllJRzJ4YWlQN0NPYmNaMU9ZelRCZWVCSVBNQWtiUHpJWVMwd2R3cy1IQzNnNFRKR2tBMDh3MXV3QzR5cFF0ZmVRV1hqQTJ3X0lkU2I3UVFBQ0QxTnpoWGtVQUFLSGQ2YkUxdk9SSnhib0xlUDNFd0xPRWRZaXdQY2t3LUhDU2FaZ1huNHl0RTN3RlR0ejNpcEdGT3BjVDNLN1ZVNXdYeFpSdFNLSUp1MUhubUhhcDMwNmtOa1dKanNWMDhsYnBZWFJWMmI2dXZCdDNuNVhTWGc3MWFhZTFFLXhjTUxtVnhoWW1RTFBVTllHSkNRUGFsa1g4LWJUcFc4SjZDZGlQTWF4NnhBcHo2cnpmQk9tbVllSXkyQkJVQ2dMckF0RUIwclAzSkRFRmd6dTlobjE1MGVfQ3BqRHoySVhVODRzNWxxbEFvRXBSa1IzcjNKTWRqVjJDT1lGZWlQSWlhanlLRktKNzRjNGpfUExESWZxSk1PVE5IdS1ZQTIyR0VaMnhKOUFpRlNXeHE5aVEtMzk1RHo0?oc=5",
       "source": "The Motley Fool",
       "published": "2026-11-19T12:15:00+09:00",
@@ -20886,25 +20911,54 @@
       }
     },
     {
-      "title": "연방준비제도 의장 케빈 워시가 2개의 AI 미래를 본다: 생산성 붐 또는 고통스러운 시장 반전과 일자리 손실",
-      "url": "https://news.google.com/rss/articles/CBMilAFBVV95cUxOSHBGcEtaVllFWndoUUZMSy0zTUJ0YU1nalRGRnZReGJHZDlKYWlvSmhnNHp6UXdmVDRjaG4zeDFTUWk5TENHNHZhalRZcHFpS0d0bkJWaXdBNW9GTWU5U3h5eXlVVm81QlVsRkN3NXR2all5NE1nUTNRODJvem5VVDZjWGpGXy1adHZ0eTF5RlRIbGdl?oc=5",
-      "source": "Yahoo Finance",
-      "published": "2026-11-19T00:30:00+09:00",
+      "title": "넷플릭스 액면분할로 가격 반감: 버리, $39 진입 노린다. 애크만은 $10.7억 추가",
+      "url": "https://news.google.com/rss/articles/CBMidkFVX3lxTE1NdHYxVDZvVHNfWG5ZTGM0ZVFINHlHa0RrMDJ2ZFc5dlNQOGFZVnZmX0ptYm84S3lDdWY5aWJpcm5HTXNQeGlxRGFoWWM0MkszM0FxZmQwaEk5blZvZmdjRXgxMnMwWGw0T3FwZWtHR1RYMzZLN1E?oc=5",
+      "source": "BigGo Finance",
+      "published": "2026-11-23T04:05:00+09:00",
       "lang": "en",
-      "person": "케빈 워시",
-      "category": "policy",
-      "category_label": "정책·연준 출신",
-      "orig": "Fed Chair Kevin Warsh Sees Two AI Futures: Productivity Boom or Painful Market Reversal and Job Losses",
-      "real": "https://finance.yahoo.com/technology/ai/articles/fed-chair-kevin-warsh-sees-153005073.html",
+      "person": "마이클 버리",
+      "category": "macro",
+      "category_label": "매크로",
+      "orig": "Netflix Stock Split Halves Price: Burry Eyes $39 Entry as Ackman Adds $1.07 Billion",
+      "real": "https://finance.biggo.com/news/9b571bcb-c01d-45ce-8b7f-6ffa17379d2b",
       "ko": {
-        "sum": "Fed 의장 Kevin Warsh, AI(그가 '초지능(SI)'이라 칭함)가 강력한 생산성 향상을 가져올 수도, 혹은 투자수익 실망 시 시장과 고용에 고통스러운 반전을 초래할 수도 있다고 경고함. 과도한 투자와 주가 급등 이후 AI 기대가 실현되지 않으면 주식가치 하락, 경제성장 둔화, 실업률 상승으로 이어질 수 있다고 언급함. 자동화가 인간 노동을 보완하기보다 대체할 가능성도 지적했으나, 이는 예측이 아닌 예시 시나리오임을 강조함. 반면 긍정적 시나리오에서는 AI가 광범위한 생산성 향상을 가져와 미국 경제성장률을 완전고용 수준 가까이 끌어올릴 수 있다고 밝힘. 전 SEC 위원장 Gary Gensler는 AI 호황이 이미 버블이라며 연간 인프라 투자 약 $800B, 빅테크 지출이 2023년 대비 5배 증가했다고 지적하고, 2028년 대선 전 경기침체 가능성을 경고함.",
+        "sum": "마이클 버리, 넷플릭스(NFLX) 주가가 30달러대 후반(고점 대비 약 31% 추가 하락)까지 떨어지면 매수 관심이 있다고 Stocktwits를 통해 밝힘(11월 20일 종가 $56.73 기준). 버리는 넷플릭스 콘텐츠의 장기 가치 유지력이 디즈니/픽사에 비해 떨어진다고 주장하며 밸류에이션 고평가를 지적함. 반면 빌 애크먼의 퍼싱스퀘어는 9월 말 기준 약 1,541만 주($1.07 billion 규모)로 지분을 확대하며 저평가 주장을 펼침, 애크먼은 낮은 주가가 장기적으로 자사주 매입을 통해 주주에게 유리하다고 설명함. 넷플릭스 3분기 매출은 전년 대비 약 12% 증가한 $12.9 billion이나 성장률은 분기마다 둔화 중(1분기 16.2%→3분기 11.8%, 4분기 가이던스 약 11.5%), 영업이익률은 3분기 34.6%로 개선세를 보임. 2026년 광고 매출 전망치는 기존 약 $3 billion에서 약 $2.7 billion으로 하향 조정됨, 경영진은 광고 성장이 목표에 못 미친다고 인정함. 현재 주가(약 $58)는 2027년 예상 실적 기준 약 15배로 S&P500 평균(17.7배)보다 낮은 수준이며, 버리가 제시한 $38은 10배 수준으로 시장 대비 40% 이상 할인된 값임.",
         "quotes": [
-          "초지능이 기대를 저버릴 수 있다. 막대한 자본투자와 주가 상승 이후 기대수익이 꺾이고 주식가치가 하락하면 경제 둔화와 뚜렷한 실업률 상승으로 이어질 수 있다. 시간이 지나면 경제는 회복되겠지만 생산성 향상 없이 그렇게 될 것이다 — Kevin Warsh"
+          "\"디즈니는 와인을 만들고, 넷플릭스는 우유를 만든다\" — 마이클 버리",
+          "\"주가가 단기~중기적으로 더 저렴해지면 시간이 지남에 따라 더 많은 돈을 벌게 될 것이다. 그만큼 회사가 더 많은 자사주를 소각하게 될 것이기 때문이다\" — 빌 애크먼"
         ]
       }
     },
     {
-      "title": "마이클 버리가 고가 30대의 넷플릭스 주식을 보고 있다고 말하다. 나는 지금 그것을 고려할 것이다. 그것보다 훨씬 위에서",
+      "title": "마이클 버리의 넷플릭스 경고, 투자자들을 $39 딜레마에 빠뜨리다",
+      "url": "https://news.google.com/rss/articles/CBMiowFBVV95cUxPYkQyTDU3ekl0dzBSSDRBUkUzeVVWUGZEbzFvcXUxbmF1VW5LNmFISU1ZZnhfOGRaWHIzX2dvbGRhb2xtSGJTMVlkeGRqMkUxeXo1VXgtT01XaUNkaWNkRHk0VG1pcF8tc09Kd3pqbkR1VUpwVFhKUVJHUWxvWlRrMmxSZjFqNXBGdXItaFJpZXFIcTBHVGVMdFRfVWZDWkpTbklR?oc=5",
+      "source": "TheStreet",
+      "published": "2026-11-23T03:33:00+09:00",
+      "lang": "en",
+      "person": "마이클 버리",
+      "category": "macro",
+      "category_label": "매크로",
+      "orig": "Michael Burry’s Netflix warning puts investors in a $39 dilemma",
+      "real": "https://www.thestreet.com/entertainment/michael-burrys-netflix-warning-puts-investors-in-a-39-dilemma"
+    },
+    {
+      "title": "마이클 버리, 엔비디아 수익 확정 및 AI 약세 심화 중 반도체 ETF 풋옵션 매각",
+      "url": "https://news.google.com/rss/articles/CBMi1wFBVV95cUxOT2k1UEUxWHNISzF3YTJxOTVRRU1tbmtvSlJIRVhCR0I0ODVRZ1NhcmpQX1ZjZmVaUGRRMExJWm9FQWtPajAwaWJKRVNHRzZtRGtyS1dTVmFvQXBwNzNoWWcxVE5mUjhxZTQ2cWgzajRrYWJHZFRaTFNuOWNaTk5zUzlUMTFjeVRzV0djRWlESWY5azVtTG9XRUthTjJKSWduc09GTURqVDhFNEZGU2VESmxHWFlXTzRKWlZLSjhjNWNYYXdnOV9zQXNTTmNUWHh0WWM1dktoTQ?oc=5",
+      "source": "Stocktwits",
+      "published": "2026-11-22T19:17:00+09:00",
+      "lang": "en",
+      "person": "마이클 버리",
+      "category": "macro",
+      "category_label": "매크로",
+      "orig": "Michael Burry Locks In Gains on Nvidia, Chipmaker ETF Puts As AI Rout Deepens",
+      "real": "https://stocktwits.com/news-articles/markets/equity/michael-burry-locks-in-gains-on-nvidia-chipmaker-etf-puts-as-ai-rout-deepens/cNbSoRqR91e",
+      "ko": {
+        "sum": "마이클 버리, 금요일 엔비디아(NVDA)와 반도체 ETF(SMH)에 대한 풋옵션 포지션의 절반을 매도해 수익을 실현함, 나스닥100에 대한 2027년 4월 만기 약세 풋옵션은 그대로 유지함. 버리는 동물 건강기업 조에티스(ZTS) 콜옵션의 약 3분의 1도 매도해 이익을 확정함, 동시에 메르카도리브레(MELI) 지분을 20% 늘리고 몰리나헬스케어(MOH), HCA헬스케어(HCA), 어도비(ADBE), 스프라우츠파머스마켓(SFM) 등에 대한 상대적 강세를 언급함. 엔비디아 주가는 이번 주 7거래일 연속 하락하며 2018년 11월 이후 최악의 주간 실적을 기록할 전망임, 전 CEO 젠슨 황이 중국 스파이 의혹 인물과의 연인 관계를 인정한 이후 주가가 계속 흔들리고 있음. 엔비디아는 이번 분기 매출이 전년 대비 두 배 이상 증가한 $115.8 billion, 순이익은 109% 급증한 $64.9 billion을 기록해 월가 예상치를 상회했으나 주가 부양에는 실패함, 4분기 매출 가이던스는 $130 billion, 2028회계연도 매출 성장률 전망은 75%로 상향됨. 미 하원 민주당 의원 2명이 엔비디아가 싱가포르 클라우드업체 메가스피드에 대한 상무부 조사에 영향력을 행사하려 했는지 조사에 착수함, 하원 에너지상업위원장 브렛 거스리는 엔비디아 경영진에게 12월 2일까지 청문회 출석을 요청하는 서한을 보냄. 엔비디아發 약세가 기술·반도체 전반으로 확산되며 나스닥100 추종 QQQ ETF는 주간 약 9% 하락, AMD는 금요일 11% 이상, 마이크론(MU)은 13% 이상 급락함. 엔비디아 주가는 연초 대비 약 28% 하락한 반면 SMH는 같은 기간 약 13% 상승함.",
+        "quotes": []
+      }
+    },
+    {
+      "title": "마이클 버리, 넷플릭스 주식을 30대 중반대에서 본다고 말해. 지금 고려해 볼 가치가 있다. 그 이상에서",
       "url": "https://news.google.com/rss/articles/CBMiiwJBVV95cUxOeF80UUhjV3dEY29NZ0JMamxIU3JrTTcxN2VkRHV5VW1WeGgzNmFWdjZlUFlfcW45M2FXam9Oay1PcFA5ZXNSSDBzXzl1SHB2bXc4RWhoaWhMTG43OVBGX3M1MnhUbGVMWVBqVlJKX2FScm9NMmRpZEJrU05WYW1KX19neWtIc2FLTTFQblY3aWdTSjZDZEJNQkhXNVc1NUo0NDdSdmlLbWtRRmdMWkQ4WnluQzdwd1pWUEpTSWFmUEJpSFB3VXVzeThFWFgxRFlmUl9QaXczdVA3aDRuYi11MnFrN0w3R1I1ZXUzX1hZVWlBMFAyZWVKT1BHU0VMSVJObENLTjQtaHlTQm8?oc=5",
       "source": "The Globe and Mail",
       "published": "2026-11-22T08:49:00+09:00",
@@ -20916,60 +20970,6 @@
       "real": "https://www.theglobeandmail.com/investing/markets/markets-news/motley/8953614/michael-burry-says-he-s-looking-at-netflix-stock-in-the-high-30s-i-d-consider-it-now-well-above-that/",
       "ko": {
         "sum": "마이클 버리, 넷플릭스 주가가 30달러대 후반이면 관심 있다고 밝힘.",
-        "quotes": []
-      }
-    },
-    {
-      "title": "마이클 버리가 AI 매도세에 월스트리트가 불의를 당하면서 '내가 말했지'라고 말하다",
-      "url": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQdzh2ZF9CQ1FlWE1oRUVfNE5rdlBOTVMydU45UC1oM2J0dTJTaS1rdHpIX3RZUlBJZU10Y1k5WDRucV9Jd2lXZGtHUk5TTmlod3FNUXp6N1F3MW9KNXVrTkFBd1FOQVdYYUxnVTBKWWpza2dYeVpBcko4NWZOV1ozQVJHeFR2aV9GQVBqR1NDQ0xERUwtWmpLbEdDcndrUG5KU0xQTFl6QXBuR2lSbmh3N1VGMmhjNFQyS0VYT2hSaw?oc=5",
-      "source": "24/7 Wall St.",
-      "published": "2026-11-21T23:44:00+09:00",
-      "lang": "en",
-      "person": "마이클 버리",
-      "category": "macro",
-      "category_label": "매크로",
-      "orig": "Michael Burry Says ‘I Told You So’ as Wall Street Caught Off Guard by AI Selloff",
-      "real": "https://247wallst.com/investing/2026/11/21/michael-burry-says-i-told-you-so-as-wall-street-caught-off-guard-by-ai-selloff/",
-      "ko": {
-        "sum": "마이클 버리, 자신의 과거 AI 거품 경고가 적중했다고 주장함. 11월 19일 X를 통해 Nvidia, CoreWeave, Nebius, 반도체주에 대한 경고를 상기시킴. 같은 날 Nvidia 3.3%, CoreWeave 6.1%, Nebius 9.4% 급락함. 골드만삭스는 이번 하락세를 '격렬한 투매'로 묘사함. 버리는 AI 기업들이 2028년까지 감가상각비를 $176 billion 가량 과소계상했을 수 있다고 주장함. 다만 Microsoft는 Azure 성장 48%에 분기 자유현금흐름 $18.6 billion을 기록했고, Amazon은 AWS 39.3% 성장했으나 자유현금흐름이 12개월 기준 $14.8 billion 유입에서 $42.4 billion 유출로 악화돼($57.2 billion 변동) 기업별로 상황이 엇갈림.",
-        "quotes": [
-          "나는 여러분 모두에게 경고하려 했다 — 마이클 버리",
-          "나는 공매도하라고 말하지 않았다. 다만 팔기 위해 필요한 정보를 제공했을 뿐이다 — 마이클 버리"
-        ]
-      }
-    },
-    {
-      "title": "마이클 버리가 AI 주식 손실이 과거 붕괴를 반복한다고 경고하다",
-      "url": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPUEJGaGNTYWtxbU1DU3UtcnRQbi16cnF4LWdyakM5ZGFGTUNDSDdnMVc4TFh2alVLZ1ZGRWtSaEk4ZE9taWVHQ1V0V2VHWF9ZeUlmTzVaRUlfWkRUM0s2NnRxLTdtLWRCYnZISXp5T29rYWg5U1JSVFNMcnhqZzNWM0hRYlJfYXUt?oc=5",
-      "source": "JournalArta",
-      "published": "2026-11-21T23:26:00+09:00",
-      "lang": "en",
-      "person": "마이클 버리",
-      "category": "macro",
-      "category_label": "매크로",
-      "orig": "Michael Burry Warns AI Stock Losses Echo Past Crashes",
-      "real": "https://journalarta.com/en/2026/11/21/michael-burry-warns-ai-stocks-past-crashes/",
-      "ko": {
-        "sum": "마이클 버리, 최근 AI 주가 하락이 1929년과 2000년 시장 붕괴와 유사한 패턴을 보인다고 경고함. Nvidia와 CoreWeave 주가는 올해 하락했고 나스닥도 연초 수준 아래로 밀림(Nvidia 약 -27%, CoreWeave 약 -43%, S&P 500은 약 +2%). 버리는 실적 호조에도 주가가 하락하는 점을 근거로 들며 당시 1929·2000년 사례를 언급함. 버리는 과거 강세장 고점 이후 약 1년 뒤 실적 악화가 뒤따랐다고 분석하고, 약세장 중 반등 랠리는 평균 22%였다고 밝힘. 퓨처럼 에퀴티스의 셰이 볼루어는 버리가 정치적 변수 등 하락 요인을 예측할 수 없었을 것이라며 반박함. 버리는 또 Nvidia의 금융거래 방식과 아시아 시장 칩 판매 경로에 대해서도 의문을 제기함.",
-        "quotes": [
-          "실적 측면에서 근접한 원인이 없다는 점 — 마이클 버리",
-          "(시장 주도주들이) 실적 면에서는 압도적인 성과를 내고 있다 — 마이클 버리"
-        ]
-      }
-    },
-    {
-      "title": "🚨긴급🚨 투자자 마이클 버리가 말하다: 그는 엔비디아 공매도 포지션의 절반을 매도했다",
-      "url": "https://news.google.com/rss/articles/CBMic0FVX3lxTE5memdUQlhoLXVKNGtfOVJKUE0yWWloVXk2QVZPcnBrVll6aFZOT19FbmpCY200Q1JNU1pVOXRVTUROOEpYX1dmcmhnQVd6X1hhd3hqamZad2hpN2RnZGNQRnBESDIxMF95Zl8zSWVocVpLX1E?oc=5",
-      "source": "KuCoin",
-      "published": "2026-11-21T12:33:00+09:00",
-      "lang": "en",
-      "person": "마이클 버리",
-      "category": "macro",
-      "category_label": "매크로",
-      "orig": "🚨BREAKING🚨 INVESTOR MICHAEL BURRY SAYS: He sold half of his Nvidia short position. https://t.co/w0qTOCaHxR",
-      "real": "https://www.kucoin.com/news/insight/NVDA/6b010c019278e40007d8e784",
-      "ko": {
-        "sum": "투자자 마이클 버리가 자신의 Nvidia 공매도 포지션 중 절반을 매도했다고 전해짐.",
         "quotes": []
       }
     }
@@ -21541,34 +21541,34 @@
     "policy": "정책·연준 출신",
     "korea": "국내 (국민연금)"
   },
-  "generated_at": "2026-11-22T01:29:22.341855+00:00",
+  "generated_at": "2026-11-23T01:55:05.459207+00:00",
   "note": "13F 는 분기말 후 45일 이내 공시되므로 최대 45일 시차가 있습니다. 파생·공매도·해외주식은 13F 에 포함되지 않습니다.",
-  "news_updated_at": "2026-11-22T01:29:04.513113+00:00",
+  "news_updated_at": "2026-11-23T01:54:49.634593+00:00",
   "views": {
-    "버크셔 해서웨이 (버핏)": "주식시장 붕괴시 투자자가 취해야 할 첫 조치 관련 조언 보도. 장기투자자에게 주식이 채권보다 낫다는 견해 재조명.",
-    "아이칸 (칼 아이칸)": "국제향료향수사(IFF) 지분 300만주로 감소. 텍사스주 7,900만달러 배상책임 분쟁서 벗어날 것 요청.",
-    "퍼싱스퀘어 (애크먼)": "비주류 기업에 10억달러 베팅 공개, 알콘·인터컨티넨털익스체인지에 20억달러 신규포지션 개설. 엔비디아 투자자들이 무시 못할 문제 지적.",
-    "바우포스트 (클라만)": "허니웰 에어로스페이스 신규 매수. 알파벳·유니온퍼시픽 지분 감소, CME 지분 추가.",
-    "그린라이트 (아인혼)": "PG&E에 신규 베팅, 알루미늄 관련 신규 종목 매수. MGM리조츠 지분 추가.",
-    "브리지워터 (달리오)": "1년내 경제 불안정 초래할 AI 사이버공격 확률 3분의1로 평가. 워싱턴 자금싸움이 미 채무문제 흔들 수 있다 경고.",
-    "듀케인 (드러켄밀러)": "자본보전 모드 돌입, 구글 주식 처분. TSMC 지분 94% 감소하고 저장소·금·우주 관련주로 재배치.",
-    "소로스 펀드 매니지먼트": "엔비디아 지분 19.3% 감소. CoreWeave 포지션 추가.",
-    "아팔루사 (테퍼)": "포트폴리오 재정렬, 마이크론을 최대 보유종목으로 전환. 아마존 지분 조정.",
-    "튜더 (폴 튜더 존스)": "중견 기술주 신규 포지션 개시, 블랙록 비트코인ETF 지분 2배 확대. 2027년 AI·IPO가 주식시장에 타격 줄 수 있다 경고.",
-    "시타델 (켄 그리핀)": "직접 발언 보도 없음. 피츠버그 CMU 기부 및 뉴욕 부동산 매각 등 개인 행보만 보도.",
-    "밀레니엄 (잉글랜더)": "직접 발언 보도 없음. 포트폴리오 상위 보유종목 및 신용거래팀 재편 이슈 보도.",
-    "포인트72 (스티브 코헨)": "AMD 보유 대부분 처분, 마이크로소프트가 더 안전한 AI주라는 판단하에 10억달러 베팅.",
-    "르네상스 테크놀로지": "샌디스크 지분 55배 이상 확대, 대형은행 3곳에 신규포지션 개설. 엔비디아 지분 감소, 마이크론 지분은 확대.",
-    "엘리엇 (폴 싱어)": "월스트리트가 철저한 붕괴에 직면했다는 경고 발언. 펜스키 매수, 씨드릴 지분 감소.",
-    "서드포인트 (댄 로브)": "AI가 연간 2-3조달러 신규수익 필요하다는 '베어 수학' 주장, 아마존 매도. 메타·엔비디아·마이크로소프트에 10억달러 신규 지분 개설.",
-    "타이거 글로벌 (체이스 콜먼)": "엔비디아를 대만반도체 제치고 최대 베팅으로 확대했으나 이후 주가 하락. 페라리 지분 확대.",
-    "틸 매크로 (피터 틸)": "보유 테슬라 주식 전량 매도. 비스타 에너지(아르헨티나 석유) 지분 큰 폭 확대, 해당 주식은 저점대비 하락.",
-    "알티미터 (거스트너)": "앤스로픽 IPO 및 50억달러 투자 관련 코멘트 보도.",
-    "국민연금공단": "AI전력 등 다각투자 방침 언급. KIC와 함께 국내전략산업 자본공급·인프라 투자 논의.",
-    "재닛 옐런": "인플레이션 억제 위해 추가 금리인상 한 차례 필요하다는 견해. AI 중심 경제에서도 대학 교육 중요성 강조.",
-    "제롬 파월": "내년부터 FOMC 회의 횟수 축소 예정, 12월 결정 사전 신호 주지 않는다는 입장. AI 투자도 금리 영향 받는다는 견해.",
-    "케빈 워시": "AI가 생산성 붐 또는 고통스러운 시장반전·일자리손실 중 하나로 귀결될 수 있다는 전망. 10월 금리동결 후에도 2% 인플레이션 목표 달성 약속, AI가 경제에 중요하지만 실망시킬 수 있다는 견해.",
-    "마이클 버리": "넷플릭스 고점 30달러대 수준 주시, 추가 하락시 매수 고려 의향 피력. AI 매도세가 과거 붕괴 반복한다 경고, 엔비디아 공매도 포지션 절반 매도."
+    "버크셔 해서웨이 (버핏)": "인내심 있는 투자자에 적합한 주식유형 선호 재확인. 장기 보유(농장 사례)와 시장 붕괴 시 우선 행동에 대한 조언 보도. 과거 비트코인 관련 입장도 재조명됨",
+    "아이칸 (칼 아이칸)": "Q3 13F상 지분 축소 포착. 텍사스 손해배상 소송 철회 요청. 센투리 주식 대규모 매각",
+    "퍼싱스퀘어 (애크먼)": "2% 인플레 목표를 3%로 변경 촉구. 12월 금리 인상/인하 모두 '정책 실수' 가능성 경고, 경기침체 위험 지적. 금융여건 긴축 및 스페이스X 채권금리 우려 제기",
+    "바우포스트 (클라만)": "직접 발언 보도 없음. Q3 허니웰 에어로스페이스 신규 매입 포착",
+    "그린라이트 (아인혼)": "직접 발언 보도 없음. Q3 PG&E·알루미늄 신규 진입, MGM 리조츠 지분 확대",
+    "브리지워터 (달리오)": "주식의 채권 대비 쿠션 축소 경고. AI 사이버공격이 경제 불안정화시킬 확률 높게 평가. 워싱턴 채무 싸움이 미 채무시장 흔들 수 있다고 경고, 자산방어 조언",
+    "듀케인 (드러켄밀러)": "'자산 보전' 모드 진입 발언. Q3 스페이스X·웨스턴디지털 매입, 대만반도체 매도 포착",
+    "소로스 펀드 매니지먼트": "직접 발언 보도 없음. 메타 대규모 베팅 수익성 악화, 마이크론 비중 2배 확대, CoreWeave 포지션 확대 등 포트폴리오 변동 보도",
+    "아팔루사 (테퍼)": "직접 발언 보도 없음. 오라클 신규 지분 취득, 마이크론 베팅 및 AI 칩 종목 대규모 로테이션 단행",
+    "튜더 (폴 튜더 존스)": "중형주 테크 신규 진출, 비트코인 ETF 지분 확대. 2027년 AI·IPO 과열이 주식시장 타격 가능성 경고(10/24)",
+    "시타델 (켄 그리핀)": "직접 발언 보도 없음. 박물관·대학 거액 기부 및 부동산 매각 등 자선·개인자산 관련 이슈",
+    "밀레니엄 (잉글랜더)": "직접 발언 보도 없음. 상위 보유종목 공개 및 일부 신용거래 종료 등 포트폴리오 조정 보도",
+    "포인트72 (스티브 코헨)": "직접 발언 보도 없음. AMD 비중 대폭 축소, 마이크로소프트에 대규모 신규 베팅 포착",
+    "르네상스 테크놀로지": "직접 발언 보도 없음. 샌디스크·은행주 신규 확대, 엔비디아 지분은 급락 전 축소, 마이크론 비중 확대",
+    "엘리엇 (폴 싱어)": "월스트리트가 '전멸' 직면한다는 경고 발언. Q3 펜스키 매입, 시드릴 비중 축소",
+    "서드포인트 (댄 로브)": "AI가 연간 수조 달러 신규 수익 창출해야 한다는 '베어 수학' 제시, 아마존 매도. Q3 캐피탈원·블록 신규 매입, 다나허 매도",
+    "타이거 글로벌 (체이스 콜먼)": "직접 발언 보도 없음. 알파벳 지분 대폭 축소, 엔비디아는 최대 보유종목으로 확대",
+    "틸 매크로 (피터 틸)": "직접 발언 보도 없음. 비스타 에너지 지분 대폭 확대, 테슬라 전량 매도, 아르헨티나 석유주 대규모 베팅",
+    "알티미터 (거스트너)": "2027년 말까지 앤스로픽 기업가치 '3조 달러' 전망 제시. Q3 스페이스X 매도, 테슬라 신규 매입",
+    "국민연금공단": "직접 발언 보도 없음. AI전력·인프라 다각투자 추진 및 신임 부동산투자실장 선임 등 조직 재정비 이슈",
+    "재닛 옐런": "AI 주도 경제에서도 대학 교육 중요성 강조 발언",
+    "제롬 파월": "내년부터 연준 회의 횟수 축소 방침. 12월 결정 사전 신호 주지 않겠다는 입장. AI 투자도 금리 영향 받는다는 견해",
+    "케빈 워시": "AI의 경제적 영향 고민하며 인플레이션 위험 회피 기조. 10월 금리 동결 후 2% 인플레 목표 달성 재약속. 연준 인사 발언 자제 요구에도 본인 발언은 오히려 증가, 정치적 리스크 부각",
+    "마이클 버리": "넷플릭스 액면분할 후 저가(약 $39대) 진입 시사. 엔비디아 관련 수익 확정 및 반도체 ETF 풋옵션 매도, AI 약세 심화 전망"
   },
-  "prices_updated_at": "2026-11-22T01:29:22.339634+00:00"
+  "prices_updated_at": "2026-11-23T01:55:05.456041+00:00"
 }
